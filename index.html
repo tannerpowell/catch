@@ -5,17 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The Catch Seafood - Fresh Cajun Seafood | Houston</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Inter:wght@400;500;600;700&display=swap');
-    
-    body {
-      font-family: 'Inter', sans-serif;
-    }
-    
-    h1, h2, h3, h4, h5, h6 {
-      font-family: 'Libre Baskerville', serif;
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- lightGallery CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/css/lightgallery-bundle.min.css">
+
+  <!-- lightGallery JS -->
+  <script src="https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/lightgallery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/plugins/zoom/lg-zoom.min.js"></script>
 </head>
 <body>
   <div id="app"></div>
@@ -175,6 +172,24 @@
       const [showLocations, setShowLocations] = useState(false);
       const [showMenu, setShowMenu] = useState(false);
 
+      React.useEffect(() => {
+        if (showMenu && typeof lightGallery !== 'undefined') {
+          // Initialize lightGallery for menu items
+          const galleryElement = document.getElementById('menu-gallery');
+          if (galleryElement) {
+            const gallery = lightGallery(galleryElement, {
+              speed: 500,
+              plugins: [lgZoom],
+              selector: '.menu-item-lightbox',
+              download: false
+            });
+            return () => {
+              gallery.destroy();
+            };
+          }
+        }
+      }, [showMenu]);
+
       if (showMenu) {
         return (
           <div className="min-h-screen" style={{background: 'linear-gradient(to bottom, #fef3e2, #fefaf5)'}}>
@@ -189,36 +204,44 @@
               <h1 className="text-5xl md:text-6xl mb-4" style={{color: '#8b4513'}}>Our Menu</h1>
               <p className="text-xl mb-16" style={{color: '#c17a5c'}}>Fresh seafood, made to order</p>
 
-              {menuCategories.map((category, idx) => (
-                <div key={idx} className="mb-20">
-                  <div className="mb-8">
-                    <h2 className="text-4xl mb-2" style={{color: '#8b4513'}}>{category.name}</h2>
-                    {category.subtitle && (
-                      <p className="text-lg italic" style={{color: '#9b7961'}}>{category.subtitle}</p>
-                    )}
-                  </div>
-                  <div className="space-y-8">
-                    {category.items.map((item, itemIdx) => (
-                      <div key={itemIdx} className="border-b pb-6" style={{borderColor: '#e8d5c4'}}>
-                        <div className="flex gap-6">
-                          {item.image && (
-                            <div className="w-32 h-32 rounded-sm overflow-hidden flex-shrink-0">
-                              <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+              <div id="menu-gallery">
+                {menuCategories.map((category, idx) => (
+                  <div key={idx} className="mb-20">
+                    <div className="mb-8">
+                      <h2 className="text-4xl mb-2" style={{color: '#8b4513'}}>{category.name}</h2>
+                      {category.subtitle && (
+                        <p className="text-lg italic" style={{color: '#9b7961'}}>{category.subtitle}</p>
+                      )}
+                    </div>
+                    <div className="space-y-8">
+                      {category.items.map((item, itemIdx) => (
+                        <div key={itemIdx} className="border-b pb-6" style={{borderColor: '#e8d5c4'}}>
+                          <div className="flex gap-6">
+                            {item.image && (
+                              <a
+                                href={item.image}
+                                className="menu-item-lightbox flex-shrink-0"
+                                data-lg-size="1200-1200"
+                              >
+                                <div className="w-32 h-32 rounded-sm overflow-hidden">
+                                  <img src={item.image} alt={item.name} className="menu-item-thumbnail w-full h-full object-cover" />
+                                </div>
+                              </a>
+                            )}
+                            <div className="flex-1">
+                              <div className="flex justify-between items-start mb-2">
+                                <h3 className="text-2xl" style={{color: '#5a3a2a'}}>{item.name}</h3>
+                                <span className="text-2xl ml-6" style={{color: '#c17a5c'}}>${item.price.toFixed(2)}</span>
+                              </div>
+                              <p className="text-lg leading-relaxed" style={{color: '#7a5f4f'}}>{item.description}</p>
                             </div>
-                          )}
-                          <div className="flex-1">
-                            <div className="flex justify-between items-start mb-2">
-                              <h3 className="text-2xl" style={{color: '#5a3a2a'}}>{item.name}</h3>
-                              <span className="text-2xl ml-6" style={{color: '#c17a5c'}}>${item.price.toFixed(2)}</span>
-                            </div>
-                            <p className="text-lg leading-relaxed" style={{color: '#7a5f4f'}}>{item.description}</p>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         );
@@ -250,40 +273,50 @@
               </div>
 
               <div className="grid md:grid-cols-2 gap-8">
-                {locations.map((loc) => (
-                  <div key={loc.id} className="bg-white rounded-sm shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-                    <div className="h-56" style={{background: 'linear-gradient(135deg, #d4915a 0%, #c17a5c 100%)'}}></div>
-                    <div className="p-8">
-                      <h3 className="text-3xl mb-6" style={{color: '#8b4513'}}>{loc.name}</h3>
-                      <div className="space-y-3 mb-6" style={{color: '#7a5f4f'}}>
-                        <div className="flex items-start gap-3">
-                          <MapPin className="w-5 h-5 mt-1 flex-shrink-0" style={{color: '#c17a5c'}} />
-                          <div>
-                            <p>{loc.address}</p>
-                            <p>{loc.city}</p>
+                {locations.map((loc) => {
+                  const locationImages = {
+                    postoak: 'images/Location-Post-Oak.jpg',
+                    conroe: 'images/Location-Conroe.jpg',
+                    atascocita: 'images/Location-Humble.jpg',
+                    willowbrook: 'images/Location-Willowbrook.jpg'
+                  };
+                  return (
+                    <div key={loc.id} className="bg-white rounded-sm shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                      <div className="h-56 overflow-hidden">
+                        <img src={locationImages[loc.id]} alt={`${loc.name} location`} className="w-full h-full object-cover" />
+                      </div>
+                      <div className="p-8">
+                        <h3 className="text-3xl mb-6" style={{color: '#8b4513'}}>{loc.name}</h3>
+                        <div className="space-y-3 mb-6" style={{color: '#7a5f4f'}}>
+                          <div className="flex items-start gap-3">
+                            <MapPin className="w-5 h-5 mt-1 flex-shrink-0" style={{color: '#c17a5c'}} />
+                            <div>
+                              <p>{loc.address}</p>
+                              <p>{loc.city}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <Phone className="w-5 h-5 flex-shrink-0" style={{color: '#c17a5c'}} />
+                            <a href={`tel:${loc.phone}`} className="hover:underline">{loc.phone}</a>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <Clock className="w-5 h-5 flex-shrink-0" style={{color: '#c17a5c'}} />
+                            <p>{loc.hours}</p>
                           </div>
                         </div>
-                        <div className="flex items-center gap-3">
-                          <Phone className="w-5 h-5 flex-shrink-0" style={{color: '#c17a5c'}} />
-                          <a href={`tel:${loc.phone}`} className="hover:underline">{loc.phone}</a>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <Clock className="w-5 h-5 flex-shrink-0" style={{color: '#c17a5c'}} />
-                          <p>{loc.hours}</p>
-                        </div>
+                        <a
+                          href={loc.orderUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-block px-8 py-4 rounded-sm text-white font-semibold text-lg hover:opacity-90 transition-opacity"
+                          style={{background: '#c17a5c'}}
+                        >
+                          Order Now
+                        </a>
                       </div>
-                      <a 
-                        href={loc.orderUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-block px-8 py-4 rounded-sm text-white font-semibold text-lg hover:opacity-90 transition-opacity"
-                        style={{background: '#c17a5c'}}
-                      >
-                        Order Now
-                      </a>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>
