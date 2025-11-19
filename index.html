@@ -3,23 +3,62 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="The Catch Seafood brings authentic Louisiana Cajun flavors to Houston with 4 locations. Fresh snow crab, catfish, shrimp boils, and classic Cajun dishes made to order. Order direct and save!">
+  <meta name="keywords" content="Cajun seafood, Houston seafood, snow crab, seafood boil, catfish, shrimp, Louisiana food, Houston restaurants">
   <title>The Catch Seafood - Fresh Cajun Seafood | Houston</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.thecatchseafood.com/">
+  <meta property="og:title" content="The Catch Seafood - Fresh Cajun Seafood | Houston">
+  <meta property="og:description" content="The Catch Seafood brings authentic Louisiana Cajun flavors to Houston with 4 locations. Fresh snow crab, catfish, shrimp boils, and classic Cajun dishes made to order.">
+  <meta property="og:image" content="https://www.thecatchseafood.com/images/Snow_Crab.png">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:site_name" content="The Catch Seafood">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://www.thecatchseafood.com/">
+  <meta name="twitter:title" content="The Catch Seafood - Fresh Cajun Seafood | Houston">
+  <meta name="twitter:description" content="Authentic Louisiana Cajun flavors with 4 Houston locations. Fresh snow crab, catfish, shrimp boils made to order.">
+  <meta name="twitter:image" content="https://www.thecatchseafood.com/images/Snow_Crab.png">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://www.thecatchseafood.com/">
+
+  <!-- Favicon (placeholder - needs actual favicon files) -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+  <!-- Google Analytics 4 - Replace G-XXXXXXXXXX with your actual Measurement ID -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+  </script>
+
+  <link rel="stylesheet" href="tailwind-custom.css">
   <link rel="stylesheet" href="styles.css">
 
   <!-- lightGallery CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/css/lightgallery-bundle.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/css/lightgallery-bundle.min.css" crossorigin="anonymous">
 
   <!-- lightGallery JS -->
-  <script src="https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/lightgallery.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/plugins/zoom/lg-zoom.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/lightgallery.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/plugins/zoom/lg-zoom.min.js" crossorigin="anonymous"></script>
 </head>
 <body>
+  <!-- Skip Navigation for Accessibility -->
+  <a href="#main-content" class="skip-link" style="position:absolute;left:-9999px;z-index:999;padding:1em;background:#c17a5c;color:white;text-decoration:none;">Skip to main content</a>
+
   <div id="app"></div>
 
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js" crossorigin="anonymous"></script>
 
   <script type="text/babel">
     const { useState } = React;
@@ -193,8 +232,9 @@
       if (showMenu) {
         return (
           <div className="min-h-screen" style={{background: 'linear-gradient(to bottom, #fef3e2, #fefaf5)'}}>
-            <button 
+            <button
               onClick={() => setShowMenu(false)}
+              aria-label="Close menu and return to home"
               className="fixed top-6 right-6 z-50 bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-shadow"
             >
               <X className="w-6 h-6" style={{color: '#8b4513'}} />
@@ -224,7 +264,7 @@
                                 data-lg-size="1200-1200"
                               >
                                 <div className="w-32 h-32 rounded-sm overflow-hidden">
-                                  <img src={item.image} alt={item.name} className="menu-item-thumbnail w-full h-full object-cover" />
+                                  <img src={item.image} alt={item.name} loading="lazy" className="menu-item-thumbnail w-full h-full object-cover" />
                                 </div>
                               </a>
                             )}
@@ -250,8 +290,9 @@
       if (showLocations) {
         return (
           <div className="min-h-screen" style={{background: 'linear-gradient(to bottom, #fef3e2, #fefaf5)'}}>
-            <button 
+            <button
               onClick={() => setShowLocations(false)}
+              aria-label="Close locations and return to home"
               className="fixed top-6 right-6 z-50 bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-shadow"
             >
               <X className="w-6 h-6" style={{color: '#8b4513'}} />
@@ -283,7 +324,7 @@
                   return (
                     <div key={loc.id} className="bg-white rounded-sm shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
                       <div className="h-56 overflow-hidden">
-                        <img src={locationImages[loc.id]} alt={`${loc.name} location`} className="w-full h-full object-cover" />
+                        <img src={locationImages[loc.id]} alt={`${loc.name} location`} loading="lazy" className="w-full h-full object-cover" />
                       </div>
                       <div className="p-8">
                         <h3 className="text-3xl mb-6" style={{color: '#8b4513'}}>{loc.name}</h3>
@@ -308,6 +349,7 @@
                           href={loc.orderUrl}
                           target="_blank"
                           rel="noopener noreferrer"
+                          aria-label={`Order now from ${loc.name} location`}
                           className="inline-block px-8 py-4 rounded-sm text-white font-semibold text-lg hover:opacity-90 transition-opacity"
                           style={{background: '#c17a5c'}}
                         >
@@ -325,6 +367,7 @@
 
       return (
         <div className="min-h-screen">
+          <main id="main-content">
           <div className="relative h-screen flex items-center justify-center overflow-hidden">
             <div 
               className="absolute inset-0"
@@ -340,15 +383,17 @@
                 Where the Gulf meets Louisiana tradition
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button 
+                <button
                   onClick={() => setShowLocations(true)}
+                  aria-label="Find your nearest location"
                   className="px-10 py-5 rounded-sm text-white text-xl font-semibold hover:opacity-90 transition-opacity shadow-xl"
                   style={{background: '#c17a5c'}}
                 >
                   Find Your Location
                 </button>
-                <button 
+                <button
                   onClick={() => setShowMenu(true)}
+                  aria-label="View our full menu"
                   className="px-10 py-5 rounded-sm bg-white text-xl font-semibold hover:opacity-90 transition-opacity shadow-xl"
                   style={{color: '#8b4513'}}
                 >
@@ -378,7 +423,7 @@
               <div className="grid md:grid-cols-3 gap-12">
                 <div>
                   <div className="h-80 mb-6 rounded-sm overflow-hidden">
-                    <img src="images/Snow_Crab.png" alt="Snow Crab" className="w-full h-full object-cover" />
+                    <img src="images/Snow_Crab.png" alt="Snow Crab" loading="lazy" className="w-full h-full object-cover" />
                   </div>
                   <h3 className="text-3xl mb-3" style={{color: '#8b4513'}}>Snow Crab</h3>
                   <p className="text-lg leading-relaxed mb-4" style={{color: '#7a5f4f'}}>
@@ -389,7 +434,7 @@
 
                 <div>
                   <div className="h-80 mb-6 rounded-sm overflow-hidden">
-                    <img src="images/Cajun_Special.png" alt="The Cajun Special" className="w-full h-full object-cover" />
+                    <img src="images/Cajun_Special.png" alt="The Cajun Special" loading="lazy" className="w-full h-full object-cover" />
                   </div>
                   <h3 className="text-3xl mb-3" style={{color: '#8b4513'}}>The Cajun Special</h3>
                   <p className="text-lg leading-relaxed mb-4" style={{color: '#7a5f4f'}}>
@@ -400,7 +445,7 @@
 
                 <div>
                   <div className="h-80 mb-6 rounded-sm overflow-hidden">
-                    <img src="images/Admirals_Platter.png" alt="Admirals Platter" className="w-full h-full object-cover" />
+                    <img src="images/Admirals_Platter.png" alt="Admirals Platter" loading="lazy" className="w-full h-full object-cover" />
                   </div>
                   <h3 className="text-3xl mb-3" style={{color: '#8b4513'}}>Admirals Platter</h3>
                   <p className="text-lg leading-relaxed mb-4" style={{color: '#7a5f4f'}}>
@@ -418,8 +463,9 @@
               <p className="text-2xl leading-relaxed mb-10 text-white/90">
                 Skip the third-party fees. Order directly from us for faster service, better value, and the same great food you love.
               </p>
-              <button 
+              <button
                 onClick={() => setShowLocations(true)}
+                aria-label="Choose your location to order"
                 className="px-10 py-5 bg-white rounded-sm text-xl font-semibold hover:opacity-90 transition-opacity inline-flex items-center gap-3"
                 style={{color: '#8b4513'}}
               >
@@ -428,15 +474,110 @@
             </div>
           </div>
 
-          <div className="py-12 px-6 text-center" style={{background: '#fef3e2', color: '#9b7961'}}>
+          </main>
+          <footer className="py-12 px-6 text-center" style={{background: '#fef3e2', color: '#9b7961'}}>
             <p className="text-lg">© 2025 The Catch Seafood. Fresh Cajun seafood made to order.</p>
-          </div>
+          </footer>
         </div>
       );
     }
 
     const root = ReactDOM.createRoot(document.getElementById('app'));
     root.render(<CatchSeafood />);
+  </script>
+
+  <!-- Schema.org Structured Data for Restaurant -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Restaurant",
+    "name": "The Catch Seafood",
+    "description": "Fresh Cajun seafood made to order with Louisiana coastal tradition",
+    "url": "https://www.thecatchseafood.com",
+    "logo": "https://www.thecatchseafood.com/images/Snow_Crab.png",
+    "image": "https://www.thecatchseafood.com/images/Snow_Crab.png",
+    "servesCuisine": ["Cajun", "Seafood", "Louisiana", "American"],
+    "priceRange": "$$",
+    "acceptsReservations": "False",
+    "location": [
+      {
+        "@type": "Place",
+        "name": "The Catch Seafood - Post Oak",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "10105 S Post Oak Rd",
+          "addressLocality": "Houston",
+          "addressRegion": "TX",
+          "postalCode": "77096",
+          "addressCountry": "US"
+        },
+        "telephone": "+1-713-360-6862",
+        "openingHoursSpecification": {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+          "opens": "10:30",
+          "closes": "22:00"
+        }
+      },
+      {
+        "@type": "Place",
+        "name": "The Catch Seafood - Conroe",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "2121 West Davis St",
+          "addressLocality": "Conroe",
+          "addressRegion": "TX",
+          "postalCode": "77304",
+          "addressCountry": "US"
+        },
+        "telephone": "+1-936-521-1618",
+        "openingHoursSpecification": {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+          "opens": "10:30",
+          "closes": "21:30"
+        }
+      },
+      {
+        "@type": "Place",
+        "name": "The Catch Seafood - Atascocita",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "6730 Atascocita Rd STE 115",
+          "addressLocality": "Humble",
+          "addressRegion": "TX",
+          "postalCode": "77346",
+          "addressCountry": "US"
+        },
+        "telephone": "+1-281-973-9825",
+        "openingHoursSpecification": {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+          "opens": "10:30",
+          "closes": "21:00"
+        }
+      },
+      {
+        "@type": "Place",
+        "name": "The Catch Seafood - Willowbrook",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "7608-B FM 1960 W",
+          "addressLocality": "Houston",
+          "addressRegion": "TX",
+          "postalCode": "77070",
+          "addressCountry": "US"
+        },
+        "telephone": "+1-281-661-1760",
+        "openingHoursSpecification": {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+          "opens": "10:30",
+          "closes": "21:30"
+        }
+      }
+    ]
+  }
   </script>
 </body>
 </html>
