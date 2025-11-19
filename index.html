@@ -4,6 +4,33 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The Catch Seafood - Fresh Cajun Seafood | Houston</title>
+
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="The Catch Seafood serves authentic Cajun seafood made fresh to order at four Houston-area locations. Enjoy snow crab, catfish, shrimp boils, and Louisiana favorites. Order direct and save!">
+  <meta name="keywords" content="cajun seafood, houston seafood restaurant, seafood boil, snow crab, catfish, fresh seafood, louisiana cuisine, conroe seafood, willowbrook, post oak, atascocita">
+  <link rel="canonical" href="https://www.thecatchseafood.com/">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="restaurant">
+  <meta property="og:url" content="https://www.thecatchseafood.com/">
+  <meta property="og:title" content="The Catch Seafood - Fresh Cajun Seafood | Houston">
+  <meta property="og:description" content="The Catch Seafood serves authentic Cajun seafood made fresh to order at four Houston-area locations. Enjoy snow crab, catfish, shrimp boils, and Louisiana favorites.">
+  <meta property="og:image" content="https://www.thecatchseafood.com/images/Snow_Crab.png">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:site_name" content="The Catch Seafood">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://www.thecatchseafood.com/">
+  <meta name="twitter:title" content="The Catch Seafood - Fresh Cajun Seafood | Houston">
+  <meta name="twitter:description" content="Authentic Cajun seafood made fresh to order. Four Houston-area locations. Order direct and save!">
+  <meta name="twitter:image" content="https://www.thecatchseafood.com/images/Snow_Crab.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="styles.css">
 
@@ -437,6 +464,137 @@
 
     const root = ReactDOM.createRoot(document.getElementById('app'));
     root.render(<CatchSeafood />);
+  </script>
+
+  <!-- Schema.org Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Restaurant",
+        "@id": "https://www.thecatchseafood.com/#restaurant",
+        "name": "The Catch Seafood",
+        "description": "Fresh Cajun seafood made to order featuring snow crab, catfish, shrimp boils, and Louisiana favorites",
+        "image": "https://www.thecatchseafood.com/images/Snow_Crab.png",
+        "servesCuisine": ["Cajun", "Seafood", "Louisiana"],
+        "priceRange": "$$",
+        "url": "https://www.thecatchseafood.com",
+        "telephone": "713-360-6862",
+        "address": [
+          {
+            "@type": "PostalAddress",
+            "streetAddress": "10105 S Post Oak Rd",
+            "addressLocality": "Houston",
+            "addressRegion": "TX",
+            "postalCode": "77096",
+            "addressCountry": "US"
+          },
+          {
+            "@type": "PostalAddress",
+            "streetAddress": "2121 West Davis St",
+            "addressLocality": "Conroe",
+            "addressRegion": "TX",
+            "postalCode": "77304",
+            "addressCountry": "US"
+          },
+          {
+            "@type": "PostalAddress",
+            "streetAddress": "6730 Atascocita Rd STE 115",
+            "addressLocality": "Humble",
+            "addressRegion": "TX",
+            "postalCode": "77346",
+            "addressCountry": "US"
+          },
+          {
+            "@type": "PostalAddress",
+            "streetAddress": "7608-B FM 1960 W",
+            "addressLocality": "Houston",
+            "addressRegion": "TX",
+            "postalCode": "77070",
+            "addressCountry": "US"
+          }
+        ],
+        "hasMenu": {
+          "@type": "Menu",
+          "hasMenuSection": [
+            {
+              "@type": "MenuSection",
+              "name": "Starters",
+              "hasMenuItem": [
+                {
+                  "@type": "MenuItem",
+                  "name": "Gumbo",
+                  "description": "Seafood gumbo with shrimp, crawfish & sausage",
+                  "offers": {
+                    "@type": "Offer",
+                    "price": "6.99",
+                    "priceCurrency": "USD"
+                  }
+                },
+                {
+                  "@type": "MenuItem",
+                  "name": "Fried Green Tomatoes",
+                  "description": "Crispy fried green tomatoes",
+                  "image": "https://www.thecatchseafood.com/images/starter-fried_green_tomatoes.png",
+                  "offers": {
+                    "@type": "Offer",
+                    "price": "7.99",
+                    "priceCurrency": "USD"
+                  }
+                }
+              ]
+            },
+            {
+              "@type": "MenuSection",
+              "name": "Boiled Favorites",
+              "hasMenuItem": [
+                {
+                  "@type": "MenuItem",
+                  "name": "Snow Crab",
+                  "description": "Fresh snow crab legs",
+                  "image": "https://www.thecatchseafood.com/images/Snow_Crab.png",
+                  "offers": {
+                    "@type": "Offer",
+                    "price": "45.99",
+                    "priceCurrency": "USD"
+                  }
+                },
+                {
+                  "@type": "MenuItem",
+                  "name": "The Catch Boil",
+                  "description": "½lb snow crab, ½lb shrimp, sausage, corn & potatoes with your choice of flavor",
+                  "offers": {
+                    "@type": "Offer",
+                    "price": "28.99",
+                    "priceCurrency": "USD"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "openingHoursSpecification": [
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+            "opens": "10:30",
+            "closes": "22:00"
+          }
+        ]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://www.thecatchseafood.com/#website",
+        "url": "https://www.thecatchseafood.com",
+        "name": "The Catch Seafood",
+        "description": "Fresh Cajun seafood made to order at four Houston-area locations",
+        "publisher": {
+          "@id": "https://www.thecatchseafood.com/#restaurant"
+        }
+      }
+    ]
+  }
   </script>
 </body>
 </html>
