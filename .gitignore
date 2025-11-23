@@ -1,0 +1,59 @@
+# Node / deps
+node_modules/
+**/node_modules/
+
+# Next.js / build
+.next/
+out/
+dist/
+
+# TypeScript build artifacts
+*.tsbuildinfo
+
+# Env files
+.env
+.env.local
+.env.*.local
+
+# OS / editor noise
+.DS_Store
+.idea/
+.vscode/
+
+# Logs / coverage
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+coverage/
+
+# Mac metadata
+Icon?
+
+# Generated data caches
+data/revel/**/images/
+data/revel/**/state.json
+
+# Reference materials (not for production)
+glorias-port-plan.md
+plans/glorias-port-plan.md
+scripts/download-glorias-template.ts
+data/templates/glorias/
+Glorias Design/
+app/styles/glorias-import.css
+initial-claude-convo.txt
+archive/Screen Captures/glorias-home.html
+archive/Screen Captures/https___www.gloriascuisine.com_.html
+progress.md
+agents/scraping-agent.md
+Mixitup/
+
+# Development/LLM context (not for production)
+catch-deploy-guide.md
+menu-formatting-rules.md
+llm-context.md
+
+# Scraped/sample data (not for production)
+revel-graphql-sample.json
+revel-products.json
+scraped-images.json

@@ -1,0 +1,517 @@
+{
+  "summary": {
+    "dfwItems": 97,
+    "revelItemsIndexed": 195,
+    "dfwOnly": 40,
+    "priceDiffs": 55,
+    "descDiffs": 2
+  },
+  "dfwOnly": [
+    {
+      "name": "Crispy Gator Bites",
+      "price": 16
+    },
+    {
+      "name": "Swamp Fries",
+      "price": 10
+    },
+    {
+      "name": "Catfish Basket",
+      "price": 11
+    },
+    {
+      "name": "Catfish Nugget Basket",
+      "price": 10
+    },
+    {
+      "name": "Whitefish Basket",
+      "price": 11
+    },
+    {
+      "name": "Jumbo Shrimp Basket",
+      "price": 11
+    },
+    {
+      "name": "Popcorn Shrimp Basket",
+      "price": 11
+    },
+    {
+      "name": "Chicken Tender Basket",
+      "price": 11
+    },
+    {
+      "name": "Crawfish Tails Basket",
+      "price": 18
+    },
+    {
+      "name": "Gator Basket",
+      "price": 19
+    },
+    {
+      "name": "Jumbo Shrimp (4) & Catfish (2) Combo",
+      "price": 18
+    },
+    {
+      "name": "Jumbo Shrimp (3) & Catfish (1) Combo",
+      "price": 15
+    },
+    {
+      "name": "Catfish Nuggets & Shrimp Combo",
+      "price": 15
+    },
+    {
+      "name": "Captain's Combo",
+      "price": 24
+    },
+    {
+      "name": "Buffalo Ranch Catfish Nuggets & Shrimp Combo",
+      "price": 15
+    },
+    {
+      "name": "Catfish (1) & Crawfish Tails Combo",
+      "price": 18
+    },
+    {
+      "name": "Catfish (1) & Gator Combo",
+      "price": 20
+    },
+    {
+      "name": "Catfish (1) & Tenders (3) Combo",
+      "price": 14
+    },
+    {
+      "name": "Jumbo Shrimp (3), Catfish (1) & Tenders (2) Combo",
+      "price": 18
+    },
+    {
+      "name": "Catch 22 Combo",
+      "price": 30
+    },
+    {
+      "name": "Cajun Special",
+      "price": 18
+    },
+    {
+      "name": "Shrimp Etouffee Quesadilla",
+      "price": 15
+    },
+    {
+      "name": "Boiled Shrimp",
+      "price": 11
+    },
+    {
+      "name": "Snow Crab",
+      "price": 17
+    },
+    {
+      "name": "Fried Snow Crab",
+      "price": 18
+    },
+    {
+      "name": "Half & Half Po Boy (Shrimp & Oyster)",
+      "price": 18
+    },
+    {
+      "name": "Warm Beignets (4)",
+      "price": 8
+    },
+    {
+      "name": "Choc Chip Cookie",
+      "price": 2.59
+    },
+    {
+      "name": "Peanut Butter Cookie",
+      "price": 2.59
+    },
+    {
+      "name": "Add (4) Fried Oysters",
+      "price": 7
+    },
+    {
+      "name": "Dipping Sauce",
+      "price": 0.01
+    },
+    {
+      "name": "Lemons",
+      "price": 0.01
+    },
+    {
+      "name": "Side Butter",
+      "price": 1.25
+    },
+    {
+      "name": "Creamy Cajun Sauce (8 oz)",
+      "price": 3.74
+    },
+    {
+      "name": "Etouffee smother",
+      "price": 3.74
+    },
+    {
+      "name": "Catfish (2) & Fried Oysters (4)",
+      "price": 16.99
+    },
+    {
+      "name": "Jumbo Shrimp (4) & Fried Oysters (4)",
+      "price": 16.99
+    },
+    {
+      "name": "Coleslaw",
+      "price": 4
+    },
+    {
+      "name": "Soft Drink",
+      "price": 2
+    },
+    {
+      "name": "Bottled Water",
+      "price": 2.99
+    }
+  ],
+  "priceDiffs": [
+    {
+      "name": "Boudin Balls (6)",
+      "dfwPrice": 8,
+      "revelPrice": 10,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "Fried Pickles",
+      "dfwPrice": 8,
+      "revelPrice": 10,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "Fried Green Tomatoes",
+      "dfwPrice": 10,
+      "revelPrice": 11,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "Bang Bang Shrimp",
+      "dfwPrice": 13,
+      "revelPrice": 14,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "Fried Mushrooms",
+      "dfwPrice": 8,
+      "revelPrice": 7.99,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "Admirals Platter",
+      "dfwPrice": 37,
+      "revelPrice": 34.99,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "French Quarter Plate",
+      "dfwPrice": 19,
+      "revelPrice": 17.99,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "The Big Easy",
+      "dfwPrice": 19,
+      "revelPrice": 17.99,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "Bourbon Chicken Pasta",
+      "dfwPrice": 17,
+      "revelPrice": 15.99,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "Alfredo Pasta",
+      "dfwPrice": 16,
+      "revelPrice": 15.99,
+      "revelStore": "store-4"
+    },
+    {
+      "name": "Creamy Cajun Pasta",
+      "dfwPrice": 18,
+      "revelPrice": 15.99,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "Chicken & Beignets",
+      "dfwPrice": 15,
+      "revelPrice": 14.99,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "Chicken & Waffles",
+      "dfwPrice": 16,
+      "revelPrice": 14.99,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "The Catch Boil",
+      "dfwPrice": 30,
+      "revelPrice": 28.99,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "Add (1) Boiled Egg",
+      "dfwPrice": 2,
+      "revelPrice": 1.25,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "Catfish",
+      "dfwPrice": 14,
+      "revelPrice": 12.99,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "Shrimp",
+      "dfwPrice": 14,
+      "revelPrice": 13.99,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "Crawfish Tails",
+      "dfwPrice": 17,
+      "revelPrice": 16.99,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "Gator",
+      "dfwPrice": 18,
+      "revelPrice": 17.49,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "Fried Oysters",
+      "dfwPrice": 19,
+      "revelPrice": 17.49,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "BYO Burger",
+      "dfwPrice": 12,
+      "revelPrice": 7.99,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "Chicken Tender Sandwich",
+      "dfwPrice": 12,
+      "revelPrice": 9.99,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "Whitefish Sandwich",
+      "dfwPrice": 12,
+      "revelPrice": 9.99,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "Caesar Salad",
+      "dfwPrice": 13,
+      "revelPrice": 10.99,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "House Salad",
+      "dfwPrice": 13,
+      "revelPrice": 10.99,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "Side salad",
+      "dfwPrice": 6,
+      "revelPrice": 6.49,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "Banana Pudding",
+      "dfwPrice": 6,
+      "revelPrice": 8,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "Key Lime Pie",
+      "dfwPrice": 6,
+      "revelPrice": 7.99,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "Kids Catfish Nuggets",
+      "dfwPrice": 8,
+      "revelPrice": 10,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "Kids Popcorn Shrimp",
+      "dfwPrice": 8,
+      "revelPrice": 10,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "Kids Chicken Tenders",
+      "dfwPrice": 8,
+      "revelPrice": 7.59,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "10 Catfish",
+      "dfwPrice": 44.99,
+      "revelPrice": 35.99,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "10 Whitefish",
+      "dfwPrice": 44.99,
+      "revelPrice": 35.99,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "16 Chicken Tenders",
+      "dfwPrice": 44.99,
+      "revelPrice": 24.99,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "24 Jumbo Shrimp",
+      "dfwPrice": 44.99,
+      "revelPrice": 35.99,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "8 Catfish & 12 Jumbo Shrimp",
+      "dfwPrice": 53.74,
+      "revelPrice": 42.99,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "8 Catfish, 12 Jumbo Shrimp & 8 Tenders",
+      "dfwPrice": 62.49,
+      "revelPrice": 49.99,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "Add (1) Catfish Fillet",
+      "dfwPrice": 6,
+      "revelPrice": 5.99,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "Add (1) Whitefish Fillet",
+      "dfwPrice": 6,
+      "revelPrice": 5.99,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "Add (4) Jumbo Shrimp",
+      "dfwPrice": 7,
+      "revelPrice": 6.99,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "Add (2.5 oz) Popcorn Shrimp",
+      "dfwPrice": 5,
+      "revelPrice": 4.99,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "Add (3) Tenders",
+      "dfwPrice": 6,
+      "revelPrice": 5.99,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "Add (2.5 oz) Crawfish Tails",
+      "dfwPrice": 6,
+      "revelPrice": 5.99,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "Add (1) Grilled Sausage",
+      "dfwPrice": 6,
+      "revelPrice": 6.99,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "Add (1) Garlic Bread",
+      "dfwPrice": 1,
+      "revelPrice": 1.5,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "Jumbo Shrimp (4) & Tenders (4)",
+      "dfwPrice": 13.49,
+      "revelPrice": 15.99,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "Jumbo Shrimp (4) & Whitefish (2)",
+      "dfwPrice": 16.99,
+      "revelPrice": 16.29,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "Catch Fries",
+      "dfwPrice": 4,
+      "revelPrice": 3.99,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "Red Beans & Rice",
+      "dfwPrice": 4,
+      "revelPrice": 5,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "Dirty Rice",
+      "dfwPrice": 4,
+      "revelPrice": 3.99,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "Fried Okra",
+      "dfwPrice": 4,
+      "revelPrice": 5,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "Corn & Potatoes",
+      "dfwPrice": 4,
+      "revelPrice": 5,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "Green Beans",
+      "dfwPrice": 4,
+      "revelPrice": 5,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "Hush Puppies",
+      "dfwPrice": 3,
+      "revelPrice": 3.99,
+      "revelStore": "store-72"
+    },
+    {
+      "name": "White Rice",
+      "dfwPrice": 3,
+      "revelPrice": 2.99,
+      "revelStore": "store-72"
+    }
+  ],
+  "descDiffs": [
+    {
+      "name": "Gumbo",
+      "dfwDesc": "Seafood gumbo, shrimp, & sausage.",
+      "revelDesc": "Seafood Gumbo (Shrimp, Crawfish & Sausage)",
+      "revelStore": "store-72"
+    },
+    {
+      "name": "Admirals Platter",
+      "dfwDesc": "Catfish (2), Whitefish (1), Jumbo Shrimp (6), Fried Oysters (2), and Crawfish Tails with a side item and 4 hush puppies.",
+      "revelDesc": "2 Catfish, 1 Whitefish, 2 Oysters, 6 Jumbo Shrimp, Crawfish Tails with Side Item and 4 hush puppies",
+      "revelStore": "store-72"
+    }
+  ]
+}

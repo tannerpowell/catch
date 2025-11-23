@@ -1,0 +1,153 @@
+/* Hero Section */
+.eventsHero {
+  position: relative;
+  height: 500px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: var(--color--tierra-reca);
+}
+
+.heroImageWrapper {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.heroImage {
+  object-fit: cover;
+  object-position: center;
+}
+
+.heroOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(15, 23, 32, 0.08) 0%,
+    rgba(50, 39, 35, 0.07) 100%
+  );
+  z-index: 1;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+.heroText {
+  max-width: 700px;
+}
+
+.heroEyebrow {
+  font-family: var(--font-family--headings);
+  font-size: 16px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--color--claro-maíz);
+  margin-bottom: 16px;
+}
+
+.heroTitle {
+  font-family: var(--font-family--headings);
+  font-size: 72px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: white;
+  margin-bottom: 20px;
+}
+
+.heroSubtitle {
+  font-size: 24px;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Form Section */
+.formSection {
+  padding: 80px 40px;
+  background: var(--color--crema-fresca);
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Info Section */
+.infoSection {
+  padding: 80px 40px;
+  background: white;
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.infoCard {
+  text-align: center;
+  padding: 32px 24px;
+}
+
+.infoIcon {
+  font-size: 48px;
+  margin-bottom: 20px;
+}
+
+.infoTitle {
+  font-family: var(--font-family--headings);
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--color--tierra-reca);
+  margin-bottom: 12px;
+}
+
+.infoText {
+  font-size: 16px;
+  line-height: 1.6;
+  color: rgba(50, 39, 35, 0.75);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .heroTitle {
+    font-size: 56px;
+  }
+
+  .infoGrid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+}
+
+@media (max-width: 768px) {
+  .eventsHero {
+    height: 400px;
+  }
+
+  .heroContent {
+    padding: 0 24px;
+  }
+
+  .heroTitle {
+    font-size: 40px;
+  }
+
+  .heroSubtitle {
+    font-size: 18px;
+  }
+
+  .formSection,
+  .infoSection {
+    padding: 60px 24px;
+  }
+}

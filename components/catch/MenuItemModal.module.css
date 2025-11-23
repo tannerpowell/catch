@@ -1,0 +1,295 @@
+/* Modal Overlay */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(4px);
+  z-index: var(--z-index--modal-backdrop);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.2s ease-out;
+  pointer-events: auto;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Modal Container */
+.modalContainer {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Layered shadow approach from voucher tile */
+.outerLayer {
+  position: relative;
+  width: 100%;
+  background: #f5ebe0;
+  border: 1px solid #e8d5c4;
+  box-shadow: 0 5px 7px rgba(0, 0, 0, 0.297);
+  border-radius: 0;
+}
+
+.innerCard {
+  position: relative;
+  margin: 4.5px;
+  background: #FDF8ED;
+  border: 1px solid #e8d5c4;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.297);
+  border-radius: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(90vh - 40px);
+}
+
+/* Close button */
+.closeButton {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: var(--z-index--modal);
+  background: rgba(255, 255, 255, 0.95);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #1a1a1a;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease;
+}
+
+.closeButton:hover {
+  background: #ffffff;
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.closeButton:active {
+  transform: scale(0.95);
+}
+
+/* Image Section */
+.imageSection {
+  padding: 16px 16px 12px;
+  background: #FDF8ED;
+}
+
+.imageFrame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: #ffffff;
+  border: 5px solid #ffffff;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.257);
+  overflow: hidden;
+}
+
+/* Content Section */
+.content {
+  padding: 20px 24px 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.title {
+  font-family: var(--font-family--headings);
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--color--tierra-reca);
+  line-height: 1.2;
+  margin: 0;
+  flex: 1;
+}
+
+.badges {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 18px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 4px 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.badgeLabel {
+  font-size: 11px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.description {
+  font-size: 15px;
+  line-height: 1.5;
+  color: #4b5563;
+  margin: 0 0 16px 0;
+}
+
+.priceSection {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 14px 0 0;
+  border-top: 1px solid #e5e7eb;
+}
+
+.currency {
+  font-family: var(--font-family--headings);
+  font-weight: 700;
+  font-size: 20px;
+  color: #6b7280;
+  line-height: 1;
+  margin-top: 2px;
+}
+
+.price {
+  font-family: var(--font-family--headings);
+  font-weight: 600;
+  font-size: 36px;
+  color: #1f2937;
+  line-height: 1;
+  letter-spacing: -0.5px;
+}
+
+/* Dark mode support */
+:global(.dark) .outerLayer {
+  background: var(--color--dark-slate-mid);
+  border-color: var(--color--dark-slate-light);
+}
+
+:global(.dark) .innerCard {
+  background: var(--color--dark-slate-base);
+  border-color: var(--color--dark-slate-light);
+}
+
+:global(.dark) .closeButton {
+  background: rgba(30, 41, 54, 0.95);
+  color: #ffffff;
+}
+
+:global(.dark) .closeButton:hover {
+  background: var(--color--dark-slate-deep);
+}
+
+:global(.dark) .imageSection {
+  background: linear-gradient(to bottom, var(--color--dark-slate-base), var(--color--dark-slate-mid));
+}
+
+:global(.dark) .imageFrame {
+  background: var(--color--dark-slate-deepest);
+  border-color: var(--color--dark-slate-mid);
+}
+
+:global(.dark) .title {
+  color: #f3f4f6;
+}
+
+:global(.dark) .description {
+  color: #d1d5db;
+}
+
+:global(.dark) .badge {
+  background: var(--color--dark-slate-mid);
+  border-color: var(--color--dark-slate-light);
+}
+
+:global(.dark) .badgeLabel {
+  color: #9ca3af;
+}
+
+:global(.dark) .priceSection {
+  border-top-color: var(--color--dark-slate-light);
+}
+
+:global(.dark) .currency {
+  color: #9ca3af;
+}
+
+:global(.dark) .price {
+  color: #f3f4f6;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .modalContainer {
+    max-width: 100%;
+  }
+
+  .content {
+    padding: 20px 20px 24px;
+  }
+
+  .title {
+    font-size: 24px;
+  }
+
+  .price {
+    font-size: 32px;
+  }
+
+  .imageSection {
+    padding: 16px 16px 12px;
+  }
+
+  .imageFrame {
+    border-width: 4px;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .overlay,
+  .modalContainer {
+    animation: none;
+  }
+
+  .closeButton {
+    transition: none;
+  }
+}

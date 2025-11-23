@@ -1,0 +1,87 @@
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+	<meta charset="UTF-8" />
+	<title>RevelUp Scraper Cheatsheet</title>
+
+	<style>
+	  :root {
+		--bg: #0f172a;          /* slate-900 */
+		--panel: #111827;       /* slate-950-ish */
+		--text: #e2e8f0;        /* slate-200 */
+		--muted: #94a3b8;       /* slate-400 */
+		--border: #1f2937;      /* slate-800 */
+		--code-bg: #111827;     /* slate-950 */
+		--accent: #38bdf8;      /* sky-400 for a touch of contrast */
+	  }
+	  * { box-sizing: border-box; }
+	  body {
+		margin: 0;
+		font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+		background: var(--bg);
+		color: var(--text);
+		padding: 32px 16px 48px;
+	  }
+	  .container { max-width: 900px; margin: 0 auto; }
+	  h1 { margin: 0 0 10px; font-size: 28px; font-weight: 700; color: var(--text); }
+	  h2 { margin: 32px 0 8px; font-size: 18px; font-weight: 700; color: var(--text); }
+	  p { margin: 4px 0 12px; color: var(--muted); }
+	  ul { padding-left: 18px; color: var(--muted); }
+	  code.inline { background: var(--panel); padding: 2px 6px; border-radius: 6px; border: 1px solid var(--border); }
+	  .cmd {
+		background: var(--code-bg);
+		border: 1px solid var(--border);
+		border-radius: 10px;
+		padding: 14px 16px;
+		margin: 8px 0 16px;
+		box-shadow: 0 8px 24px rgba(0,0,0,0.24);
+	  }
+	  .cmd pre {
+		margin: 0;
+		font-family: SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+		font-size: 14px;
+		line-height: 1.5;
+		color: var(--text);
+		white-space: pre-wrap;
+		word-break: break-word;
+	  }
+	  .note { color: var(--muted); font-size: 0.95em; margin-top: 6px; }
+	  .accent { color: var(--accent); }
+	</style>
+  </head>
+  <body>
+	<div class="container">
+	  <h1>RevelUp Scraper — Commands</h1>
+	  <p>Location: <code class="inline">/Users/tp/Projects/Catch</code></p>
+
+	  <h2>1) Activate venv</h2>
+	  <div class="cmd"><pre>cd /Users/tp/Projects/Catch
+  source .venv/bin/activate</pre></div>
+
+	  <h2>2) Install Playwright (reference)</h2>
+	  <div class="cmd"><pre>python -m pip install --upgrade pip
+  python -m pip install playwright
+  python -m playwright install chromium</pre></div>
+
+	  <h2>3) Run scraper (all seven stores)</h2>
+	  <div class="cmd"><pre>python scripts/scrape_revel_playwright.py --csv --download-images</pre></div>
+	  <p class="note">Outputs: <code class="inline">data/revel/&lt;store-slug&gt;/</code> (JSON, CSV, images/)</p>
+
+	  <h2>4) Skip Post Oak (already scraped)</h2>
+	  <div class="cmd"><pre>python scripts/scrape_revel_playwright.py --exclude store-5-post-oak --csv --download-images</pre></div>
+	  <p class="note">Exclude by ID: <code class="inline">--exclude 5</code>; single store: <code class="inline">--store store-105</code></p>
+
+	  <h2>5) Headed mode</h2>
+	  <div class="cmd"><pre>python scripts/scrape_revel_playwright.py --headed</pre></div>
+
+	  <h2>6) Deactivate venv</h2>
+	  <div class="cmd"><pre>deactivate</pre></div>
+
+	  <h2>Notes</h2>
+	  <ul>
+		<li>Script closes browser/page and disposes the API context automatically.</li>
+		<li>Playwright binaries cache: <code class="inline">~/Library/Caches/ms-playwright</code> (optional to prune).</li>
+	  </ul>
+	</div>
+  </body>
+  </html>

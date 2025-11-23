@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "lib": ["dom", "es2020"],
+    "esModuleInterop": true,
+    "strict": true,
+    "jsx": "react-jsx",
+    "types": ["sanity"]
+  },
+  "include": [
+    "sanity.config.ts",
+    "sanity.cli.ts",
+    "sanity/**/*.ts"
+  ]
+}

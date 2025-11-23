@@ -1,0 +1,848 @@
+{
+  "site_name": "The Catch",
+  "base_url": "https://thecatchdfw.com",
+  "locations": {
+    "denton": {
+      "label": "Denton",
+      "address_lines": [
+        "1725 W University Dr",
+        "Denton, TX 76201"
+      ],
+      "phone": "(940)-435-0161",
+      "phone_href": "tel:+19404350161"
+    },
+    "garland": {
+      "label": "Garland",
+      "address_lines": [
+        "5949 Broadway Blvd",
+        "Garland, TX 75043"
+      ],
+      "phone": "(469) 443-0033",
+      "phone_href": "tel:+14694430033"
+    },
+    "coit_campbell": {
+      "label": "Coit & Campbell",
+      "address_lines": [
+        "7522 Campbell Rd #108",
+        "Dallas, TX 75248"
+      ],
+      "phone": "(214) 484-1941",
+      "phone_href": "tel:+12144841941"
+    }
+  },
+  "home": {
+    "nav": {
+      "menu": "https://thecatchdfw.com/food-menu",
+      "specials": "https://thecatchdfw.com/specials",
+      "order_online": {
+        "denton": "https://thecatchdfw.com/order-online-denton",
+        "garland": "https://thecatchdfw.com/order-online-garland",
+        "coit_and_campbell": "https://thecatchdfw.com/order-online-coit-and-campbell"
+      },
+      "parties": "https://thecatchdfw.com/party",
+      "catering": "https://thecatchdfw.com/catering",
+      "jobs": "https://tmt.spotapps.co/job-listings?spot_id=620500&callback_url=http://thecatchdfw.com/#",
+      "social": {
+        "facebook": "https://www.facebook.com/105979095877845",
+        "instagram": "https://www.instagram.com/thecatchdfw",
+        "google": "https://www.google.com/search?q=the+catch+denton+tx"
+      }
+    },
+    "hero": {
+      "title": "The Catch - Denton, TX",
+      "heading": "Welcome to The Catch",
+      "subheading": "Join Us in Denton for a Fresh Seafood Experience",
+      "body": "Ready to dive in? Reserve your table at The Catch in Denton and enjoy seafood done right \u2014 Southern-style. Whether you're coming for lunch with friends or a weekend dinner with the family, we'll make sure you have a seat waiting. Walk-ins are always welcome, but reservations help us serve you best!",
+      "primary_cta": {
+        "label": "book a table",
+        "href": "tel:+19404350161"
+      }
+    },
+    "order_online_section": {
+      "title": "Order online",
+      "subtitle": "Get hooked up \u2014 fast & easy",
+      "body": "Craving seafood but can't stay? No problem \u2014 order online and enjoy The Catch wherever you are. From crispy fried shrimp to savory gumbo and Po'Boys, your favorites are just a few clicks away. Quick, convenient, and always fresh \u2014 that's The Catch way.",
+      "locations": [
+        {
+          "label": "Denton",
+          "cta": "order online at Denton location",
+          "url": "https://thecatchdfw.com/order-online-denton"
+        },
+        {
+          "label": "Garland",
+          "cta": "order online at Garland location",
+          "url": "https://thecatchdfw.com/order-online-garland"
+        },
+        {
+          "label": "Coit & Campbell",
+          "cta": "order online at Coit & Campbell location",
+          "url": "https://thecatchdfw.com/order-online-coit-and-campbell"
+        }
+      ]
+    },
+    "catering_section": {
+      "label": "CATERING",
+      "headline": "Fresh, flavorful seafood for every occasion",
+      "body": "Planning a gathering? Let The Catch handle the cooking! Our catering brings the same bold seafood flavors you love to your home, office, or event. From shrimp boils and fried platters to crowd-pleasing sides, we make it easy to feed a crew. Big or small, casual or formal \u2014 we've got your menu covered. Contact us today to plan your custom seafood spread!",
+      "cta_label": "CATERING",
+      "cta_url": "https://thecatchdfw.com/catering"
+    },
+    "groups_parties_section": {
+      "title": "Groups & Parties",
+      "subtitle": "Join us in Denton for a fresh seafood experience",
+      "body": "Welcome to The Catch in Denton, Texas \u2014 where Gulf Coast flavor meets friendly Texas charm. We're all about serving up the freshest seafood, cooked your way \u2014 grilled, blackened, or fried to perfection. From classic Po'Boys and Cajun gumbo to shrimp boils and fish platters, every dish is made fresh, full of flavor, and served with a smile. Whether you're here for a quick bite or a family feast, The Catch is where good food and good times come together.",
+      "cta_label": "Parties",
+      "cta_url": "https://thecatchdfw.com/party"
+    },
+    "about_section": {
+      "title": "about the catch",
+      "headline": "Fresh catch. Southern flavor. Local favorite.",
+      "body": "Looking for the perfect spot to host your next get-together? The Catch is built for good times \u2014 casual, lively, and full of flavor. Whether it's a birthday, graduation, or team celebration, our team will make sure your guests enjoy great food and friendly service. Sit back, relax, and let us turn your next event into a true seafood feast.",
+      "cta_label": "our menu",
+      "cta_url": "https://thecatchdfw.com/food-menu"
+    },
+    "gallery": {
+      "images": [
+        {
+          "alt": "Different menu items served on the table, top view.",
+          "src": "https://static.spotapps.co/spots/1f/3faf26153b47d7b0a512104a1faa2b/full"
+        },
+        {
+          "alt": "The Catch Boil, sea food plater.",
+          "src": "https://static.spotapps.co/spots/39/ac12214bf74bc29818f409fd088c08/full"
+        },
+        {
+          "alt": "Fish tacos with a dipping sauce and tater tots on the side.",
+          "src": "https://static.spotapps.co/spots/2a/f43bdf35224bbbb1b98725ac529e1b/full"
+        }
+      ]
+    },
+    "reviews": [
+      {
+        "author": "Joshua",
+        "rating": 5,
+        "source": "Google",
+        "text": "Everything is incredible, the service, the music, the food, and the prices. The Cajun special is unbeatable, I'm so glad we happened by this spot. Love it, wish the food lasted long enough to take a couple pictures"
+      },
+      {
+        "author": "Lee W",
+        "rating": 5,
+        "source": "Google",
+        "text": "Came here with a friend for the first time after hearing about this location for so long. April was very sweet to us. The food also came out quickly and was really fresh! Everything was crispy and tasted amazing!"
+      },
+      {
+        "author": "Jerry H",
+        "rating": 5,
+        "source": "Google",
+        "text": "Food is excellent. I had the Cajun Plate with catfish & sausage, rice & beans, and hush puppies. Everything was seasoned just right and fried perfectly. The wife and daughter also enjoyed their meal. First time visiting, but won't be the last!"
+      },
+      {
+        "author": "Brian S",
+        "rating": 5,
+        "source": "Google",
+        "text": "You've got to try the French Quarter plate! What a delightful surprise it was to find a top notch etouffee in Denton, TX! The fish fry had a super tasty breading, and everything was well cooked. Will be back next time we're in Denton."
+      },
+      {
+        "author": "Lea D",
+        "rating": 5,
+        "source": "Google",
+        "text": "We have been to this location on several locations and each time the food quality doesn't disappoint. The food is always fresh, hot and flavorful! An added bonus is the great customer service! We will be back!"
+      }
+    ],
+    "newsletter": {
+      "title": "Newsletter",
+      "body": "Sign up for our newsletter & get exclusive offers and invites!",
+      "fields": [
+        {
+          "id": "email",
+          "label": "Email (required)",
+          "type": "email",
+          "required": true
+        }
+      ]
+    },
+    "hours": [
+      {
+        "days": [
+          "Fri",
+          "Sat"
+        ],
+        "open": "10:30 AM",
+        "close": "10:00 PM"
+      },
+      {
+        "days": [
+          "Sun",
+          "Mon",
+          "Tue",
+          "Wed",
+          "Thur"
+        ],
+        "open": "10:30 AM",
+        "close": "9:00 PM"
+      }
+    ],
+    "contact": {
+      "email": "Lawrencethecatch@icloud.com",
+      "email_href": "mailto:Lawrencethecatch@icloud.com"
+    }
+  },
+  "order_providers": {
+    "denton": {
+      "main_page": "https://thecatchdfw.com/order-online-denton",
+      "in_store_online": "https://www.ubereats.com/store/the-catch-garland/kMzqlNVtU3KZppkOtLxVDw?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhZmUlMjAxNzE3JTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyaGVyZSUzQXBkcyUzQXBsYWNlJTNBODQwZGpmODMtMjdhZGQxNjljNjg4NTc1M2RiNDA1Yjk2ODJjMjFlYmYlMjIlMkMlMjJyZWZlcmVuY2VUeXBlJTIyJTNBJTIyaGVyZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTMyLjQyMjYlMkMlMjJsb25naXR1ZGUlMjIlM0EtODYuNDEwOTElN0Q%3D&sc=SEARCH_SUGGESTION",
+      "uber_eats": "https://www.ubereats.com/store/the-catch-denton/DIQK0cV_TIqLkUI6_fiq6g?diningMode=DELIVERY",
+      "doordash": "https://www.doordash.com/store/the-catch-denton-24626128/83090557/?srsltid=AfmBOoqmSC54CeaD590dAT0dx6zG8In60FIth5Cg5YHfiwPbmDDJjPcM"
+    },
+    "garland": {
+      "main_page": "https://thecatchdfw.com/order-online-garland",
+      "in_store_online": "https://online.skytab.com/s/thecatchgarland",
+      "uber_eats": "https://www.ubereats.com/store/the-catch-garland/kMzqlNVtU3KZppkOtLxVDw?diningMode=DELIVERY&sc=SEARCH_SUGGESTION",
+      "doordash": "https://www.doordash.com/store/the-catch-garland-733884/77318352/?srsltid=AfmBOop5b8lHSjBYopEUG3QjrpasTMDmW8D3jCOzI_9mH4RXqHwHWE-Y"
+    },
+    "coit_campbell": {
+      "main_page": "https://thecatchdfw.com/order-online-coit-and-campbell",
+      "in_store_online": "https://online.skytab.com/s/thecatchcampbell",
+      "uber_eats": "https://www.ubereats.com/store/the-catch-dallas/uyEZoD1KUmyFHoJIP-MSWQ?diningMode=DELIVERY&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkNhZmUlMjAxNzE3JTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyaGVyZSUzQXBkcyUzQXBsYWNlJTNBODQwZGpmODMtMjdhZGQxNjljNjg4NTc1M2RiNDA1Yjk2ODJjMjFlYmYlMjIlMkMlMjJyZWZlcmVuY2VUeXBlJTIyJTNBJTIyaGVyZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTMyLjQyMjYlMkMlMjJsb25naXR1ZGUlMjIlM0EtODYuNDEwOTElN0Q%3D&utm_campaign=CM2508147-search-free-nonbrand-google-pas_e_all_acq_Global&utm_medium=search-free-nonbrand&utm_source=google-pas",
+      "doordash": "https://www.doordash.com/store/the-catch-dallas-25019821/77324553/?rwg_token=ACgRB3dw99zmIE0cQopznPB8g57QDAjBQYWwVNtDlO86hpDUgW7nNzcdJMLwqlVwx5wMDuKmAo5DWwxjgL5CGwA1EhX1AD5XVQ==&utm_campaign=gpa"
+    }
+  },
+  "menu": {
+    "categories": [
+      {
+        "name": "Starters",
+        "items": [
+          {
+            "name": "Gumbo",
+            "prices": {
+              "cup": 7.0,
+              "bowl": 10.0
+            },
+            "description": "Seafood gumbo, shrimp, & sausage."
+          },
+          {
+            "name": "Shrimp Etouffee",
+            "prices": {
+              "cup": 7.0,
+              "bowl": 10.0
+            }
+          },
+          {
+            "name": "Boudin Balls (6)",
+            "price": 8.0
+          },
+          {
+            "name": "Fried Pickles",
+            "price": 8.0
+          },
+          {
+            "name": "Fried Green Tomatoes",
+            "price": 10.0
+          },
+          {
+            "name": "Bang Bang Shrimp",
+            "price": 13.0
+          },
+          {
+            "name": "Fried Mushrooms",
+            "price": 8.0
+          },
+          {
+            "name": "Crispy Gator Bites",
+            "price": 16.0
+          },
+          {
+            "name": "Swamp Fries",
+            "price": 10.0
+          }
+        ]
+      },
+      {
+        "name": "Baskets",
+        "items": [
+          {
+            "name": "Catfish Basket",
+            "price": 11.0
+          },
+          {
+            "name": "Catfish Nugget Basket",
+            "price": 10.0
+          },
+          {
+            "name": "Whitefish Basket",
+            "price": 11.0
+          },
+          {
+            "name": "Jumbo Shrimp Basket",
+            "price": 11.0,
+            "description": "4, 6, or 8 Jumbo Shrimp with your choice of side item and 2 hush puppies."
+          },
+          {
+            "name": "Popcorn Shrimp Basket",
+            "price": 11.0
+          },
+          {
+            "name": "Chicken Tender Basket",
+            "price": 11.0
+          },
+          {
+            "name": "Crawfish Tails Basket",
+            "price": 18.0
+          },
+          {
+            "name": "Gator Basket",
+            "price": 19.0
+          }
+        ]
+      },
+      {
+        "name": "Combos",
+        "items": [
+          {
+            "name": "Jumbo Shrimp (4) & Catfish (2) Combo",
+            "price": 18.0
+          },
+          {
+            "name": "Jumbo Shrimp (3) & Catfish (1) Combo",
+            "price": 15.0
+          },
+          {
+            "name": "Catfish Nuggets & Shrimp Combo",
+            "price": 15.0
+          },
+          {
+            "name": "Captain's Combo",
+            "price": 24.0,
+            "description": "2 Catfish, 4 Jumbo Shrimp, 4 Boudin Balls with side item of choice, and 3 hush puppies."
+          },
+          {
+            "name": "Buffalo Ranch Catfish Nuggets & Shrimp Combo",
+            "price": 15.0
+          },
+          {
+            "name": "Catfish (1) & Crawfish Tails Combo",
+            "price": 18.0
+          },
+          {
+            "name": "Catfish (1) & Gator Combo",
+            "price": 20.0
+          },
+          {
+            "name": "Catfish (1) & Tenders (3) Combo",
+            "price": 14.0
+          },
+          {
+            "name": "Jumbo Shrimp (3), Catfish (1) & Tenders (2) Combo",
+            "price": 18.0
+          },
+          {
+            "name": "Catch 22 Combo",
+            "price": 30.0,
+            "description": "Catfish (2), Whitefish (1), Jumbo Shrimp (6), and Fried Oysters (2) with a side item and 4 hush puppies."
+          },
+          {
+            "name": "Admirals Platter",
+            "price": 37.0,
+            "description": "Catfish (2), Whitefish (1), Jumbo Shrimp (6), Fried Oysters (2), and Crawfish Tails with a side item and 4 hush puppies."
+          }
+        ]
+      },
+      {
+        "name": "House Favorites",
+        "items": [
+          {
+            "name": "Cajun Special",
+            "price": 18.0
+          },
+          {
+            "name": "French Quarter Plate",
+            "price": 19.0
+          },
+          {
+            "name": "The Big Easy",
+            "price": 19.0
+          },
+          {
+            "name": "Bourbon Chicken Pasta",
+            "price": 17.0
+          },
+          {
+            "name": "Alfredo Pasta",
+            "price": 16.0
+          },
+          {
+            "name": "Creamy Cajun Pasta",
+            "price": 18.0
+          },
+          {
+            "name": "Chicken & Beignets",
+            "price": 15.0
+          },
+          {
+            "name": "Chicken & Waffles",
+            "price": 16.0
+          },
+          {
+            "name": "Shrimp Etouffee Quesadilla",
+            "price": 15.0
+          }
+        ]
+      },
+      {
+        "name": "Boiled Favorites",
+        "items": [
+          {
+            "name": "Boiled Shrimp",
+            "price": 11.0
+          },
+          {
+            "name": "Snow Crab",
+            "price": 17.0
+          },
+          {
+            "name": "The Catch Boil",
+            "price": 30.0
+          },
+          {
+            "name": "Add (1) Boiled Egg",
+            "price": 2.0
+          },
+          {
+            "name": "Fried Snow Crab",
+            "price": 18.0
+          }
+        ]
+      },
+      {
+        "name": "Sandwiches & More",
+        "items": [
+          {
+            "name": "Catfish",
+            "price": 14.0
+          },
+          {
+            "name": "Shrimp",
+            "price": 14.0
+          },
+          {
+            "name": "Crawfish Tails",
+            "price": 17.0
+          },
+          {
+            "name": "Gator",
+            "price": 18.0
+          },
+          {
+            "name": "Fried Oysters",
+            "price": 19.0
+          },
+          {
+            "name": "BYO Burger",
+            "price": 12.0
+          },
+          {
+            "name": "Chicken Tender Sandwich",
+            "price": 12.0
+          },
+          {
+            "name": "Whitefish Sandwich",
+            "price": 12.0
+          },
+          {
+            "name": "Half & Half Po Boy (Shrimp & Oyster)",
+            "price": 18.0
+          }
+        ]
+      },
+      {
+        "name": "Salads",
+        "items": [
+          {
+            "name": "Caesar Salad",
+            "price": 13.0
+          },
+          {
+            "name": "House Salad",
+            "price": 13.0
+          },
+          {
+            "name": "Side salad",
+            "price": 6.0
+          }
+        ]
+      },
+      {
+        "name": "Desserts",
+        "items": [
+          {
+            "name": "Banana Pudding",
+            "price": 6.0
+          },
+          {
+            "name": "Key Lime Pie",
+            "price": 6.0
+          },
+          {
+            "name": "Warm Beignets (4)",
+            "price": 8.0
+          },
+          {
+            "name": "Choc Chip Cookie",
+            "price": 2.59
+          },
+          {
+            "name": "Peanut Butter Cookie",
+            "price": 2.59
+          }
+        ]
+      },
+      {
+        "name": "Kids Menu",
+        "items": [
+          {
+            "name": "Kids Catfish Nuggets",
+            "price": 8.0
+          },
+          {
+            "name": "Kids Popcorn Shrimp",
+            "price": 8.0
+          },
+          {
+            "name": "Kids Chicken Tenders",
+            "price": 8.0
+          }
+        ]
+      },
+      {
+        "name": "Family Packs",
+        "items": [
+          {
+            "name": "10 Catfish",
+            "price": 44.99
+          },
+          {
+            "name": "10 Whitefish",
+            "price": 44.99
+          },
+          {
+            "name": "16 Chicken Tenders",
+            "price": 44.99
+          },
+          {
+            "name": "24 Jumbo Shrimp",
+            "price": 44.99
+          },
+          {
+            "name": "8 Catfish & 12 Jumbo Shrimp",
+            "price": 53.74
+          },
+          {
+            "name": "8 Catfish, 12 Jumbo Shrimp & 8 Tenders",
+            "price": 62.49
+          }
+        ]
+      },
+      {
+        "name": "A La Carte",
+        "items": [
+          {
+            "name": "Add (1) Catfish Fillet",
+            "price": 6.0
+          },
+          {
+            "name": "Add (1) Whitefish Fillet",
+            "price": 6.0
+          },
+          {
+            "name": "Add (4) Jumbo Shrimp",
+            "price": 7.0
+          },
+          {
+            "name": "Add (2.5 oz) Popcorn Shrimp",
+            "price": 5.0
+          },
+          {
+            "name": "Add (3) Tenders",
+            "price": 6.0
+          },
+          {
+            "name": "Add (2.5 oz) Crawfish Tails",
+            "price": 6.0
+          },
+          {
+            "name": "Add (4) Fried Oysters",
+            "price": 7.0
+          },
+          {
+            "name": "Add (1) Grilled Sausage",
+            "price": 6.0
+          },
+          {
+            "name": "Add (1) Garlic Bread",
+            "price": 1.0
+          }
+        ]
+      },
+      {
+        "name": "Condiments",
+        "items": [
+          {
+            "name": "Dipping Sauce",
+            "price": 0.01
+          },
+          {
+            "name": "Lemons",
+            "price": 0.01
+          },
+          {
+            "name": "Side Butter",
+            "price": 1.25
+          },
+          {
+            "name": "Creamy Cajun Sauce (8 oz)",
+            "price": 3.74
+          },
+          {
+            "name": "Etouffee smother",
+            "price": 3.74
+          }
+        ]
+      },
+      {
+        "name": "Off Menu Combos",
+        "items": [
+          {
+            "name": "Catfish (2) & Fried Oysters (4)",
+            "price": 16.99
+          },
+          {
+            "name": "Jumbo Shrimp (4) & Fried Oysters (4)",
+            "price": 16.99
+          },
+          {
+            "name": "Jumbo Shrimp (4) & Tenders (4)",
+            "price": 13.49
+          },
+          {
+            "name": "Jumbo Shrimp (4) & Whitefish (2)",
+            "price": 16.99
+          }
+        ]
+      },
+      {
+        "name": "Sides",
+        "items": [
+          {
+            "name": "Catch Fries",
+            "price": 4.0
+          },
+          {
+            "name": "Red Beans & Rice",
+            "price": 4.0
+          },
+          {
+            "name": "Dirty Rice",
+            "price": 4.0
+          },
+          {
+            "name": "Fried Okra",
+            "price": 4.0
+          },
+          {
+            "name": "Coleslaw",
+            "price": 4.0
+          },
+          {
+            "name": "Corn & Potatoes",
+            "price": 4.0
+          },
+          {
+            "name": "Green Beans",
+            "price": 4.0
+          },
+          {
+            "name": "Hush Puppies",
+            "price": 3.0
+          },
+          {
+            "name": "White Rice",
+            "price": 3.0
+          }
+        ]
+      },
+      {
+        "name": "Drinks",
+        "items": [
+          {
+            "name": "Soft Drink",
+            "price": 2.0
+          },
+          {
+            "name": "Bottled Water",
+            "price": 2.99
+          }
+        ]
+      }
+    ]
+  },
+  "forms": {
+    "catering": {
+      "form_name": "The Catch \u2013 Catering Request",
+      "form_id": "catch_catering_request",
+      "fields": [
+        {
+          "id": "full_name",
+          "label": "Name",
+          "type": "text",
+          "required": true,
+          "placeholder": "Your full name"
+        },
+        {
+          "id": "phone",
+          "label": "Phone",
+          "type": "tel",
+          "required": true,
+          "placeholder": "Your mobile number"
+        },
+        {
+          "id": "email",
+          "label": "Email (required)",
+          "type": "email",
+          "required": true,
+          "placeholder": "e.g. cris@example.com"
+        },
+        {
+          "id": "company",
+          "label": "Company (optional)",
+          "type": "text",
+          "required": false,
+          "placeholder": "Name of your business..."
+        },
+        {
+          "id": "number_of_people",
+          "label": "Number of People (required)",
+          "type": "select",
+          "required": true
+        },
+        {
+          "id": "date",
+          "label": "Select Date (required)",
+          "type": "date",
+          "required": true
+        },
+        {
+          "id": "time",
+          "label": "Select Time (required)",
+          "type": "time",
+          "required": true
+        },
+        {
+          "id": "occasion",
+          "label": "Select Occasion (required)",
+          "type": "select",
+          "required": true
+        },
+        {
+          "id": "catering_type",
+          "label": "Select Type Of Catering Service (required)",
+          "type": "select",
+          "required": true
+        },
+        {
+          "id": "budget_per_person",
+          "label": "Budget per Person",
+          "type": "currency",
+          "required": false
+        },
+        {
+          "id": "description_requests",
+          "label": "Description / Requests (optional)",
+          "type": "textarea",
+          "required": false
+        },
+        {
+          "id": "heard_about_us",
+          "label": "How did you hear about us? (optional)",
+          "type": "text",
+          "required": false
+        }
+      ]
+    },
+    "parties": {
+      "form_name": "The Catch \u2013 Group Reservations and Private Parties",
+      "form_id": "catch_party_reservation",
+      "fields": [
+        {
+          "id": "full_name",
+          "label": "Full Name (required)",
+          "type": "text",
+          "required": true,
+          "placeholder": "e.g. Nina Simone"
+        },
+        {
+          "id": "phone",
+          "label": "Phone (required)",
+          "type": "tel",
+          "required": true,
+          "placeholder": "e.g. (123) 456-7890"
+        },
+        {
+          "id": "marketing_consent",
+          "label": "Marketing Text Consent",
+          "type": "checkbox",
+          "required": false
+        },
+        {
+          "id": "email",
+          "label": "Email (required)",
+          "type": "email",
+          "required": true,
+          "placeholder": "e.g. cris@example.com"
+        },
+        {
+          "id": "company",
+          "label": "Company (optional)",
+          "type": "text",
+          "required": false,
+          "placeholder": "Name of your business..."
+        },
+        {
+          "id": "number_of_people",
+          "label": "Number of People (required)",
+          "type": "select",
+          "required": true
+        },
+        {
+          "id": "date",
+          "label": "Select Date (required)",
+          "type": "date",
+          "required": true
+        },
+        {
+          "id": "time",
+          "label": "Select Time (required)",
+          "type": "time",
+          "required": true
+        },
+        {
+          "id": "occasion",
+          "label": "Select Occasion (required)",
+          "type": "select",
+          "required": true
+        },
+        {
+          "id": "requests",
+          "label": "Description / Requests (optional)",
+          "type": "textarea",
+          "required": false
+        },
+        {
+          "id": "heard_about_us",
+          "label": "How did you hear about us? (optional)",
+          "type": "text",
+          "required": false
+        }
+      ]
+    }
+  }
+}
