@@ -14,14 +14,14 @@ def scrape_post_oak(output_csv="post_oak_menu.csv"):
 			print(f"Navigating to {START_URL}")
 			page.goto(START_URL, wait_until="networkidle", timeout=30000)
 
-		# ---- STEP 1: make sure we're on the Post Oak store page ----
-		# If this URL already lands you on the store menu, this may be enough.
-		# Otherwise, you could add a click here to pick the S. Post Oak store.
+			# ---- STEP 1: make sure we're on the Post Oak store page ----
+			# If this URL already lands you on the store menu, this may be enough.
+			# Otherwise, you could add a click here to pick the S. Post Oak store.
 
-		# ---- STEP 2: collect all category buttons (STARTERS, BASKETS, etc.) ----
-		# This selector is intentionally generic. You’ll likely need to tweak it
-		# in devtools (use page.locator("text=STARTERS") etc. to confirm).
-		category_buttons = page.locator("button")
+			# ---- STEP 2: collect all category buttons (STARTERS, BASKETS, etc.) ----
+			# This selector is intentionally generic. You'll likely need to tweak it
+			# in devtools (use page.locator("text=STARTERS") etc. to confirm).
+			category_buttons = page.locator("button")
 		category_count = category_buttons.count()
 		print(f"Found {category_count} buttons; filtering to menu categories...")
 
@@ -121,18 +121,35 @@ def scrape_post_oak(output_csv="post_oak_menu.csv"):
 						"description": desc,
 						"price": price_text,
 					}
-				)		# ---- STEP 4: write CSV ----
-		if not all_items:
-			print("No items collected. You probably need to tweak the selectors.")
-		else:
-			fieldnames = ["category", "name", "description", "price"]
-			with open(output_csv, "w", newline="", encoding="utf-8") as f:
-				writer = csv.DictWriter(f, fieldnames=fieldnames)
-				writer.writeheader()
-				writer.writerows(all_items)
-			print(f"\n✅ Wrote {len(all_items)} items to {output_csv}")
+				)
 
-		browser.close()
+			# ---- STEP 4: write CSV ----
+			if not all_items:
+				print("No items collected. You probably need to tweak the selectors.")
+			else:
+				fieldnames = ["category", "name", "description", "price"]
+				with open(output_csv, "w", newline="", encoding="utf-8") as f:
+					writer = csv.DictWriter(f, fieldnames=fieldnames)
+					writer.writeheader()
+					writer.writerows(all_items)
+				print(f"\n✅ Wrote {len(all_items)} items to {output_csv}")
+
+		except TimeoutError as e:
+			print(f"❌ Navigation timeout while accessing {START_URL}: {str(e)}")
+			print("The page took too long to load. Check the URL or network connectivity.")
+		except Exception as e:
+			print(f"❌ Error scraping {START_URL}: {type(e).__name__}: {str(e)}")
+		finally:
+			# Ensure resources are always cleaned up
+			try:
+				page.close()
+			except:
+				pass
+			try:
+				context.close()
+			except:
+				pass
+			browser.close()
 
 
 if __name__ == "__main__":
