@@ -34,6 +34,9 @@ Icon?
 data/revel/**/images/
 data/revel/**/state.json
 
+# Generated PWA icons (created during build)
+public/icons/*.png
+
 # Reference materials (not for production)
 glorias-port-plan.md
 plans/glorias-port-plan.md

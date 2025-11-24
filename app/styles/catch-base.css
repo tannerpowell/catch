@@ -219,6 +219,7 @@ body {
   padding-left: 32px;
   padding-right: 32px;
   display: flex;
+  position: relative;
 }
 
 .nav-links {
@@ -228,6 +229,54 @@ body {
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+/* Nav Cart Button - Subtle, floating right */
+.nav-cart-button {
+  position: absolute;
+  right: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: 1px solid rgba(50, 39, 35, 0.15);
+  border-radius: 8px;
+  color: var(--color--tierra-reca);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-cart-button:hover {
+  background: rgba(50, 39, 35, 0.04);
+  border-color: var(--color--chile-rojo);
+  color: var(--color--chile-rojo);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.nav-cart-button:active {
+  transform: translateY(0);
+}
+
+.nav-cart-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  background: var(--color--chile-rojo);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 999px;
+  border: 2px solid var(--color--crema-fresca);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
 }
 
 .header-icon-wrapper {

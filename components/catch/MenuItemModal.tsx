@@ -3,10 +3,14 @@
 import { useEffect } from 'react';
 import Image from 'next/image';
 import styles from './MenuItemModal.module.css';
+import { AddToCartButton } from '@/components/cart/AddToCartButton';
+import type { MenuItem, Location } from '@/lib/types';
 
 interface MenuItemModalProps {
   isOpen: boolean;
   onClose: () => void;
+  menuItem: MenuItem;
+  location: Location;
   name: string;
   description?: string;
   price?: number | null;
@@ -17,6 +21,8 @@ interface MenuItemModalProps {
 export default function MenuItemModal({
   isOpen,
   onClose,
+  menuItem,
+  location,
   name,
   description,
   price,
@@ -128,6 +134,11 @@ export default function MenuItemModal({
                   <span className={styles.price}>{price.toFixed(0)}</span>
                 </div>
               )}
+
+              {/* Add to Cart Button */}
+              <div style={{ marginTop: '24px' }}>
+                <AddToCartButton menuItem={menuItem} location={location} />
+              </div>
             </div>
           </div>
         </div>

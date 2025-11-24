@@ -5,6 +5,7 @@ export interface Hours {
 }
 
 export interface Location {
+  _id: string;
   name: string;
   slug: string;
   addressLine1: string;
@@ -13,6 +14,7 @@ export interface Location {
   state: string;
   postalCode: string;
   phone?: string;
+  email?: string;
   geo?: GeoPoint;
   hours?: Hours;
   openToday?: boolean;
@@ -24,6 +26,23 @@ export interface Location {
   menuUrl?: string;
   directionsUrl?: string;
   heroImage?: string;
+  // Stripe Connect fields
+  stripeAccountId?: string;
+  stripeOnboardingComplete?: boolean;
+  stripeChargesEnabled?: boolean;
+  stripePayoutsEnabled?: boolean;
+  stripeOnboardingLink?: string;
+  stripeDashboardLink?: string;
+  // Revel POS
+  revelEstablishmentId?: string;
+  storeId?: number;
+  // Online ordering settings
+  onlineOrderingEnabled?: boolean;
+  acceptingOrders?: boolean;
+  orderTypes?: ("pickup" | "delivery" | "dine-in")[];
+  minimumOrderAmount?: number;
+  deliveryFee?: number;
+  taxRate?: number;
 }
 
 export type Badge =
@@ -70,4 +89,121 @@ export interface BrandAdapter {
   getLocations(): Promise<Location[]>;
   getLocationBySlug(slug: string): Promise<Location | undefined>;
   getItemsByCategory(slug: string): Promise<MenuItem[]>;
+}
+
+// === ONLINE ORDERING TYPES ===
+
+export interface CartModifier {
+  name: string;
+  option: string;
+  priceDelta: number;
+}
+
+export interface CartItem {
+  menuItem: MenuItem;
+  quantity: number;
+  price: number;
+  modifiers: CartModifier[];
+  specialInstructions?: string;
+}
+
+export interface Cart {
+  location: Location | null;
+  locationId: string | null;
+  items: CartItem[];
+  subtotal: number;
+  tax: number;
+  tip: number;
+  deliveryFee: number;
+  total: number;
+}
+
+export type OrderStatus = "pending" | "confirmed" | "preparing" | "ready" | "completed" | "cancelled";
+export type PaymentStatus = "pending" | "processing" | "paid" | "failed" | "refunded" | "partially_refunded";
+export type OrderType = "pickup" | "delivery" | "dine-in";
+
+export interface OrderItem {
+  menuItem: { _ref: string; _type: "reference" };
+  menuItemSnapshot: {
+    name: string;
+    description?: string;
+    basePrice: number;
+  };
+  quantity: number;
+  price: number;
+  totalPrice: number;
+  modifiers: CartModifier[];
+  specialInstructions?: string;
+}
+
+export interface Order {
+  _id: string;
+  _type: "order";
+  orderNumber: string;
+  status: OrderStatus;
+  location: { _ref: string; _type: "reference" };
+  locationSnapshot: {
+    name: string;
+    address: string;
+    phone: string;
+  };
+  customer: {
+    name: string;
+    email: string;
+    phone: string;
+    marketingOptIn: boolean;
+  };
+  orderType: OrderType;
+  items: OrderItem[];
+  subtotal: number;
+  tax: number;
+  taxRate?: number;
+  tip: number;
+  deliveryFee: number;
+  platformFee: number;
+  total: number;
+  locationPayout?: number;
+  // Stripe fields
+  stripePaymentIntentId?: string;
+  stripeAccountId?: string;
+  stripeChargeId?: string;
+  paymentStatus: PaymentStatus;
+  paymentMethod?: {
+    brand: string;
+    last4: string;
+    type: string;
+  };
+  refundAmount?: number;
+  refundReason?: string;
+  // Fulfillment
+  scheduledFor?: string;
+  estimatedReadyTime?: string;
+  deliveryAddress?: {
+    street: string;
+    unit?: string;
+    city: string;
+    state: string;
+    zip: string;
+    instructions?: string;
+  };
+  specialInstructions?: string;
+  // Revel integration
+  revelOrderId?: string;
+  revelSynced: boolean;
+  revelSyncedAt?: string;
+  revelSyncError?: string;
+  // Timestamps
+  createdAt: string;
+  updatedAt?: string;
+  confirmedAt?: string;
+  preparingAt?: string;
+  readyAt?: string;
+  completedAt?: string;
+  cancelledAt?: string;
+  // Notes
+  internalNotes?: Array<{
+    note: string;
+    author: string;
+    timestamp: string;
+  }>;
 }

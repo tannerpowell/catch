@@ -10,7 +10,7 @@ interface MenuHeroProps {
 
 export default function MenuHero({ locations, selectedSlug, onLocationChange, heroImage }: MenuHeroProps) {
   return (
-    <section className="catch-paper-bg" style={{ borderBottom: "1px solid var(--catch-tierra-reca)" }}>
+    <section className="catch-paper-bg border-b border-slate-300 dark:border-slate-700">
       <div className="catch-container" style={{
         padding: "48px 24px"
       }}>
@@ -27,7 +27,7 @@ export default function MenuHero({ locations, selectedSlug, onLocationChange, he
               <select
                 value={selectedSlug}
                 onChange={e => onLocationChange(e.target.value)}
-                className="catch-location-select"
+                className="catch-location-select bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-50 border border-slate-300 dark:border-slate-700"
                 style={{
                   width: "100%",
                   height: "38px",
@@ -35,10 +35,7 @@ export default function MenuHero({ locations, selectedSlug, onLocationChange, he
                   fontSize: "14px",
                   lineHeight: "1.42857",
                   fontFamily: "var(--catch-font-body)",
-                  border: "1px solid #ccc",
                   borderRadius: "0",
-                  backgroundColor: "#f3f3f3",
-                  color: "#333",
                   cursor: "pointer",
                   display: "block",
                   marginBottom: "10px",

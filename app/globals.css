@@ -2,6 +2,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 @import "./styles/components.css";
 @import "./styles/catch-base.css";
+@import "./styles/dark-theme.css";
 
 @tailwind base;
 @tailwind components;
@@ -11,8 +12,34 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Hide header, footer, and theme toggle on kitchen route */
+html[data-route^="/kitchen"] .header,
+html[data-route^="/kitchen"] .footer,
+html[data-route^="/kitchen"] .full-page-menu,
+html[data-route^="/kitchen"] [class*="ThemeToggle"] {
+  display: none !important;
+}
+
+html[data-route^="/kitchen"] main {
+  margin: 0;
+  padding: 0;
+}
+
 /* Theme tokens (Catch x Gulf-inspired palette) */
 :root {
+  /* Slate palette (light mode uses lighter shades) */
+  --slate-50: #f8fafc;
+  --slate-100: #f1f5f9;
+  --slate-200: #e2e8f0;
+  --slate-300: #cbd5e1;
+  --slate-400: #94a3b8;
+  --slate-500: #64748b;
+  --slate-600: #475569;
+  --slate-700: #334155;
+  --slate-800: #1e293b;
+  --slate-900: #0f172a;
+  --slate-950: #020617;
+
   /* Color */
   --color-brand-primary: #b64f3b;
   --color-brand-primary-soft: #c86452;
