@@ -2,7 +2,7 @@ import path from "node:path";
 import fs from "node:fs";
 import sharp from "sharp";
 import { createClient } from "@sanity/client";
-import fetch from "node-fetch";
+// Using Node.js native fetch (available since v18.0.0)
 import dotenv from "dotenv";
 
 dotenv.config({ path: path.resolve(process.cwd(), ".env.local") });

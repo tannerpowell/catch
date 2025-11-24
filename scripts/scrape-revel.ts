@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import fetch from "node-fetch";
+// Using Node.js native fetch (available since v18.0.0)
 
 const GRAPHQL_ENDPOINT = "https://conroe.mw.revelup.online/graphql";
 const STORE_ID = Number(process.env.REVEL_STORE_ID || 105);
