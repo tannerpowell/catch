@@ -110,9 +110,9 @@ export default function MenuItemModal({
                   src={image ?? "/images/placeholder-efefef.jpg"}
                   alt={name}
                   fill
-                  sizes="(max-width: 768px) 90vw, 600px"
+                  sizes="(max-width: 768px) 90vw, (max-width: 1200px) 50vw, 600px"
                   style={{ objectFit: "cover" }}
-                  priority
+                  loading="eager"
                   unoptimized={!image}
                 />
               </div>

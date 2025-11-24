@@ -32,6 +32,14 @@ interface MenuItemCardProps {
  */
 export default function MenuItemCard({ menuItem, location, name, description, price, image, isAvailable = true, badges }: MenuItemCardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [shouldPreload, setShouldPreload] = useState(false);
+
+  // Preload the modal image on hover for instant display
+  const handleMouseEnter = () => {
+    if (isAvailable && image && !shouldPreload) {
+      setShouldPreload(true);
+    }
+  };
 
   return (
     <>
@@ -39,6 +47,7 @@ export default function MenuItemCard({ menuItem, location, name, description, pr
         className="catch-menu-card"
         style={{ opacity: isAvailable ? 1 : 0.6, cursor: isAvailable ? 'pointer' : 'default', position: 'relative', zIndex: 1 }}
         onClick={() => isAvailable && setIsModalOpen(true)}
+        onMouseEnter={handleMouseEnter}
         role="button"
         tabIndex={isAvailable ? 0 : -1}
         onKeyDown={(e) => {
@@ -82,6 +91,11 @@ export default function MenuItemCard({ menuItem, location, name, description, pr
           )}
         </div>
       </article>
+
+      {/* Preload larger image on hover for instant modal display */}
+      {shouldPreload && image && (
+        <link rel="preload" as="image" href={image} />
+      )}
 
       {isModalOpen && (
         <Suspense fallback={null}>
