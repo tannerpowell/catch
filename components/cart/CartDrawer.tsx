@@ -10,6 +10,15 @@ interface CartDrawerProps {
   onClose: () => void;
 }
 
+/**
+ * Renders the shopping cart drawer UI, including backdrop, item list, totals, and checkout link.
+ *
+ * The drawer prevents body scrolling while open and delays rendering until after client mount to avoid hydration issues.
+ *
+ * @param isOpen - Whether the drawer is visible
+ * @param onClose - Callback invoked to close the drawer (also used by backdrop and close controls)
+ * @returns The cart drawer element (or `null` before the component is mounted)
+ */
 export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   const { cart, removeFromCart, updateQuantity, itemCount, isHydrated } = useCart();
   const [mounted, setMounted] = useState(false);
@@ -213,7 +222,13 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   );
 }
 
-// Floating Cart Button (shows item count)
+/**
+ * Renders a floating cart button that displays the current item count and opens the cart drawer.
+ *
+ * This component delays rendering until after client mount to avoid hydration mismatches, shows a badge when there are items in the cart, and controls the visibility of the CartDrawer.
+ *
+ * @returns The rendered cart button element and its associated CartDrawer
+ */
 export function CartButton() {
   const { itemCount } = useCart();
   const [isOpen, setIsOpen] = useState(false);

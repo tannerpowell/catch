@@ -12,6 +12,11 @@ export const metadata: Metadata = {
   }
 };
 
+/**
+ * Render the Gulf Coast Seafood homepage containing hero, featured dishes, story, and locations sections.
+ *
+ * @returns The React element for the homepage, including hero banner, static featured-dishes list, story CTA, and locations CTA with client-side navigation links.
+ */
 export default function HomePage() {
   return (
     <>

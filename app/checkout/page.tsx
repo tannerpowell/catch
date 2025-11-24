@@ -5,6 +5,15 @@ import { useRouter } from 'next/navigation';
 import { useCart } from '@/lib/contexts/CartContext';
 import { useOrders } from '@/lib/contexts/OrdersContext';
 
+/**
+ * Render the checkout UI, validate contact input, submit a demo order, and navigate to confirmation.
+ *
+ * Validates name, email format, and a 10-digit US phone number; on successful submission it creates a demo order
+ * via the Orders context, clears the cart, and redirects to the order confirmation page. Displays loading and
+ * empty-cart states, an error banner for validation/runtime errors, and a sticky order summary reflecting cart contents.
+ *
+ * @returns The checkout page React element containing the form, order summary, and submission handlers.
+ */
 export default function CheckoutPage() {
   const router = useRouter();
   const { cart, clearCart, isHydrated } = useCart();

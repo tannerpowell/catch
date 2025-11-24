@@ -18,6 +18,13 @@ const client = createClient({
   useCdn: false,
 });
 
+/**
+ * Enables online ordering for every `location` document in the Sanity dataset (demo mode).
+ *
+ * For each location whose `onlineOrderingEnabled` is false, sets `onlineOrderingEnabled` to `true`,
+ * `acceptingOrders` to `true`, and `orderTypes` to `['pickup', 'delivery']`. Logs progress for each
+ * processed location and a completion message.
+ */
 async function enableOnlineOrdering() {
   console.log('🚀 Enabling online ordering for all locations...\n');
 

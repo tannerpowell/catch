@@ -14,6 +14,15 @@ interface AddToCartButtonProps {
   disabled?: boolean;
 }
 
+/**
+ * Render an "Add to Cart" button that adds the provided menu item to the cart, prompts to switch locations when necessary, and shows a success confirmation.
+ *
+ * @param menuItem - The menu item to add when the button is pressed.
+ * @param location - The location to associate with the cart addition.
+ * @param className - Optional additional CSS class names to apply to the button.
+ * @param disabled - If `true`, the button is rendered disabled and interaction is prevented.
+ * @returns The button element plus any modals used for location switching and success confirmation.
+ */
 export function AddToCartButton({
   menuItem,
   location,
@@ -106,4 +115,3 @@ export function AddToCartButton({
     </>
   );
 }
-

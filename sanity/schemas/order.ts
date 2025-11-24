@@ -1,9 +1,10 @@
 import { defineType, defineField } from "sanity";
 
 /**
- * Validates international phone numbers with flexible formatting
- * Accepts E.164 format (+1234567890), parentheses, hyphens, spaces
- * Requires minimum 10 digits for valid international numbers
+ * Validate a phone number allowing international formats and common separators.
+ *
+ * @param value - The phone number string to validate
+ * @returns `true` if the phone number is valid; otherwise an error message describing the violation (invalid characters, too few digits, or too many digits)
  */
 function validatePhoneNumber(value: string): boolean | string {
   if (!value || typeof value !== "string") {

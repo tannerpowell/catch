@@ -12,6 +12,20 @@ interface LocationSwitchModalProps {
   onConfirm: () => void;
 }
 
+/**
+ * Display a modal prompting the user to confirm switching the cart's location.
+ *
+ * When visible, the modal prevents body scrolling, closes on backdrop click or
+ * when the Escape key is pressed, and invokes `onConfirm` followed by `onClose`
+ * when the user confirms the switch.
+ *
+ * @param isOpen - Whether the modal should be visible
+ * @param onClose - Callback to close the modal
+ * @param currentLocation - Location currently associated with the cart
+ * @param newLocation - Location to switch the cart to
+ * @param onConfirm - Callback invoked when the user confirms the location switch
+ * @returns The modal's JSX when mounted and open; otherwise `null`
+ */
 export function LocationSwitchModal({
   isOpen,
   onClose,

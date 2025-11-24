@@ -6,6 +6,14 @@ interface OrderTimerProps {
   createdAt: string;
 }
 
+/**
+ * Displays a live-updating order timer that shows how long ago the provided creation timestamp occurred.
+ *
+ * The component updates its display every 30 seconds and applies visual urgency states based on elapsed time.
+ *
+ * @param createdAt - Creation timestamp string (e.g., ISO 8601) used as the reference time for the timer
+ * @returns A JSX element containing a clock icon and the formatted elapsed time. Adds the CSS modifier `order-timer--warning` when elapsed time is between 15 and 29 minutes, and `order-timer--critical` when elapsed time is 30 minutes or more.
+ */
 export function OrderTimer({ createdAt }: OrderTimerProps) {
   const [elapsed, setElapsed] = useState('');
   const [isWarning, setIsWarning] = useState(false);

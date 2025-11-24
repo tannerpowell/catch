@@ -14,6 +14,12 @@ const OrdersContext = createContext<OrdersContextType | undefined>(undefined);
 
 const ORDERS_STORAGE_KEY = 'catch-demo-orders';
 
+/**
+ * Provides the OrdersContext to its descendants and manages order state with hydration and localStorage persistence.
+ *
+ * @param children - React nodes that will receive the OrdersContext
+ * @returns A React provider element that supplies `orders`, `addOrder`, `updateOrderStatus`, and `clearOrders` to descendants
+ */
 export function OrdersProvider({ children }: { children: React.ReactNode }) {
   const [orders, setOrders] = useState<Order[]>([]);
   const [isHydrated, setIsHydrated] = useState(false);
@@ -88,6 +94,12 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
+/**
+ * Retrieves the current Orders context value.
+ *
+ * @returns The context object with `orders`, `addOrder`, `updateOrderStatus`, and `clearOrders`.
+ * @throws If called outside of an `OrdersProvider`.
+ */
 export function useOrders() {
   const context = useContext(OrdersContext);
   if (!context) {

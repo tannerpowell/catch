@@ -18,7 +18,11 @@ if (!fs.existsSync(iconsDir)) {
 }
 
 /**
- * Generate an SVG icon (kitchen pot with steam)
+ * Generate an SVG document for a kitchen-pot-with-steam icon at the specified square size.
+ *
+ * The returned string is a complete SVG file (UTF-8 XML) with a dark background and a white pot-and-steam graphic whose coordinates and stroke widths scale with the provided size.
+ * @param {number} size - Icon dimension in pixels; used for both width and height and to scale all SVG elements.
+ * @returns {string} The SVG document as a string sized to `${size}x${size}` pixels.
  */
 function generateIconSvg(size) {
   return `<?xml version="1.0" encoding="UTF-8"?>
@@ -51,7 +55,10 @@ function generateIconSvg(size) {
 }
 
 /**
- * Generate PNG icon from SVG using Sharp
+ * Create a PNG icon file of the given square size from the inline SVG template.
+ *
+ * @param {number} size - Target icon size in pixels (width and height).
+ * @returns {boolean} `true` if the PNG file was written successfully, `false` otherwise.
  */
 async function generateIconPng(size) {
   const svg = generateIconSvg(size);
@@ -71,7 +78,11 @@ async function generateIconPng(size) {
 }
 
 /**
- * Generate all icon sizes
+ * Generate all configured PWA icon PNGs and return an overall exit code.
+ *
+ * Runs icon generation for each configured size in parallel, logs progress and a final summary,
+ * and returns an exit code indicating overall success.
+ * @returns {number} 0 if all icons were generated successfully, 1 if any icon failed.
  */
 async function generateAllIcons() {
   console.log('🎨 Generating PWA icons...');

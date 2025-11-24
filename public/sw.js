@@ -101,6 +101,13 @@ self.addEventListener('sync', (event) => {
   }
 });
 
+/**
+ * Synchronize pending order status updates that were created while the client was offline.
+ *
+ * Intended to be invoked by the service worker's background sync (tagged "sync-orders") to
+ * process and send any queued order updates to the server. Currently the function logs
+ * "Syncing orders..." and serves as a placeholder for the actual sync implementation.
+ */
 async function syncOrders() {
   // This would sync any pending order status updates
   // that were made while offline

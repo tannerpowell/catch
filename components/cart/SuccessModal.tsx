@@ -9,6 +9,14 @@ interface SuccessModalProps {
   itemName: string;
 }
 
+/**
+ * Render a success modal that informs the user an item was added to the cart.
+ *
+ * @param isOpen - Controls whether the modal is visible
+ * @param onClose - Callback invoked to close the modal
+ * @param itemName - The display name of the item shown in the modal message
+ * @returns The modal JSX when `isOpen` is true, otherwise `null`
+ */
 export function SuccessModal({ isOpen, onClose, itemName }: SuccessModalProps) {
   const router = useRouter();
 

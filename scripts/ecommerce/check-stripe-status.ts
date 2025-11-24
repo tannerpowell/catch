@@ -30,6 +30,15 @@ interface SanityLocation {
   stripeAccountId?: string;
 }
 
+/**
+ * Checks Stripe connected account status for all locations and updates Sanity with each account's capabilities and onboarding state.
+ *
+ * For each location that has a Stripe account ID this function:
+ * - Retrieves the Stripe account details and records whether charges and payouts are enabled.
+ * - Attempts to generate a new onboarding link when requirements are pending.
+ * - Updates the corresponding Sanity document fields: `stripeChargesEnabled`, `stripePayoutsEnabled`, and `stripeOnboardingComplete`.
+ * - Logs a final summary grouping locations into ready, pending, and issues.
+ */
 async function checkAccountStatus() {
   console.log('🔍 Checking Stripe account status for all locations...\n');
 

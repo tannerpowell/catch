@@ -3,6 +3,15 @@
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
+/**
+ * Order confirmation page that displays the placed order status, demo notice, and navigation actions.
+ *
+ * Reads the `orderNumber` from URL search parameters and logs a diagnostic warning if it is missing or empty.
+ * When an order number is present the page shows it; otherwise it shows a warning alert with guidance.
+ * The page also includes a demo-mode disclaimer, a link to the Kitchen Dashboard, and buttons to continue ordering or view the dashboard.
+ *
+ * @returns The rendered confirmation page as a JSX element.
+ */
 export default function OrderConfirmationPage() {
   const searchParams = useSearchParams();
   const orderNumberParam = searchParams.get('orderNumber');

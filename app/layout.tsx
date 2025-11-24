@@ -56,6 +56,12 @@ export const metadata: Metadata = {
   }
 };
 
+/**
+ * Renders the application's root HTML layout including global head links, route marker, providers, header, footer, and theme toggle.
+ *
+ * @param children - The page content to render inside the layout's main area
+ * @returns The root HTML structure for the application
+ */
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
