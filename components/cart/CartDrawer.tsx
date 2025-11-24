@@ -49,6 +49,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
         aria-label="Shopping cart"
         role="dialog"
         aria-modal="true"
+        aria-hidden={!isOpen}
       >
         {/* Header */}
         <div className="cart-drawer-header">

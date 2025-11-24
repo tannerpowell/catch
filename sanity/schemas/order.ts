@@ -5,7 +5,7 @@ import { defineType, defineField } from "sanity";
  * Accepts E.164 format (+1234567890), parentheses, hyphens, spaces
  * Requires minimum 10 digits for valid international numbers
  */
-function validatePhoneNumber(value: string): boolean | string {
+function validatePhoneNumber(value: string | undefined): true | string {
   if (!value || typeof value !== "string") {
     return "Phone number is required";
   }
@@ -175,13 +175,13 @@ export default defineType({
               validation: (rule) => rule.required().min(0.01).custom((value: unknown, context: any) => {
                 const quantity = context.parent?.quantity;
                 const price = context.parent?.price;
-                const totalPrice = value as number;
-                
-                if (quantity !== undefined && price !== undefined && totalPrice !== undefined) {
+                const totalPrice = Number(value);
+
+                if (quantity !== undefined && price !== undefined && !isNaN(totalPrice)) {
                   const expected = quantity * price;
                   const tolerance = 0.01; // Allow for floating point rounding
                   if (Math.abs(totalPrice - expected) > tolerance) {
-                    return `Total price ($${totalPrice}) must equal quantity ($${quantity}) × price per item ($${price}) = $${expected.toFixed(2)}`;
+                    return `Total price ($${totalPrice.toFixed(2)}) must equal quantity (${quantity}) × price per item ($${price.toFixed(2)}) = $${expected.toFixed(2)}`;
                   }
                 }
                 return true;
@@ -213,7 +213,7 @@ export default defineType({
             prepare({ title, quantity, price }) {
               return {
                 title: `${quantity}x ${title}`,
-                subtitle: `$${price?.toFixed(2)}`
+                subtitle: price != null ? `$${price.toFixed(2)}` : "Price not set"
               };
             }
           }
@@ -361,7 +361,7 @@ export default defineType({
       name: "deliveryAddress",
       title: "Delivery Address",
       type: "object",
-      hidden: ({ parent }) => parent?.orderType !== "delivery",
+      hidden: ({ document }) => document?.orderType !== "delivery",
       fields: [
         defineField({
           name: "street",

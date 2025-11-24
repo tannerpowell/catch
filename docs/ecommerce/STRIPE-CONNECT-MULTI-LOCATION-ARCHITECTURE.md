@@ -32,7 +32,7 @@ The Catch has 7 restaurant locations. Each location may need:
 
 **Stripe Connect** allows you to create a **Platform Account** (The Catch corporate) that manages multiple **Connected Accounts** (each restaurant location).
 
-```
+```text
                     ┌─────────────────────────┐
                     │  The Catch Platform     │
                     │  (Main Stripe Account)  │
@@ -72,7 +72,8 @@ The Catch has 7 restaurant locations. Each location may need:
    - Complete business verification
 
 2. **Enable Stripe Connect**
-   - Dashboard → Settings → Connect
+   - Dashboard: [https://dashboard.stripe.com/settings/connect](https://dashboard.stripe.com/settings/connect)
+   - Settings → Connect
    - Fill out platform profile
    - Choose "Platform or Marketplace"
 
@@ -114,7 +115,7 @@ You'll create 7 Connected Accounts (one per location). For each location:
 Create a one-time setup script:
 
 ```typescript
-// scripts/setup-stripe-locations.ts
+// scripts/ecommerce/setup-stripe-locations.ts
 import Stripe from 'stripe';
 import { sanityClient } from '../lib/sanity';
 
@@ -199,7 +200,7 @@ createConnectedAccounts();
 
 Run with:
 ```bash
-npx tsx scripts/setup-stripe-locations.ts
+npx tsx scripts/ecommerce/setup-stripe-locations.ts
 ```
 
 ### Step 4: Complete Onboarding for Each Location
@@ -218,7 +219,7 @@ Each location manager needs to:
 ### Step 5: Verify Accounts Are Ready
 
 ```typescript
-// scripts/check-stripe-status.ts
+// scripts/ecommerce/check-stripe-status.ts
 async function checkAccountStatus(accountId: string) {
   const account = await stripe.accounts.retrieve(accountId);
 
@@ -910,7 +911,7 @@ npm run dev
 If you already have location documents in Sanity, create a migration script:
 
 ```typescript
-// scripts/migrate-locations.ts
+// scripts/ecommerce/migrate-locations.ts
 import { sanityClient } from '../lib/sanity';
 
 async function migrateLocations() {
@@ -949,7 +950,7 @@ migrateLocations();
 
 Run with:
 ```bash
-npx tsx scripts/migrate-locations.ts
+npx tsx scripts/ecommerce/migrate-locations.ts
 ```
 
 ---
@@ -958,7 +959,7 @@ npx tsx scripts/migrate-locations.ts
 
 ### Complete Payment Flow Diagram
 
-```
+```text
 ┌─────────────┐
 │  Customer   │
 │   Browses   │
@@ -1570,7 +1571,7 @@ stripe trigger payment_intent.succeeded
 #### 4. Multi-Location Testing
 
 ```typescript
-// Test script: scripts/test-multi-location.ts
+// Test script: scripts/ecommerce/test-multi-location.ts
 import { sanityClient } from '../lib/sanity';
 
 async function testMultiLocation() {
@@ -1741,8 +1742,8 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_xxxxx
 STRIPE_WEBHOOK_SECRET=whsec_xxxxx
 
 # Sanity
-SANITY_PROJECT_ID=xxxxx
-SANITY_DATASET=production
+NEXT_PUBLIC_SANITY_PROJECT_ID=xxxxx
+NEXT_PUBLIC_SANITY_DATASET=production
 SANITY_API_TOKEN=skxxxxx
 
 # Never commit these!

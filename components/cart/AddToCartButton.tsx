@@ -31,6 +31,12 @@ export function AddToCartButton({
       return;
     }
 
+    // Validate price exists and is a number (allow 0)
+    if (menuItem.price == null || typeof menuItem.price !== 'number') {
+      console.warn('Cannot add item without valid price');
+      return;
+    }
+
     // Check if location can accept this item
     if (!canAddFromLocation(location._id)) {
       // Show modal to confirm location switch
@@ -38,12 +44,12 @@ export function AddToCartButton({
       return;
     }
 
-    // Add to cart
+    // Add to cart with validated price
     addToCart(
       {
         menuItem,
         quantity: 1,
-        price: menuItem.price as number,
+        price: menuItem.price,
         modifiers: [],
       },
       location
@@ -54,12 +60,18 @@ export function AddToCartButton({
   };
 
   const handleConfirmSwitch = () => {
+    // Validate price before switching
+    if (menuItem.price == null || typeof menuItem.price !== 'number') {
+      console.warn('Cannot add item without valid price');
+      return;
+    }
+
     clearCart();
     addToCart(
       {
         menuItem,
         quantity: 1,
-        price: menuItem.price || 0,
+        price: menuItem.price,
         modifiers: [],
       },
       location
@@ -68,7 +80,8 @@ export function AddToCartButton({
   };
 
   // Don't show button if no price (market price or unavailable)
-  if (!menuItem.price || menuItem.price === null) {
+  // Explicitly check for null/undefined, allow 0
+  if (menuItem.price == null || typeof menuItem.price !== 'number') {
     return (
       <button className={`add-to-cart-btn add-to-cart-btn-disabled ${className}`} disabled>
         See Menu for Price

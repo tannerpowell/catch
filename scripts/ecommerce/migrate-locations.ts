@@ -100,7 +100,15 @@ async function migrateLocations() {
     postalCode: string;
     reason: string;
   }> = [];
-  
+
+  const failedLocations: Array<{
+    name: string;
+    city: string;
+    state: string;
+    postalCode: string;
+    reason: string;
+  }> = [];
+
   const taxRateLookups: Array<{
     name: string;
     postalCode: string;
@@ -198,6 +206,13 @@ async function migrateLocations() {
 
       } catch (error) {
         console.error(`  ❌ Error migrating ${location.name}:`, error);
+        failedLocations.push({
+          name: location.name,
+          city: location.city,
+          state: location.state,
+          postalCode: location.postalCode,
+          reason: `Patch error: ${error instanceof Error ? error.message : String(error)}`,
+        });
       }
     }
 
@@ -229,10 +244,17 @@ async function migrateLocations() {
       );
     }
 
-    const successCount = locations.length - skippedLocations.length;
+    const successCount = locations.length - skippedLocations.length - failedLocations.length;
     console.log(`\n${successCount}/${locations.length} locations migrated successfully`);
-    
-    if (skippedLocations.length === 0) {
+
+    if (failedLocations.length > 0) {
+      console.log(`\n❌ ${failedLocations.length} location(s) failed during migration:\n`);
+      for (const loc of failedLocations) {
+        console.log(`  • ${loc.name} (${loc.city}, ${loc.state} ${loc.postalCode}) - ${loc.reason}`);
+      }
+    }
+
+    if (skippedLocations.length === 0 && failedLocations.length === 0) {
       console.log('\n✅ Migration complete!');
       console.log('\nNext steps:');
       console.log('1. Review tax rates in Sanity Studio for each location');
@@ -240,7 +262,7 @@ async function migrateLocations() {
       console.log('3. Run setup-stripe-locations.ts to create Stripe accounts');
       console.log('4. Enable onlineOrderingEnabled for locations when ready\n');
     } else {
-      console.log('\n❌ Migration incomplete - please fix missing tax rates and retry\n');
+      console.log('\n❌ Migration incomplete - please fix missing tax rates and/or retry after resolving failures\n');
       process.exit(1);
     }
 

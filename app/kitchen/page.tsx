@@ -21,13 +21,11 @@ export default function KitchenDashboard() {
     setTimeout(() => setLoading(false), 300);
   }, []);
 
-  // Auto-refresh timestamp every 30 seconds
+  // Update timestamp on mount (orders are automatically synced via OrdersContext)
+  // No need for interval since we're using localStorage with real-time updates
   useEffect(() => {
-    const interval = setInterval(() => {
-      setLastRefresh(new Date());
-    }, 30000);
-    return () => clearInterval(interval);
-  }, []);
+    setLastRefresh(new Date());
+  }, [orders]); // Update timestamp when orders change
 
   const handleOrderUpdate = (orderId: string, newStatus: OrderStatus) => {
     updateOrderStatus(orderId, newStatus);

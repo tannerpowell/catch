@@ -5,13 +5,15 @@
   "scripts": {
     "generate-icons": "node scripts/generate-pwa-icons.js",
     "verify-icons": "node scripts/verify-pwa-icons.js",
+    "security-check": "bash scripts/check-production-safety.sh",
     "dev": "npm run generate-icons && next dev --turbopack",
-    "build": "npm run generate-icons && npm run verify-icons && next build",
+    "build": "npm run security-check && npm run generate-icons && npm run verify-icons && next build",
     "start": "next start",
     "lint": "eslint .",
     "stripe:setup": "tsx scripts/ecommerce/setup-stripe-locations.ts",
     "stripe:check": "tsx scripts/ecommerce/check-stripe-status.ts",
-    "locations:migrate": "tsx scripts/ecommerce/migrate-locations.ts"
+    "locations:migrate": "tsx scripts/ecommerce/migrate-locations.ts",
+    "generate:jwt": "tsx scripts/generate-kitchen-jwt.ts"
   },
   "dependencies": {
     "@sanity/client": "^6.20.1",
@@ -19,6 +21,7 @@
     "clsx": "^2.1.1",
     "dotenv": "^17.2.3",
     "groq": "^3.49.0",
+    "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.554.0",
     "mapbox-gl": "^3.16.0",
     "mixitup": "^3.3.2",
@@ -37,6 +40,7 @@
     "@eslint/compat": "^2.0.0",
     "@eslint/eslintrc": "^3.3.1",
     "@next/eslint-plugin-next": "^16.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20.12.7",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
@@ -50,6 +54,7 @@
     "shadcn": "^3.5.0",
     "tailwindcss": "^3.4.4",
     "ts-node": "^10.9.2",
+    "tsx": "^4.19.2",
     "typescript": "^5.4.5"
   }
 }

@@ -2,14 +2,14 @@
 
 import { useState } from 'react';
 import { OrderTimer } from './OrderTimer';
-import type { Order } from '@/lib/types';
+import type { Order, OrderStatus } from '@/lib/types';
 
 interface OrderCardProps {
   order: Order;
-  nextStatus: string;
+  nextStatus: OrderStatus;
   actionLabel: string;
   actionColor: 'blue' | 'green' | 'gray';
-  onUpdate: (orderId: string, newStatus: string) => void;
+  onUpdate: (orderId: string, newStatus: OrderStatus) => void | Promise<void>;
 }
 
 export function OrderCard({
@@ -24,8 +24,8 @@ export function OrderCard({
   const handleStatusUpdate = async () => {
     setIsUpdating(true);
     try {
-      // Update order status via context
-      onUpdate(order._id, nextStatus);
+      // Update order status via context (await in case it's async)
+      await onUpdate(order._id, nextStatus);
     } catch (error) {
       console.error('Error updating order:', error);
       alert('Failed to update order. Please try again.');
@@ -67,7 +67,7 @@ export function OrderCard({
       {/* Order items */}
       <div className="order-items">
         {order.items.map((item, index) => (
-          <div key={index} className="order-item">
+          <div key={item._key ?? `${item.menuItemSnapshot.name}-${item.quantity}-${index}`} className="order-item">
             <div className="order-item-header">
               <span className="order-item-quantity">{item.quantity}x</span>
               <span className="order-item-name">

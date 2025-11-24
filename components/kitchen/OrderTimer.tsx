@@ -13,9 +13,21 @@ export function OrderTimer({ createdAt }: OrderTimerProps) {
 
   useEffect(() => {
     const updateElapsed = () => {
+      // Validate createdAt date
       const created = new Date(createdAt);
+      const createdTime = created.getTime();
+
+      // Check if date is invalid
+      if (isNaN(createdTime)) {
+        console.error(`[OrderTimer] Invalid createdAt date: "${createdAt}"`);
+        setElapsed('—');
+        setIsWarning(false);
+        setIsCritical(false);
+        return; // Don't continue with invalid date
+      }
+
       const now = new Date();
-      const diffMs = now.getTime() - created.getTime();
+      const diffMs = now.getTime() - createdTime;
       const diffMins = Math.floor(diffMs / 60000);
 
       // Format time display
@@ -37,6 +49,16 @@ export function OrderTimer({ createdAt }: OrderTimerProps) {
       setIsWarning(diffMins >= 15 && diffMins < 30);
       setIsCritical(diffMins >= 30);
     };
+
+    // Validate before setting up interval
+    const testDate = new Date(createdAt);
+    if (isNaN(testDate.getTime())) {
+      console.error(`[OrderTimer] Invalid createdAt date: "${createdAt}" - skipping interval`);
+      setElapsed('—');
+      setIsWarning(false);
+      setIsCritical(false);
+      return; // Don't set up interval for invalid date
+    }
 
     // Update immediately
     updateElapsed();

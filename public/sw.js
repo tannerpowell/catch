@@ -7,15 +7,34 @@ const OFFLINE_URL = '/kitchen';
 // Assets to cache on install
 const STATIC_ASSETS = [
   '/kitchen',
-  '/app/styles/kitchen.css',
   '/manifest.json',
 ];
 
 // Install event - cache static assets
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(STATIC_ASSETS);
+    caches.open(CACHE_NAME).then(async (cache) => {
+      // Cache assets individually to avoid install failure if one asset fails
+      const cachePromises = STATIC_ASSETS.map(async (url) => {
+        try {
+          const response = await fetch(url);
+          if (response.ok) {
+            await cache.put(url, response);
+            console.log(`[SW] Cached: ${url}`);
+          } else {
+            console.warn(`[SW] Failed to cache ${url}: ${response.status}`);
+          }
+        } catch (error) {
+          console.error(`[SW] Error caching ${url}:`, error);
+        }
+      });
+
+      // Wait for all caching attempts to complete (don't fail on individual errors)
+      await Promise.allSettled(cachePromises);
+      console.log('[SW] Installation complete');
+    }).catch((error) => {
+      console.error('[SW] Install failed:', error);
+      // Still resolve to allow SW to install even if caching fails
     })
   );
   // Force the waiting service worker to become the active service worker
@@ -54,11 +73,13 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
       fetch(event.request)
         .then((response) => {
-          // Clone the response before caching
-          const responseToCache = response.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseToCache);
-          });
+          // Only cache successful responses
+          if (response && response.ok) {
+            const responseToCache = response.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseToCache);
+            });
+          }
           return response;
         })
         .catch(() => {
@@ -69,27 +90,36 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Cache-first strategy for static assets
+  // Cache-first strategy for static assets with offline fallback for navigation
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) {
         return cachedResponse;
       }
 
-      return fetch(event.request).then((response) => {
-        // Don't cache non-successful responses
-        if (!response || response.status !== 200) {
+      return fetch(event.request)
+        .then((response) => {
+          // Don't cache non-successful responses
+          if (!response || response.status !== 200) {
+            return response;
+          }
+
+          // Clone the response before caching
+          const responseToCache = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseToCache);
+          });
+
           return response;
-        }
-
-        // Clone the response before caching
-        const responseToCache = response.clone();
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, responseToCache);
+        })
+        .catch(() => {
+          // For navigation requests, return offline page
+          if (event.request.mode === 'navigate') {
+            return caches.match(OFFLINE_URL);
+          }
+          // For other requests, just fail
+          return new Response('Offline', { status: 503, statusText: 'Service Unavailable' });
         });
-
-        return response;
-      });
     })
   );
 });

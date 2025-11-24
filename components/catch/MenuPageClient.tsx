@@ -5,6 +5,7 @@ import type { Location, MenuCategory, MenuItem } from "@/lib/types";
 import MenuHero from "./MenuHero";
 import CategoryPills from "./CategoryPills";
 import MenuItemCard from "./MenuItemCard";
+import { formatPhone } from "@/lib/utils/formatPhone";
 
 interface MenuPageClientProps {
   categories: MenuCategory[];
@@ -20,25 +21,6 @@ function slugify(input: string) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/-+/g, "-")
     .replace(/(^-|-$)/g, "");
-}
-
-function formatPhone(phone: string): string {
-  // Remove all non-digit characters
-  const digits = phone.replace(/\D/g, '');
-  // Format as (XXX) XXX-XXXX
-  if (digits.length === 11 && digits[0] === '1') {
-    // Remove leading 1 for US numbers
-    const areaCode = digits.slice(1, 4);
-    const prefix = digits.slice(4, 7);
-    const lineNumber = digits.slice(7, 11);
-    return `(${areaCode}) ${prefix}-${lineNumber}`;
-  } else if (digits.length === 10) {
-    const areaCode = digits.slice(0, 3);
-    const prefix = digits.slice(3, 6);
-    const lineNumber = digits.slice(6, 10);
-    return `(${areaCode}) ${prefix}-${lineNumber}`;
-  }
-  return phone; // Return original if format doesn't match
 }
 
 export default function MenuPageClient({ categories, items, locations, imageMap }: MenuPageClientProps) {
@@ -94,6 +76,16 @@ export default function MenuPageClient({ categories, items, locations, imageMap 
   }, [categories, items, imageMap, selectedSlug]);
 
   const selectedLocation = selectedSlug !== "all" ? locations.find(l => l.slug === selectedSlug) : undefined;
+  const safeLocation = selectedLocation ?? (locations.length > 0 ? locations[0] : undefined);
+
+  // Early return if no locations available
+  if (!safeLocation) {
+    return (
+      <div className="p-8 text-center text-slate-600 dark:text-slate-400">
+        <p>No locations available. Please check back later.</p>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -105,23 +97,10 @@ export default function MenuPageClient({ categories, items, locations, imageMap 
       />
 
       {/* Location Filter Buttons */}
-      <div style={{
-        borderBottom: '1px solid var(--slate-700)',
-        padding: '24px 20px',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '20px',
-        alignItems: 'center',
-        backgroundColor: 'var(--slate-50)'
-      }} className="dark:bg-slate-900 dark:border-slate-700">
+      <div className="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 p-6 flex flex-col gap-5 items-center">
         {/* DFW Locations */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
-          <span style={{
-            fontSize: '12px',
-            fontWeight: 500,
-            letterSpacing: '2px',
-            textTransform: 'uppercase'
-          }} className="text-slate-600 dark:text-slate-400">DFW:</span>
+        <div className="flex items-center gap-3 flex-wrap justify-center">
+          <span className="text-xs font-medium tracking-widest uppercase text-slate-600 dark:text-slate-400">DFW:</span>
           {locations.filter(loc => ['denton', 'coit-campbell', 'garland'].includes(loc.slug)).map(location => (
             <button
               key={location.slug}
@@ -137,13 +116,8 @@ export default function MenuPageClient({ categories, items, locations, imageMap 
         </div>
 
         {/* Houston Locations */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
-          <span style={{
-            fontSize: '12px',
-            fontWeight: 500,
-            letterSpacing: '2px',
-            textTransform: 'uppercase'
-          }} className="text-slate-600 dark:text-slate-400">HOUSTON:</span>
+        <div className="flex items-center gap-3 flex-wrap justify-center">
+          <span className="text-xs font-medium tracking-widest uppercase text-slate-600 dark:text-slate-400">HOUSTON:</span>
           {locations.filter(loc => !['denton', 'coit-campbell', 'garland'].includes(loc.slug)).map(location => (
             <button
               key={location.slug}
@@ -160,24 +134,14 @@ export default function MenuPageClient({ categories, items, locations, imageMap 
 
         {/* Location Info - Shows for selected location */}
         {selectedLocation && (
-          <div style={{
-            fontSize: '12px',
-            fontWeight: 500,
-            letterSpacing: '2px',
-            textAlign: 'center',
-            marginTop: '8px'
-          }} className="text-slate-600 dark:text-slate-300">
+          <div className="text-xs font-medium tracking-widest text-center mt-2 text-slate-600 dark:text-slate-300">
             <a
               href={`https://maps.apple.com/?address=${encodeURIComponent(
                 `${selectedLocation.addressLine1}, ${selectedLocation.city}, ${selectedLocation.state} ${selectedLocation.postalCode}`
               )}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-slate-800 dark:hover:text-slate-100 transition-colors"
-              style={{
-                textDecoration: 'none',
-                cursor: 'pointer'
-              }}
+              className="hover:text-slate-800 dark:hover:text-slate-100 transition-colors no-underline cursor-pointer"
             >
               {selectedLocation.addressLine1}, {selectedLocation.city}, {selectedLocation.state} {selectedLocation.postalCode}
             </a>
@@ -186,11 +150,7 @@ export default function MenuPageClient({ categories, items, locations, imageMap 
                 &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;
                 <a
                   href={`tel:${selectedLocation.phone}`}
-                  className="hover:text-slate-800 dark:hover:text-slate-100 transition-colors"
-                  style={{
-                    textDecoration: 'none',
-                    cursor: 'pointer'
-                  }}
+                  className="hover:text-slate-800 dark:hover:text-slate-100 transition-colors no-underline cursor-pointer"
                 >
                   {formatPhone(selectedLocation.phone)}
                 </a>
@@ -241,7 +201,7 @@ export default function MenuPageClient({ categories, items, locations, imageMap 
                       <MenuItemCard
                         key={item.id}
                         menuItem={item}
-                        location={selectedLocation || locations[0]}
+                        location={safeLocation}
                         name={item.name}
                         description={item.description}
                         price={item.price}

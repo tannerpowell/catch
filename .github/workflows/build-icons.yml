@@ -1,0 +1,50 @@
+name: Build and Verify PWA Icons
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate PWA icons
+        run: npm run generate-icons
+
+      - name: Verify PWA icons
+        run: npm run verify-icons
+
+      - name: Build Next.js
+        run: npm run build
+
+      - name: Check icons exist in build
+        run: |
+          test -f public/icons/icon-192x192.png || (echo "❌ icon-192x192.png missing from build" && exit 1)
+          test -f public/icons/icon-512x512.png || (echo "❌ icon-512x512.png missing from build" && exit 1)
+          echo "✅ All required PWA icons present in build"
+
+      - name: Upload build artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pwa-icons-${{ matrix.node-version }}
+          path: public/icons/
+          retention-days: 7

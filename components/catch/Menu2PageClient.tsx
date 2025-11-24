@@ -3,6 +3,7 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
 import type { Location, MenuCategory, MenuItem } from "@/lib/types";
 import MenuItemCard from "./MenuItemCard";
+import { formatPhone } from "@/lib/utils/formatPhone";
 
 interface Menu2PageClientProps {
   categories: MenuCategory[];
@@ -18,25 +19,6 @@ function slugify(input: string) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/-+/g, "-")
     .replace(/(^-|-$)/g, "");
-}
-
-function formatPhone(phone: string): string {
-  // Remove all non-digit characters
-  const digits = phone.replace(/\D/g, '');
-  // Format as (XXX) XXX-XXXX
-  if (digits.length === 11 && digits[0] === '1') {
-    // Remove leading 1 for US numbers
-    const areaCode = digits.slice(1, 4);
-    const prefix = digits.slice(4, 7);
-    const lineNumber = digits.slice(7, 11);
-    return `(${areaCode}) ${prefix}-${lineNumber}`;
-  } else if (digits.length === 10) {
-    const areaCode = digits.slice(0, 3);
-    const prefix = digits.slice(3, 6);
-    const lineNumber = digits.slice(6, 10);
-    return `(${areaCode}) ${prefix}-${lineNumber}`;
-  }
-  return phone; // Return original if format doesn't match
 }
 
 export default function Menu2PageClient({ categories, items, locations, imageMap }: Menu2PageClientProps) {

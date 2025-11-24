@@ -17,11 +17,13 @@ if (missingVars.length > 0) {
   );
 }
 
+// TypeScript doesn't know that throw stops execution,
+// so we assert these are defined after validation
 export default defineConfig({
   name: "catch-studio",
   title: "The Catch CMS",
-  projectId,
-  dataset,
+  projectId: projectId!,
+  dataset: dataset!,
   basePath: "/studio",
   plugins: [structureTool()],
   schema: { types: schemaTypes }

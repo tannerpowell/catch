@@ -1,15 +1,16 @@
 'use client';
 
+import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
-export default function OrderConfirmationPage() {
+function OrderConfirmationContent() {
   const searchParams = useSearchParams();
   const orderNumberParam = searchParams.get('orderNumber');
 
   // Validate orderNumber - log if missing for debugging
   const orderNumber = orderNumberParam?.trim();
-  
+
   if (!orderNumber) {
     console.warn('[OrderConfirmation] Missing or invalid orderNumber parameter', {
       received: orderNumberParam,
@@ -74,5 +75,20 @@ export default function OrderConfirmationPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function OrderConfirmationPage() {
+  return (
+    <Suspense fallback={
+      <div className="section" style={{ minHeight: '70vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '64px', marginBottom: '24px' }}>⏳</div>
+          <p>Loading...</p>
+        </div>
+      </div>
+    }>
+      <OrderConfirmationContent />
+    </Suspense>
   );
 }

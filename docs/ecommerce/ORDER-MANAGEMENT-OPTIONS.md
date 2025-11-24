@@ -25,7 +25,7 @@ Orders appear in Sanity Studio automatically. Staff clicks "Orders" in sidebar, 
 ### What It Looks Like
 
 **List View:**
-```
+```text
 Orders
 ─────────────────────────────────────
 🔍 Search orders...
@@ -225,7 +225,7 @@ A custom page on your domain (`thecatch.com/kds`) optimized for kitchen workflow
 ### What It Looks Like
 
 **Desktop View (3 columns):**
-```
+```text
 ┌──────────────────────────────────────────────────────────┐
 │  Kitchen Display - Catch DFW                   🔄 Live   │
 ├──────────────────────────────────────────────────────────┤
@@ -250,7 +250,7 @@ A custom page on your domain (`thecatch.com/kds`) optimized for kitchen workflow
 ```
 
 **Tablet View (single column, swipe between statuses):**
-```
+```text
 ┌──────────────────────────────────────┐
 │  NEW ORDERS              [ → Ready ] │
 ├──────────────────────────────────────┤
@@ -1126,7 +1126,7 @@ KDS_PASSWORD=your-kds-password-at-least-16-characters
 - Analytics and reporting
 
 **They share the same data:**
-```
+```text
 Order Created in Sanity
          ↓
     Both see it
@@ -1140,20 +1140,23 @@ Manager adds note in Sanity → Updates Sanity → Cook sees note in KDS
 
 ## My Recommendation
 
-### **For POC (Now):**
+### For POC (Now)
+
 **Use Sanity Studio only**
 - It already works
 - Perfect for 5-10 orders/day
 - Can test the entire flow
 - Managers handle everything
 
-### **Week 5-8 (After Success):**
+### Week 5-8 (After Success)
+
 **Build basic Kitchen Display**
 - Spend 2-3 days building `/kds`
 - Keep it simple: just 3 columns, big buttons
 - Test at one location
 
-### **Production:**
+### Production
+
 **Polish Kitchen Display + Sanity Studio**
 - Kitchen gets a tablet mounted on wall
 - They use KDS all day

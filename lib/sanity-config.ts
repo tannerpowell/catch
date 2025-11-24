@@ -36,7 +36,13 @@ export function validateSanityEnv(): {
     process.exit(1);
   }
 
-  return { projectId, dataset, token };
+  // TypeScript doesn't know that process.exit() stops execution,
+  // so we assert these are defined after validation
+  return {
+    projectId: projectId!,
+    dataset: dataset!,
+    token: token!,
+  };
 }
 
 /**

@@ -67,6 +67,12 @@ export default function CheckoutPage() {
     e.preventDefault();
     setError(null);
 
+    // CRITICAL: Validate location is present before order creation
+    if (!cartData.location || !cartData.location._id) {
+      setError('Please select a location before placing your order. Your cart items must be from a specific location.');
+      return;
+    }
+
     // Validate form before submission
     if (!validateForm()) {
       return;
@@ -81,19 +87,24 @@ export default function CheckoutPage() {
       // Generate order number
       const orderNumber = `ORD-${Date.now()}-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
 
-      // Create order
+      // Double-check location before creating order (defensive)
+      if (!cartData.location || !cartData.location._id) {
+        throw new Error('Location information is missing. Please add items to your cart from a specific location.');
+      }
+
+      // Create order with validated location
       try {
         addOrder({
           orderNumber,
           status: 'confirmed',
           location: {
-            _ref: cartData.location?._id || '',
+            _ref: cartData.location._id,
             _type: 'reference',
           },
           locationSnapshot: {
-            name: cartData.location?.name || '',
-            address: cartData.location?.addressLine1 || '',
-            phone: cartData.location?.phone || '',
+            name: cartData.location.name,
+            address: cartData.location.addressLine1 || '',
+            phone: cartData.location.phone || '',
           },
           customer: {
             name: customerInfo.name,
@@ -117,7 +128,7 @@ export default function CheckoutPage() {
           })),
           subtotal: cartData.subtotal,
           tax: cartData.tax,
-          taxRate: cartData.location?.taxRate || 0.0825,
+          taxRate: cartData.location.taxRate || 0,
           tip: cartData.tip,
           deliveryFee: cartData.deliveryFee,
           platformFee: 0,
@@ -332,20 +343,20 @@ export default function CheckoutPage() {
               {/* Submit */}
               <button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || !cartData.location || !cartData.location._id}
                 style={{
                   width: '100%',
                   padding: '16px',
-                  backgroundColor: isSubmitting ? '#999' : '#C41E3A',
+                  backgroundColor: (isSubmitting || !cartData.location) ? '#999' : '#C41E3A',
                   color: 'white',
                   border: 'none',
                   borderRadius: '8px',
                   fontSize: '18px',
                   fontWeight: 600,
-                  cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                  cursor: (isSubmitting || !cartData.location) ? 'not-allowed' : 'pointer',
                 }}
               >
-                {isSubmitting ? 'Processing...' : 'Place Order (Demo)'}
+                {isSubmitting ? 'Processing...' : !cartData.location ? 'Select Location First' : 'Place Order (Demo)'}
               </button>
             </form>
           </div>

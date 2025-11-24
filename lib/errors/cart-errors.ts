@@ -86,31 +86,32 @@ export async function captureCartError(
     },
   };
 
+  // TODO: Integrate Sentry error reporting when @sentry/nextjs is installed
   // Try to report to Sentry (client-side)
-  if (typeof window !== 'undefined') {
-    try {
-      // Dynamically import client-side Sentry to avoid bundling on server
-      const { captureException } = await import('@sentry/nextjs');
-      captureException(new Error(code), errorPayload);
-    } catch (e) {
-      // Sentry not initialized or import failed - continue gracefully
-      if (process.env.NODE_ENV === 'development') {
-        console.warn('[CartError] Failed to report to Sentry (client):', e);
-      }
-    }
-  } else {
-    // Server-side error reporting
-    try {
-      // Use server-side Sentry via @sentry/nextjs
-      const { captureException } = await import('@sentry/nextjs');
-      captureException(new Error(code), errorPayload);
-    } catch (e) {
-      // Sentry not initialized or import failed - continue gracefully
-      if (process.env.NODE_ENV === 'development') {
-        console.warn('[CartError] Failed to report to Sentry (server):', e);
-      }
-    }
-  }
+  // if (typeof window !== 'undefined') {
+  //   try {
+  //     // Dynamically import client-side Sentry to avoid bundling on server
+  //     const { captureException } = await import('@sentry/nextjs');
+  //     captureException(new Error(code), errorPayload);
+  //   } catch (e) {
+  //     // Sentry not initialized or import failed - continue gracefully
+  //     if (process.env.NODE_ENV === 'development') {
+  //       console.warn('[CartError] Failed to report to Sentry (client):', e);
+  //     }
+  //   }
+  // } else {
+  //   // Server-side error reporting
+  //   try {
+  //     // Use server-side Sentry via @sentry/nextjs
+  //     const { captureException } = await import('@sentry/nextjs');
+  //     captureException(new Error(code), errorPayload);
+  //   } catch (e) {
+  //     // Sentry not initialized or import failed - continue gracefully
+  //     if (process.env.NODE_ENV === 'development') {
+  //       console.warn('[CartError] Failed to report to Sentry (server):', e);
+  //     }
+  //   }
+  // }
 
   // Always log to console in development
   if (process.env.NODE_ENV === 'development') {

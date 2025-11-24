@@ -4,7 +4,9 @@
   /* Slate palette from shadcn - backgrounds (darker shades) */
   --slate-950: #020617;
   --slate-900: #0f172a;
+  --slate-850: #161f31; /* Custom intermediate shade between 900 and 800 */
   --slate-800: #1e293b;
+  --slate-750: #293646; /* Custom intermediate shade between 800 and 700 */
   --slate-700: #334155;
   --slate-600: #475569;
   --slate-500: #64748b;

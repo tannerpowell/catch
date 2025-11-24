@@ -7,22 +7,52 @@
  * 3. Generates onboarding links
  * 4. Updates Sanity with account IDs and links
  *
- * Run with: npx tsx scripts/setup-stripe-locations.ts
+ * Run with: npx tsx scripts/ecommerce/setup-stripe-locations.ts
  */
 
 import Stripe from 'stripe';
 import { createClient } from '@sanity/client';
 
+// Validate required environment variables upfront
+const requiredEnvVars = {
+  STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
+  NEXT_PUBLIC_SANITY_PROJECT_ID: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+  SANITY_API_TOKEN: process.env.SANITY_API_TOKEN,
+  NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
+};
+
+const missingVars = Object.entries(requiredEnvVars)
+  .filter(([_, value]) => !value)
+  .map(([key]) => key);
+
+if (missingVars.length > 0) {
+  console.error('❌ Missing required environment variables:');
+  missingVars.forEach(varName => {
+    console.error(`   - ${varName}`);
+  });
+  console.error('\nPlease ensure these are set in your .env.local file.');
+  process.exit(1);
+}
+
+// Validate BASE_URL is a fully qualified HTTPS URL
+const baseUrl = requiredEnvVars.NEXT_PUBLIC_BASE_URL;
+if (baseUrl && !baseUrl.startsWith('https://') && !baseUrl.startsWith('http://localhost')) {
+  console.error('❌ NEXT_PUBLIC_BASE_URL must be a fully qualified HTTPS URL');
+  console.error(`   Current value: ${baseUrl}`);
+  console.error('   Example: https://thecatch.com');
+  process.exit(1);
+}
+
 // Initialize Stripe
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+const stripe = new Stripe(requiredEnvVars.STRIPE_SECRET_KEY!, {
   apiVersion: '2024-12-18.acacia',
 });
 
 // Initialize Sanity client
 const sanityClient = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
+  projectId: requiredEnvVars.NEXT_PUBLIC_SANITY_PROJECT_ID!,
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
-  token: process.env.SANITY_API_TOKEN,
+  token: requiredEnvVars.SANITY_API_TOKEN!,
   useCdn: false,
   apiVersion: '2024-01-01',
 });
@@ -119,8 +149,8 @@ async function createConnectedAccounts() {
 
         const accountLink = await stripe.accountLinks.create({
           account: account.id,
-          refresh_url: `${process.env.NEXT_PUBLIC_BASE_URL}/admin/stripe-connect/refresh`,
-          return_url: `${process.env.NEXT_PUBLIC_BASE_URL}/admin/stripe-connect/success`,
+          refresh_url: `${requiredEnvVars.NEXT_PUBLIC_BASE_URL}/admin/stripe-connect/refresh`,
+          return_url: `${requiredEnvVars.NEXT_PUBLIC_BASE_URL}/admin/stripe-connect/success`,
           type: 'account_onboarding',
         });
 

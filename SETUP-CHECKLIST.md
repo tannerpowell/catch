@@ -1,5 +1,15 @@
 # Multi-Location Online Ordering Setup Checklist
 
+⚠️ **CRITICAL SECURITY NOTICE** ⚠️
+**Authentication is currently DISABLED for order management.**
+This must be implemented before production deployment.
+
+**Required Reading:**
+- [Authentication Implementation Guide](./docs/AUTH-IMPLEMENTATION.md)
+- [Pre-Deployment Security Checklist](./docs/SECURITY-CHECKLIST.md) ← **RUN THIS BEFORE DEPLOYING**
+
+---
+
 Complete these steps in order to set up Stripe Connect for all 7 locations.
 
 ---

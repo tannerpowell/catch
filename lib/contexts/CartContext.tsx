@@ -67,9 +67,26 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!isHydrated || !cart) return;
 
-    const subtotal = cart.items.reduce((sum, item) => {
+    // Defensive computation - handle malformed localStorage data
+    const safeItems = Array.isArray(cart.items) ? cart.items : [];
+    const subtotal = safeItems.reduce((sum, item) => {
+      // Validate item structure
+      if (!item || typeof item.price !== 'number' || typeof item.quantity !== 'number') {
+        console.warn('[CartContext] Skipping malformed cart item:', item);
+        return sum;
+      }
+
       const itemTotal = item.price * item.quantity;
-      const modifierTotal = item.modifiers.reduce((modSum, mod) => modSum + (mod.priceDelta * item.quantity), 0);
+
+      // Safely handle modifiers
+      const safeModifiers = Array.isArray(item.modifiers) ? item.modifiers : [];
+      const modifierTotal = safeModifiers.reduce((modSum, mod) => {
+        if (mod && typeof mod.priceDelta === 'number') {
+          return modSum + (mod.priceDelta * item.quantity);
+        }
+        return modSum;
+      }, 0);
+
       return sum + itemTotal + modifierTotal;
     }, 0);
 

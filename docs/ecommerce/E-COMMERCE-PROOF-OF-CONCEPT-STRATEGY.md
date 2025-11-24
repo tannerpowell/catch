@@ -20,17 +20,17 @@ acceptingOrders: boolean        // Temporary on/off switch
 
 ### How to Hide During Development
 
-**Option A: Keep All Locations Disabled (Recommended)**
+### Option A: Keep All Locations Disabled (Recommended)
 
 1. Keep `onlineOrderingEnabled: false` for all locations
 2. Build entire cart/checkout system
 3. Test locally with dev environment
 4. When ready for POC:
    - Set `onlineOrderingEnabled: true` for Post Oak only
-   - Public can only order from Post Oak
+   - Post Oak is the only public-facing location
    - Other locations show "Online ordering coming soon"
 
-**Option B: Server-Side Admin Access (Secure)**
+### Option B: Server-Side Admin Access (Secure)
 
 Never expose admin codes in URLs or client-side code. Instead, use a server-side endpoint with HTTP-only cookies:
 
@@ -282,7 +282,7 @@ To ensure locations actually use it, focus on:
 
 **Simple Kitchen Display:**
 
-```
+```text
 ┌─────────────────────────────────────────────────┐
 │  NEW ORDERS                                     │
 ├─────────────────────────────────────────────────┤
@@ -563,7 +563,7 @@ Track these to evaluate success:
 1. **Use existing Stripe account for POC** - Totally fine, just use test mode
 2. **Feature flags built in** - `onlineOrderingEnabled` per location
 3. **Start with one location** - Post Oak or Denton only
-4. **Keep it simple** - Pickup only, no fancy features yet
+4. **Keep it simple** - Pickup only, defer fancy features
 5. **Make it look good** - Polish matters for adoption
 6. **Easy for staff** - Simple kitchen display is key
 7. **Measure success** - Track orders, feedback, issues

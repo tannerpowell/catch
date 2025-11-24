@@ -451,7 +451,6 @@
   color: var(--color-blue);
   text-decoration: none;
   font-weight: var(--font-weight-medium);
-  display: inline-block;
   min-height: var(--touch-target-min);
   display: flex;
   align-items: center;

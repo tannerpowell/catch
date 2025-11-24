@@ -10,10 +10,30 @@ import dotenv from 'dotenv';
 
 dotenv.config({ path: '.env.local' });
 
+// Validate required environment variables
+const requiredEnvVars = {
+  NEXT_PUBLIC_SANITY_PROJECT_ID: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+  NEXT_PUBLIC_SANITY_DATASET: process.env.NEXT_PUBLIC_SANITY_DATASET,
+  SANITY_API_TOKEN: process.env.SANITY_API_TOKEN,
+};
+
+const missingVars = Object.entries(requiredEnvVars)
+  .filter(([_, value]) => !value)
+  .map(([key]) => key);
+
+if (missingVars.length > 0) {
+  console.error('❌ Missing required environment variables:');
+  missingVars.forEach(varName => {
+    console.error(`   - ${varName}`);
+  });
+  console.error('\nPlease ensure these are set in your .env.local file.');
+  process.exit(1);
+}
+
 const client = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
-  token: process.env.SANITY_API_TOKEN!,
+  projectId: requiredEnvVars.NEXT_PUBLIC_SANITY_PROJECT_ID,
+  dataset: requiredEnvVars.NEXT_PUBLIC_SANITY_DATASET,
+  token: requiredEnvVars.SANITY_API_TOKEN,
   apiVersion: '2024-01-01',
   useCdn: false,
 });

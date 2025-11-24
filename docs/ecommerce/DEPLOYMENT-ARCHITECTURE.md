@@ -3,7 +3,7 @@
 ## The Problem
 
 **Scenario:**
-```
+```text
 You deploy a change to thecatch.com
          ↓
 TypeScript error in marketing page
@@ -28,7 +28,7 @@ Revenue loss + operational chaos 😱
 
 ### Architecture Overview
 
-```
+```text
 ┌─────────────────────────────────────────────────┐
 │  thecatch.com                                   │
 │  Marketing site, about, locations, blog        │
@@ -767,7 +767,7 @@ useEffect(() => {
 
 **If all else fails, have a manual process:**
 
-```
+```text
 ┌─────────────────────────────────────────┐
 │  KDS Goes Down                          │
 │         ↓                               │
@@ -1141,7 +1141,8 @@ vercel --prod --force  # Force redeploy of current git commit
 
 ## Summary & Recommendation
 
-### **POC Phase (Now - Week 4):**
+### POC Phase (Now - Week 4)
+
 **Use:** Option 3 (Same codebase, single deployment)
 ```bash
 # Deploy everything to thecatch.com
@@ -1152,7 +1153,8 @@ vercel --prod
 
 ---
 
-### **Soft Launch (Week 5-8):**
+### Soft Launch (Week 5-8)
+
 **Use:** Option 3 (Same codebase, multiple deployments)
 ```bash
 # Deploy to separate subdomains
@@ -1165,7 +1167,8 @@ vercel --prod --config vercel-kds.json
 
 ---
 
-### **Production (Month 2+):**
+### Production (Month 2+)
+
 **Use:** Option 1 (Separate projects)
 ```
 catch-marketing/  → thecatch.com

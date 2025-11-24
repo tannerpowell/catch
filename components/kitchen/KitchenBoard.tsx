@@ -1,11 +1,11 @@
 'use client';
 
 import { OrderColumn } from './OrderColumn';
-import type { Order } from '@/lib/types';
+import type { Order, OrderStatus } from '@/lib/types';
 
 interface KitchenBoardProps {
   orders: Order[];
-  onOrderUpdate: (orderId: string, newStatus: string) => void;
+  onOrderUpdate: (orderId: string, newStatus: OrderStatus) => void;
 }
 
 export function KitchenBoard({ orders, onOrderUpdate }: KitchenBoardProps) {
@@ -18,7 +18,6 @@ export function KitchenBoard({ orders, onOrderUpdate }: KitchenBoardProps) {
     <div className="kitchen-board">
       <OrderColumn
         title="New Orders"
-        status="confirmed"
         orders={confirmedOrders}
         nextStatus="preparing"
         actionLabel="Start Cooking"
@@ -28,7 +27,6 @@ export function KitchenBoard({ orders, onOrderUpdate }: KitchenBoardProps) {
 
       <OrderColumn
         title="Preparing"
-        status="preparing"
         orders={preparingOrders}
         nextStatus="ready"
         actionLabel="Mark Ready"
@@ -38,7 +36,6 @@ export function KitchenBoard({ orders, onOrderUpdate }: KitchenBoardProps) {
 
       <OrderColumn
         title="Ready"
-        status="ready"
         orders={readyOrders}
         nextStatus="completed"
         actionLabel="Complete"

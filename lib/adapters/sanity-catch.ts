@@ -63,6 +63,7 @@ const HoursSchema = z
   .optional();
 
 const LocationSchema = z.object({
+  _id: z.string(),
   name: z.string(),
   slug: z.string(),
   addressLine1: z.string().nullable().optional(),
@@ -102,7 +103,7 @@ const ItemSchema = z.object({
 });
 
 const qCategories = groq`*[_type=="menuCategory"]|order(position asc){ "slug": slug.current, title, position, description }`;
-const qLocations = groq`*[_type=="location"]{ name, "slug": slug.current, addressLine1, addressLine2, city, state, postalCode, phone, hours, revelUrl, doordashUrl, uberEatsUrl, menuUrl, directionsUrl, "heroImage": heroImage.asset->url }`;
+const qLocations = groq`*[_type=="location"]{ _id, name, "slug": slug.current, addressLine1, addressLine2, city, state, postalCode, phone, hours, revelUrl, doordashUrl, uberEatsUrl, menuUrl, directionsUrl, "heroImage": heroImage.asset->url }`;
 const qItems = groq`*[_type=="menuItem"]{ _id, name, "slug": slug.current, description, "categorySlug": category->slug.current, "image": image.asset->url, badges, "basePrice": coalesce(basePrice, null), "overrides": coalesce(locationOverrides, [])[]{ "loc": location->slug.current, price, available } }`;
 
 function normalizeOverrides(arr: { loc: string; price?: number; available?: boolean }[] | undefined) {
