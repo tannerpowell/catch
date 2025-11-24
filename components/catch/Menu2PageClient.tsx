@@ -83,10 +83,6 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
   // Get user's geolocation
   const { latitude, longitude, loading: geoLoading } = useGeolocation();
 
-  console.log('Menu2PageClient render - selectedSlug:', selectedSlug);
-  console.log('Available locations:', locations.map(l => l.slug));
-  console.log('Selected category:', selectedCategory);
-
   // Auto-select nearest location based on user's geolocation.
   // Only run while we're still on the initial default location.
   useEffect(() => {
@@ -98,7 +94,6 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
     ) {
       const nearestSlug = findNearestLocation(latitude, longitude, locations);
       if (nearestSlug) {
-        console.log('Auto-selecting nearest location:', nearestSlug);
         setSelectedSlug(nearestSlug);
       }
     }
@@ -176,7 +171,6 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
       filterString = `.location-${selectedSlug}`;
     }
 
-    console.log('Filtering with:', filterString);
     mixitupRef.current.filter(filterString);
   }, [selectedSlug, selectedCategory]);
 
@@ -205,8 +199,10 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
 
     preloadedImagesRef.current.add(src);
 
-    // TODO: Track preload events for analytics
-    // trackImagePreload({ src, category: selectedCategory, location: selectedSlug });
+    // Track preload events for analytics (can be extended with external tracking service)
+    if (process.env.NODE_ENV === 'development') {
+      console.debug('[Image Preload]', { src, category: selectedCategory, location: selectedSlug });
+    }
   };
 
   // Phase 1: Preload first 12 items immediately (above the fold for Popular + Denton)
@@ -224,7 +220,7 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
     });
   }, [selectedSlug, selectedCategory, allItemsWithMeta]);
 
-  // Phase 2: Create IntersectionObserver once (only recreates when allItemsWithMeta changes)
+  // Phase 2: Create IntersectionObserver once on mount
   useEffect(() => {
     if (typeof window === 'undefined' || !containerRef.current) return;
 
@@ -253,7 +249,15 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
       observer.disconnect();
       observerRef.current = null;
     };
-  }, [allItemsWithMeta]);
+  }, []); // Only create once on mount
+
+  // Re-observe when DOM updates (mixitup filtering changes)
+  useEffect(() => {
+    if (!observerRef.current || !containerRef.current) return;
+
+    const cards = containerRef.current.querySelectorAll('.mix-item');
+    cards.forEach(card => observerRef.current!.observe(card));
+  }, [selectedSlug, selectedCategory]);
 
   // Phase 2b: Update itemImageMap when filters change (reuses observer)
   useEffect(() => {
@@ -456,10 +460,7 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
           {locations.filter(loc => ['denton', 'coit-campbell', 'garland'].includes(loc.slug)).map(location => (
             <button
               key={location.slug}
-              onClick={() => {
-                console.log('Button clicked:', location.slug);
-                setSelectedSlug(location.slug);
-              }}
+              onClick={() => setSelectedSlug(location.slug)}
               className="location-filter-button filter-button"
               data-active={selectedSlug === location.slug}
             >
@@ -479,10 +480,7 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
           {locations.filter(loc => !['denton', 'coit-campbell', 'garland'].includes(loc.slug)).map(location => (
             <button
               key={location.slug}
-              onClick={() => {
-                console.log('Button clicked:', location.slug);
-                setSelectedSlug(location.slug);
-              }}
+              onClick={() => setSelectedSlug(location.slug)}
               className="location-filter-button filter-button"
               data-active={selectedSlug === location.slug}
             >
@@ -613,7 +611,9 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
 
               // Guard against undefined location (should not happen in practice, but prevent runtime crashes)
               if (!selectedLocation) {
-                console.warn(`[Menu2PageClient] No location available for item "${item.name}" - locations array is empty`);
+                if (process.env.NODE_ENV === 'development') {
+                  console.warn(`[Menu2PageClient] No location available for item "${item.name}" - locations array is empty`);
+                }
                 return null;
               }
 
