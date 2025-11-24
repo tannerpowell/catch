@@ -123,6 +123,7 @@ export type PaymentStatus = "pending" | "processing" | "paid" | "failed" | "refu
 export type OrderType = "pickup" | "delivery" | "dine-in";
 
 export interface OrderItem {
+  _key?: string; // Sanity array item key
   menuItem: { _ref: string; _type: "reference" };
   menuItemSnapshot: {
     name: string;
