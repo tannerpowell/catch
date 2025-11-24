@@ -1,12 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@sanity/client';
+import { timingSafeEqual } from 'crypto';
+
+// Validate required environment variables at module load
+const SANITY_PROJECT_ID = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
+const SANITY_DATASET = process.env.NEXT_PUBLIC_SANITY_DATASET;
+const SANITY_WRITE_TOKEN = process.env.SANITY_WRITE_TOKEN;
+
+if (!SANITY_PROJECT_ID || !SANITY_DATASET || !SANITY_WRITE_TOKEN) {
+  const missing: string[] = [];
+  if (!SANITY_PROJECT_ID) missing.push('NEXT_PUBLIC_SANITY_PROJECT_ID');
+  if (!SANITY_DATASET) missing.push('NEXT_PUBLIC_SANITY_DATASET');
+  if (!SANITY_WRITE_TOKEN) missing.push('SANITY_WRITE_TOKEN');
+  
+  throw new Error(
+    `Missing required environment variables for order status API: ${missing.join(', ')}. ` +
+    'Please ensure these are set in your environment configuration.'
+  );
+}
 
 const sanityClient = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
+  projectId: SANITY_PROJECT_ID,
+  dataset: SANITY_DATASET,
   useCdn: false,
   apiVersion: '2024-01-01',
-  token: process.env.SANITY_WRITE_TOKEN, // Need write token
+  token: SANITY_WRITE_TOKEN,
 });
 
 /**
@@ -39,9 +57,30 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const token = authHeader.substring(7); // Remove 'Bearer ' prefix
+    const token = authHeader.substring(7).trim(); // Remove 'Bearer ' prefix and trim whitespace
 
-    if (token !== apiKey) {
+    // Use timing-safe comparison to prevent timing attacks
+    try {
+      const tokenBuffer = Buffer.from(token, 'utf8');
+      const apiKeyBuffer = Buffer.from(apiKey, 'utf8');
+
+      // If lengths differ, treat as invalid (timingSafeEqual requires equal lengths)
+      if (tokenBuffer.length !== apiKeyBuffer.length) {
+        return NextResponse.json(
+          { error: 'Invalid API key' },
+          { status: 401 }
+        );
+      }
+
+      if (!timingSafeEqual(tokenBuffer, apiKeyBuffer)) {
+        return NextResponse.json(
+          { error: 'Invalid API key' },
+          { status: 401 }
+        );
+      }
+    } catch (comparisonError) {
+      // Handle any buffer conversion errors
+      console.error('Error during token comparison:', comparisonError);
       return NextResponse.json(
         { error: 'Invalid API key' },
         { status: 401 }

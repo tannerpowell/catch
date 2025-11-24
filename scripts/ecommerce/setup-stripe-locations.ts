@@ -167,8 +167,15 @@ async function createConnectedAccounts() {
 
         console.log(`✅ Onboarding link created`);
 
-        // Generate Express dashboard link
-        const loginLink = await stripe.accounts.createLoginLink(account.id);
+        // Generate Express dashboard link (optional - may fail for newly created accounts)
+        let loginLinkUrl: string | undefined;
+        try {
+          const loginLink = await stripe.accounts.createLoginLink(account.id);
+          loginLinkUrl = loginLink.url;
+        } catch (loginLinkError) {
+          console.warn(`⚠️  Could not generate login link for account ${account.id}: ${loginLinkError instanceof Error ? loginLinkError.message : String(loginLinkError)}`);
+          console.log(`   This is normal for newly created accounts - the link can be generated later`);
+        }
 
         // Update Sanity with Stripe account details
         console.log(`💾 Updating Sanity...`);
@@ -178,7 +185,7 @@ async function createConnectedAccounts() {
           .set({
             stripeAccountId: account.id,
             stripeOnboardingLink: accountLink.url,
-            stripeDashboardLink: loginLink.url,
+            stripeDashboardLink: loginLinkUrl,
             stripeOnboardingComplete: false,
             stripeChargesEnabled: false,
             stripePayoutsEnabled: false,

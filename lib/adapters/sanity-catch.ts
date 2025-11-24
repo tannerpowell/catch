@@ -63,6 +63,7 @@ const HoursSchema = z
   .optional();
 
 const LocationSchema = z.object({
+  _id: z.string(),
   name: z.string(),
   slug: z.string(),
   addressLine1: z.string().nullable().optional(),
@@ -102,7 +103,7 @@ const ItemSchema = z.object({
 });
 
 const qCategories = groq`*[_type=="menuCategory"]|order(position asc){ "slug": slug.current, title, position, description }`;
-const qLocations = groq`*[_type=="location"]{ name, "slug": slug.current, addressLine1, addressLine2, city, state, postalCode, phone, hours, revelUrl, doordashUrl, uberEatsUrl, menuUrl, directionsUrl, "heroImage": heroImage.asset->url }`;
+const qLocations = groq`*[_type=="location"]{ _id, name, "slug": slug.current, addressLine1, addressLine2, city, state, postalCode, phone, hours, revelUrl, doordashUrl, uberEatsUrl, menuUrl, directionsUrl, "heroImage": heroImage.asset->url }`;
 const qItems = groq`*[_type=="menuItem"]{ _id, name, "slug": slug.current, description, "categorySlug": category->slug.current, "image": image.asset->url, badges, "basePrice": coalesce(basePrice, null), "overrides": coalesce(locationOverrides, [])[]{ "loc": location->slug.current, price, available } }`;
 
 function normalizeOverrides(arr: { loc: string; price?: number; available?: boolean }[] | undefined) {
@@ -147,7 +148,9 @@ const getLocationsCached = cache(async (): Promise<Location[]> => {
     const raw = await client.fetch(qLocations);
     const parsed = z.array(LocationSchema).parse(raw);
     return parsed.map(l => ({
-      ...l,
+      _id: l._id,
+      name: l.name,
+      slug: l.slug,
       addressLine1: l.addressLine1 ?? "",
       addressLine2: l.addressLine2 ?? undefined,
       city: l.city ?? "",
@@ -210,13 +213,15 @@ export const adapter: BrandAdapter = {
     }
     try {
       const one = await client.fetch(
-        groq`*[_type=="location" && slug.current==$s][0]{ name, "slug": slug.current, addressLine1, addressLine2, city, state, postalCode, phone, hours, menuUrl, directionsUrl }`,
+        groq`*[_type=="location" && slug.current==$s][0]{ _id, name, "slug": slug.current, addressLine1, addressLine2, city, state, postalCode, phone, hours, menuUrl, directionsUrl }`,
         { s: slug }
       );
       if (!one) return undefined;
       const parsed = LocationSchema.parse(one);
       return {
-        ...parsed,
+        _id: parsed._id,
+        name: parsed.name,
+        slug: parsed.slug,
         addressLine1: parsed.addressLine1 ?? '',
         city: parsed.city ?? '',
         state: parsed.state ?? '',
@@ -228,7 +233,9 @@ export const adapter: BrandAdapter = {
         uberEatsUrl: parsed.uberEatsUrl ?? undefined,
         menuUrl: parsed.menuUrl ?? undefined,
         directionsUrl: parsed.directionsUrl ?? undefined,
-        heroImage: parsed.heroImage ?? fallbackHero(parsed.slug)
+        heroImage: parsed.heroImage ?? fallbackHero(parsed.slug),
+        openToday: false,
+        hours: parsed.hours
       };
     } catch (error) {
       console.warn("Falling back to demo location", slug, error instanceof Error ? error.message : error);

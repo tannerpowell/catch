@@ -6,7 +6,7 @@ import { defineType, defineField } from "sanity";
  * @param value - The phone number string to validate
  * @returns `true` if the phone number is valid; otherwise an error message describing the violation (invalid characters, too few digits, or too many digits)
  */
-function validatePhoneNumber(value: string): boolean | string {
+function validatePhoneNumber(value: string | undefined): boolean | string {
   if (!value || typeof value !== "string") {
     return "Phone number is required";
   }
@@ -107,7 +107,13 @@ export default defineType({
           type: "string",
           title: "Phone",
           description: "International phone number (e.g., +1-555-123-4567 or (555) 123-4567)",
-          validation: (rule) => rule.required().custom((value) => validatePhoneNumber(value))
+          validation: (rule) => rule.required().custom((value: string | undefined) => {
+            const result = validatePhoneNumber(value);
+            // Sanity expects true or string error message, not false
+            if (result === true) return true;
+            if (typeof result === 'string') return result;
+            return 'Invalid phone number';
+          })
         }),
         defineField({
           name: "marketingOptIn",

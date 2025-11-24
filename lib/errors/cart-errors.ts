@@ -93,31 +93,37 @@ export async function captureCartError(
     },
   };
 
-  // Try to report to Sentry (client-side)
-  if (typeof window !== 'undefined') {
-    try {
-      // Dynamically import client-side Sentry to avoid bundling on server
-      const { captureException } = await import('@sentry/nextjs');
-      captureException(new Error(code), errorPayload);
-    } catch (e) {
-      // Sentry not initialized or import failed - continue gracefully
-      if (process.env.NODE_ENV === 'development') {
-        console.warn('[CartError] Failed to report to Sentry (client):', e);
-      }
-    }
-  } else {
-    // Server-side error reporting
-    try {
-      // Use server-side Sentry via @sentry/nextjs
-      const { captureException } = await import('@sentry/nextjs');
-      captureException(new Error(code), errorPayload);
-    } catch (e) {
-      // Sentry not initialized or import failed - continue gracefully
-      if (process.env.NODE_ENV === 'development') {
-        console.warn('[CartError] Failed to report to Sentry (server):', e);
-      }
-    }
-  }
+  // Sentry reporting disabled - @sentry/nextjs not installed
+  // To enable error reporting:
+  // 1. Run: npm install @sentry/nextjs
+  // 2. Configure Sentry in your app
+  // 3. Uncomment the code below
+
+  // // Try to report to Sentry (client-side)
+  // if (typeof window !== 'undefined') {
+  //   try {
+  //     // Dynamically import client-side Sentry to avoid bundling on server
+  //     const { captureException } = await import('@sentry/nextjs');
+  //     captureException(new Error(code), errorPayload);
+  //   } catch (e) {
+  //     // Sentry not initialized or import failed - continue gracefully
+  //     if (process.env.NODE_ENV === 'development') {
+  //       console.warn('[CartError] Failed to report to Sentry (client):', e);
+  //     }
+  //   }
+  // } else {
+  //   // Server-side error reporting
+  //   try {
+  //     // Use server-side Sentry via @sentry/nextjs
+  //     const { captureException } = await import('@sentry/nextjs');
+  //     captureException(new Error(code), errorPayload);
+  //   } catch (e) {
+  //     // Sentry not initialized or import failed - continue gracefully
+  //     if (process.env.NODE_ENV === 'development') {
+  //       console.warn('[CartError] Failed to report to Sentry (server):', e);
+  //     }
+  //   }
+  // }
 
   // Always log to console in development
   if (process.env.NODE_ENV === 'development') {

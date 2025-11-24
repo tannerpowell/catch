@@ -36,7 +36,12 @@ export function validateSanityEnv(): {
     process.exit(1);
   }
 
-  return { projectId, dataset, token };
+  // TypeScript assertion - we've validated these are defined
+  return {
+    projectId: projectId as string,
+    dataset: dataset as string,
+    token: token as string
+  };
 }
 
 /**

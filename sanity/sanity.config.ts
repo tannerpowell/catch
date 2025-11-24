@@ -20,8 +20,8 @@ if (missingVars.length > 0) {
 export default defineConfig({
   name: "catch-studio",
   title: "The Catch CMS",
-  projectId,
-  dataset,
+  projectId: projectId as string,
+  dataset: dataset as string,
   basePath: "/studio",
   plugins: [structureTool()],
   schema: { types: schemaTypes }
