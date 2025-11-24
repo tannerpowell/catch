@@ -31,6 +31,7 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
         const savedOrders = localStorage.getItem(ORDERS_STORAGE_KEY);
         if (savedOrders) {
           const parsed = JSON.parse(savedOrders);
+          // eslint-disable-next-line react-hooks/set-state-in-effect
           setOrders(parsed);
         }
       } catch (e) {
