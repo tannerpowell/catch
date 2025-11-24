@@ -32,11 +32,18 @@ function buildDfwImageMap(): ImageMap {
 
 export default async function Menu2Page() {
   const brand = getBrand();
-  const [categories, items, locations] = await Promise.all([
+  const [categories, items, rawLocations] = await Promise.all([
     brand.getCategories(),
     brand.getItems(),
     brand.getLocations()
   ]);
+
+  // Sort locations with Denton first (default), then alphabetically
+  const locations = [...rawLocations].sort((a, b) => {
+    if (a.slug === 'denton') return -1;
+    if (b.slug === 'denton') return 1;
+    return a.name.localeCompare(b.name);
+  });
 
   const dfwImageMap = buildDfwImageMap();
 

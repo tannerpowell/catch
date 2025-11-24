@@ -62,6 +62,7 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
   const [colorTheme, setColorTheme] = useState<'blue' | 'cream'>('blue');
   const mixitupRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [preloadedImages, setPreloadedImages] = useState<Set<string>>(new Set());
 
   console.log('Menu2PageClient render - selectedSlug:', selectedSlug);
   console.log('Available locations:', locations.map(l => l.slug));
@@ -142,6 +143,64 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
     console.log('Filtering with:', filterString);
     mixitupRef.current.filter(filterString);
   }, [selectedSlug, selectedCategory]);
+
+  // Smart image preloading with analytics-ready infrastructure
+  useEffect(() => {
+    // Helper to preload Next.js optimized image
+    const preloadImage = (src: string) => {
+      if (!src || preloadedImages.has(src)) return;
+
+      const optimizedUrl = `/_next/image?url=${encodeURIComponent(src)}&w=640&q=75`;
+      const link = document.createElement('link');
+      link.rel = 'preload';
+      link.as = 'image';
+      link.href = optimizedUrl;
+      document.head.appendChild(link);
+
+      setPreloadedImages(prev => new Set(prev).add(src));
+
+      // TODO: Track preload events for analytics
+      // trackImagePreload({ src, category: selectedCategory, location: selectedSlug });
+    };
+
+    // Phase 1: Preload first 12 items immediately (above the fold for Popular + Denton)
+    const visibleItems = allItemsWithMeta
+      .filter(item => {
+        const availableAtLocation = isItemAvailableAtLocation(item, selectedSlug);
+        const matchesCategory = !selectedCategory || item.categorySlug === selectedCategory;
+        return availableAtLocation && matchesCategory;
+      })
+      .slice(0, 12);
+
+    visibleItems.forEach(item => {
+      if (item.image) preloadImage(item.image);
+    });
+
+    // Phase 2: Intersection Observer for remaining items
+    if (typeof window === 'undefined' || !containerRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const img = entry.target.querySelector('img');
+            const src = img?.getAttribute('src');
+            if (src) {
+              preloadImage(src);
+              observer.unobserve(entry.target);
+            }
+          }
+        });
+      },
+      { rootMargin: '200px' } // Start loading 200px before item enters viewport
+    );
+
+    // Observe all menu item cards
+    const cards = containerRef.current.querySelectorAll('.mix-item');
+    cards.forEach(card => observer.observe(card));
+
+    return () => observer.disconnect();
+  }, [selectedSlug, selectedCategory, allItemsWithMeta, preloadedImages]);
 
   const selectedLocation = selectedSlug ? locations.find(l => l.slug === selectedSlug) : undefined;
 
