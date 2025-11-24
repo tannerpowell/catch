@@ -8,6 +8,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 import { RouteMarker } from "@/components/RouteMarker";
 import { Providers } from "./providers";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -80,6 +81,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ThemeToggle />
         </Providers>
         <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   );
