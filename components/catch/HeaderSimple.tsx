@@ -3,6 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
+import { ShoppingCart } from 'lucide-react';
+import { useCart } from '@/lib/contexts/CartContext';
+import { CartDrawer } from '@/components/cart/CartDrawer';
 
 const navLinks = [
   { href: "/menu", label: "menu" },
@@ -10,11 +13,14 @@ const navLinks = [
   { href: "/locations", label: "locations" },
   // { href: "/gift-cards", label: "gift cards" },
   // { href: "/our-story", label: "our story" },
-  { href: "/private-events", label: "events" }
+  { href: "/private-events", label: "events" },
+  { href: "/kitchen", label: "iPad" }
 ] as const;
 
 export default function HeaderSimple() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
+  const { itemCount } = useCart();
   const hasAnimatedRef = useRef(false);
 
   useEffect(() => {
@@ -97,6 +103,16 @@ export default function HeaderSimple() {
               </li>
             ))}
           </ul>
+          <button
+            onClick={() => setCartOpen(true)}
+            className="nav-cart-button"
+            aria-label="Open cart"
+          >
+            <ShoppingCart size={20} />
+            {itemCount > 0 && (
+              <span className="nav-cart-badge">{itemCount}</span>
+            )}
+          </button>
         </div>
 
         <div className="header-icon-wrapper">
@@ -253,6 +269,9 @@ export default function HeaderSimple() {
           <div className="texture-overlay"></div>
         </div>
       </div>
+
+      {/* Cart Drawer */}
+      <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} />
     </>
   );
 }

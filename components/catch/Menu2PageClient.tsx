@@ -175,13 +175,19 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
   };
 
   return (
-    <div style={{ backgroundColor: colorTheme === 'cream' ? '#FDF8ED' : 'white' }}>
+    <div className="bg-white dark:bg-slate-950">
       <style jsx>{`
         .filter-section-primary {
           background-color: ${themeColors.primary};
         }
+        .dark .filter-section-primary {
+          background-color: var(--slate-900);
+        }
         .filter-section-secondary {
           background-color: ${themeColors.secondary};
+        }
+        .dark .filter-section-secondary {
+          background-color: var(--slate-800);
         }
         .filter-button {
           background-color: ${themeColors.buttonBg};
@@ -189,19 +195,38 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
           border: 1px solid ${themeColors.buttonBorder};
           transition: all 0.2s ease;
         }
+        .dark .filter-button {
+          background-color: var(--slate-700);
+          color: var(--slate-100);
+          border-color: var(--slate-600);
+        }
         .filter-button:hover {
           background-color: ${themeColors.buttonHoverBg};
           border-color: ${themeColors.buttonHoverBorder};
+        }
+        .dark .filter-button:hover {
+          background-color: var(--slate-600);
+          border-color: var(--slate-500);
         }
         .location-filter-button[data-active="true"] {
           background-color: #333333;
           color: white;
           border-color: #1a1a1a;
         }
+        .dark .location-filter-button[data-active="true"] {
+          background-color: var(--slate-600);
+          color: var(--slate-50);
+          border-color: var(--slate-500);
+        }
         .category-filter-button[data-active="true"] {
           background-color: ${themeColors.activeButtonBg};
           color: white;
           border-color: ${themeColors.activeButtonBorder};
+        }
+        .dark .category-filter-button[data-active="true"] {
+          background-color: var(--slate-600);
+          color: var(--slate-50);
+          border-color: var(--slate-500);
         }
         .theme-toggle-button {
           background-color: transparent;
@@ -216,9 +241,17 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
           cursor: pointer;
           transition: all 0.2s ease;
         }
+        .dark .theme-toggle-button {
+          color: var(--slate-200);
+          border-color: var(--slate-600);
+        }
         .theme-toggle-button:hover {
           background-color: rgba(255, 255, 255, 0.1);
           border-color: rgba(255, 255, 255, 0.5);
+        }
+        .dark .theme-toggle-button:hover {
+          background-color: var(--slate-700);
+          border-color: var(--slate-500);
         }
         .desktop-line-break {
           display: none;
@@ -246,6 +279,11 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
           box-shadow: 0 2px 3px rgba(0, 0, 0, 0.09);
           z-index: 10;
           transform: rotate(5deg);
+        }
+        .dark .price-badge {
+          background-color: var(--slate-700);
+          color: var(--slate-50);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
         .price-badge .dollar-sign {
           font-size: 23px;
@@ -279,10 +317,8 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
             fontSize: '12px',
             fontWeight: 500,
             letterSpacing: '2px',
-            textTransform: 'uppercase',
-            color: 'white',
-            opacity: 0.8
-          }}>DFW:</span>
+            textTransform: 'uppercase'
+          }} className="text-white dark:text-slate-300 opacity-80">DFW:</span>
           {locations.filter(loc => ['denton', 'coit-campbell', 'garland'].includes(loc.slug)).map(location => (
             <button
               key={location.slug}
@@ -304,10 +340,8 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
             fontSize: '12px',
             fontWeight: 500,
             letterSpacing: '2px',
-            textTransform: 'uppercase',
-            color: 'white',
-            opacity: 0.8
-          }}>HOUSTON:</span>
+            textTransform: 'uppercase'
+          }} className="text-white dark:text-slate-300 opacity-80">HOUSTON:</span>
           {locations.filter(loc => !['denton', 'coit-campbell', 'garland'].includes(loc.slug)).map(location => (
             <button
               key={location.slug}
@@ -329,19 +363,17 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
             fontSize: '12px',
             fontWeight: 500,
             letterSpacing: '2px',
-            color: 'white',
-            opacity: 0.9,
             textAlign: 'center',
             marginTop: '8px'
-          }}>
+          }} className="text-white dark:text-slate-200 opacity-90">
             <a
               href={`https://maps.apple.com/?address=${encodeURIComponent(
                 `${selectedLocation.addressLine1}, ${selectedLocation.city}, ${selectedLocation.state} ${selectedLocation.postalCode}`
               )}`}
               target="_blank"
               rel="noopener noreferrer"
+              className="hover:opacity-100 transition-opacity"
               style={{
-                color: 'inherit',
                 textDecoration: 'none',
                 cursor: 'pointer'
               }}
@@ -353,8 +385,8 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
                 &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;
                 <a
                   href={`tel:${selectedLocation.phone}`}
+                  className="hover:opacity-100 transition-opacity"
                   style={{
-                    color: 'inherit',
                     textDecoration: 'none',
                     cursor: 'pointer'
                   }}
@@ -444,10 +476,19 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
               });
 
               const itemPrice = getItemPrice(item, selectedSlug);
+              const selectedLocation = locations.find(l => l.slug === selectedSlug) || locations[0];
+
+              // Guard against undefined location (should not happen in practice, but prevent runtime crashes)
+              if (!selectedLocation) {
+                console.warn(`[Menu2PageClient] No location available for item "${item.name}" - locations array is empty`);
+                return null;
+              }
 
               return (
                 <div key={item.id} className={classes.join(' ')} style={{ position: 'relative' }}>
                   <MenuItemCard
+                    menuItem={{ ...item, price: itemPrice }}
+                    location={selectedLocation}
                     name={item.name}
                     description={item.description}
                     price={itemPrice}

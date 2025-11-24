@@ -1,22 +1,35 @@
-/* Dark Theme - Slate Blue Palette */
+/* Dark Theme - shadcn Slate Palette */
 
 :root.dark {
-  /* Dark slate blue backgrounds */
-  --color--dark-slate-deepest: #0f1729;
-  --color--dark-slate-deep: #1a2332;
-  --color--dark-slate-base: #1e2936;
-  --color--dark-slate-mid: #283544;
-  --color--dark-slate-light: #374557;
+  /* Slate palette from shadcn - backgrounds (darker shades) */
+  --slate-950: #020617;
+  --slate-900: #0f172a;
+  --slate-800: #1e293b;
+  --slate-700: #334155;
+  --slate-600: #475569;
+  --slate-500: #64748b;
+  --slate-400: #94a3b8;
+  --slate-300: #cbd5e1;
+  --slate-200: #e2e8f0;
+  --slate-100: #f1f5f9;
+  --slate-50: #f8fafc;
+
+  /* Primary backgrounds using Slate */
+  --color--dark-slate-deepest: var(--slate-950);
+  --color--dark-slate-deep: var(--slate-900);
+  --color--dark-slate-base: var(--slate-800);
+  --color--dark-slate-mid: var(--slate-700);
+  --color--dark-slate-light: var(--slate-600);
 
   /* Accent colors adjusted for dark mode */
   --color--chile-rojo-dark: #ff6b5a;
   --color--claro-maiz-dark: oklch(0.80 0.05 240);
-  --color--tierra-reca-dark: #e8ddd0;
+  --color--tierra-reca-dark: var(--slate-300);
 
-  /* Text colors */
-  --text-primary: rgba(255, 255, 255, 0.95);
-  --text-secondary: rgba(255, 255, 255, 0.75);
-  --text-tertiary: rgba(255, 255, 255, 0.55);
+  /* Text colors using Slate */
+  --text-primary: var(--slate-50);
+  --text-secondary: var(--slate-300);
+  --text-tertiary: var(--slate-400);
 
   /* Overrides */
   color-scheme: dark;
@@ -24,45 +37,131 @@
 
 /* Base elements */
 .dark {
-  background-color: var(--color--dark-slate-deepest);
-  color: var(--text-primary);
+  background-color: var(--slate-900);
+  color: var(--slate-50);
 }
 
 .dark body {
-  background-color: var(--color--dark-slate-deepest);
-  color: var(--text-primary);
+  background-color: var(--slate-900);
+  color: var(--slate-50);
+}
+
+/* Typography and text elements */
+.dark .catch-paper-bg {
+  background-color: var(--slate-900);
+}
+
+.dark .catch-eyebrow {
+  color: var(--color--chile-rojo-dark);
+}
+
+.dark .catch-heading-1,
+.dark .catch-heading-2,
+.dark .catch-heading-3,
+.dark .h1,
+.dark .h2,
+.dark .h3 {
+  color: var(--slate-50);
+}
+
+.dark .catch-body {
+  color: var(--slate-300);
+}
+
+.dark .catch-body-muted {
+  color: var(--slate-400);
+}
+
+/* Category pills */
+.dark .catch-category-row {
+  background-color: var(--slate-900);
+  border-bottom: 1px solid var(--slate-700);
+}
+
+.dark .catch-category-pill {
+  color: var(--slate-300);
+  border-bottom-color: transparent;
+}
+
+.dark .catch-category-pill:hover {
+  color: var(--slate-100);
+  border-bottom-color: var(--color--chile-rojo-dark);
+}
+
+.dark .catch-category-pill.active {
+  color: var(--slate-50);
+  border-bottom-color: var(--color--chile-rojo-dark);
+}
+
+/* Select dropdowns */
+.dark .catch-location-select,
+.dark select {
+  background-color: var(--slate-800);
+  border-color: var(--slate-700);
+  color: var(--slate-50);
+}
+
+.dark .catch-location-select:focus,
+.dark select:focus {
+  border-color: var(--slate-600);
+  background-color: var(--slate-700);
+}
+
+/* Section backgrounds */
+.dark .section {
+  background-color: var(--slate-900);
+}
+
+/* Home page elements */
+.dark .subhead {
+  color: var(--slate-300);
+}
+
+.dark .paragraph,
+.dark .paragraph-small,
+.dark .paragraph-large {
+  color: var(--slate-300);
+}
+
+.dark .arch-image-wrapper {
+  background-color: var(--slate-800);
 }
 
 /* Header */
-.dark .header {
-  background-color: var(--color--dark-slate-base);
-  border-bottom: 1px solid var(--color--dark-slate-mid);
+.dark .header,
+.dark .site-header {
+  background-color: var(--slate-900);
+  border-bottom: 1px solid var(--slate-800);
 }
 
-.dark .catch-nav-link {
-  color: var(--text-primary);
+.dark .catch-nav-link,
+.dark .nav-link {
+  color: var(--slate-50);
 }
 
-.dark .catch-nav-link:hover {
+.dark .catch-nav-link:hover,
+.dark .nav-link:hover {
   color: var(--color--chile-rojo-dark);
 }
 
 /* Menu icon */
-.dark .menu-icon span {
-  background-color: var(--text-primary);
+.dark .menu-icon span,
+.dark .hamburger-btn {
+  background-color: var(--slate-50);
+  color: var(--slate-50);
 }
 
 /* Full page menu */
 .dark .full-page-menu {
-  background-color: var(--color--dark-slate-deepest);
+  background-color: var(--slate-900);
 }
 
 .dark .full-page-nav-left {
-  background-color: var(--color--dark-slate-deep);
+  background-color: var(--slate-900);
 }
 
 .dark .full-page-nav-right {
-  background-color: var(--color--dark-slate-base);
+  background-color: var(--slate-800);
 }
 
 .dark .texture-overlay {
@@ -91,51 +190,56 @@
 
 /* Hero sections */
 .dark .hero-section {
-  background-color: var(--color--dark-slate-base);
+  background-color: var(--slate-900);
 }
 
 .dark .hero-overlay {
   background: linear-gradient(
     135deg,
-    rgba(15, 23, 41, 0.85) 0%,
-    rgba(30, 41, 54, 0.75) 100%
+    rgba(15, 23, 42, 0.85) 0%,
+    rgba(30, 41, 59, 0.75) 100%
   );
 }
 
 /* Cards */
 .dark .card,
 .dark .catch-menu-card {
-  background-color: var(--color--dark-slate-base);
-  border-color: var(--color--dark-slate-mid);
+  background-color: transparent;
+  border-color: var(--slate-700);
 }
 
 .dark .catch-menu-card:hover {
-  background-color: var(--color--dark-slate-mid);
-  border-color: var(--color--dark-slate-light);
+  transform: translateY(-2px);
+  opacity: 0.9;
+}
+
+.dark .catch-menu-card-image {
+  background-color: var(--slate-800);
 }
 
 .dark .catch-menu-card-title {
-  color: var(--text-primary);
+  color: var(--slate-50);
 }
 
 .dark .catch-menu-card-description {
-  color: var(--text-secondary);
+  color: var(--slate-300);
 }
 
 .dark .catch-menu-card-price {
-  color: var(--color--claro-maiz-dark);
+  color: var(--slate-300);
+  font-weight: 600;
 }
 
 /* Badges */
 .dark .catch-badge {
-  background-color: var(--color--dark-slate-light);
-  color: var(--text-primary);
+  background-color: var(--slate-700);
+  color: var(--slate-50);
 }
 
 /* Buttons */
 .dark .button {
-  background-color: var(--color--dark-slate-light);
-  color: var(--text-primary);
+  background-color: var(--slate-700);
+  color: var(--slate-50);
 }
 
 .dark .button:hover {
@@ -143,33 +247,43 @@
 }
 
 .dark .button.crema-fresca-small {
-  background-color: var(--color--dark-slate-mid);
-  border-color: var(--color--dark-slate-light);
+  background-color: var(--slate-700);
+  border-color: var(--slate-600);
 }
 
 .dark .button.crema-fresca-small:hover {
-  background-color: var(--color--dark-slate-light);
+  background-color: var(--slate-600);
+}
+
+.dark .btn--outline {
+  border-color: var(--slate-600);
+  color: var(--slate-300);
+}
+
+.dark .btn--outline:hover {
+  border-color: var(--slate-400);
+  color: var(--slate-100);
 }
 
 /* Forms */
 .dark input,
 .dark textarea,
 .dark select {
-  background-color: var(--color--dark-slate-base);
-  border-color: var(--color--dark-slate-mid);
-  color: var(--text-primary);
+  background-color: var(--slate-800);
+  border-color: var(--slate-700);
+  color: var(--slate-50);
 }
 
 .dark input:focus,
 .dark textarea:focus,
 .dark select:focus {
   border-color: var(--color--chile-rojo-dark);
-  background-color: var(--color--dark-slate-mid);
+  background-color: var(--slate-700);
 }
 
 .dark input::placeholder,
 .dark textarea::placeholder {
-  color: var(--text-tertiary);
+  color: var(--slate-400);
 }
 
 /* Links */
@@ -188,57 +302,482 @@
 
 /* Location cards */
 .dark .locationCard {
-  background-color: var(--color--dark-slate-base);
-  border-color: var(--color--dark-slate-mid);
+  background-color: var(--slate-800);
+  border-color: var(--slate-700);
 }
 
 /* Menu categories */
 .dark .catch-category-button {
-  background-color: var(--color--dark-slate-base);
-  color: var(--text-secondary);
-  border-color: var(--color--dark-slate-mid);
+  background-color: var(--slate-800);
+  color: var(--slate-300);
+  border-color: var(--slate-700);
 }
 
 .dark .catch-category-button:hover,
 .dark .catch-category-button.active {
-  background-color: var(--color--dark-slate-light);
-  color: var(--text-primary);
+  background-color: var(--slate-700);
+  color: var(--slate-50);
   border-color: var(--color--chile-rojo-dark);
+}
+
+/* Location and menu filter buttons */
+.dark .location-filter-button {
+  background-color: transparent;
+  color: var(--slate-300);
+  border-color: var(--slate-600);
+}
+
+.dark .location-filter-button:hover {
+  background-color: var(--slate-800);
+  border-color: var(--slate-500);
+}
+
+.dark .location-filter-button[data-active="true"] {
+  background-color: var(--slate-600);
+  color: var(--slate-50);
+  border-color: var(--slate-500);
+}
+
+.dark .location-filter-button[data-active="true"]:hover {
+  background-color: var(--slate-600);
+  opacity: 0.9;
+}
+
+.dark .menu-filter-button {
+  color: var(--slate-300);
+}
+
+.dark .menu-filter-button:hover {
+  color: var(--slate-100);
+  opacity: 1;
 }
 
 /* Events form */
 .dark .formContainer {
-  background-color: rgba(30, 41, 54, 0.95);
+  background-color: rgba(30, 41, 59, 0.95);
   backdrop-filter: blur(10px);
 }
 
 .dark .formToggle button {
-  color: var(--text-secondary);
+  color: var(--slate-300);
 }
 
 .dark .formToggle button.active {
-  color: var(--text-primary);
-  background-color: var(--color--dark-slate-light);
+  color: var(--slate-50);
+  background-color: var(--slate-700);
 }
 
-/* Footer elements */
+/* Footer */
+.dark .footer {
+  background-color: var(--slate-900);
+  border-top: 1px solid var(--slate-800);
+}
+
+.dark .footer-divider-line {
+  background-color: var(--slate-700);
+}
+
+.dark .footer-bottom {
+  border-top-color: var(--slate-800);
+  color: var(--slate-400);
+}
+
+.dark .footer-logo {
+  filter: brightness(1) invert(0) !important;
+}
+
 .dark .social-link {
-  color: var(--text-secondary);
+  color: var(--slate-300);
 }
 
 .dark .social-link:hover {
-  color: var(--text-primary);
+  color: var(--slate-50);
 }
 
 /* Scrollbar */
 .dark ::-webkit-scrollbar {
-  background-color: var(--color--dark-slate-base);
+  background-color: var(--slate-900);
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background-color: var(--color--dark-slate-light);
+  background-color: var(--slate-700);
 }
 
 .dark ::-webkit-scrollbar-thumb:hover {
-  background-color: var(--color--dark-slate-mid);
+  background-color: var(--slate-600);
+}
+
+/* ================================================================
+   CART & CHECKOUT DARK MODE
+   ================================================================ */
+
+/* Nav Cart Button */
+.dark .nav-cart-button {
+  background: transparent;
+  border-color: var(--slate-700);
+  color: var(--slate-300);
+}
+
+.dark .nav-cart-button:hover {
+  background: var(--slate-800);
+  border-color: var(--color--chile-rojo-dark);
+  color: var(--color--chile-rojo-dark);
+  box-shadow: 0 2px 8px rgba(255, 107, 90, 0.15);
+}
+
+.dark .nav-cart-badge {
+  background: var(--color--chile-rojo-dark);
+  border-color: var(--slate-900);
+  box-shadow: 0 1px 4px rgba(255, 107, 90, 0.3);
+}
+
+/* Cart Drawer */
+.dark .cart-drawer {
+  background: linear-gradient(to bottom, var(--slate-900) 0%, var(--slate-950) 100%);
+  box-shadow: -8px 0 40px rgba(0, 0, 0, 0.5);
+}
+
+.dark .cart-drawer-backdrop {
+  background: rgba(0, 0, 0, 0.75);
+}
+
+.dark .cart-drawer-header {
+  background: linear-gradient(to bottom, var(--slate-900) 0%, var(--slate-850) 100%);
+  border-bottom-color: var(--slate-800);
+}
+
+.dark .cart-drawer-header-content svg {
+  color: var(--color--chile-rojo-dark);
+}
+
+.dark .cart-drawer-title {
+  color: var(--slate-50);
+}
+
+.dark .cart-item-count {
+  color: var(--slate-400);
+}
+
+.dark .cart-drawer-close {
+  color: var(--slate-400);
+}
+
+.dark .cart-drawer-close:hover {
+  background: var(--slate-800);
+  color: var(--slate-50);
+}
+
+/* Cart Content */
+.dark .cart-drawer-content {
+  scrollbar-color: var(--slate-700) transparent;
+}
+
+.dark .cart-drawer-content::-webkit-scrollbar-thumb {
+  background: var(--slate-700);
+}
+
+.dark .cart-drawer-content::-webkit-scrollbar-thumb:hover {
+  background: var(--slate-600);
+}
+
+/* Empty State */
+.dark .cart-empty-icon {
+  color: var(--slate-700);
+}
+
+.dark .cart-empty-text {
+  color: var(--slate-200);
+}
+
+.dark .cart-empty-subtext {
+  color: var(--slate-400);
+}
+
+/* Location Info Section */
+.dark .cart-location-badge {
+  background: var(--slate-800);
+  border-color: var(--slate-700);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dark .cart-location-name {
+  color: var(--slate-50);
+}
+
+.dark .cart-location-address {
+  color: var(--slate-400);
+}
+
+.dark .cart-location-change {
+  color: var(--slate-500);
+}
+
+/* Cart Items */
+.dark .cart-item {
+  background: var(--slate-800);
+  border-color: var(--slate-700);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.dark .cart-item:hover {
+  background: var(--slate-750);
+  border-color: var(--slate-600);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.dark .cart-item-name {
+  color: var(--slate-50);
+}
+
+.dark .cart-item-remove {
+  color: var(--slate-500);
+}
+
+.dark .cart-item-remove:hover {
+  background: rgba(220, 38, 38, 0.2);
+  color: #ef4444;
+}
+
+.dark .cart-item-modifiers {
+  color: var(--slate-400);
+}
+
+.dark .cart-item-modifier {
+  background: var(--slate-750);
+  border-left-color: var(--color--chile-rojo-dark);
+}
+
+.dark .cart-item-modifier-price {
+  color: var(--color--chile-rojo-dark);
+}
+
+.dark .cart-item-instructions {
+  color: var(--slate-400);
+  background: rgba(251, 146, 60, 0.1);
+  border-left-color: #fb923c;
+}
+
+.dark .cart-item-quantity {
+  background: var(--slate-750);
+  border-color: var(--slate-700);
+}
+
+.dark .cart-item-quantity-btn {
+  background: var(--slate-700);
+  border-color: var(--slate-600);
+  color: var(--slate-200);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.dark .cart-item-quantity-btn:hover {
+  background: var(--color--chile-rojo-dark);
+  color: white;
+  border-color: var(--color--chile-rojo-dark);
+  box-shadow: 0 2px 6px rgba(255, 107, 90, 0.4);
+}
+
+.dark .cart-item-quantity-value {
+  color: var(--slate-50);
+}
+
+.dark .cart-item-price {
+  color: var(--slate-50);
+}
+
+/* Totals */
+.dark .cart-totals {
+  border-top-color: var(--slate-800);
+}
+
+.dark .cart-total-row {
+  color: var(--slate-400);
+}
+
+.dark .cart-total-row span:last-child {
+  color: var(--slate-300);
+}
+
+.dark .cart-total-final {
+  border-top-color: var(--slate-700);
+  color: var(--slate-50);
+}
+
+.dark .cart-total-final span:last-child {
+  color: var(--color--chile-rojo-dark);
+}
+
+/* Footer */
+.dark .cart-drawer-footer {
+  background: linear-gradient(to bottom, var(--slate-850) 0%, var(--slate-900) 100%);
+  border-top-color: var(--slate-800);
+}
+
+.dark .cart-checkout-btn {
+  background: var(--slate-700);
+  color: white !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.dark .cart-checkout-btn:hover {
+  background: var(--slate-600);
+  color: white !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* Location Switch Modal */
+.dark .modal-backdrop {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.dark .modal-content {
+  background: var(--slate-900);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+}
+
+.dark .modal-close {
+  color: var(--slate-400);
+}
+
+.dark .modal-close:hover {
+  background: var(--slate-800);
+  color: var(--slate-50);
+}
+
+.dark .modal-title {
+  color: var(--slate-50);
+}
+
+.dark .location-switch-text {
+  color: var(--slate-200);
+}
+
+.dark .location-switch-note {
+  color: var(--slate-400);
+}
+
+.dark .modal-btn-secondary {
+  background: var(--slate-800);
+  color: var(--slate-200);
+  border-color: var(--slate-700);
+}
+
+.dark .modal-btn-secondary:hover {
+  background: var(--slate-700);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.dark .modal-btn-primary {
+  background: linear-gradient(135deg, var(--color--chile-rojo-dark) 0%, #d9534f 100%);
+  box-shadow: 0 4px 12px rgba(255, 107, 90, 0.4);
+}
+
+.dark .modal-btn-primary:hover {
+  box-shadow: 0 6px 20px rgba(255, 107, 90, 0.5);
+}
+
+.dark .modal-message {
+  color: var(--slate-400);
+}
+
+/* Add to Cart Button */
+.dark .add-to-cart-btn {
+  background: #444444;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.dark .add-to-cart-btn:hover:not(:disabled) {
+  background: #555555;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+.dark .add-to-cart-btn-disabled {
+  background: var(--slate-800) !important;
+  color: var(--slate-600) !important;
+  box-shadow: none;
+}
+
+/* Add to Cart Error Notification - Dark Theme */
+.dark .add-to-cart-error-notification {
+  background: rgba(220, 53, 69, 0.12);
+  border-color: rgba(220, 53, 69, 0.5);
+}
+
+.dark .add-to-cart-error-text {
+  color: #ff7f8f;
+}
+
+.dark .add-to-cart-error-dismiss:hover {
+  color: #ff5066;
+}
+
+/* Checkout Page */
+.dark .checkout-container {
+  background-color: var(--slate-900);
+}
+
+.dark .checkout-form-section {
+  background-color: var(--slate-800);
+  border-color: var(--slate-700);
+}
+
+.dark .checkout-summary {
+  background-color: var(--slate-850);
+  border-color: var(--slate-700);
+}
+
+.dark .checkout-summary h3 {
+  color: var(--slate-50);
+}
+
+.dark .checkout-order-item {
+  border-bottom-color: var(--slate-700);
+}
+
+.dark .checkout-order-item-name {
+  color: var(--slate-100);
+}
+
+.dark .checkout-order-item-details {
+  color: var(--slate-400);
+}
+
+.dark .checkout-total-row {
+  color: var(--slate-300);
+}
+
+.dark .checkout-total-final {
+  border-top-color: var(--slate-700);
+  color: var(--slate-50);
+}
+
+.dark .checkout-submit-btn {
+  background: linear-gradient(135deg, var(--color--chile-rojo-dark) 0%, #d9534f 100%);
+  box-shadow: 0 4px 16px rgba(255, 107, 90, 0.4);
+}
+
+.dark .checkout-submit-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #d9534f 0%, var(--color--chile-rojo-dark) 100%);
+  box-shadow: 0 8px 24px rgba(255, 107, 90, 0.5);
+}
+
+.dark .checkout-submit-btn:disabled {
+  background: var(--slate-700);
+  color: var(--slate-500);
+  box-shadow: none;
+}
+
+/* Order Confirmation */
+.dark .order-confirmation-container {
+  background-color: var(--slate-900);
+}
+
+.dark .order-confirmation-success {
+  background-color: var(--slate-800);
+  border-color: var(--slate-700);
+}
+
+.dark .order-demo-notice {
+  background-color: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.2);
+  color: var(--slate-200);
 }

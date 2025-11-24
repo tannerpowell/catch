@@ -106,23 +106,22 @@ export default function MenuPageClient({ categories, items, locations, imageMap 
 
       {/* Location Filter Buttons */}
       <div style={{
-        borderBottom: '1px solid var(--color--tierra-reca)',
+        borderBottom: '1px solid var(--slate-700)',
         padding: '24px 20px',
         display: 'flex',
         flexDirection: 'column',
         gap: '20px',
-        alignItems: 'center'
-      }}>
+        alignItems: 'center',
+        backgroundColor: 'var(--slate-50)'
+      }} className="dark:bg-slate-900 dark:border-slate-700">
         {/* DFW Locations */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
           <span style={{
             fontSize: '12px',
             fontWeight: 500,
             letterSpacing: '2px',
-            textTransform: 'uppercase',
-            color: 'var(--color--tierra-reca)',
-            opacity: 0.6
-          }}>DFW:</span>
+            textTransform: 'uppercase'
+          }} className="text-slate-600 dark:text-slate-400">DFW:</span>
           {locations.filter(loc => ['denton', 'coit-campbell', 'garland'].includes(loc.slug)).map(location => (
             <button
               key={location.slug}
@@ -143,10 +142,8 @@ export default function MenuPageClient({ categories, items, locations, imageMap 
             fontSize: '12px',
             fontWeight: 500,
             letterSpacing: '2px',
-            textTransform: 'uppercase',
-            color: 'var(--color--tierra-reca)',
-            opacity: 0.6
-          }}>HOUSTON:</span>
+            textTransform: 'uppercase'
+          }} className="text-slate-600 dark:text-slate-400">HOUSTON:</span>
           {locations.filter(loc => !['denton', 'coit-campbell', 'garland'].includes(loc.slug)).map(location => (
             <button
               key={location.slug}
@@ -167,19 +164,17 @@ export default function MenuPageClient({ categories, items, locations, imageMap 
             fontSize: '12px',
             fontWeight: 500,
             letterSpacing: '2px',
-            color: 'var(--color--tierra-reca)',
-            opacity: 0.6,
             textAlign: 'center',
             marginTop: '8px'
-          }}>
+          }} className="text-slate-600 dark:text-slate-300">
             <a
               href={`https://maps.apple.com/?address=${encodeURIComponent(
                 `${selectedLocation.addressLine1}, ${selectedLocation.city}, ${selectedLocation.state} ${selectedLocation.postalCode}`
               )}`}
               target="_blank"
               rel="noopener noreferrer"
+              className="hover:text-slate-800 dark:hover:text-slate-100 transition-colors"
               style={{
-                color: 'inherit',
                 textDecoration: 'none',
                 cursor: 'pointer'
               }}
@@ -191,8 +186,8 @@ export default function MenuPageClient({ categories, items, locations, imageMap 
                 &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;
                 <a
                   href={`tel:${selectedLocation.phone}`}
+                  className="hover:text-slate-800 dark:hover:text-slate-100 transition-colors"
                   style={{
-                    color: 'inherit',
                     textDecoration: 'none',
                     cursor: 'pointer'
                   }}
@@ -245,6 +240,8 @@ export default function MenuPageClient({ categories, items, locations, imageMap 
                     {categoryItems.map(item => (
                       <MenuItemCard
                         key={item.id}
+                        menuItem={item}
+                        location={selectedLocation || locations[0]}
                         name={item.name}
                         description={item.description}
                         price={item.price}

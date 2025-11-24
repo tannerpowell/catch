@@ -2,10 +2,13 @@
 
 import { useState, lazy, Suspense } from 'react';
 import Image from "next/image";
+import type { MenuItem, Location } from "@/lib/types";
 
 const MenuItemModal = lazy(() => import('./MenuItemModal'));
 
 interface MenuItemCardProps {
+  menuItem: MenuItem;
+  location: Location;
   name: string;
   description?: string;
   price?: number | null;
@@ -14,7 +17,7 @@ interface MenuItemCardProps {
   badges?: string[];
 }
 
-export default function MenuItemCard({ name, description, price, image, isAvailable = true, badges }: MenuItemCardProps) {
+export default function MenuItemCard({ menuItem, location, name, description, price, image, isAvailable = true, badges }: MenuItemCardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -71,6 +74,8 @@ export default function MenuItemCard({ name, description, price, image, isAvaila
           <MenuItemModal
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
+            menuItem={menuItem}
+            location={location}
             name={name}
             description={description}
             price={price}

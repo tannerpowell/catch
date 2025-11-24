@@ -40,7 +40,7 @@ export default function HomePage() {
       </section>
 
       {/* Featured Dishes Section */}
-      <section className="section padding-large" style={{ backgroundColor: "#fff" }}>
+      <section className="section padding-large bg-white dark:bg-slate-950">
         <div style={{ maxWidth: "1400px", margin: "0 auto" }}>
           <h2 className="h2" style={{ textAlign: "center", marginBottom: "60px" }}>
             Catch of the Day
@@ -117,7 +117,7 @@ export default function HomePage() {
       </section>
 
       {/* Locations CTA */}
-      <section className="section" style={{ backgroundColor: "#fff" }}>
+      <section className="section bg-white dark:bg-slate-950">
         <div style={{ maxWidth: "800px", margin: "0 auto", textAlign: "center" }}>
           <h2 className="h2" style={{ marginBottom: "24px" }}>
             Visit Us
