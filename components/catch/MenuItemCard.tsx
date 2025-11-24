@@ -34,6 +34,13 @@ export default function MenuItemCard({ menuItem, location, name, description, pr
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [shouldPreload, setShouldPreload] = useState(false);
 
+  // Generate the optimized Next.js image URL that will actually be requested
+  const getOptimizedImageUrl = (src: string) => {
+    // Match the width from MenuItemModal's sizes prop (600px max on desktop)
+    // Use 640 from Next.js deviceSizes config for proper optimization
+    return `/_next/image?url=${encodeURIComponent(src)}&w=640&q=75`;
+  };
+
   // Preload the modal image on hover for instant display
   const handleMouseEnter = () => {
     if (isAvailable && image && !shouldPreload) {
@@ -64,7 +71,6 @@ export default function MenuItemCard({ menuItem, location, name, description, pr
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
             style={{ objectFit: "cover" }}
-            unoptimized={!image}
           />
         </div>
         <div className="catch-menu-card-content">
@@ -94,7 +100,7 @@ export default function MenuItemCard({ menuItem, location, name, description, pr
 
       {/* Preload larger image on hover for instant modal display */}
       {shouldPreload && image && (
-        <link rel="preload" as="image" href={image} />
+        <link rel="preload" as="image" href={getOptimizedImageUrl(image)} />
       )}
 
       {isModalOpen && (
