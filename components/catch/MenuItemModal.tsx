@@ -107,12 +107,13 @@ export default function MenuItemModal({
             <div className={styles.imageSection}>
               <div className={styles.imageFrame}>
                 <Image
-                  src={image || "/images/placeholder-efefef.jpg"}
+                  src={image ?? "/images/placeholder-efefef.jpg"}
                   alt={name}
                   fill
                   sizes="(max-width: 768px) 90vw, 600px"
                   style={{ objectFit: "cover" }}
                   priority
+                  unoptimized={!image}
                 />
               </div>
             </div>

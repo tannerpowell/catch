@@ -50,11 +50,12 @@ export default function MenuItemCard({ menuItem, location, name, description, pr
       >
         <div className="catch-menu-card-image">
           <Image
-            src={image || "/images/placeholder-efefef.jpg"}
+            src={image ?? "/images/placeholder-efefef.jpg"}
             alt={name}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
             style={{ objectFit: "cover" }}
+            unoptimized={!image}
           />
         </div>
         <div className="catch-menu-card-content">
