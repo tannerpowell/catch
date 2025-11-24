@@ -1,11 +1,11 @@
 'use client';
 
 import { OrderColumn } from './OrderColumn';
-import type { Order } from '@/lib/types';
+import type { Order, OrderStatus } from '@/lib/types';
 
 interface KitchenBoardProps {
   orders: Order[];
-  onOrderUpdate: (orderId: string, newStatus: string) => void;
+  onOrderUpdate: (orderId: string, newStatus: OrderStatus) => void;
 }
 
 /**

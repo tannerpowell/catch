@@ -1,16 +1,16 @@
 'use client';
 
 import { OrderCard } from './OrderCard';
-import type { Order } from '@/lib/types';
+import type { Order, OrderStatus } from '@/lib/types';
 
 interface OrderColumnProps {
   title: string;
   status: string;
   orders: Order[];
-  nextStatus: string;
+  nextStatus: OrderStatus;
   actionLabel: string;
   actionColor: 'blue' | 'green' | 'gray';
-  onOrderUpdate: (orderId: string, newStatus: string) => void;
+  onOrderUpdate: (orderId: string, newStatus: OrderStatus) => void;
 }
 
 /**

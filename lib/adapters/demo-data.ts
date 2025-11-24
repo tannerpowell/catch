@@ -7,6 +7,7 @@ export const demoCategories: MenuCategory[] = [
 
 export const demoLocations: Location[] = [
   {
+    _id: "demo-humble",
     name: "The Catch – Humble",
     slug: "humble",
     addressLine1: "19325 Timber Forest Dr",
@@ -28,6 +29,7 @@ export const demoLocations: Location[] = [
     heroImage: "/images/Location-Humble.jpg"
   },
   {
+    _id: "demo-willowbrook",
     name: "The Catch – Willowbrook",
     slug: "willowbrook",
     addressLine1: "17615 Tomball Pkwy",

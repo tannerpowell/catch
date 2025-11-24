@@ -2,14 +2,14 @@
 
 import { useState } from 'react';
 import { OrderTimer } from './OrderTimer';
-import type { Order } from '@/lib/types';
+import type { Order, OrderStatus } from '@/lib/types';
 
 interface OrderCardProps {
   order: Order;
-  nextStatus: string;
+  nextStatus: OrderStatus;
   actionLabel: string;
   actionColor: 'blue' | 'green' | 'gray';
-  onUpdate: (orderId: string, newStatus: string) => void;
+  onUpdate: (orderId: string, newStatus: OrderStatus) => void | Promise<void>;
 }
 
 /**
