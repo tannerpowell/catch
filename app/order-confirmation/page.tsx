@@ -1,18 +1,14 @@
 'use client';
 
+import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
 /**
- * Order confirmation page that displays the placed order status, demo notice, and navigation actions.
- *
- * Reads the `orderNumber` from URL search parameters and logs a diagnostic warning if it is missing or empty.
- * When an order number is present the page shows it; otherwise it shows a warning alert with guidance.
- * The page also includes a demo-mode disclaimer, a link to the Kitchen Dashboard, and buttons to continue ordering or view the dashboard.
- *
- * @returns The rendered confirmation page as a JSX element.
+ * Order confirmation page content component that reads search params.
+ * Separated to allow Suspense boundary wrapping (required by Next.js 15+).
  */
-export default function OrderConfirmationPage() {
+function OrderConfirmationContent() {
   const searchParams = useSearchParams();
   const orderNumberParam = searchParams.get('orderNumber');
 
@@ -83,5 +79,29 @@ export default function OrderConfirmationPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+/**
+ * Order confirmation page that displays the placed order status, demo notice, and navigation actions.
+ *
+ * Reads the `orderNumber` from URL search parameters and logs a diagnostic warning if it is missing or empty.
+ * When an order number is present the page shows it; otherwise it shows a warning alert with guidance.
+ * The page also includes a demo-mode disclaimer, a link to the Kitchen Dashboard, and buttons to continue ordering or view the dashboard.
+ *
+ * @returns The rendered confirmation page as a JSX element.
+ */
+export default function OrderConfirmationPage() {
+  return (
+    <Suspense fallback={
+      <div className="section" style={{ minHeight: '70vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '64px', marginBottom: '24px' }}>⏳</div>
+          <p>Loading...</p>
+        </div>
+      </div>
+    }>
+      <OrderConfirmationContent />
+    </Suspense>
   );
 }
