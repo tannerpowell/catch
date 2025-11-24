@@ -122,10 +122,14 @@ if (envExists) {
   ];
 
   requiredVars.forEach((varName) => {
-    // Split into lines, ignore comments, match VAR_NAME=<value> where value doesn't start with "your-"
+    // Split into lines, ignore comments, check if line starts with varName followed by = and a non-placeholder value
     const lines = envContent.split('\n').filter(line => !line.trim().startsWith('#'));
-    const varRegex = new RegExp(`^\\s*${varName}\\s*=\\s*(?!your-)(.+)\\s*$`);
-    const hasVar = lines.some(line => varRegex.test(line));
+    const hasVar = lines.some(line => {
+      const trimmed = line.trim();
+      const [prefix, ...valueParts] = trimmed.split('=');
+      const value = valueParts.join('=').trim();
+      return prefix?.trim() === varName && value && !value.startsWith('your-');
+    });
     check(
       varName,
       hasVar,
