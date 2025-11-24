@@ -234,7 +234,7 @@ export const adapter: BrandAdapter = {
         menuUrl: parsed.menuUrl ?? undefined,
         directionsUrl: parsed.directionsUrl ?? undefined,
         heroImage: parsed.heroImage ?? fallbackHero(parsed.slug),
-        openToday: false,
+        openToday: !!parsed.hours,
         hours: parsed.hours
       };
     } catch (error) {

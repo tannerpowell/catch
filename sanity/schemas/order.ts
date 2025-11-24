@@ -368,7 +368,7 @@ export default defineType({
       name: "deliveryAddress",
       title: "Delivery Address",
       type: "object",
-      hidden: ({ parent }) => parent?.orderType !== "delivery",
+      hidden: ({ document }) => document?.orderType !== "delivery",
       fields: [
         defineField({
           name: "street",

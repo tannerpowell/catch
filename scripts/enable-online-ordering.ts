@@ -10,10 +10,27 @@ import dotenv from 'dotenv';
 
 dotenv.config({ path: '.env.local' });
 
+// Validate required environment variables
+const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
+const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET;
+const token = process.env.SANITY_API_TOKEN;
+
+if (!projectId || !dataset || !token) {
+  const missing: string[] = [];
+  if (!projectId) missing.push('NEXT_PUBLIC_SANITY_PROJECT_ID');
+  if (!dataset) missing.push('NEXT_PUBLIC_SANITY_DATASET');
+  if (!token) missing.push('SANITY_API_TOKEN');
+  
+  throw new Error(
+    `Missing required environment variables: ${missing.join(', ')}. ` +
+    'Please ensure these are set in your .env.local file.'
+  );
+}
+
 const client = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
-  token: process.env.SANITY_API_TOKEN!,
+  projectId,
+  dataset,
+  token,
   apiVersion: '2024-01-01',
   useCdn: false,
 });
@@ -39,28 +56,49 @@ async function enableOnlineOrdering() {
 
   console.log(`Found ${locations.length} locations:\n`);
 
+  const failedLocations: Array<{ id: string; name: string; error: string }> = [];
+
   // Update each location
   for (const location of locations) {
     console.log(`📍 ${location.name}`);
     console.log(`   Current: onlineOrderingEnabled = ${location.onlineOrderingEnabled}`);
 
     if (!location.onlineOrderingEnabled) {
-      await client
-        .patch(location._id)
-        .set({
-          onlineOrderingEnabled: true,
-          acceptingOrders: true,
-          orderTypes: ['pickup', 'delivery'],
-        })
-        .commit();
+      try {
+        await client
+          .patch(location._id)
+          .set({
+            onlineOrderingEnabled: true,
+            acceptingOrders: true,
+            orderTypes: ['pickup', 'delivery'],
+          })
+          .commit();
 
-      console.log(`   ✅ Updated: onlineOrderingEnabled = true\n`);
+        console.log(`   ✅ Updated: onlineOrderingEnabled = true\n`);
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        console.error(`   ❌ Failed to update location ${location._id}: ${errorMessage}\n`);
+        failedLocations.push({
+          id: location._id,
+          name: location.name,
+          error: errorMessage,
+        });
+      }
     } else {
       console.log(`   ✓ Already enabled\n`);
     }
   }
 
-  console.log('✅ Done! Online ordering is now enabled for all locations.');
+  if (failedLocations.length > 0) {
+    console.log(`\n⚠️  ${failedLocations.length} location(s) failed to update:\n`);
+    for (const failed of failedLocations) {
+      console.log(`  • ${failed.name} (${failed.id}): ${failed.error}`);
+    }
+    console.log('');
+  }
+
+  const successCount = locations.length - failedLocations.length;
+  console.log(`✅ Done! Online ordering enabled for ${successCount}/${locations.length} locations.`);
 }
 
 enableOnlineOrdering().catch(console.error);

@@ -12,6 +12,26 @@ export interface CartError {
 }
 
 /**
+ * Safe context interface for error reporting
+ * SECURITY: Only includes non-sensitive fields that are safe to log/monitor
+ * DO NOT add user objects, PII, tokens, or API responses here
+ */
+export interface SafeErrorContext {
+  /** Location slug (non-sensitive identifier) */
+  slug?: string;
+  /** Error code or message (already sanitized) */
+  errorCode?: string;
+  errorMessage?: string;
+  /** Item/order IDs (non-sensitive identifiers) */
+  itemId?: string;
+  orderId?: string;
+  /** Request metadata (non-sensitive) */
+  timestamp?: string;
+  userAgent?: string;
+  url?: string;
+}
+
+/**
  * Standardized error codes for cart operations
  * Format: {COMPONENT}_{ISSUE}_{SEQUENCE}
  * Example: LOC_MISSING_001 = Location + Missing _id + First occurrence
@@ -75,12 +95,15 @@ export function getErrorMetadata(code: CartErrorCode | string): CartError {
  * This function is async to support future Sentry integration, but currently
  * only performs synchronous console logging in development.
  *
+ * SECURITY: Only pass non-sensitive context via SafeErrorContext interface.
+ * DO NOT pass user objects, PII, passwords, tokens, or raw API responses.
+ *
  * @param code - Key identifying the cart error to report (known code or string)
- * @param context - Additional contextual fields to include inside `cart_error`
+ * @param context - Safe, non-sensitive contextual fields (see SafeErrorContext)
  */
 export async function captureCartError(
   code: CartErrorCode | string,
-  context: Record<string, any> = {}
+  context: SafeErrorContext = {}
 ) {
   const metadata = getErrorMetadata(code);
 
@@ -149,13 +172,16 @@ export async function captureCartError(
  * If you need to report the error to monitoring, use `reportCartError` separately
  * or call `captureCartError` in a fire-and-forget manner.
  *
+ * SECURITY: Only pass non-sensitive context via SafeErrorContext interface.
+ * DO NOT pass user objects, PII, passwords, tokens, or raw API responses.
+ *
  * @param code - Cart error code identifying the error metadata to use for message
- * @param context - Optional context to include in the error message for debugging
+ * @param context - Safe, non-sensitive context for debugging (see SafeErrorContext)
  * @returns An Error with message formatted as `<code>: <userMessage>`
  */
 export function createCartError(
   code: CartErrorCode | string,
-  context?: Record<string, any>
+  context?: SafeErrorContext
 ): Error {
   const metadata = getErrorMetadata(code);
 
@@ -180,12 +206,15 @@ export function createCartError(
  * For most cases, prefer the synchronous `createCartError` and let error
  * boundaries handle reporting.
  *
+ * SECURITY: Only pass non-sensitive context via SafeErrorContext interface.
+ * DO NOT pass user objects, PII, passwords, tokens, or raw API responses.
+ *
  * @param code - Cart error code to report
- * @param context - Additional context for monitoring payload
+ * @param context - Safe, non-sensitive context for monitoring (see SafeErrorContext)
  */
 export async function reportCartError(
   code: CartErrorCode | string,
-  context: Record<string, any> = {}
+  context: SafeErrorContext = {}
 ): Promise<void> {
   await captureCartError(code, context);
 }
