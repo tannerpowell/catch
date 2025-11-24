@@ -103,6 +103,16 @@ export default function MenuPageClient({ categories, items, locations, imageMap 
   }, [categories, items, imageMap, selectedSlug]);
 
   const selectedLocation = selectedSlug !== "all" ? locations.find(l => l.slug === selectedSlug) : undefined;
+  const safeLocation = selectedLocation ?? (locations.length > 0 ? locations[0] : undefined);
+
+  // Early return if no locations available
+  if (!safeLocation) {
+    return (
+      <div className="p-8 text-center text-slate-600 dark:text-slate-400">
+        <p>No locations available. Please check back later.</p>
+      </div>
+    );
+  }
 
   return (
     <div>
