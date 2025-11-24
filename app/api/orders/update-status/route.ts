@@ -1,40 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient, type SanityClient } from '@sanity/client';
+import { getSanityClient } from '@/lib/sanity-config';
 import { timingSafeEqual } from 'crypto';
 
-// Lazy-load Sanity client to avoid build-time errors when env vars aren't set
-let sanityClient: SanityClient | null = null;
+// Force Node.js runtime (required for crypto.timingSafeEqual)
+export const runtime = 'nodejs';
 
-function getSanityClient(): SanityClient {
-  if (sanityClient) {
-    return sanityClient;
-  }
+/**
+ * Validate and return INTERNAL_API_KEY from environment
+ * @throws {Error} if INTERNAL_API_KEY is not configured
+ */
+function getInternalApiKey(): string {
+  const apiKey = process.env.INTERNAL_API_KEY;
 
-  const SANITY_PROJECT_ID = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
-  const SANITY_DATASET = process.env.NEXT_PUBLIC_SANITY_DATASET;
-  const SANITY_WRITE_TOKEN = process.env.SANITY_WRITE_TOKEN;
-
-  if (!SANITY_PROJECT_ID || !SANITY_DATASET || !SANITY_WRITE_TOKEN) {
-    const missing: string[] = [];
-    if (!SANITY_PROJECT_ID) missing.push('NEXT_PUBLIC_SANITY_PROJECT_ID');
-    if (!SANITY_DATASET) missing.push('NEXT_PUBLIC_SANITY_DATASET');
-    if (!SANITY_WRITE_TOKEN) missing.push('SANITY_WRITE_TOKEN');
-
+  if (!apiKey) {
     throw new Error(
-      `Missing required environment variables for order status API: ${missing.join(', ')}. ` +
-      'Please ensure these are set in your environment configuration.'
+      'INTERNAL_API_KEY not configured. This is required for internal API authentication.'
     );
   }
 
-  sanityClient = createClient({
-    projectId: SANITY_PROJECT_ID,
-    dataset: SANITY_DATASET,
-    useCdn: false,
-    apiVersion: 'v2024-06-24',
-    token: SANITY_WRITE_TOKEN,
-  });
-
-  return sanityClient;
+  return apiKey;
 }
 
 /**
@@ -48,17 +32,30 @@ function getSanityClient(): SanityClient {
  */
 export async function POST(request: NextRequest) {
   try {
-    // Authentication: Require internal API key for order updates
-    const authHeader = request.headers.get('authorization');
-    const apiKey = process.env.INTERNAL_API_KEY;
+    // Parse request body first to distinguish JSON errors from other failures
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json(
+        { error: 'Invalid JSON in request body' },
+        { status: 400 }
+      );
+    }
 
-    if (!apiKey) {
-      console.error('INTERNAL_API_KEY not configured');
+    // Authentication: Require internal API key for order updates
+    let apiKey: string;
+    try {
+      apiKey = getInternalApiKey();
+    } catch (configError) {
+      console.error('INTERNAL_API_KEY not configured:', configError);
       return NextResponse.json(
         { error: 'Server configuration error' },
         { status: 500 }
       );
     }
+
+    const authHeader = request.headers.get('authorization');
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return NextResponse.json(
@@ -97,26 +94,42 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { orderId, newStatus } = await request.json();
-
-    // Validate inputs
-    if (!orderId || !newStatus) {
+    // Validate request body structure
+    if (!body || typeof body !== 'object') {
       return NextResponse.json(
-        { error: 'Missing orderId or newStatus' },
+        { error: 'Request body must be a JSON object' },
         { status: 400 }
       );
     }
 
-    // Validate status
-    const validStatuses = ['confirmed', 'preparing', 'ready', 'completed', 'cancelled'];
-    if (!validStatuses.includes(newStatus)) {
+    const { orderId, newStatus } = body as Record<string, unknown>;
+
+    // Validate inputs with strict type checking
+    if (!orderId || typeof orderId !== 'string') {
       return NextResponse.json(
-        { error: 'Invalid status value' },
+        { error: 'Missing or invalid orderId (must be string)' },
+        { status: 400 }
+      );
+    }
+
+    if (!newStatus || typeof newStatus !== 'string') {
+      return NextResponse.json(
+        { error: 'Missing or invalid newStatus (must be string)' },
+        { status: 400 }
+      );
+    }
+
+    // Validate status against whitelist
+    const validStatuses = ['confirmed', 'preparing', 'ready', 'completed', 'cancelled'] as const;
+    if (!validStatuses.includes(newStatus as typeof validStatuses[number])) {
+      return NextResponse.json(
+        { error: `Invalid status value. Must be one of: ${validStatuses.join(', ')}` },
         { status: 400 }
       );
     }
 
     // Get Sanity client (validates env vars at runtime, not build time)
+    // Uses shared config with centralized apiVersion
     const client = getSanityClient();
 
     // Verify order exists
