@@ -38,8 +38,26 @@ npm run dev
 - Data will update instantly in dev. For prod, use Sanity webhooks → `/api/revalidate?secret=REVALIDATE_SECRET` to re-build/ISR.
 
 ## Optional: Deploy
-- Vercel works out-of-the-box. Add env vars in the project settings.
-- Point a Sanity webhook to your deploy’s `/api/revalidate?secret=...`.
+
+### Vercel Deployment
+Vercel works out-of-the-box with this configuration:
+
+1. **Add environment variables** in Vercel project settings:
+   - `NEXT_PUBLIC_SANITY_PROJECT_ID`
+   - `NEXT_PUBLIC_SANITY_DATASET`
+   - `REVALIDATE_SECRET`
+   - All other vars from `.env.local`
+
+2. **Point Sanity webhook** to your deploy's `/api/revalidate?secret=...`
+
+3. **Branch Configuration**:
+   - Production deploys from `main` branch
+   - Feature branches create preview deployments
+
+4. **Important**: The project requires `--legacy-peer-deps` flag for npm install
+   - `vercel.json` is already configured with: `"installCommand": "npm install --legacy-peer-deps"`
+   - This is needed due to peer dependency conflicts between Next.js 16 and next-sanity@11.4.2
+   - These are soft conflicts - packages work fine despite version mismatches
 
 ## Notes
 - Keep using the **adapter** as the only place you shape data coming from Sanity.
