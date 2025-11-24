@@ -30,6 +30,13 @@ function buildDfwImageMap(): ImageMap {
   return map;
 }
 
+/**
+ * Render the menu page by fetching brand categories, items, and locations, preparing an image map, and supplying them to the client component.
+ *
+ * The fetched locations are sorted with the location whose slug is `denton` placed first, followed by the remaining locations ordered alphabetically by name.
+ *
+ * @returns A React element that renders Menu2PageClient with the fetched `categories`, `items`, sorted `locations` (Denton first), and the DFW `imageMap`.
+ */
 export default async function Menu2Page() {
   const brand = getBrand();
   const [categories, items, rawLocations] = await Promise.all([

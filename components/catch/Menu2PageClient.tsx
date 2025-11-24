@@ -40,17 +40,15 @@ function formatPhone(phone: string): string {
 }
 
 /**
- * Renders a location- and category-filterable menu with theme toggle and per-location pricing.
+ * Render the menu UI filtered by location and category, with a theme toggle and per-location pricing.
  *
- * Renders UI for selecting a location and a single category, initializes MixItUp to filter displayed
- * menu items by location and category, computes location-specific images and prices, and passes each
- * item (with overridden price when applicable) to MenuItemCard. Also displays location contact info
- * and a circular price badge when an item has a price.
+ * Builds menu items with chosen images and location-specific prices, initializes client-side filtering,
+ * and preloads item images to improve performance.
  *
  * @param categories - Array of menu categories used to build the category filter pills
- * @param items - Array of menu items to display; each item may include locationOverrides for availability/price
- * @param locations - Array of locations; one location must be selected for filtering to show items
- * @param imageMap - Mapping of item slugs to image URLs used to choose the best image for each item
+ * @param items - Array of menu items to display; items may include `locationOverrides` for availability and price
+ * @param locations - Array of available locations used for filtering and per-location data
+ * @param imageMap - Mapping of item slugs to image URLs used to select the best image for each item
  * @returns The rendered menu page JSX element
  */
 export default function Menu2PageClient({ categories, items, locations, imageMap }: Menu2PageClientProps) {
