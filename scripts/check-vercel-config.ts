@@ -53,16 +53,27 @@ check(
 );
 
 // Check 2: vercel.json has --legacy-peer-deps
+let hasLegacyFlag = false;
 if (vercelJsonExists) {
-  const vercelJson = JSON.parse(fs.readFileSync(vercelJsonPath, 'utf-8'));
-  const hasLegacyFlag = vercelJson.installCommand?.includes('--legacy-peer-deps');
-  check(
-    '--legacy-peer-deps flag',
-    hasLegacyFlag,
-    '✓ installCommand includes --legacy-peer-deps',
-    '✗ installCommand missing --legacy-peer-deps flag',
-    'Update vercel.json: "installCommand": "npm install --legacy-peer-deps"'
-  );
+  try {
+    const vercelJson = JSON.parse(fs.readFileSync(vercelJsonPath, 'utf-8'));
+    hasLegacyFlag = vercelJson.installCommand?.includes('--legacy-peer-deps') ?? false;
+    check(
+      '--legacy-peer-deps flag',
+      hasLegacyFlag,
+      '✓ installCommand includes --legacy-peer-deps',
+      '✗ installCommand missing --legacy-peer-deps flag',
+      'Update vercel.json: "installCommand": "npm install --legacy-peer-deps"'
+    );
+  } catch (err) {
+    check(
+      'vercel.json is valid JSON',
+      false,
+      '✓ vercel.json is valid JSON',
+      '✗ vercel.json could not be parsed as JSON',
+      'Fix JSON syntax in vercel.json'
+    );
+  }
 }
 
 // Check 3: .npmrc exists
@@ -79,7 +90,9 @@ check(
 // Check 4: .npmrc has legacy-peer-deps
 if (npmrcExists) {
   const npmrc = fs.readFileSync(npmrcPath, 'utf-8');
-  const hasLegacyPeerDeps = npmrc.includes('legacy-peer-deps=true');
+  // Split into lines, ignore comments, match legacy-peer-deps=true
+  const lines = npmrc.split('\n').filter(line => !line.trim().startsWith('#'));
+  const hasLegacyPeerDeps = lines.some(line => /^\s*legacy-peer-deps\s*=\s*true\s*$/.test(line.trim()));
   check(
     '.npmrc legacy-peer-deps',
     hasLegacyPeerDeps,
@@ -109,7 +122,10 @@ if (envExists) {
   ];
 
   requiredVars.forEach((varName) => {
-    const hasVar = envContent.includes(`${varName}=`) && !envContent.includes(`${varName}=your-`);
+    // Split into lines, ignore comments, match VAR_NAME=<value> where value doesn't start with "your-"
+    const lines = envContent.split('\n').filter(line => !line.trim().startsWith('#'));
+    const varRegex = new RegExp(`^\\s*${varName}\\s*=\\s*(?!your-)(.+)\\s*$`);
+    const hasVar = lines.some(line => varRegex.test(line));
     check(
       varName,
       hasVar,
@@ -128,25 +144,28 @@ if (fs.existsSync(packageJsonPath)) {
   const nextSanityVersion = packageJson.dependencies?.['next-sanity'];
 
   if (nextVersion) {
-    const isNext16 = nextVersion.includes('16.');
-    warn(
-      'Next.js version',
-      isNext16
-        ? '⚠ Next.js 16 requires --legacy-peer-deps (next-sanity expects v15)'
-        : '✓ Next.js version',
-      isNext16 ? 'This is expected - vercel.json has the fix' : undefined
-    );
+    const isNext16 = /^[\^~]?16\./.test(nextVersion);
+    if (isNext16) {
+      const fixMessage = hasLegacyFlag
+        ? 'This is expected - vercel.json has --legacy-peer-deps'
+        : 'Ensure vercel.json installCommand includes --legacy-peer-deps';
+      warn(
+        'Next.js version',
+        '⚠ Next.js 16 requires --legacy-peer-deps (next-sanity expects v15)',
+        fixMessage
+      );
+    }
   }
 
   if (nextSanityVersion) {
-    const isOldVersion = nextSanityVersion.includes('11.');
-    warn(
-      'next-sanity version',
-      isOldVersion
-        ? '⚠ next-sanity@11.x expects Next.js 15 (you have 16)'
-        : '✓ next-sanity version',
-      isOldVersion ? 'This is expected - wait for next-sanity to support Next.js 16' : undefined
-    );
+    const isVersion11 = /^[\^~]?11\./.test(nextSanityVersion);
+    if (isVersion11) {
+      warn(
+        'next-sanity version',
+        '⚠ next-sanity@11.x expects Next.js 15 (you have 16)',
+        'This is expected - wait for next-sanity to support Next.js 16'
+      );
+    }
   }
 }
 
@@ -189,7 +208,11 @@ console.log('='.repeat(60));
 
 if (fails > 0) {
   console.log('\n❌ Configuration has issues that will cause deployment failures!');
-  console.log('📖 See VERCEL.md for detailed troubleshooting\n');
+  if (vercelMdExists) {
+    console.log('📖 See VERCEL.md for detailed troubleshooting\n');
+  } else {
+    console.log('📖 See project README for troubleshooting guidance\n');
+  }
   process.exit(1);
 } else if (warns > 0) {
   console.log('\n⚠️  Configuration is valid but has expected warnings');
