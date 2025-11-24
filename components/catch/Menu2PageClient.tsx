@@ -63,6 +63,7 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
   const mixitupRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const preloadedImagesRef = useRef<Set<string>>(new Set());
+  const observerRef = useRef<{ observer: IntersectionObserver; itemImageMapRef: { current: Map<string, string> } } | null>(null);
 
   console.log('Menu2PageClient render - selectedSlug:', selectedSlug);
   console.log('Available locations:', locations.map(l => l.slug));
@@ -144,28 +145,28 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
     mixitupRef.current.filter(filterString);
   }, [selectedSlug, selectedCategory]);
 
-  // Smart image preloading with analytics-ready infrastructure
+  // Helper to preload Next.js optimized image
+  const preloadImage = (src: string) => {
+    if (!src || preloadedImagesRef.current.has(src)) return;
+
+    // Use w=640 to match MenuItemCard's sizes attribute behavior
+    // MenuItemCard uses: "(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+    // Next.js will pick 640px for most viewports based on deviceSizes config
+    const optimizedUrl = `/_next/image?url=${encodeURIComponent(src)}&w=640&q=75`;
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.as = 'image';
+    link.href = optimizedUrl;
+    document.head.appendChild(link);
+
+    preloadedImagesRef.current.add(src);
+
+    // TODO: Track preload events for analytics
+    // trackImagePreload({ src, category: selectedCategory, location: selectedSlug });
+  };
+
+  // Phase 1: Preload first 12 items immediately (above the fold for Popular + Denton)
   useEffect(() => {
-    // Helper to preload Next.js optimized image (without hardcoded width)
-    const preloadImage = (src: string) => {
-      if (!src || preloadedImagesRef.current.has(src)) return;
-
-      // Let Next.js determine responsive width based on Image component's sizes attribute
-      // Don't hardcode w=640 to avoid conflicts with MenuItemCard's responsive strategy
-      const optimizedUrl = `/_next/image?url=${encodeURIComponent(src)}&q=75`;
-      const link = document.createElement('link');
-      link.rel = 'preload';
-      link.as = 'image';
-      link.href = optimizedUrl;
-      document.head.appendChild(link);
-
-      preloadedImagesRef.current.add(src);
-
-      // TODO: Track preload events for analytics
-      // trackImagePreload({ src, category: selectedCategory, location: selectedSlug });
-    };
-
-    // Phase 1: Preload first 12 items immediately (above the fold for Popular + Denton)
     const visibleItems = allItemsWithMeta
       .filter(item => {
         const availableAtLocation = isItemAvailableAtLocation(item, selectedSlug);
@@ -177,12 +178,46 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
     visibleItems.forEach(item => {
       if (item.image) preloadImage(item.image);
     });
+  }, [selectedSlug, selectedCategory, allItemsWithMeta]);
 
-    // Phase 2: Intersection Observer for remaining items
+  // Phase 2: Create IntersectionObserver once (only recreates when allItemsWithMeta changes)
+  useEffect(() => {
     if (typeof window === 'undefined' || !containerRef.current) return;
 
-    // Create map of item IDs to raw image URLs for preloading from data, not DOM
-    const itemImageMap = new Map(
+    const itemImageMapRef = { current: new Map<string, string>() };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const itemId = entry.target.getAttribute('data-item-id');
+            const src = itemId ? itemImageMapRef.current.get(itemId) : null;
+            if (src) {
+              preloadImage(src);
+              observer.unobserve(entry.target);
+            }
+          }
+        });
+      },
+      { rootMargin: '200px' }
+    );
+
+    const cards = containerRef.current.querySelectorAll('.mix-item');
+    cards.forEach(card => observer.observe(card));
+
+    observerRef.current = { observer, itemImageMapRef };
+
+    return () => {
+      observer.disconnect();
+      observerRef.current = null;
+    };
+  }, [allItemsWithMeta]);
+
+  // Phase 2b: Update itemImageMap when filters change (reuses observer)
+  useEffect(() => {
+    if (!observerRef.current) return;
+
+    const newMap = new Map(
       allItemsWithMeta
         .filter(item => {
           const availableAtLocation = isItemAvailableAtLocation(item, selectedSlug);
@@ -192,28 +227,7 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
         .map(item => [item.id.toString(), item.image!])
     );
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            // Get raw image URL from data attribute instead of DOM query
-            const itemId = entry.target.getAttribute('data-item-id');
-            const src = itemId ? itemImageMap.get(itemId) : null;
-            if (src) {
-              preloadImage(src);
-              observer.unobserve(entry.target);
-            }
-          }
-        });
-      },
-      { rootMargin: '200px' } // Start loading 200px before item enters viewport
-    );
-
-    // Observe all menu item cards
-    const cards = containerRef.current.querySelectorAll('.mix-item');
-    cards.forEach(card => observer.observe(card));
-
-    return () => observer.disconnect();
+    observerRef.current.itemImageMapRef.current = newMap;
   }, [selectedSlug, selectedCategory, allItemsWithMeta]);
 
   const selectedLocation = selectedSlug ? locations.find(l => l.slug === selectedSlug) : undefined;
