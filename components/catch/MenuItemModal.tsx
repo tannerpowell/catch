@@ -112,7 +112,7 @@ export default function MenuItemModal({
                   fill
                   sizes="(max-width: 768px) 90vw, (max-width: 1200px) 50vw, 600px"
                   style={{ objectFit: "cover" }}
-                  loading="eager"
+                  priority
                   unoptimized={!image}
                 />
               </div>
