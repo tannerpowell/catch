@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSanityClient } from '@/lib/sanity-config';
 import { timingSafeEqual } from 'crypto';
+import { isIP } from 'net';
 
 // Force Node.js runtime (required for crypto.timingSafeEqual)
 export const runtime = 'nodejs';
@@ -33,10 +34,15 @@ const RATE_LIMIT_MAX_REQUESTS = 30; // 30 requests per minute
  * Strategy depends on deployment model:
  * - Traditional server: Use periodic cleanup (setInterval)
  * - Serverless/Edge: Use on-demand cleanup (this function)
+ *
+ * Threshold is configurable via RATE_LIMIT_CLEANUP_THRESHOLD env var.
+ * Default is 75 entries, but can be tuned based on traffic:
+ * - High traffic: increase threshold (e.g., 150) to reduce cleanup frequency
+ * - Low traffic: decrease threshold (e.g., 50) to minimize memory usage
  */
 function cleanupExpiredEntries(): void {
   const now = Date.now();
-  const CLEANUP_THRESHOLD = 75; // Cleanup at lower threshold to prevent gradual accumulation
+  const CLEANUP_THRESHOLD = parseInt(process.env.RATE_LIMIT_CLEANUP_THRESHOLD || '75', 10);
 
   // Skip cleanup if map is small (optimization for serverless cold starts)
   if (rateLimitMap.size < CLEANUP_THRESHOLD) {
@@ -63,7 +69,8 @@ function cleanupExpiredEntries(): void {
 function checkRateLimit(ip: string): boolean {
   // Perform on-demand cleanup when threshold reached
   // Check every request to ensure timely cleanup
-  if (rateLimitMap.size >= 75) {
+  const CLEANUP_THRESHOLD = parseInt(process.env.RATE_LIMIT_CLEANUP_THRESHOLD || '75', 10);
+  if (rateLimitMap.size >= CLEANUP_THRESHOLD) {
     cleanupExpiredEntries();
   }
 
@@ -120,12 +127,11 @@ function getClientIp(request: NextRequest): string | null {
     clientIp = xForwardedFor.split(',')[0].trim();
   }
 
-  // Validate IP address format with proper octet range validation
+  // Validate IP address using Node's built-in net.isIP()
+  // Returns 4 for IPv4, 6 for IPv6, or 0 for invalid
+  // This is more robust than regex and handles edge cases correctly
   const isValidIp = (ip: string): boolean => {
-    // Validate IPv4 with proper octet range (0-255)
-    const ipv4Pattern = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
-    const ipv6Pattern = /^([0-9a-fA-F]{0,4}:){2,7}[0-9a-fA-F]{0,4}$/;
-    return ipv4Pattern.test(ip) || ipv6Pattern.test(ip);
+    return isIP(ip) !== 0;
   };
 
   if (!clientIp || !isValidIp(clientIp)) {
