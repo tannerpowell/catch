@@ -1,0 +1,718 @@
+/* ========================================
+   Kitchen Dashboard Styles
+   iOS Design System / Apple HIG
+   ======================================== */
+
+/* ========================================
+   Design Tokens (8-point grid)
+   ======================================== */
+
+:root {
+  /* Spacing (8px base unit) */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 40px;
+  --spacing-3xl: 48px;
+
+  /* Typography - SF Pro System Font Stack */
+  --font-system: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-base: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 22px;
+  --font-size-2xl: 28px;
+  --font-size-3xl: 34px;
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* iOS Semantic Colors (Light Mode) */
+  --color-background: #ffffff;
+  --color-background-secondary: #f2f2f7;
+  --color-background-tertiary: #ffffff;
+  --color-grouped-background: #f2f2f7;
+
+  --color-label: #000000;
+  --color-label-secondary: #3c3c43;
+  --color-label-tertiary: #3c3c4399; /* 60% opacity */
+  --color-label-quaternary: #3c3c434d; /* 30% opacity */
+
+  --color-separator: #3c3c4349; /* ~29% opacity */
+  --color-separator-opaque: #c6c6c8;
+
+  --color-fill: #78788033; /* ~20% opacity */
+  --color-fill-secondary: #78788028; /* ~16% opacity */
+  --color-fill-tertiary: #7676801f; /* ~12% opacity */
+
+  /* iOS System Colors */
+  --color-blue: #007aff;
+  --color-blue-hover: #0051d5;
+  --color-green: #34c759;
+  --color-green-hover: #248a3d;
+  --color-orange: #ff9500;
+  --color-orange-hover: #c77700;
+  --color-red: #ff3b30;
+  --color-red-hover: #d70015;
+  --color-yellow: #ffcc00;
+  --color-gray: #8e8e93;
+  --color-gray-hover: #636366;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.12);
+
+  /* Border Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+
+  /* Touch Target (minimum 44px) */
+  --touch-target-min: 44px;
+
+  /* Transitions */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background: #000000;
+    --color-background-secondary: #1c1c1e;
+    --color-background-tertiary: #2c2c2e;
+    --color-grouped-background: #000000;
+
+    --color-label: #ffffff;
+    --color-label-secondary: #ebebf5;
+    --color-label-tertiary: #ebebf599; /* 60% opacity */
+    --color-label-quaternary: #ebebf54d; /* 30% opacity */
+
+    --color-separator: #54545899; /* ~60% opacity */
+    --color-separator-opaque: #38383a;
+
+    --color-fill: #7878805b; /* ~36% opacity */
+    --color-fill-secondary: #78788051; /* ~32% opacity */
+    --color-fill-tertiary: #7676803d; /* ~24% opacity */
+
+    --color-blue: #0a84ff;
+    --color-blue-hover: #409cff;
+    --color-green: #30d158;
+    --color-green-hover: #32d74b;
+    --color-orange: #ff9f0a;
+    --color-orange-hover: #ffb340;
+    --color-red: #ff453a;
+    --color-red-hover: #ff6961;
+    --color-yellow: #ffd60a;
+    --color-gray: #98989d;
+    --color-gray-hover: #aeaeb2;
+  }
+}
+
+/* ========================================
+   Dashboard Layout
+   ======================================== */
+
+.kitchen-dashboard {
+  min-height: 100vh;
+  background: var(--color-grouped-background);
+  font-family: var(--font-system);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ========================================
+   Header
+   ======================================== */
+
+.kitchen-header {
+  background: var(--color-background);
+  border-bottom: 0.5px solid var(--color-separator);
+  padding: var(--spacing-md) var(--spacing-lg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+}
+
+.kitchen-header-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.kitchen-header h1 {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-label);
+  margin: 0 0 var(--spacing-xs) 0;
+  line-height: 1.2;
+}
+
+.kitchen-header-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.kitchen-order-count {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-label-secondary);
+}
+
+.kitchen-last-update {
+  font-size: var(--font-size-sm);
+  color: var(--color-label-tertiary);
+}
+
+.kitchen-refresh-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  min-height: var(--touch-target-min);
+  padding: 0 var(--spacing-md);
+  background: var(--color-blue);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  font-family: var(--font-system);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.kitchen-refresh-btn:hover {
+  background: var(--color-blue-hover);
+}
+
+.kitchen-refresh-btn:active {
+  transform: scale(0.98);
+}
+
+/* ========================================
+   Error Banner
+   ======================================== */
+
+.kitchen-error {
+  background: var(--color-red);
+  color: white;
+  padding: var(--spacing-md) var(--spacing-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+/* ========================================
+   Loading State
+   ======================================== */
+
+.kitchen-loading {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-lg);
+  background: var(--color-grouped-background);
+  color: var(--color-label-secondary);
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--color-fill-tertiary);
+  border-top-color: var(--color-blue);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ========================================
+   Board Layout
+   ======================================== */
+
+.kitchen-board {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Responsive breakpoints */
+@media (max-width: 1024px) {
+  .kitchen-board {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .kitchen-board {
+    grid-template-columns: 1fr;
+    padding: var(--spacing-md);
+  }
+}
+
+/* ========================================
+   Column
+   ======================================== */
+
+.kitchen-column {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.kitchen-column-header {
+  background: var(--color-background);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: var(--shadow-sm);
+}
+
+.kitchen-column-header h2 {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-label);
+  margin: 0;
+}
+
+.kitchen-column-count {
+  min-width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-fill);
+  color: var(--color-label);
+  border-radius: 14px;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  padding: 0 var(--spacing-sm);
+}
+
+.kitchen-column-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: var(--spacing-md);
+}
+
+/* ========================================
+   Empty State
+   ======================================== */
+
+.kitchen-empty-state {
+  background: var(--color-background);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-3xl) var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+  color: var(--color-label-tertiary);
+}
+
+.kitchen-empty-icon {
+  color: var(--color-label-quaternary);
+}
+
+.kitchen-empty-state p {
+  margin: 0;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+}
+
+/* ========================================
+   Order Card
+   ======================================== */
+
+.order-card {
+  background: var(--color-background);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  transition: box-shadow var(--transition-fast);
+}
+
+.order-card:active {
+  box-shadow: var(--shadow-lg);
+}
+
+/* Card Header */
+.order-card-header {
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-bottom: 0.5px solid var(--color-separator);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+}
+
+.order-card-header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.order-number {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-label);
+}
+
+.order-type-badge {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-label-secondary);
+  background: var(--color-fill);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-sm);
+}
+
+/* Order Timer */
+.order-timer {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-label-secondary);
+  white-space: nowrap;
+}
+
+.order-timer svg {
+  color: var(--color-label-tertiary);
+}
+
+.order-timer--warning {
+  color: var(--color-orange);
+}
+
+.order-timer--warning svg {
+  color: var(--color-orange);
+}
+
+.order-timer--critical {
+  color: var(--color-red);
+  font-weight: var(--font-weight-semibold);
+}
+
+.order-timer--critical svg {
+  color: var(--color-red);
+}
+
+/* Customer Info */
+.order-customer {
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-bottom: 0.5px solid var(--color-separator);
+}
+
+.order-customer-name {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-label);
+  margin-bottom: 2px;
+}
+
+.order-customer-phone {
+  font-size: var(--font-size-sm);
+  color: var(--color-blue);
+  text-decoration: none;
+  font-weight: var(--font-weight-medium);
+  min-height: var(--touch-target-min);
+  display: flex;
+  align-items: center;
+}
+
+.order-customer-phone:active {
+  opacity: 0.6;
+}
+
+/* Order Items */
+.order-items {
+  padding: var(--spacing-md) var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.order-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.order-item + .order-item {
+  padding-top: var(--spacing-md);
+  border-top: 0.5px solid var(--color-separator);
+}
+
+.order-item-header {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-sm);
+}
+
+.order-item-quantity {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-label);
+  min-width: 28px;
+}
+
+.order-item-name {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-label);
+  flex: 1;
+}
+
+.order-item-modifiers {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-left: 36px;
+}
+
+.order-item-modifier {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-xs);
+  font-size: var(--font-size-sm);
+  color: var(--color-label-secondary);
+}
+
+.order-item-modifier-bullet {
+  color: var(--color-label-tertiary);
+  font-weight: var(--font-weight-bold);
+}
+
+.order-item-instructions {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-xs);
+  margin-left: 36px;
+  margin-top: 4px;
+  padding: var(--spacing-sm);
+  background: var(--color-fill-secondary);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  color: var(--color-label-secondary);
+  line-height: 1.4;
+}
+
+.order-item-instructions-icon {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--color-blue);
+}
+
+/* Order Special Instructions */
+.order-special-instructions {
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: var(--color-fill-secondary);
+  border-top: 0.5px solid var(--color-separator);
+}
+
+.order-special-instructions-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-label);
+  margin-bottom: 4px;
+}
+
+.order-special-instructions-text {
+  font-size: var(--font-size-sm);
+  color: var(--color-label-secondary);
+  line-height: 1.4;
+}
+
+/* Card Footer */
+.order-card-footer {
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-top: 0.5px solid var(--color-separator);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+}
+
+.order-total {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.order-total-label {
+  font-size: var(--font-size-xs);
+  color: var(--color-label-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: var(--font-weight-semibold);
+}
+
+.order-total-amount {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-label);
+}
+
+/* Action Button */
+.order-action-button {
+  min-height: var(--touch-target-min);
+  padding: 0 var(--spacing-lg);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  font-family: var(--font-system);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.order-action-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.order-action-button--blue {
+  background: var(--color-blue);
+  color: white;
+}
+
+.order-action-button--blue:hover:not(:disabled) {
+  background: var(--color-blue-hover);
+}
+
+.order-action-button--green {
+  background: var(--color-green);
+  color: white;
+}
+
+.order-action-button--green:hover:not(:disabled) {
+  background: var(--color-green-hover);
+}
+
+.order-action-button--gray {
+  background: var(--color-fill);
+  color: var(--color-label);
+}
+
+.order-action-button--gray:hover:not(:disabled) {
+  background: var(--color-fill-secondary);
+}
+
+.order-action-button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.order-action-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+/* ========================================
+   iPad Specific Optimizations
+   ======================================== */
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  /* Optimize for iPad portrait and landscape */
+  .kitchen-header {
+    padding: var(--spacing-lg) var(--spacing-xl);
+  }
+
+  .kitchen-board {
+    padding: var(--spacing-xl);
+    gap: var(--spacing-lg);
+  }
+
+  .order-card {
+    font-size: var(--font-size-lg);
+  }
+}
+
+/* ========================================
+   Safe Area Insets (for iPad notch)
+   ======================================== */
+
+@supports (padding: env(safe-area-inset-top)) {
+  .kitchen-header {
+    padding-top: max(var(--spacing-md), env(safe-area-inset-top));
+    padding-left: max(var(--spacing-lg), env(safe-area-inset-left));
+    padding-right: max(var(--spacing-lg), env(safe-area-inset-right));
+  }
+
+  .kitchen-board {
+    padding-left: max(var(--spacing-lg), env(safe-area-inset-left));
+    padding-right: max(var(--spacing-lg), env(safe-area-inset-right));
+    padding-bottom: max(var(--spacing-lg), env(safe-area-inset-bottom));
+  }
+}
+
+/* ========================================
+   Accessibility
+   ======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  /* Disable spinner animations */
+  .spinner,
+  .order-action-spinner {
+    animation: none !important;
+    border-top-color: var(--color-label-tertiary);
+  }
+  
+  /* Remove decorative transitions on interactive elements */
+  .kitchen-refresh-btn,
+  .order-card,
+  .order-action-btn {
+    transition: none !important;
+  }
+}
+
+/* Focus visible for keyboard navigation */
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--color-blue);
+  outline-offset: 2px;
+}

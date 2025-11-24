@@ -107,20 +107,20 @@ export async function captureCartError(
 ) {
   const metadata = getErrorMetadata(code);
 
-  // Build common payload for Sentry
-  const errorPayload = {
-    tags: {
-      errorCode: code,
-      severity: metadata.severity,
-    },
-    contexts: {
-      cart_error: {
-        code,
-        description: metadata.description,
-        ...context,
-      },
-    },
-  };
+  // Build common payload for Sentry (uncomment when Sentry is enabled)
+  // const errorPayload = {
+  //   tags: {
+  //     errorCode: code,
+  //     severity: metadata.severity,
+  //   },
+  //   contexts: {
+  //     cart_error: {
+  //       code,
+  //       description: metadata.description,
+  //       ...context,
+  //     },
+  //   },
+  // };
 
   // Sentry reporting disabled - @sentry/nextjs not installed
   // To enable error reporting:

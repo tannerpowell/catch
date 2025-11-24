@@ -50,17 +50,13 @@ const isBadge = (value: unknown): value is Badge => typeof value === "string" &&
 
 const BadgeSchema = z.enum(badgeOptions);
 
-const HoursSchema = z
-  .object({
-    sunday: z.string().optional(),
-    monday: z.string().optional(),
-    tuesday: z.string().optional(),
-    wednesday: z.string().optional(),
-    thursday: z.string().optional(),
-    friday: z.string().optional(),
-    saturday: z.string().optional()
-  })
-  .optional();
+// Note: Hours schema not currently used - using z.any() for flexibility
+// If strict hours validation needed, define:
+// const HoursSchema = z.object({
+//   sunday: z.string().optional(),
+//   monday: z.string().optional(),
+//   ...
+// }).optional();
 
 const LocationSchema = z.object({
   _id: z.string(),
@@ -178,7 +174,7 @@ const getItemsCached = cache(async (): Promise<MenuItem[]> => {
   }
   try {
     const raw = await client.fetch(qItems);
-    const mapped = raw.map((i: any) => ({
+    const mapped = raw.map((i: Record<string, unknown>) => ({
       id: i._id,
       name: i.name,
       slug: i.slug,
@@ -187,7 +183,11 @@ const getItemsCached = cache(async (): Promise<MenuItem[]> => {
       price: i.basePrice ?? null,
       badges: Array.isArray(i.badges) ? i.badges.filter(isBadge) : undefined,
       image: i.image ?? undefined,
-      locationOverrides: normalizeOverrides(i.overrides)
+      locationOverrides: normalizeOverrides(
+        Array.isArray(i.overrides)
+          ? i.overrides as { loc: string; price?: number; available?: boolean }[]
+          : undefined
+      )
     }));
     return z.array(ItemSchema).parse(mapped) as MenuItem[];
   } catch (error) {

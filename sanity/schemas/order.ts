@@ -1,5 +1,11 @@
 import { defineType, defineField } from "sanity";
 
+// Type for Sanity validation context
+interface ValidationContext {
+  document?: Record<string, unknown>;
+  parent?: unknown;
+}
+
 /**
  * Validate a phone number allowing international formats and common separators.
  *
@@ -179,12 +185,14 @@ export default defineType({
               name: "totalPrice",
               type: "number",
               title: "Total Price",
-              validation: (rule) => rule.required().min(0.01).custom((value: unknown, context: any) => {
-                const quantity = context.parent?.quantity;
-                const price = context.parent?.price;
+              validation: (rule) => rule.required().min(0.01).custom((value: unknown, context: ValidationContext) => {
+                const parent = context.parent as Record<string, unknown> | undefined;
+                const quantity = parent?.quantity as number | undefined;
+                const price = parent?.price as number | undefined;
                 const totalPrice = value as number;
-                
-                if (quantity !== undefined && price !== undefined && totalPrice !== undefined) {
+
+                if (quantity !== undefined && price !== undefined && totalPrice !== undefined &&
+                    typeof quantity === 'number' && typeof price === 'number') {
                   const expected = quantity * price;
                   const tolerance = 0.01; // Allow for floating point rounding
                   if (Math.abs(totalPrice - expected) > tolerance) {
@@ -374,7 +382,7 @@ export default defineType({
           name: "street",
           type: "string",
           title: "Street",
-          validation: (rule) => rule.custom((value, context: any) => {
+          validation: (rule) => rule.custom((value, context: ValidationContext) => {
             if (context.document?.orderType === "delivery" && !value) {
               return "Street address is required for delivery orders";
             }
@@ -390,7 +398,7 @@ export default defineType({
           name: "city",
           type: "string",
           title: "City",
-          validation: (rule) => rule.custom((value, context: any) => {
+          validation: (rule) => rule.custom((value, context: ValidationContext) => {
             if (context.document?.orderType === "delivery" && !value) {
               return "City is required for delivery orders";
             }
@@ -401,7 +409,7 @@ export default defineType({
           name: "state",
           type: "string",
           title: "State",
-          validation: (rule) => rule.custom((value, context: any) => {
+          validation: (rule) => rule.custom((value, context: ValidationContext) => {
             if (context.document?.orderType === "delivery" && !value) {
               return "State is required for delivery orders";
             }
@@ -412,7 +420,7 @@ export default defineType({
           name: "zip",
           type: "string",
           title: "ZIP",
-          validation: (rule) => rule.custom((value, context: any) => {
+          validation: (rule) => rule.custom((value, context: ValidationContext) => {
             if (context.document?.orderType === "delivery" && !value) {
               return "ZIP code is required for delivery orders";
             }

@@ -933,26 +933,67 @@ export default function KitchenDisplay() {
 }
 ```
 
+**Install required dependencies:**
+```bash
+npm install bcryptjs
+npm install jose
+npm install --save-dev @types/bcryptjs
+```
+
+**Generate a bcrypt password hash:**
+```bash
+# Generate a bcrypt hash for your password
+npx bcryptjs-cli hash "your-secure-password" 10
+
+# Example output:
+# $2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy
+```
+
+**Add environment variables:**
+```env
+# .env.local
+KDS_PASSWORD_HASH=$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy
+KDS_JWT_SECRET=your-random-jwt-secret-at-least-32-characters-long
+```
+
 **Create the server-side authentication endpoint:**
 ```typescript
 // app/api/auth/kds/route.ts
 import { cookies } from 'next/headers';
 import { SignJWT, jwtVerify } from 'jose';
+import bcrypt from 'bcryptjs';
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.KDS_JWT_SECRET || 'your-secret-key-change-in-production'
-);
+// Validate required environment variables at module load
+const KDS_PASSWORD_HASH = process.env.KDS_PASSWORD_HASH;
+const KDS_JWT_SECRET = process.env.KDS_JWT_SECRET;
+
+if (!KDS_PASSWORD_HASH || !KDS_JWT_SECRET) {
+  const missing: string[] = [];
+  if (!KDS_PASSWORD_HASH) missing.push('KDS_PASSWORD_HASH');
+  if (!KDS_JWT_SECRET) missing.push('KDS_JWT_SECRET');
+  
+  throw new Error(
+    `Missing required KDS auth environment variables: ${missing.join(', ')}. ` +
+    'Please set these in your .env.local file. ' +
+    'Generate password hash with: npx bcryptjs-cli hash "your-password" 10'
+  );
+}
+
+const JWT_SECRET = new TextEncoder().encode(KDS_JWT_SECRET);
 
 export async function POST(request: Request) {
   try {
     const { password } = await request.json();
     
-    // Verify password using hash-based comparison (timing-safe)
-    const { createHash, timingSafeEqual } = await import('crypto');
+    if (!password || typeof password !== 'string') {
+      return Response.json(
+        { error: 'Invalid credentials' },
+        { status: 401 }
+      );
+    }
     
-    const inputHash = createHash('sha256').update(password || '').digest();
-    const expectedHash = createHash('sha256').update(process.env.KDS_PASSWORD || '').digest();
-    const isValidPassword = timingSafeEqual(inputHash, expectedHash);
+    // Verify password using bcrypt (timing-safe)
+    const isValidPassword = await bcrypt.compare(password, KDS_PASSWORD_HASH);
     
     if (!isValidPassword) {
       return Response.json(
@@ -967,7 +1008,7 @@ export async function POST(request: Request) {
       .setExpirationTime('24h')
       .sign(JWT_SECRET);
 
-    // Set HTTP-only cookie
+    // Set HTTP-only cookie (secure flag based on NODE_ENV)
     const cookieJar = await cookies();
     cookieJar.set('kds-auth', token, {
       httpOnly: true,
@@ -1018,9 +1059,17 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { jwtVerify } from 'jose';
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.KDS_JWT_SECRET || 'your-secret-key-change-in-production'
-);
+// Validate JWT secret at module load
+const KDS_JWT_SECRET = process.env.KDS_JWT_SECRET;
+
+if (!KDS_JWT_SECRET) {
+  throw new Error(
+    'Missing required environment variable: KDS_JWT_SECRET. ' +
+    'Please set this in your .env.local file with a secure random string.'
+  );
+}
+
+const JWT_SECRET = new TextEncoder().encode(KDS_JWT_SECRET);
 
 export async function middleware(request: NextRequest) {
   // Only protect KDS routes

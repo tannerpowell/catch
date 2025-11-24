@@ -24,7 +24,12 @@ export function OrderTimer({ createdAt }: OrderTimerProps) {
       const created = new Date(createdAt);
       const now = new Date();
       const diffMs = now.getTime() - created.getTime();
-      const diffMins = Math.floor(diffMs / 60000);
+      let diffMins = Math.floor(diffMs / 60000);
+
+      // Clamp negative values to zero (handles future timestamps)
+      if (diffMins < 0) {
+        diffMins = 0;
+      }
 
       // Format time display
       if (diffMins < 1) {

@@ -19,7 +19,7 @@ interface AddToCartButtonProps {
  * Price must be defined, not null, be a number, and >= 0
  */
 function isValidPrice(price: number | null | undefined): price is number {
-  return price !== null && price !== undefined && typeof price === 'number' && price >= 0;
+  return price !== null && price !== undefined && Number.isFinite(price) && price >= 0;
 }
 
 /**

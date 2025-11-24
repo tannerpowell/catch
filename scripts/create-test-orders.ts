@@ -11,12 +11,37 @@ import { resolve } from 'path';
 // Load .env.local
 config({ path: resolve(process.cwd(), '.env.local') });
 
+// Validate required environment variables
+const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
+const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET;
+const token = process.env.SANITY_WRITE_TOKEN;
+
+if (!projectId || !dataset || !token) {
+  const missing: string[] = [];
+  if (!projectId) missing.push('NEXT_PUBLIC_SANITY_PROJECT_ID');
+  if (!dataset) missing.push('NEXT_PUBLIC_SANITY_DATASET');
+  if (!token) missing.push('SANITY_WRITE_TOKEN');
+  
+  console.error('❌ Configuration Error: Missing required environment variables\n');
+  for (const variable of missing) {
+    console.error(`  • ${variable}`);
+  }
+  console.error('\nRequired setup:');
+  console.error('  1. Create a .env.local file in the project root');
+  console.error('  2. Add these variables:');
+  console.error('     NEXT_PUBLIC_SANITY_PROJECT_ID=your_project_id');
+  console.error('     NEXT_PUBLIC_SANITY_DATASET=your_dataset');
+  console.error('     SANITY_WRITE_TOKEN=your_write_token');
+  console.error('  3. Get these values from https://manage.sanity.io\n');
+  process.exit(1);
+}
+
 const client = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
+  projectId,
+  dataset,
   useCdn: false,
   apiVersion: '2024-01-01',
-  token: process.env.SANITY_WRITE_TOKEN
+  token
 });
 
 /**

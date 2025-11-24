@@ -7,7 +7,7 @@ const OFFLINE_URL = '/kitchen';
 // Assets to cache on install
 const STATIC_ASSETS = [
   '/kitchen',
-  '/app/styles/kitchen.css',
+  '/styles/kitchen.css',
   '/manifest.json',
 ];
 

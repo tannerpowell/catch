@@ -19,6 +19,7 @@ export default function KitchenDashboard() {
   const { orders: allOrders, clearOrders, updateOrderStatus } = useOrders();
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
   const [loading, setLoading] = useState(true);
+  const [showA2HSHint, setShowA2HSHint] = useState(false);
 
   // Filter to only show active orders (not completed/cancelled)
   const orders = allOrders.filter(order =>
@@ -27,7 +28,8 @@ export default function KitchenDashboard() {
 
   // Simulate initial load
   useEffect(() => {
-    setTimeout(() => setLoading(false), 300);
+    const timer = setTimeout(() => setLoading(false), 300);
+    return () => clearTimeout(timer);
   }, []);
 
   // Auto-refresh timestamp every 30 seconds
@@ -42,15 +44,15 @@ export default function KitchenDashboard() {
     updateOrderStatus(orderId, newStatus);
   };
 
-  // Add to home screen prompt for iPad
+  // Show Add to Home Screen hint for non-standalone users
   useEffect(() => {
     // Check if running as standalone PWA
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
 
     if (!isStandalone) {
-      // Show subtle hint after 30 seconds
+      // Show user-visible hint after 30 seconds
       const timer = setTimeout(() => {
-        console.log('Hint: Add to Home Screen for full-screen experience');
+        setShowA2HSHint(true);
       }, 30000);
 
       return () => clearTimeout(timer);
@@ -112,6 +114,52 @@ export default function KitchenDashboard() {
 
       {/* Main board */}
       <KitchenBoard orders={orders} onOrderUpdate={handleOrderUpdate} />
+
+      {/* Add to Home Screen hint banner */}
+      {showA2HSHint && (
+        <div
+          role="status"
+          aria-live="polite"
+          style={{
+            position: 'fixed',
+            top: '80px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            maxWidth: '500px',
+            backgroundColor: '#1f2937',
+            color: 'white',
+            padding: '16px 20px',
+            borderRadius: '8px',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            zIndex: 1000,
+            fontSize: '14px',
+            lineHeight: '1.4',
+          }}
+        >
+          <span role="img" aria-label="Information">ℹ️</span>
+          <span style={{ flex: 1 }}>
+            <strong>Tip:</strong> Add this page to your home screen for a full-screen experience
+          </span>
+          <button
+            onClick={() => setShowA2HSHint(false)}
+            aria-label="Dismiss hint"
+            style={{
+              background: 'transparent',
+              border: 'none',
+              color: 'white',
+              cursor: 'pointer',
+              fontSize: '18px',
+              padding: '4px 8px',
+              opacity: 0.8,
+            }}
+          >
+            ✕
+          </button>
+        </div>
+      )}
 
       {/* Clear Orders Button */}
       {orders.length > 0 && (

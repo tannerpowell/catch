@@ -17,8 +17,8 @@ export default [
     ]
   },
   ...tseslint.configs.recommended,
-  ...pluginReact.configs.flat.recommended,
-  ...pluginReact.configs.flat['jsx-runtime'],
+  pluginReact.configs.flat.recommended,
+  pluginReact.configs.flat['jsx-runtime'],
   ...nextConfig,
   {
     files: ["**/*.{js,jsx,ts,tsx}"],

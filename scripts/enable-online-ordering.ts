@@ -7,6 +7,7 @@
 
 import { createClient } from '@sanity/client';
 import dotenv from 'dotenv';
+import { Location } from '../lib/types';
 
 dotenv.config({ path: '.env.local' });
 
@@ -31,7 +32,7 @@ const client = createClient({
   projectId,
   dataset,
   token,
-  apiVersion: '2024-01-01',
+  apiVersion: '2024-11-24',
   useCdn: false,
 });
 
@@ -46,13 +47,27 @@ async function enableOnlineOrdering() {
   console.log('🚀 Enabling online ordering for all locations...\n');
 
   // Fetch all locations
-  const locations = await client.fetch(`*[_type == "location"] {
-    _id,
-    name,
-    onlineOrderingEnabled,
-    acceptingOrders,
-    orderTypes
-  }`);
+  let locations: Location[];
+  try {
+    locations = await client.fetch(`*[_type == "location"] {
+      _id,
+      name,
+      onlineOrderingEnabled,
+      acceptingOrders,
+      orderTypes
+    }`);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error('❌ Failed to fetch locations from Sanity:');
+    console.error(`   Error: ${errorMessage}`);
+    console.error('   Query: *[_type == "location"]');
+    console.error('\nPossible causes:');
+    console.error('   • Network connectivity issues');
+    console.error('   • Invalid Sanity credentials');
+    console.error('   • Incorrect project ID or dataset');
+    console.error('   • Missing read permissions for the API token\n');
+    process.exit(1);
+  }
 
   console.log(`Found ${locations.length} locations:\n`);
 

@@ -169,10 +169,17 @@ async function createConnectedAccounts() {
     console.log(`✓ Created account ${account.id} for ${location.name}`);
 
     // Generate onboarding link
+    const refreshUrl = process.env.STRIPE_REFRESH_URL || `https://thecatch.com/admin/stripe-connect/refresh`;
+    const returnUrl = process.env.STRIPE_RETURN_URL || `https://thecatch.com/admin/stripe-connect/success`;
+    
+    if (!process.env.STRIPE_REFRESH_URL || !process.env.STRIPE_RETURN_URL) {
+      console.warn('⚠️  STRIPE_REFRESH_URL or STRIPE_RETURN_URL not set in environment, using default values');
+    }
+
     const accountLink = await stripe.accountLinks.create({
       account: account.id,
-      refresh_url: `https://thecatch.com/admin/stripe-connect/refresh`,
-      return_url: `https://thecatch.com/admin/stripe-connect/success`,
+      refresh_url: refreshUrl,
+      return_url: returnUrl,
       type: 'account_onboarding',
     });
 
@@ -1170,12 +1177,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     const tax = subtotal * taxRate;
     const total = subtotal + tax + cart.tip + cart.deliveryFee;
 
-    setCart((prev) => ({
-      ...prev,
-      subtotal,
-      tax,
-      total,
-    }));
+    // Only update if values actually changed to prevent infinite loop
+    if (cart.subtotal !== subtotal || cart.tax !== tax || cart.total !== total) {
+      setCart((prev) => ({
+        ...prev,
+        subtotal,
+        tax,
+        total,
+      }));
+    }
   }, [cart.items, cart.tip, cart.deliveryFee, cart.location]);
 
   // Persist cart to localStorage

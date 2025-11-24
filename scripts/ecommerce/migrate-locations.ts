@@ -45,10 +45,17 @@ function validateEnv() {
 // Run validation before initializing client
 validateEnv();
 
+const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production';
+
+// Log which dataset will be mutated
+console.log(`\n⚠️  This script will modify the "${dataset}" dataset.`);
+console.log(`   Project: ${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}`);
+console.log(`   Make sure this is the correct target!\n`);
+
 // Initialize Sanity client with validated environment variables
 const sanityClient = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
+  dataset,
   token: process.env.SANITY_API_TOKEN!,
   useCdn: false,
   apiVersion: '2024-01-01',
@@ -78,12 +85,12 @@ const TAX_RATES_BY_ZIP: Record<string, number> = {
 
 // Fallback: Tax rates by city, state (used if ZIP code not found)
 const TAX_RATES_BY_CITY: Record<string, number> = {
-  'Arlington, TX': 0.0825,
-  'Dallas, TX': 0.0825,
-  'Houston, TX': 0.0825,
-  'San Antonio, TX': 0.08125,
-  'Austin, TX': 0.0825,
-  'Fort Worth, TX': 0.0825,
+  'arlington, TX': 0.0825,
+  'dallas, TX': 0.0825,
+  'houston, TX': 0.0825,
+  'san antonio, TX': 0.08125,
+  'austin, TX': 0.0825,
+  'fort worth, TX': 0.0825,
   // Add more cities as needed
 };
 
@@ -151,22 +158,28 @@ async function migrateLocations() {
         let taxRate: number | undefined;
         let lookupMethod: string = '';
 
+        // Normalize location fields for lookup (handle ZIP+4, whitespace, case)
+        const postalCodeKey = location.postalCode?.slice(0, 5).trim();
+        const cityKey = location.city?.trim().toLowerCase();
+        const stateKey = location.state?.trim().toUpperCase();
+
         // Lookup priority: ZIP code → City/State → State → Skip
         
-        // 1. Try ZIP code lookup
-        if (location.postalCode && location.postalCode in TAX_RATES_BY_ZIP) {
-          taxRate = TAX_RATES_BY_ZIP[location.postalCode];
-          lookupMethod = `ZIP code ${location.postalCode}`;
+        // 1. Try ZIP code lookup (normalize to 5-digit ZIP)
+        if (postalCodeKey && postalCodeKey in TAX_RATES_BY_ZIP) {
+          taxRate = TAX_RATES_BY_ZIP[postalCodeKey];
+          lookupMethod = `ZIP code ${postalCodeKey}`;
         }
         // 2. Try city/state lookup
-        else if (`${location.city}, ${location.state}` in TAX_RATES_BY_CITY) {
-          taxRate = TAX_RATES_BY_CITY[`${location.city}, ${location.state}`];
-          lookupMethod = `City (${location.city}, ${location.state})`;
+        else if (cityKey && stateKey && `${cityKey}, ${stateKey}` in TAX_RATES_BY_CITY) {
+          const key = `${cityKey}, ${stateKey}`;
+          taxRate = TAX_RATES_BY_CITY[key];
+          lookupMethod = `City (${key})`;
         }
         // 3. Try state-only lookup
-        else if (location.state in TAX_RATES_BY_STATE) {
-          taxRate = TAX_RATES_BY_STATE[location.state];
-          lookupMethod = `State (${location.state})`;
+        else if (stateKey && stateKey in TAX_RATES_BY_STATE) {
+          taxRate = TAX_RATES_BY_STATE[stateKey];
+          lookupMethod = `State (${stateKey})`;
         }
         
         // 4. No tax rate found - skip this location
@@ -276,7 +289,9 @@ async function migrateLocations() {
       console.log('3. Run setup-stripe-locations.ts to create Stripe accounts');
       console.log('4. Enable onlineOrderingEnabled for locations when ready\n');
     } else {
-      console.log('\n❌ Migration incomplete - please fix missing tax rates and retry\n');
+      console.log(
+        '\n❌ Migration incomplete - please fix missing tax rates and/or retry after resolving migration failures\n'
+      );
       process.exit(1);
     }
 
