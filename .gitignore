@@ -55,6 +55,7 @@ Mixitup/
 catch-deploy-guide.md
 menu-formatting-rules.md
 llm-context.md
+VERCEL.md
 
 # Scraped/sample data (not for production)
 revel-graphql-sample.json
