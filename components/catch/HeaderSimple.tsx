@@ -17,6 +17,13 @@ const navLinks = [
   { href: "/kitchen", label: "iPad" }
 ] as const;
 
+/**
+ * Renders the site header with logo, primary navigation, a cart button (with item count badge), a hamburger that opens a full-page mobile menu, and a cart drawer.
+ *
+ * The component manages internal state for the mobile menu and cart drawer, closes the mobile menu when mobile links are clicked, and dynamically loads GSAP to animate the right-side menu items when the full-page menu becomes visible.
+ *
+ * @returns The header and associated overlays as a JSX element
+ */
 export default function HeaderSimple() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);

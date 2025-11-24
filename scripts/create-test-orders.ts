@@ -19,6 +19,14 @@ const client = createClient({
   token: process.env.SANITY_WRITE_TOKEN
 });
 
+/**
+ * Creates three sample order documents in Sanity for kitchen dashboard testing.
+ *
+ * Fetches up to three `location` documents and, if at least one exists, creates
+ * three predefined orders that reference the first location and include
+ * customer, item, pricing, and timestamp fields. Exits early if no locations
+ * are found.
+ */
 async function createTestOrders() {
   console.log('🔍 Fetching locations...');
   const locations = await client.fetch(`*[_type == "location"][0...3]`);

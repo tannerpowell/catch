@@ -8,6 +8,15 @@ interface MenuHeroProps {
   heroImage?: string;
 }
 
+/**
+ * Renders the menu hero section with title, description, a location selector, and a hero image.
+ *
+ * @param locations - Array of location objects used to populate the select options.
+ * @param selectedSlug - Slug of the currently selected location shown as the select's value.
+ * @param onLocationChange - Callback invoked with a location slug when the user selects a different location.
+ * @param heroImage - Optional URL to override the default hero image.
+ * @returns The JSX element for the menu hero section.
+ */
 export default function MenuHero({ locations, selectedSlug, onLocationChange, heroImage }: MenuHeroProps) {
   return (
     <section className="catch-paper-bg border-b border-slate-300 dark:border-slate-700">

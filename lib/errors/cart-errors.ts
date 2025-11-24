@@ -43,7 +43,10 @@ export const CART_ERROR_CODES = {
 export type CartErrorCode = keyof typeof CART_ERROR_CODES;
 
 /**
- * Get error metadata by code
+ * Retrieve structured cart error metadata for a given error code.
+ *
+ * @param code - The cart error code to look up.
+ * @returns The corresponding CartError metadata; if the code is not found, returns an `UNKNOWN_ERROR` metadata object.
  */
 export function getErrorMetadata(code: CartErrorCode): CartError {
   const metadata = CART_ERROR_CODES[code];
@@ -60,10 +63,14 @@ export function getErrorMetadata(code: CartErrorCode): CartError {
 }
 
 /**
- * Log error to monitoring system with structured context
- * Works on both client and server sides using dynamic imports
- * @param code - Error code from CART_ERROR_CODES
- * @param context - Additional context to send to monitoring
+ * Send structured cart error metadata to the configured monitoring system.
+ *
+ * Reports the provided cart error code with standardized tags and a `cart_error`
+ * context payload. If reporting fails it is swallowed (no exception is thrown).
+ * In development, the same metadata is also written to the console for debugging.
+ *
+ * @param code - Key identifying the cart error to report
+ * @param context - Additional contextual fields to include inside `cart_error`
  */
 export async function captureCartError(
   code: CartErrorCode,
@@ -122,9 +129,11 @@ export async function captureCartError(
 }
 
 /**
- * Create a safe error to throw to user
- * Contains error code but not sensitive details
- * Async to allow monitoring integration
+ * Create a sanitized Error for user consumption and trigger monitoring when context is provided.
+ *
+ * @param code - Cart error code identifying the error metadata to use for message and reporting.
+ * @param context - Optional additional context to include in monitoring payload.
+ * @returns An Error with message formatted as `<code>: <userMessage>`.
  */
 export async function createCartError(code: CartErrorCode, context?: Record<string, any>): Promise<Error> {
   const metadata = getErrorMetadata(code);

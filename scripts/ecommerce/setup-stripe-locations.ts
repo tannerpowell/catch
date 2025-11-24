@@ -39,6 +39,11 @@ interface SanityLocation {
   stripeAccountId?: string;
 }
 
+/**
+ * Creates Stripe Express connected accounts for all Sanity location documents and stores their onboarding and dashboard links.
+ *
+ * For each location without an existing Stripe account and with an email, creates an Express connected account, generates an onboarding link and an Express dashboard login link, and updates the corresponding Sanity document with the account ID, links, and initial Stripe status flags. Skips locations that already have a Stripe account or lack an email, logs progress for each location, continues on per-location errors, and logs a summary when finished.
+ */
 async function createConnectedAccounts() {
   console.log('🚀 Starting Stripe Connect setup for The Catch locations...\n');
 

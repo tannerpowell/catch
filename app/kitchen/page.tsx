@@ -6,6 +6,15 @@ import { KitchenBoard } from '@/components/kitchen/KitchenBoard';
 import { RegisterServiceWorker } from './register-sw';
 import { useOrders } from '@/lib/contexts/OrdersContext';
 
+/**
+ * Render the kitchen dashboard UI for managing active orders.
+ *
+ * The component displays a header with active order count and a last-updated timestamp, a refresh control,
+ * the main KitchenBoard for order interactions, and a floating "Clear All Demo Orders" button when there are active orders.
+ * It also updates the last-updated timestamp every 30 seconds and shows a subtle add-to-home-screen hint on non-standalone displays.
+ *
+ * @returns A React element rendering the kitchen dashboard, including header, refresh control, order board, and optional clear button.
+ */
 export default function KitchenDashboard() {
   const { orders: allOrders, clearOrders, updateOrderStatus } = useOrders();
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());

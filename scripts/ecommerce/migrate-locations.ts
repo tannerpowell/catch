@@ -9,7 +9,12 @@
 
 import { createClient } from '@sanity/client';
 
-// Validate required environment variables
+/**
+ * Ensures required Sanity-related environment variables are present and exits the process if any are missing.
+ *
+ * Checks for NEXT_PUBLIC_SANITY_PROJECT_ID and SANITY_API_TOKEN; when either is missing or empty, prints a configuration error
+ * with setup instructions and terminates the process with a non-zero exit code.
+ */
 function validateEnv() {
   const errors: string[] = [];
 
@@ -90,6 +95,14 @@ const TAX_RATES_BY_STATE: Record<string, number> = {
   // Add other states as needed
 };
 
+/**
+ * Migrates location documents in Sanity to add online-ordering defaults and assign tax rates.
+ *
+ * Fetches all locations and for each sets missing online-ordering fields and `taxRate` using a priority
+ * lookup: ZIP code → City/State → State. Locations without an applicable tax rate are skipped and
+ * recorded; if any locations are skipped the script exits with a non-zero status. Progress is logged
+ * per location and a final summary of lookup methods and skipped locations is printed.
+ */
 async function migrateLocations() {
   console.log('🔄 Starting location migration...\n');
   

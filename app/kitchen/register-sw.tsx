@@ -2,6 +2,13 @@
 
 import { useEffect } from 'react';
 
+/**
+ * Registers a service worker in production and schedules hourly update checks for its registration while the component is mounted.
+ *
+ * The component registers '/sw.js' when running in a browser environment with service worker support and when NODE_ENV is 'production'. It schedules periodic calls to `registration.update()` every hour and clears that timer when the component unmounts.
+ *
+ * @returns A React element that renders nothing (`null`).
+ */
 export function RegisterServiceWorker() {
   useEffect(() => {
     let intervalId: ReturnType<typeof setInterval> | undefined;

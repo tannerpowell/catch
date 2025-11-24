@@ -21,8 +21,9 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 const CART_STORAGE_KEY = 'catch-cart';
 
 /**
- * Factory function to create an empty cart object
- * Used for initialization and clearing cart state
+ * Create a new empty Cart object with no location, no items, and all totals set to zero.
+ *
+ * @returns A `Cart` object with `location` and `locationId` set to `null`, `items` as an empty array, and `subtotal`, `tax`, `tip`, `deliveryFee`, and `total` set to `0`.
  */
 function getEmptyCart(): Cart {
   return {
@@ -37,6 +38,15 @@ function getEmptyCart(): Cart {
   };
 }
 
+/**
+ * Provides cart state, derived values, and mutation actions to descendant components via CartContext.
+ *
+ * The provider hydrates cart state from localStorage on the client, persists updates back to localStorage,
+ * and recalculates totals (subtotal, tax, total) when items, tip, delivery fee, or location change.
+ *
+ * @param children - The React nodes to render inside the provider
+ * @returns A React element that wraps `children` with the CartContext provider supplying cart state, actions, and flags
+ */
 export function CartProvider({ children }: { children: React.ReactNode }) {
   // Initialize cart as null to match SSR initial state
   const [cart, setCart] = useState<Cart | null>(null);
@@ -193,6 +203,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
+/**
+ * Accesses the cart context provided by CartProvider.
+ *
+ * @returns The cart context value containing cart state and cart-manipulation methods.
+ * @throws If the hook is used outside of a `CartProvider`.
+ */
 export function useCart() {
   const context = useContext(CartContext);
   if (!context) {

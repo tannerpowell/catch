@@ -8,6 +8,13 @@ interface KitchenBoardProps {
   onOrderUpdate: (orderId: string, newStatus: string) => void;
 }
 
+/**
+ * Render a three-column kitchen board that groups orders by status and exposes actions to advance them.
+ *
+ * @param orders - Array of orders to display in the board; orders are placed into the "New Orders", "Preparing", and "Ready" columns based on their `status` property.
+ * @param onOrderUpdate - Callback invoked when a column action requests a status change; called with `orderId` and the desired `newStatus`.
+ * @returns The rendered kitchen board element containing three order columns for "confirmed", "preparing", and "ready" orders.
+ */
 export function KitchenBoard({ orders, onOrderUpdate }: KitchenBoardProps) {
   // Filter orders by status
   const confirmedOrders = orders.filter(o => o.status === 'confirmed');

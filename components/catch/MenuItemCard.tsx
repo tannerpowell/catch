@@ -17,6 +17,19 @@ interface MenuItemCardProps {
   badges?: string[];
 }
 
+/**
+ * Render a menu item card that displays image, title, badges, description, and price, and — when the item is available — opens a lazy-loaded modal with full item details.
+ *
+ * @param menuItem - The MenuItem object representing the underlying item (passed through to the modal).
+ * @param location - The Location where the menu item is offered (passed through to the modal).
+ * @param name - The visible title of the menu item.
+ * @param description - Optional short description shown on the card.
+ * @param price - Optional numeric price; when provided the card shows the whole-dollar price (e.g., `$12`).
+ * @param image - Optional image URL; a placeholder is used when omitted.
+ * @param isAvailable - When `true` the card is interactive and opens the modal; when `false` the card appears dimmed and is not interactive.
+ * @param badges - Optional list of badge labels rendered as compact icons on the card.
+ * @returns The React element for the menu item card (includes conditional rendering of a lazy-loaded modal). 
+ */
 export default function MenuItemCard({ menuItem, location, name, description, price, image, isAvailable = true, badges }: MenuItemCardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 

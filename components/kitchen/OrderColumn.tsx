@@ -13,6 +13,18 @@ interface OrderColumnProps {
   onOrderUpdate: (orderId: string, newStatus: string) => void;
 }
 
+/**
+ * Renders a kitchen column with a header (title and order count) and content that shows either an empty state or a list of orders.
+ *
+ * @param title - Column title displayed in the header
+ * @param status - Current status represented by this column (informational)
+ * @param orders - Array of orders to display in the column
+ * @param nextStatus - Status value to apply when an order is advanced via the column's action
+ * @param actionLabel - Text label shown on each OrderCard's action control
+ * @param actionColor - Color variant for the action control: 'blue', 'green', or 'gray'
+ * @param onOrderUpdate - Callback invoked as onOrderUpdate(orderId, newStatus) when an order requests a status change
+ * @returns A React element representing the column; shows an empty-state UI when `orders` is empty, otherwise a list of OrderCard components.
+ */
 export function OrderColumn({
   title,
   status,

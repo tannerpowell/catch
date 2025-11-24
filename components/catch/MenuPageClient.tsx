@@ -41,6 +41,15 @@ function formatPhone(phone: string): string {
   return phone; // Return original if format doesn't match
 }
 
+/**
+ * Render the client-side menu page with location filtering, category grouping, and per-location image/price overrides.
+ *
+ * @param categories - Array of menu categories used to group and order menu items.
+ * @param items - Array of menu items; items may include per-location overrides for availability and price.
+ * @param locations - Array of locations used for the hero, location filters, and per-location lookups.
+ * @param imageMap - Optional map of item slug to override image URL (used to prefer exact-match DFW images).
+ * @returns The menu page React element containing the hero, location filter UI, category pills, and grouped menu item sections.
+ */
 export default function MenuPageClient({ categories, items, locations, imageMap }: MenuPageClientProps) {
   const [selectedSlug, setSelectedSlug] = useState<string>(locations[0]?.slug ?? "all");
 

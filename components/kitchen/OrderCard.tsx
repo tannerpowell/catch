@@ -12,6 +12,16 @@ interface OrderCardProps {
   onUpdate: (orderId: string, newStatus: string) => void;
 }
 
+/**
+ * Renders a detailed order card showing order metadata, items, timers, customer contact, notes, totals, and an action button to advance the order status.
+ *
+ * @param order - Order data used to populate the card
+ * @param nextStatus - Status string to apply when the action button is pressed
+ * @param actionLabel - Text displayed in the action button
+ * @param actionColor - Visual variant for the action button ('blue' | 'green' | 'gray')
+ * @param onUpdate - Callback invoked as onUpdate(orderId, newStatus) when the action is triggered; the action button is disabled while the update is in progress
+ * @returns A JSX element representing the order card UI
+ */
 export function OrderCard({
   order,
   nextStatus,

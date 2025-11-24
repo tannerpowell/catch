@@ -9,6 +9,15 @@ const sanityClient = createClient({
   token: process.env.SANITY_WRITE_TOKEN, // Need write token
 });
 
+/**
+ * HTTP POST handler that updates an order's status and records a corresponding timestamp in Sanity.
+ *
+ * @param request - NextRequest whose JSON body must include `orderId` (Sanity document ID) and `newStatus` (one of `'confirmed'`, `'preparing'`, `'ready'`, `'completed'`, `'cancelled'`).
+ * @returns A NextResponse containing JSON:
+ * - On success: `{ success: true, order: <updated order document> }`.
+ * - On client error (missing/invalid input): `{ error: <message> }` with status 400.
+ * - On server error: `{ error: 'Failed to update order status' }` with status 500.
+ */
 export async function POST(request: NextRequest) {
   try {
     const { orderId, newStatus } = await request.json();
