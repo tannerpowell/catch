@@ -147,9 +147,10 @@ function getClientIp(request: NextRequest): string | null {
       return null; // Signal that IP validation failed
     }
 
-    // Fall back to request.ip in development (Next.js provides this in some deployments)
+    // Fall back to a random identifier in development
+    // This prevents blocking all requests as "unknown" in local dev
     console.warn('[RATE_LIMIT] No valid IP found, using fallback (development only)');
-    clientIp = request.ip || `dev-${Math.random().toString(36).substring(7)}`;
+    clientIp = `dev-${Math.random().toString(36).substring(7)}`;
   }
 
   return clientIp;
