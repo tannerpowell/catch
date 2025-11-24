@@ -81,7 +81,7 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
   const itemImageMapRef = useRef<Map<string, string>>(new Map());
 
   // Get user's geolocation
-  const { latitude, longitude, loading: geoLoading } = useGeolocation();
+  const { latitude, longitude } = useGeolocation();
 
   // Auto-select nearest location based on user's geolocation.
   // Only run while we're still on the initial default location.
@@ -175,7 +175,8 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
   }, [selectedSlug, selectedCategory]);
 
   // Helper to preload Next.js optimized image
-  const preloadImage = (src: string) => {
+  // Wrapped in useCallback to prevent stale closures in IntersectionObserver
+  const preloadImage = React.useCallback((src: string) => {
     if (!src || preloadedImagesRef.current.has(src)) return;
 
     // Use w=640 to match MenuItemCard's sizes attribute behavior
@@ -203,7 +204,7 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
     if (process.env.NODE_ENV === 'development') {
       console.debug('[Image Preload]', { src, category: selectedCategory, location: selectedSlug });
     }
-  };
+  }, [selectedCategory, selectedSlug]);
 
   // Phase 1: Preload first 12 items immediately (above the fold for Popular + Denton)
   useEffect(() => {
@@ -218,7 +219,7 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
     visibleItems.forEach(item => {
       if (item.image) preloadImage(item.image);
     });
-  }, [selectedSlug, selectedCategory, allItemsWithMeta]);
+  }, [selectedSlug, selectedCategory, allItemsWithMeta, preloadImage]);
 
   // Phase 2: Create IntersectionObserver once on mount
   useEffect(() => {
