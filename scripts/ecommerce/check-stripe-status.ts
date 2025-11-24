@@ -111,12 +111,6 @@ async function checkAccountStatus() {
       console.log(`${location.name}`);
       console.log('─'.repeat(60));
 
-      if (!location.stripeAccountId) {
-        console.log('⚠️  No Stripe account ID');
-        summary.issues.push(location.name);
-        continue;
-      }
-
       try {
         // Fetch account details from Stripe
         const account = await stripe.accounts.retrieve(location.stripeAccountId);
@@ -152,21 +146,19 @@ async function checkAccountStatus() {
           console.log(`\n⏳ Onboarding incomplete`);
           summary.pending.push(location.name);
 
-          // Generate new onboarding link if needed
-          if (account.requirements?.currently_due && account.requirements.currently_due.length > 0) {
-            try {
-              const accountLink = await stripe.accountLinks.create({
-                account: account.id,
-                refresh_url: `${process.env.NEXT_PUBLIC_BASE_URL}/admin/stripe-connect/refresh`,
-                return_url: `${process.env.NEXT_PUBLIC_BASE_URL}/admin/stripe-connect/success`,
-                type: 'account_onboarding',
-              });
+          // Generate new onboarding link
+          try {
+            const accountLink = await stripe.accountLinks.create({
+              account: account.id,
+              refresh_url: `${process.env.NEXT_PUBLIC_BASE_URL}/admin/stripe-connect/refresh`,
+              return_url: `${process.env.NEXT_PUBLIC_BASE_URL}/admin/stripe-connect/success`,
+              type: 'account_onboarding',
+            });
 
-              console.log(`\n🔗 New onboarding link:`);
-              console.log(`   ${accountLink.url}`);
-            } catch (linkError) {
-              console.log(`   Could not generate new link: ${linkError}`);
-            }
+            console.log(`\n🔗 New onboarding link:`);
+            console.log(`   ${accountLink.url}`);
+          } catch (linkError) {
+            console.log(`   Could not generate new link: ${linkError}`);
           }
         } else {
           console.log(`\n⚠️  Account has issues`);

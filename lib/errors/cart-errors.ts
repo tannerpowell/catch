@@ -45,11 +45,14 @@ export type CartErrorCode = keyof typeof CART_ERROR_CODES;
 /**
  * Retrieve structured cart error metadata for a given error code.
  *
- * @param code - The cart error code to look up.
- * @returns The corresponding CartError metadata; if the code is not found, returns an `UNKNOWN_ERROR` metadata object.
+ * Accepts both known error codes and arbitrary strings for flexibility.
+ * Unknown codes will return a generic UNKNOWN_ERROR metadata object.
+ *
+ * @param code - The cart error code to look up (known code or arbitrary string)
+ * @returns The corresponding CartError metadata, or UNKNOWN_ERROR fallback
  */
-export function getErrorMetadata(code: CartErrorCode): CartError {
-  const metadata = CART_ERROR_CODES[code];
+export function getErrorMetadata(code: CartErrorCode | string): CartError {
+  const metadata = CART_ERROR_CODES[code as CartErrorCode];
   if (!metadata) {
     return {
       code: 'UNKNOWN_ERROR',
@@ -69,11 +72,14 @@ export function getErrorMetadata(code: CartErrorCode): CartError {
  * context payload. If reporting fails it is swallowed (no exception is thrown).
  * In development, the same metadata is also written to the console for debugging.
  *
- * @param code - Key identifying the cart error to report
+ * This function is async to support future Sentry integration, but currently
+ * only performs synchronous console logging in development.
+ *
+ * @param code - Key identifying the cart error to report (known code or string)
  * @param context - Additional contextual fields to include inside `cart_error`
  */
 export async function captureCartError(
-  code: CartErrorCode,
+  code: CartErrorCode | string,
   context: Record<string, any> = {}
 ) {
   const metadata = getErrorMetadata(code);
@@ -135,20 +141,51 @@ export async function captureCartError(
 }
 
 /**
- * Create a sanitized Error for user consumption and trigger monitoring when context is provided.
+ * Create a sanitized Error for user consumption (synchronous).
  *
- * @param code - Cart error code identifying the error metadata to use for message and reporting.
- * @param context - Optional additional context to include in monitoring payload.
- * @returns An Error with message formatted as `<code>: <userMessage>`.
+ * This is the main error factory for UI components. It returns a standard Error
+ * object immediately without awaiting any async telemetry.
+ *
+ * If you need to report the error to monitoring, use `reportCartError` separately
+ * or call `captureCartError` in a fire-and-forget manner.
+ *
+ * @param code - Cart error code identifying the error metadata to use for message
+ * @param context - Optional context to include in the error message for debugging
+ * @returns An Error with message formatted as `<code>: <userMessage>`
  */
-export async function createCartError(code: CartErrorCode, context?: Record<string, any>): Promise<Error> {
+export function createCartError(
+  code: CartErrorCode | string,
+  context?: Record<string, any>
+): Error {
   const metadata = getErrorMetadata(code);
 
-  // Send details to monitoring
-  if (context) {
-    await captureCartError(code, context);
+  // Log in development for debugging (synchronous)
+  if (process.env.NODE_ENV === 'development' && context) {
+    console.error(
+      `[${code}] ${metadata.description}`,
+      { context, suggestedAction: metadata.suggestedAction }
+    );
   }
 
   // Return clean error for user
   return new Error(`${code}: ${metadata.userMessage}`);
+}
+
+/**
+ * Report a cart error to monitoring systems asynchronously.
+ *
+ * Use this when you need to ensure error reporting completes before continuing,
+ * or when you want explicit control over when telemetry is sent.
+ *
+ * For most cases, prefer the synchronous `createCartError` and let error
+ * boundaries handle reporting.
+ *
+ * @param code - Cart error code to report
+ * @param context - Additional context for monitoring payload
+ */
+export async function reportCartError(
+  code: CartErrorCode | string,
+  context: Record<string, any> = {}
+): Promise<void> {
+  await captureCartError(code, context);
 }

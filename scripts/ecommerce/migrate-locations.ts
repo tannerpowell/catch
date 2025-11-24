@@ -114,6 +114,14 @@ async function migrateLocations() {
     postalCode: string;
     reason: string;
   }> = [];
+
+  const failedLocations: Array<{
+    name: string;
+    city: string;
+    state: string;
+    postalCode: string;
+    reason: string;
+  }> = [];
   
   const taxRateLookups: Array<{
     name: string;
@@ -212,6 +220,13 @@ async function migrateLocations() {
 
       } catch (error) {
         console.error(`  ❌ Error migrating ${location.name}:`, error);
+        failedLocations.push({
+          name: location.name,
+          city: location.city,
+          state: location.state,
+          postalCode: location.postalCode,
+          reason: `Patch error: ${error instanceof Error ? error.message : String(error)}`,
+        });
       }
     }
 
@@ -243,10 +258,17 @@ async function migrateLocations() {
       );
     }
 
-    const successCount = locations.length - skippedLocations.length;
+    if (failedLocations.length > 0) {
+      console.log(`\n❌ ${failedLocations.length} location(s) failed during migration:\n`);
+      for (const loc of failedLocations) {
+        console.log(`  • ${loc.name} (${loc.city}, ${loc.state} ${loc.postalCode}) - ${loc.reason}`);
+      }
+    }
+
+    const successCount = locations.length - skippedLocations.length - failedLocations.length;
     console.log(`\n${successCount}/${locations.length} locations migrated successfully`);
     
-    if (skippedLocations.length === 0) {
+    if (skippedLocations.length === 0 && failedLocations.length === 0) {
       console.log('\n✅ Migration complete!');
       console.log('\nNext steps:');
       console.log('1. Review tax rates in Sanity Studio for each location');

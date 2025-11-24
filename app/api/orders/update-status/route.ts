@@ -106,6 +106,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Verify order exists
+    const existingOrder = await sanityClient.fetch(
+      `*[_type == "order" && _id == $orderId][0]`,
+      { orderId }
+    );
+
+    if (!existingOrder) {
+      return NextResponse.json(
+        { error: 'Order not found' },
+        { status: 404 }
+      );
+    }
+
     // Build timestamp field based on status
     const timestampField = `${newStatus}At`;
     const timestamp = new Date().toISOString();
@@ -116,6 +129,7 @@ export async function POST(request: NextRequest) {
       .set({
         status: newStatus,
         [timestampField]: timestamp,
+        updatedAt: timestamp,
       })
       .commit();
 

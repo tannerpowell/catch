@@ -35,7 +35,7 @@ export function OrderCard({
     setIsUpdating(true);
     try {
       // Update order status via context
-      onUpdate(order._id, nextStatus);
+      await onUpdate(order._id, nextStatus);
     } catch (error) {
       console.error('Error updating order:', error);
       alert('Failed to update order. Please try again.');
@@ -77,7 +77,7 @@ export function OrderCard({
       {/* Order items */}
       <div className="order-items">
         {order.items.map((item, index) => (
-          <div key={index} className="order-item">
+          <div key={`item-${index}`} className="order-item">
             <div className="order-item-header">
               <span className="order-item-quantity">{item.quantity}x</span>
               <span className="order-item-name">
@@ -89,7 +89,7 @@ export function OrderCard({
             {item.modifiers && item.modifiers.length > 0 && (
               <div className="order-item-modifiers">
                 {item.modifiers.map((mod, modIndex) => (
-                  <div key={modIndex} className="order-item-modifier">
+                  <div key={`mod-${modIndex}`} className="order-item-modifier">
                     <span className="order-item-modifier-bullet">•</span>
                     <span className="order-item-modifier-text">
                       {mod.name}: {mod.option}
@@ -138,6 +138,7 @@ export function OrderCard({
         <button
           onClick={handleStatusUpdate}
           disabled={isUpdating}
+          aria-busy={isUpdating}
           className={`order-action-button order-action-button--${actionColor}`}
           aria-label={`${actionLabel} for order ${order.orderNumber}`}
         >
