@@ -3,6 +3,8 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
 import type { Location, MenuCategory, MenuItem } from "@/lib/types";
 import MenuItemCard from "./MenuItemCard";
+import { useGeolocation } from "@/lib/hooks/useGeolocation";
+import { findNearestLocation } from "@/lib/utils/findNearestLocation";
 
 interface Menu2PageClientProps {
   categories: MenuCategory[];
@@ -39,22 +41,33 @@ function formatPhone(phone: string): string {
   return phone; // Return original if format doesn't match
 }
 
+// Pure helper function to determine if item is available at a location
+// Hoisted outside component to avoid dependency array issues in useEffect hooks
+function isItemAvailableAtLocation(item: MenuItem, locationSlug: string): boolean {
+  if (locationSlug === "all") return true;
+
+  if (item.locationOverrides && Object.keys(item.locationOverrides).length > 0) {
+    const override = item.locationOverrides[locationSlug];
+    if (!override || override.available === false) return false;
+  }
+
+  return true;
+}
+
 /**
- * Renders a location- and category-filterable menu with theme toggle and per-location pricing.
+ * Render the menu UI filtered by location and category, with a theme toggle and per-location pricing.
  *
- * Renders UI for selecting a location and a single category, initializes MixItUp to filter displayed
- * menu items by location and category, computes location-specific images and prices, and passes each
- * item (with overridden price when applicable) to MenuItemCard. Also displays location contact info
- * and a circular price badge when an item has a price.
+ * Builds menu items with chosen images and location-specific prices, initializes client-side filtering,
+ * and preloads item images to improve performance.
  *
  * @param categories - Array of menu categories used to build the category filter pills
- * @param items - Array of menu items to display; each item may include locationOverrides for availability/price
- * @param locations - Array of locations; one location must be selected for filtering to show items
- * @param imageMap - Mapping of item slugs to image URLs used to choose the best image for each item
+ * @param items - Array of menu items to display; items may include `locationOverrides` for availability and price
+ * @param locations - Array of available locations used for filtering and per-location data
+ * @param imageMap - Mapping of item slugs to image URLs used to select the best image for each item
  * @returns The rendered menu page JSX element
  */
 export default function Menu2PageClient({ categories, items, locations, imageMap }: Menu2PageClientProps) {
-  // Default to first location (user MUST select a location)
+  // Default to first location (fallback if geolocation fails)
   const [selectedSlug, setSelectedSlug] = useState<string>(locations[0]?.slug ?? "");
   // Default to "Popular" category
   const [selectedCategory, setSelectedCategory] = useState<string>("popular");
@@ -62,10 +75,29 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
   const [colorTheme, setColorTheme] = useState<'blue' | 'cream'>('blue');
   const mixitupRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const preloadedImagesRef = useRef<Set<string>>(new Set());
+  // Split into two separate refs for cleaner types (CodeRabbit suggestion)
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const itemImageMapRef = useRef<Map<string, string>>(new Map());
 
-  console.log('Menu2PageClient render - selectedSlug:', selectedSlug);
-  console.log('Available locations:', locations.map(l => l.slug));
-  console.log('Selected category:', selectedCategory);
+  // Get user's geolocation
+  const { latitude, longitude } = useGeolocation();
+
+  // Auto-select nearest location based on user's geolocation.
+  // Only run while we're still on the initial default location.
+  useEffect(() => {
+    if (
+      latitude != null &&
+      longitude != null &&
+      locations.length > 0 &&
+      selectedSlug === (locations[0]?.slug ?? "")
+    ) {
+      const nearestSlug = findNearestLocation(latitude, longitude, locations);
+      if (nearestSlug) {
+        setSelectedSlug(nearestSlug);
+      }
+    }
+  }, [latitude, longitude, locations, selectedSlug]);
 
   // Prepare all items with their metadata for filtering
   const allItemsWithMeta = useMemo(() => {
@@ -139,23 +171,116 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
       filterString = `.location-${selectedSlug}`;
     }
 
-    console.log('Filtering with:', filterString);
     mixitupRef.current.filter(filterString);
   }, [selectedSlug, selectedCategory]);
 
-  const selectedLocation = selectedSlug ? locations.find(l => l.slug === selectedSlug) : undefined;
+  // Helper to preload Next.js optimized image
+  // Wrapped in useCallback to prevent stale closures in IntersectionObserver
+  const preloadImage = React.useCallback((src: string) => {
+    if (!src || preloadedImagesRef.current.has(src)) return;
 
-  // Helper function to determine if item is available at a location
-  const isItemAvailableAtLocation = (item: MenuItem, locationSlug: string) => {
-    if (locationSlug === "all") return true;
+    // Use w=640 to match MenuItemCard's sizes attribute behavior
+    // MenuItemCard uses: "(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+    // Next.js will pick 640px for most viewports based on deviceSizes config
+    const optimizedUrl = `/_next/image?url=${encodeURIComponent(src)}&w=640&q=75`;
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.as = 'image';
+    link.href = optimizedUrl;
 
-    if (item.locationOverrides && Object.keys(item.locationOverrides).length > 0) {
-      const override = item.locationOverrides[locationSlug];
-      if (!override || override.available === false) return false;
+    // Clean up link after load to prevent accumulation
+    const cleanup = () => {
+      if (link.parentNode) link.parentNode.removeChild(link);
+    };
+    link.onload = cleanup;
+    link.onerror = cleanup;
+    setTimeout(cleanup, 30000); // Fallback cleanup after 30s
+
+    document.head.appendChild(link);
+
+    preloadedImagesRef.current.add(src);
+
+    // Track preload events for analytics (can be extended with external tracking service)
+    if (process.env.NODE_ENV === 'development') {
+      console.debug('[Image Preload]', { src, category: selectedCategory, location: selectedSlug });
     }
+  }, [selectedCategory, selectedSlug]);
 
-    return true;
-  };
+  // Phase 1: Preload first 12 items immediately (above the fold for Popular + Denton)
+  useEffect(() => {
+    const visibleItems = allItemsWithMeta
+      .filter(item => {
+        const availableAtLocation = isItemAvailableAtLocation(item, selectedSlug);
+        const matchesCategory = !selectedCategory || item.categorySlug === selectedCategory;
+        return availableAtLocation && matchesCategory && item.image;
+      })
+      .slice(0, 12);
+
+    visibleItems.forEach(item => {
+      if (item.image) preloadImage(item.image);
+    });
+  }, [selectedSlug, selectedCategory, allItemsWithMeta, preloadImage]);
+
+  // Phase 2: Create IntersectionObserver once on mount
+  useEffect(() => {
+    if (typeof window === 'undefined' || !containerRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const itemId = entry.target.getAttribute('data-item-id');
+            const src = itemId ? itemImageMapRef.current.get(itemId) : null;
+            if (src) {
+              preloadImage(src);
+              observer.unobserve(entry.target);
+            }
+          }
+        });
+      },
+      { rootMargin: '200px' }
+    );
+
+    const cards = containerRef.current.querySelectorAll('.mix-item');
+    cards.forEach(card => observer.observe(card));
+
+    observerRef.current = observer;
+
+    return () => {
+      observer.disconnect();
+      observerRef.current = null;
+    };
+  }, []); // Only create once on mount
+
+  // Re-observe when DOM updates (mixitup filtering changes)
+  useEffect(() => {
+    if (!observerRef.current || !containerRef.current) return;
+
+    const cards = containerRef.current.querySelectorAll('.mix-item');
+    cards.forEach(card => observerRef.current!.observe(card));
+  }, [selectedSlug, selectedCategory]);
+
+  // Phase 2b: Update itemImageMap when filters change (reuses observer)
+  useEffect(() => {
+    if (!observerRef.current) return;
+
+    const newMap = new Map(
+      allItemsWithMeta
+        .filter(item => {
+          const availableAtLocation = isItemAvailableAtLocation(item, selectedSlug);
+          const matchesCategory = !selectedCategory || item.categorySlug === selectedCategory;
+          return availableAtLocation && matchesCategory && item.image;
+        })
+        .map(item => [item.id, item.image!])
+    );
+
+    itemImageMapRef.current = newMap;
+  }, [selectedSlug, selectedCategory, allItemsWithMeta]);
+
+  // Memoize selectedLocation lookup to avoid redundant computation
+  const selectedLocation = useMemo(() => {
+    return selectedSlug ? locations.find(l => l.slug === selectedSlug) : undefined;
+  }, [selectedSlug, locations]);
 
   // Get location-specific price
   const getItemPrice = (item: MenuItem, locationSlug: string) => {
@@ -336,10 +461,7 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
           {locations.filter(loc => ['denton', 'coit-campbell', 'garland'].includes(loc.slug)).map(location => (
             <button
               key={location.slug}
-              onClick={() => {
-                console.log('Button clicked:', location.slug);
-                setSelectedSlug(location.slug);
-              }}
+              onClick={() => setSelectedSlug(location.slug)}
               className="location-filter-button filter-button"
               data-active={selectedSlug === location.slug}
             >
@@ -359,10 +481,7 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
           {locations.filter(loc => !['denton', 'coit-campbell', 'garland'].includes(loc.slug)).map(location => (
             <button
               key={location.slug}
-              onClick={() => {
-                console.log('Button clicked:', location.slug);
-                setSelectedSlug(location.slug);
-              }}
+              onClick={() => setSelectedSlug(location.slug)}
               className="location-filter-button filter-button"
               data-active={selectedSlug === location.slug}
             >
@@ -490,16 +609,17 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
               });
 
               const itemPrice = getItemPrice(item, selectedSlug);
-              const selectedLocation = locations.find(l => l.slug === selectedSlug) || locations[0];
 
               // Guard against undefined location (should not happen in practice, but prevent runtime crashes)
               if (!selectedLocation) {
-                console.warn(`[Menu2PageClient] No location available for item "${item.name}" - locations array is empty`);
+                if (process.env.NODE_ENV === 'development') {
+                  console.warn(`[Menu2PageClient] No location available for item "${item.name}" - locations array is empty`);
+                }
                 return null;
               }
 
               return (
-                <div key={item.id} className={classes.join(' ')} style={{ position: 'relative' }}>
+                <div key={item.id} className={classes.join(' ')} data-item-id={item.id} style={{ position: 'relative' }}>
                   <MenuItemCard
                     menuItem={{ ...item, price: itemPrice }}
                     location={selectedLocation}

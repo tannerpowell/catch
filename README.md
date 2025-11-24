@@ -42,11 +42,19 @@ npm run dev
 ### Vercel Deployment
 Vercel works out-of-the-box with this configuration:
 
-1. **Add environment variables** in Vercel project settings:
-   - `NEXT_PUBLIC_SANITY_PROJECT_ID`
-   - `NEXT_PUBLIC_SANITY_DATASET`
-   - `REVALIDATE_SECRET`
-   - All other vars from `.env.local`
+1. **Add environment variables** in Vercel project settings (required):
+   - `NEXT_PUBLIC_SANITY_PROJECT_ID` - Your Sanity project ID
+   - `NEXT_PUBLIC_SANITY_DATASET` - Dataset name (e.g., "production")
+   - `NEXT_PUBLIC_SANITY_STUDIO_URL` - Full studio URL (e.g., "https://yourdomain.com/studio")
+   - `SANITY_WRITE_TOKEN` - API token for server-side mutations
+   - `NEXT_PUBLIC_SITE_URL` - Full site URL (e.g., "https://yourdomain.com")
+   - `REVALIDATION_SECRET` - Secret for cache revalidation webhooks
+   - `INTERNAL_API_KEY` - Secret for server-to-server API authentication
+
+   Optional variables (see `.env.example` for details):
+   - `BRAND` - Brand identifier (default: "cms-catch")
+   - `RATE_LIMIT_CLEANUP_THRESHOLD` - Rate limiter cleanup threshold (default: 75)
+   - `REQUIRE_VERIFIED_IP` - Require verified proxy headers for rate limiting (default: false)
 
 2. **Point Sanity webhook** to your deploy's `/api/revalidate?secret=...`
 
