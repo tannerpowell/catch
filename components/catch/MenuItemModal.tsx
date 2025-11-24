@@ -19,20 +19,20 @@ interface MenuItemModalProps {
 }
 
 /**
- * Render a modal dialog that displays a menu item's image, badges, description, price, and an Add to Cart button.
+ * Renders a modal dialog showing a menu item's image, badges, description, price, and an Add to Cart button.
  *
- * While open, the component disables page scroll and closes when the overlay is clicked or the Escape key is pressed.
+ * While open, disables page scroll and closes when the overlay is clicked or the Escape key is pressed.
  *
  * @param isOpen - Controls whether the modal is visible
  * @param onClose - Callback invoked to close the modal
- * @param menuItem - MenuItem data passed to the AddToCartButton
+ * @param menuItem - Menu item data passed to the AddToCartButton
  * @param location - Location context passed to the AddToCartButton
  * @param name - Title shown at the top of the modal
  * @param description - Optional descriptive text for the menu item
- * @param price - Optional price displayed (renders when not null)
+ * @param price - Optional price displayed; rendered when not null
  * @param image - Optional image URL; a placeholder is used when omitted
  * @param badges - Optional list of badge labels to render alongside emoji indicators
- * @returns The modal dialog element when open; `null` when closed
+ * @returns The modal React element when open, or `null` when closed
  */
 export default function MenuItemModal({
   isOpen,
