@@ -186,6 +186,15 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
     link.rel = 'preload';
     link.as = 'image';
     link.href = optimizedUrl;
+
+    // Clean up link after load to prevent accumulation
+    const cleanup = () => {
+      if (link.parentNode) link.parentNode.removeChild(link);
+    };
+    link.onload = cleanup;
+    link.onerror = cleanup;
+    setTimeout(cleanup, 30000); // Fallback cleanup after 30s
+
     document.head.appendChild(link);
 
     preloadedImagesRef.current.add(src);
@@ -251,7 +260,7 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
           const matchesCategory = !selectedCategory || item.categorySlug === selectedCategory;
           return availableAtLocation && matchesCategory && item.image;
         })
-        .map(item => [item.id.toString(), item.image!])
+        .map(item => [item.id, item.image!])
     );
 
     itemImageMapRef.current = newMap;
