@@ -4,7 +4,8 @@
  * This script adds default values for new online ordering fields
  * to existing location documents in Sanity.
  *
- * Run with: npx tsx scripts/migrate-locations.ts
+ * Run with: npx tsx scripts/ecommerce/migrate-locations.ts
+ * Or use the npm script: npm run locations:migrate
  */
 
 import { createClient } from '@sanity/client';
