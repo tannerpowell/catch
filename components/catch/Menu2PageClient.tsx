@@ -62,7 +62,7 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
   const [colorTheme, setColorTheme] = useState<'blue' | 'cream'>('blue');
   const mixitupRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [preloadedImages, setPreloadedImages] = useState<Set<string>>(new Set());
+  const preloadedImagesRef = useRef<Set<string>>(new Set());
 
   console.log('Menu2PageClient render - selectedSlug:', selectedSlug);
   console.log('Available locations:', locations.map(l => l.slug));
@@ -146,18 +146,20 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
 
   // Smart image preloading with analytics-ready infrastructure
   useEffect(() => {
-    // Helper to preload Next.js optimized image
+    // Helper to preload Next.js optimized image (without hardcoded width)
     const preloadImage = (src: string) => {
-      if (!src || preloadedImages.has(src)) return;
+      if (!src || preloadedImagesRef.current.has(src)) return;
 
-      const optimizedUrl = `/_next/image?url=${encodeURIComponent(src)}&w=640&q=75`;
+      // Let Next.js determine responsive width based on Image component's sizes attribute
+      // Don't hardcode w=640 to avoid conflicts with MenuItemCard's responsive strategy
+      const optimizedUrl = `/_next/image?url=${encodeURIComponent(src)}&q=75`;
       const link = document.createElement('link');
       link.rel = 'preload';
       link.as = 'image';
       link.href = optimizedUrl;
       document.head.appendChild(link);
 
-      setPreloadedImages(prev => new Set(prev).add(src));
+      preloadedImagesRef.current.add(src);
 
       // TODO: Track preload events for analytics
       // trackImagePreload({ src, category: selectedCategory, location: selectedSlug });
@@ -168,7 +170,7 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
       .filter(item => {
         const availableAtLocation = isItemAvailableAtLocation(item, selectedSlug);
         const matchesCategory = !selectedCategory || item.categorySlug === selectedCategory;
-        return availableAtLocation && matchesCategory;
+        return availableAtLocation && matchesCategory && item.image;
       })
       .slice(0, 12);
 
@@ -179,12 +181,24 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
     // Phase 2: Intersection Observer for remaining items
     if (typeof window === 'undefined' || !containerRef.current) return;
 
+    // Create map of item IDs to raw image URLs for preloading from data, not DOM
+    const itemImageMap = new Map(
+      allItemsWithMeta
+        .filter(item => {
+          const availableAtLocation = isItemAvailableAtLocation(item, selectedSlug);
+          const matchesCategory = !selectedCategory || item.categorySlug === selectedCategory;
+          return availableAtLocation && matchesCategory && item.image;
+        })
+        .map(item => [item.id.toString(), item.image!])
+    );
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
-            const img = entry.target.querySelector('img');
-            const src = img?.getAttribute('src');
+            // Get raw image URL from data attribute instead of DOM query
+            const itemId = entry.target.getAttribute('data-item-id');
+            const src = itemId ? itemImageMap.get(itemId) : null;
             if (src) {
               preloadImage(src);
               observer.unobserve(entry.target);
@@ -200,7 +214,7 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
     cards.forEach(card => observer.observe(card));
 
     return () => observer.disconnect();
-  }, [selectedSlug, selectedCategory, allItemsWithMeta, preloadedImages]);
+  }, [selectedSlug, selectedCategory, allItemsWithMeta]);
 
   const selectedLocation = selectedSlug ? locations.find(l => l.slug === selectedSlug) : undefined;
 
@@ -558,7 +572,7 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
               }
 
               return (
-                <div key={item.id} className={classes.join(' ')} style={{ position: 'relative' }}>
+                <div key={item.id} className={classes.join(' ')} data-item-id={item.id} style={{ position: 'relative' }}>
                   <MenuItemCard
                     menuItem={{ ...item, price: itemPrice }}
                     location={selectedLocation}
