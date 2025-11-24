@@ -16,6 +16,7 @@
   "dependencies": {
     "@sanity/client": "^6.20.1",
     "@sanity/vision": "^4.10.2",
+    "@vercel/speed-insights": "^1.2.0",
     "clsx": "^2.1.1",
     "dotenv": "^17.2.3",
     "groq": "^3.49.0",
