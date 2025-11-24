@@ -36,7 +36,7 @@ const RATE_LIMIT_MAX_REQUESTS = 30; // 30 requests per minute
  */
 function cleanupExpiredEntries(): void {
   const now = Date.now();
-  const CLEANUP_THRESHOLD = 100; // Only cleanup if map grows beyond this size
+  const CLEANUP_THRESHOLD = 75; // Cleanup at lower threshold to prevent gradual accumulation
 
   // Skip cleanup if map is small (optimization for serverless cold starts)
   if (rateLimitMap.size < CLEANUP_THRESHOLD) {
@@ -61,9 +61,9 @@ function cleanupExpiredEntries(): void {
  * @returns true if request should be allowed, false if rate limit exceeded
  */
 function checkRateLimit(ip: string): boolean {
-  // Perform on-demand cleanup periodically (10% of requests)
-  // This prevents memory leaks in serverless environments
-  if (rateLimitMap.size >= 100 && Math.random() < 0.1) {
+  // Perform on-demand cleanup when threshold reached
+  // Check every request to ensure timely cleanup
+  if (rateLimitMap.size >= 75) {
     cleanupExpiredEntries();
   }
 
@@ -120,9 +120,10 @@ function getClientIp(request: NextRequest): string | null {
     clientIp = xForwardedFor.split(',')[0].trim();
   }
 
-  // Validate IP address format (basic IPv4/IPv6 check)
+  // Validate IP address format with proper octet range validation
   const isValidIp = (ip: string): boolean => {
-    const ipv4Pattern = /^(\d{1,3}\.){3}\d{1,3}$/;
+    // Validate IPv4 with proper octet range (0-255)
+    const ipv4Pattern = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
     const ipv6Pattern = /^([0-9a-fA-F]{0,4}:){2,7}[0-9a-fA-F]{0,4}$/;
     return ipv4Pattern.test(ip) || ipv6Pattern.test(ip);
   };
@@ -180,24 +181,68 @@ function getInternalApiKey(): string {
 export async function POST(request: NextRequest) {
   try {
     // ========================================================================
-    // RATE LIMITING CHECK
+    // AUTHENTICATION CHECK (before rate limiting)
     // ========================================================================
-    const clientIp = getClientIp(request);
+    // Check authentication first so we can bypass rate limiting for valid API keys
+    // This allows server-side order updates (lib/api/orders.ts) to work without
+    // being blocked by rate limits when they lack proxy headers
 
-    if (!clientIp) {
-      // IP validation failed (only in production with REQUIRE_VERIFIED_IP=true)
+    let apiKey: string;
+    try {
+      apiKey = getInternalApiKey();
+    } catch (configError) {
+      console.error('INTERNAL_API_KEY not configured:', configError);
       return NextResponse.json(
-        { error: 'Bad request - Client identification required' },
-        { status: 400 }
+        { error: 'Server configuration error' },
+        { status: 500 }
       );
     }
 
-    if (!checkRateLimit(clientIp)) {
-      console.warn(`[RATE_LIMIT] Rate limit exceeded for IP: ${clientIp}`);
-      return NextResponse.json(
-        { error: 'Too many requests. Please try again later.' },
-        { status: 429 }
-      );
+    const authHeader = request.headers.get('authorization');
+    let isAuthenticated = false;
+
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.substring(7).trim();
+
+      // Use timing-safe comparison to prevent timing attacks
+      try {
+        const tokenBuffer = Buffer.from(token, 'utf8');
+        const apiKeyBuffer = Buffer.from(apiKey, 'utf8');
+
+        if (tokenBuffer.length === apiKeyBuffer.length && timingSafeEqual(tokenBuffer, apiKeyBuffer)) {
+          isAuthenticated = true;
+        }
+      } catch (comparisonError) {
+        // Invalid token format - will be caught by auth check below
+        console.error('Error during token comparison:', comparisonError);
+      }
+    }
+
+    // ========================================================================
+    // RATE LIMITING CHECK (only for unauthenticated requests)
+    // ========================================================================
+    // Bypass rate limiting for authenticated requests (server-side calls)
+    // This prevents blocking legitimate server-to-server updates that may
+    // not have proxy headers (all would appear as "unknown" IP)
+
+    if (!isAuthenticated) {
+      const clientIp = getClientIp(request);
+
+      if (!clientIp) {
+        // IP validation failed (only in production with REQUIRE_VERIFIED_IP=true)
+        return NextResponse.json(
+          { error: 'Bad request - Client identification required' },
+          { status: 400 }
+        );
+      }
+
+      if (!checkRateLimit(clientIp)) {
+        console.warn(`[RATE_LIMIT] Rate limit exceeded for IP: ${clientIp}`);
+        return NextResponse.json(
+          { error: 'Too many requests. Please try again later.' },
+          { status: 429 }
+        );
+      }
     }
 
     // ========================================================================
@@ -214,57 +259,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Authentication: Require internal API key for order updates
-    let apiKey: string;
-    try {
-      apiKey = getInternalApiKey();
-    } catch (configError) {
-      console.error('INTERNAL_API_KEY not configured:', configError);
-      return NextResponse.json(
-        { error: 'Server configuration error' },
-        { status: 500 }
-      );
-    }
-
-    const authHeader = request.headers.get('authorization');
-
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    // ========================================================================
+    // FINAL AUTHENTICATION CHECK
+    // ========================================================================
+    // Reject if authentication failed (checked earlier before rate limiting)
+    if (!isAuthenticated) {
       return NextResponse.json(
         { error: 'Missing or invalid authorization header' },
         { status: 401 }
       );
     }
 
-    const token = authHeader.substring(7).trim(); // Remove 'Bearer ' prefix and trim whitespace
-
-    // Use timing-safe comparison to prevent timing attacks
-    try {
-      const tokenBuffer = Buffer.from(token, 'utf8');
-      const apiKeyBuffer = Buffer.from(apiKey, 'utf8');
-
-      // If lengths differ, treat as invalid (timingSafeEqual requires equal lengths)
-      if (tokenBuffer.length !== apiKeyBuffer.length) {
-        return NextResponse.json(
-          { error: 'Invalid API key' },
-          { status: 401 }
-        );
-      }
-
-      if (!timingSafeEqual(tokenBuffer, apiKeyBuffer)) {
-        return NextResponse.json(
-          { error: 'Invalid API key' },
-          { status: 401 }
-        );
-      }
-    } catch (comparisonError) {
-      // Handle any buffer conversion errors
-      console.error('Error during token comparison:', comparisonError);
-      return NextResponse.json(
-        { error: 'Invalid API key' },
-        { status: 401 }
-      );
-    }
-
+    // ========================================================================
+    // REQUEST VALIDATION
+    // ========================================================================
     // Validate request body structure
     if (!body || typeof body !== 'object') {
       return NextResponse.json(
