@@ -9,6 +9,7 @@
     "build": "npm run generate-icons && npm run verify-icons && next build",
     "start": "next start",
     "lint": "eslint .",
+    "vercel:check": "tsx scripts/check-vercel-config.ts",
     "stripe:setup": "tsx scripts/ecommerce/setup-stripe-locations.ts",
     "stripe:check": "tsx scripts/ecommerce/check-stripe-status.ts",
     "locations:migrate": "tsx scripts/ecommerce/migrate-locations.ts"
