@@ -31,8 +31,8 @@ export function findNearestLocation(
   let shortestDistance = Infinity;
 
   for (const location of locations) {
-    // Skip locations without geo coordinates
-    if (!location.geo?.lat || !location.geo?.lng) {
+    // Skip locations without geo coordinates (explicit null/undefined checks to accept 0)
+    if (location.geo == null || location.geo.lat == null || location.geo.lng == null) {
       continue;
     }
 

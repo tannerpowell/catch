@@ -59,15 +59,24 @@ export default function MenuPageClient({ categories, items, locations, imageMap 
   // Get user's geolocation
   const { latitude, longitude } = useGeolocation();
 
-  // Auto-select nearest location based on user's geolocation
+  // Auto-select nearest location based on user's geolocation.
+  // Only run while we're still on the initial default location.
   useEffect(() => {
-    if (latitude && longitude && locations.length > 0) {
+    const initialDefaultSlug = locations[0]?.slug ?? "all";
+    if (
+      latitude !== null &&
+      latitude !== undefined &&
+      longitude !== null &&
+      longitude !== undefined &&
+      locations.length > 0 &&
+      selectedSlug === initialDefaultSlug
+    ) {
       const nearestSlug = findNearestLocation(latitude, longitude, locations);
       if (nearestSlug) {
         setSelectedSlug(nearestSlug);
       }
     }
-  }, [latitude, longitude, locations]);
+  }, [latitude, longitude, locations, selectedSlug]);
 
   const itemsByCategory = useMemo(() => {
     const map = new Map<string, MenuItem[]>();

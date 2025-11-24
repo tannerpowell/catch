@@ -87,16 +87,22 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
   console.log('Available locations:', locations.map(l => l.slug));
   console.log('Selected category:', selectedCategory);
 
-  // Auto-select nearest location based on user's geolocation
+  // Auto-select nearest location based on user's geolocation.
+  // Only run while we're still on the initial default location.
   useEffect(() => {
-    if (latitude && longitude && locations.length > 0) {
+    if (
+      latitude != null &&
+      longitude != null &&
+      locations.length > 0 &&
+      selectedSlug === (locations[0]?.slug ?? "")
+    ) {
       const nearestSlug = findNearestLocation(latitude, longitude, locations);
       if (nearestSlug) {
         console.log('Auto-selecting nearest location:', nearestSlug);
         setSelectedSlug(nearestSlug);
       }
     }
-  }, [latitude, longitude, locations]);
+  }, [latitude, longitude, locations, selectedSlug]);
 
   // Prepare all items with their metadata for filtering
   const allItemsWithMeta = useMemo(() => {
@@ -266,7 +272,10 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
     itemImageMapRef.current = newMap;
   }, [selectedSlug, selectedCategory, allItemsWithMeta]);
 
-  const selectedLocation = selectedSlug ? locations.find(l => l.slug === selectedSlug) : undefined;
+  // Memoize selectedLocation lookup to avoid redundant computation
+  const selectedLocation = useMemo(() => {
+    return selectedSlug ? locations.find(l => l.slug === selectedSlug) : undefined;
+  }, [selectedSlug, locations]);
 
   // Get location-specific price
   const getItemPrice = (item: MenuItem, locationSlug: string) => {
@@ -601,7 +610,6 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
               });
 
               const itemPrice = getItemPrice(item, selectedSlug);
-              const selectedLocation = locations.find(l => l.slug === selectedSlug) || locations[0];
 
               // Guard against undefined location (should not happen in practice, but prevent runtime crashes)
               if (!selectedLocation) {
