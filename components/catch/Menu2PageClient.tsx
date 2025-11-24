@@ -39,6 +39,19 @@ function formatPhone(phone: string): string {
   return phone; // Return original if format doesn't match
 }
 
+// Pure helper function to determine if item is available at a location
+// Hoisted outside component to avoid dependency array issues in useEffect hooks
+function isItemAvailableAtLocation(item: MenuItem, locationSlug: string): boolean {
+  if (locationSlug === "all") return true;
+
+  if (item.locationOverrides && Object.keys(item.locationOverrides).length > 0) {
+    const override = item.locationOverrides[locationSlug];
+    if (!override || override.available === false) return false;
+  }
+
+  return true;
+}
+
 /**
  * Render the menu UI filtered by location and category, with a theme toggle and per-location pricing.
  *
@@ -61,7 +74,9 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
   const mixitupRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const preloadedImagesRef = useRef<Set<string>>(new Set());
-  const observerRef = useRef<{ observer: IntersectionObserver; itemImageMapRef: { current: Map<string, string> } } | null>(null);
+  // Split into two separate refs for cleaner types (CodeRabbit suggestion)
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const itemImageMapRef = useRef<Map<string, string>>(new Map());
 
   console.log('Menu2PageClient render - selectedSlug:', selectedSlug);
   console.log('Available locations:', locations.map(l => l.slug));
@@ -182,8 +197,6 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
   useEffect(() => {
     if (typeof window === 'undefined' || !containerRef.current) return;
 
-    const itemImageMapRef = { current: new Map<string, string>() };
-
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach(entry => {
@@ -203,7 +216,7 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
     const cards = containerRef.current.querySelectorAll('.mix-item');
     cards.forEach(card => observer.observe(card));
 
-    observerRef.current = { observer, itemImageMapRef };
+    observerRef.current = observer;
 
     return () => {
       observer.disconnect();
@@ -225,22 +238,10 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
         .map(item => [item.id.toString(), item.image!])
     );
 
-    observerRef.current.itemImageMapRef.current = newMap;
+    itemImageMapRef.current = newMap;
   }, [selectedSlug, selectedCategory, allItemsWithMeta]);
 
   const selectedLocation = selectedSlug ? locations.find(l => l.slug === selectedSlug) : undefined;
-
-  // Helper function to determine if item is available at a location
-  const isItemAvailableAtLocation = (item: MenuItem, locationSlug: string) => {
-    if (locationSlug === "all") return true;
-
-    if (item.locationOverrides && Object.keys(item.locationOverrides).length > 0) {
-      const override = item.locationOverrides[locationSlug];
-      if (!override || override.available === false) return false;
-    }
-
-    return true;
-  };
 
   // Get location-specific price
   const getItemPrice = (item: MenuItem, locationSlug: string) => {
