@@ -7,11 +7,47 @@
  * 3. Generates onboarding links
  * 4. Updates Sanity with account IDs and links
  *
- * Run with: npx tsx scripts/setup-stripe-locations.ts
+ * Run with: npx tsx scripts/ecommerce/setup-stripe-locations.ts
  */
 
 import Stripe from 'stripe';
 import { createClient } from '@sanity/client';
+
+// Validate required environment variables
+function validateEnv() {
+  const errors: string[] = [];
+
+  if (!process.env.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY.trim() === '') {
+    errors.push('STRIPE_SECRET_KEY is required but not defined or empty');
+  }
+
+  if (!process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || process.env.NEXT_PUBLIC_SANITY_PROJECT_ID.trim() === '') {
+    errors.push('NEXT_PUBLIC_SANITY_PROJECT_ID is required but not defined or empty');
+  }
+
+  if (!process.env.SANITY_API_TOKEN || process.env.SANITY_API_TOKEN.trim() === '') {
+    errors.push('SANITY_API_TOKEN is required but not defined or empty');
+  }
+
+  if (!process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_BASE_URL.trim() === '') {
+    errors.push('NEXT_PUBLIC_BASE_URL is required but not defined or empty');
+  }
+
+  if (errors.length > 0) {
+    console.error('❌ Configuration Error: Missing required environment variables\n');
+    for (const error of errors) {
+      console.error(`  • ${error}`);
+    }
+    console.error('\nRequired setup:');
+    console.error('  1. Copy .env.example to .env.local');
+    console.error('  2. Fill in all required values');
+    console.error('  3. Run this script again\n');
+    process.exit(1);
+  }
+}
+
+// Validate environment before initializing clients
+validateEnv();
 
 // Initialize Stripe
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -22,7 +58,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 const sanityClient = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
-  token: process.env.SANITY_API_TOKEN,
+  token: process.env.SANITY_API_TOKEN!,
   useCdn: false,
   apiVersion: '2024-01-01',
 });

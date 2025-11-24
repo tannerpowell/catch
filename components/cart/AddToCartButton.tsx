@@ -15,6 +15,14 @@ interface AddToCartButtonProps {
 }
 
 /**
+ * Helper function to validate if a menu item has a valid price
+ * Price must be defined, not null, be a number, and >= 0
+ */
+function isValidPrice(price: number | null | undefined): price is number {
+  return price !== null && price !== undefined && typeof price === 'number' && price >= 0;
+}
+
+/**
  * Render an "Add to Cart" button that adds the provided menu item to the cart, prompts to switch locations when necessary, and shows a success confirmation.
  *
  * @param menuItem - The menu item to add when the button is pressed.
@@ -40,6 +48,12 @@ export function AddToCartButton({
       return;
     }
 
+    // Validate price before adding to cart
+    if (!isValidPrice(menuItem.price)) {
+      console.warn('Cannot add item with invalid price:', menuItem.name);
+      return;
+    }
+
     // Check if location can accept this item
     if (!canAddFromLocation(location._id)) {
       // Show modal to confirm location switch
@@ -52,7 +66,7 @@ export function AddToCartButton({
       {
         menuItem,
         quantity: 1,
-        price: menuItem.price as number,
+        price: menuItem.price,
         modifiers: [],
       },
       location
@@ -63,12 +77,18 @@ export function AddToCartButton({
   };
 
   const handleConfirmSwitch = () => {
+    // Validate price before adding to cart
+    if (!isValidPrice(menuItem.price)) {
+      console.warn('Cannot add item with invalid price:', menuItem.name);
+      return;
+    }
+
     clearCart();
     addToCart(
       {
         menuItem,
         quantity: 1,
-        price: menuItem.price || 0,
+        price: menuItem.price,
         modifiers: [],
       },
       location
@@ -77,7 +97,7 @@ export function AddToCartButton({
   };
 
   // Don't show button if no price (market price or unavailable)
-  if (!menuItem.price || menuItem.price === null) {
+  if (!isValidPrice(menuItem.price)) {
     return (
       <button className={`add-to-cart-btn add-to-cart-btn-disabled ${className}`} disabled>
         See Menu for Price

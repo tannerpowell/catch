@@ -20,6 +20,34 @@ const sanityClient = createClient({
  */
 export async function POST(request: NextRequest) {
   try {
+    // Authentication: Require internal API key for order updates
+    const authHeader = request.headers.get('authorization');
+    const apiKey = process.env.INTERNAL_API_KEY;
+
+    if (!apiKey) {
+      console.error('INTERNAL_API_KEY not configured');
+      return NextResponse.json(
+        { error: 'Server configuration error' },
+        { status: 500 }
+      );
+    }
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return NextResponse.json(
+        { error: 'Missing or invalid authorization header' },
+        { status: 401 }
+      );
+    }
+
+    const token = authHeader.substring(7); // Remove 'Bearer ' prefix
+
+    if (token !== apiKey) {
+      return NextResponse.json(
+        { error: 'Invalid API key' },
+        { status: 401 }
+      );
+    }
+
     const { orderId, newStatus } = await request.json();
 
     // Validate inputs
