@@ -1,10 +1,12 @@
 'use client';
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import type { Location, MenuCategory, MenuItem } from "@/lib/types";
 import MenuHero from "./MenuHero";
 import CategoryPills from "./CategoryPills";
 import MenuItemCard from "./MenuItemCard";
+import { useGeolocation } from "@/lib/hooks/useGeolocation";
+import { findNearestLocation } from "@/lib/utils/findNearestLocation";
 
 interface MenuPageClientProps {
   categories: MenuCategory[];
@@ -51,7 +53,21 @@ function formatPhone(phone: string): string {
  * @returns The menu page React element containing the hero, location filter UI, category pills, and grouped menu item sections.
  */
 export default function MenuPageClient({ categories, items, locations, imageMap }: MenuPageClientProps) {
+  // Default to first location (fallback if geolocation fails)
   const [selectedSlug, setSelectedSlug] = useState<string>(locations[0]?.slug ?? "all");
+
+  // Get user's geolocation
+  const { latitude, longitude } = useGeolocation();
+
+  // Auto-select nearest location based on user's geolocation
+  useEffect(() => {
+    if (latitude && longitude && locations.length > 0) {
+      const nearestSlug = findNearestLocation(latitude, longitude, locations);
+      if (nearestSlug) {
+        setSelectedSlug(nearestSlug);
+      }
+    }
+  }, [latitude, longitude, locations]);
 
   const itemsByCategory = useMemo(() => {
     const map = new Map<string, MenuItem[]>();

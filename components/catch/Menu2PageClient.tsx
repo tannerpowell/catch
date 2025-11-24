@@ -3,6 +3,8 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
 import type { Location, MenuCategory, MenuItem } from "@/lib/types";
 import MenuItemCard from "./MenuItemCard";
+import { useGeolocation } from "@/lib/hooks/useGeolocation";
+import { findNearestLocation } from "@/lib/utils/findNearestLocation";
 
 interface Menu2PageClientProps {
   categories: MenuCategory[];
@@ -65,7 +67,7 @@ function isItemAvailableAtLocation(item: MenuItem, locationSlug: string): boolea
  * @returns The rendered menu page JSX element
  */
 export default function Menu2PageClient({ categories, items, locations, imageMap }: Menu2PageClientProps) {
-  // Default to first location (user MUST select a location)
+  // Default to first location (fallback if geolocation fails)
   const [selectedSlug, setSelectedSlug] = useState<string>(locations[0]?.slug ?? "");
   // Default to "Popular" category
   const [selectedCategory, setSelectedCategory] = useState<string>("popular");
@@ -78,9 +80,23 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
   const observerRef = useRef<IntersectionObserver | null>(null);
   const itemImageMapRef = useRef<Map<string, string>>(new Map());
 
+  // Get user's geolocation
+  const { latitude, longitude, loading: geoLoading } = useGeolocation();
+
   console.log('Menu2PageClient render - selectedSlug:', selectedSlug);
   console.log('Available locations:', locations.map(l => l.slug));
   console.log('Selected category:', selectedCategory);
+
+  // Auto-select nearest location based on user's geolocation
+  useEffect(() => {
+    if (latitude && longitude && locations.length > 0) {
+      const nearestSlug = findNearestLocation(latitude, longitude, locations);
+      if (nearestSlug) {
+        console.log('Auto-selecting nearest location:', nearestSlug);
+        setSelectedSlug(nearestSlug);
+      }
+    }
+  }, [latitude, longitude, locations]);
 
   // Prepare all items with their metadata for filtering
   const allItemsWithMeta = useMemo(() => {
