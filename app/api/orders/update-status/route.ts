@@ -1,31 +1,41 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@sanity/client';
+import { createClient, type SanityClient } from '@sanity/client';
 import { timingSafeEqual } from 'crypto';
 
-// Validate required environment variables at module load
-const SANITY_PROJECT_ID = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
-const SANITY_DATASET = process.env.NEXT_PUBLIC_SANITY_DATASET;
-const SANITY_WRITE_TOKEN = process.env.SANITY_WRITE_TOKEN;
+// Lazy-load Sanity client to avoid build-time errors when env vars aren't set
+let sanityClient: SanityClient | null = null;
 
-if (!SANITY_PROJECT_ID || !SANITY_DATASET || !SANITY_WRITE_TOKEN) {
-  const missing: string[] = [];
-  if (!SANITY_PROJECT_ID) missing.push('NEXT_PUBLIC_SANITY_PROJECT_ID');
-  if (!SANITY_DATASET) missing.push('NEXT_PUBLIC_SANITY_DATASET');
-  if (!SANITY_WRITE_TOKEN) missing.push('SANITY_WRITE_TOKEN');
-  
-  throw new Error(
-    `Missing required environment variables for order status API: ${missing.join(', ')}. ` +
-    'Please ensure these are set in your environment configuration.'
-  );
+function getSanityClient(): SanityClient {
+  if (sanityClient) {
+    return sanityClient;
+  }
+
+  const SANITY_PROJECT_ID = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
+  const SANITY_DATASET = process.env.NEXT_PUBLIC_SANITY_DATASET;
+  const SANITY_WRITE_TOKEN = process.env.SANITY_WRITE_TOKEN;
+
+  if (!SANITY_PROJECT_ID || !SANITY_DATASET || !SANITY_WRITE_TOKEN) {
+    const missing: string[] = [];
+    if (!SANITY_PROJECT_ID) missing.push('NEXT_PUBLIC_SANITY_PROJECT_ID');
+    if (!SANITY_DATASET) missing.push('NEXT_PUBLIC_SANITY_DATASET');
+    if (!SANITY_WRITE_TOKEN) missing.push('SANITY_WRITE_TOKEN');
+
+    throw new Error(
+      `Missing required environment variables for order status API: ${missing.join(', ')}. ` +
+      'Please ensure these are set in your environment configuration.'
+    );
+  }
+
+  sanityClient = createClient({
+    projectId: SANITY_PROJECT_ID,
+    dataset: SANITY_DATASET,
+    useCdn: false,
+    apiVersion: 'v2024-06-24',
+    token: SANITY_WRITE_TOKEN,
+  });
+
+  return sanityClient;
 }
-
-const sanityClient = createClient({
-  projectId: SANITY_PROJECT_ID,
-  dataset: SANITY_DATASET,
-  useCdn: false,
-  apiVersion: 'v2024-06-24',
-  token: SANITY_WRITE_TOKEN,
-});
 
 /**
  * HTTP POST handler that updates an order's status and records a corresponding timestamp in Sanity.
@@ -106,8 +116,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Get Sanity client (validates env vars at runtime, not build time)
+    const client = getSanityClient();
+
     // Verify order exists
-    const existingOrder = await sanityClient.fetch(
+    const existingOrder = await client.fetch(
       `*[_type == "order" && _id == $orderId][0]`,
       { orderId }
     );
@@ -124,7 +137,7 @@ export async function POST(request: NextRequest) {
     const timestamp = new Date().toISOString();
 
     // Update order in Sanity
-    const updatedOrder = await sanityClient
+    const updatedOrder = await client
       .patch(orderId)
       .set({
         status: newStatus,
