@@ -130,6 +130,8 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
       if (containerRef.current && !mixitupRef.current) {
         const dentonLocation = locations.find(l => l.slug === "denton");
         const initialSlug = dentonLocation?.slug ?? locations[0]?.slug ?? "";
+        // Start with both location AND category filter (popular is default)
+        const initialFilter = `.location-${initialSlug}.category-${selectedCategory}`;
         mixitupRef.current = mixitup.default(containerRef.current, {
           selectors: {
             target: '.mix-item'
@@ -139,8 +141,8 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
             effects: 'fade scale'
           },
           load: {
-            // Start with Denton location selected
-            filter: `.location-${initialSlug}`
+            // Start with Denton location AND popular category selected
+            filter: initialFilter
           }
         });
       }
@@ -152,7 +154,7 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
         mixitupRef.current = null;
       }
     };
-  }, [locations]);
+  }, [locations, selectedCategory]);
 
   // Handle filtering when selectedSlug or selectedCategory changes
   useEffect(() => {
