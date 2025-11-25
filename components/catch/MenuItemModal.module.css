@@ -2,23 +2,26 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(4px);
+  background: rgba(10, 22, 40, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   z-index: var(--z-index--modal-backdrop);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
-  animation: fadeIn 0.2s ease-out;
+  animation: overlayFadeIn 0.3s ease-out;
   pointer-events: auto;
 }
 
-@keyframes fadeIn {
+@keyframes overlayFadeIn {
   from {
     opacity: 0;
+    backdrop-filter: blur(0px);
   }
   to {
     opacity: 1;
+    backdrop-filter: blur(8px);
   }
 }
 
@@ -26,15 +29,15 @@
 .modalContainer {
   position: relative;
   width: 100%;
-  max-width: 600px;
+  max-width: 560px;
   max-height: 90vh;
-  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: modalSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes slideUp {
+@keyframes modalSlideUp {
   from {
     opacity: 0;
-    transform: translateY(20px) scale(0.95);
+    transform: translateY(40px) scale(0.96);
   }
   to {
     opacity: 1;
@@ -42,63 +45,78 @@
   }
 }
 
-/* Layered shadow approach from voucher tile */
+/* Elegant layered card approach */
 .outerLayer {
   position: relative;
   width: 100%;
-  background: #f5ebe0;
-  border: 1px solid #e8d5c4;
-  box-shadow: 0 5px 7px rgba(0, 0, 0, 0.297);
-  border-radius: 0;
+  background: linear-gradient(145deg, #f8f5f0 0%, #ebe5dc 100%);
+  border: 1px solid rgba(201, 169, 98, 0.3);
+  box-shadow:
+    0 25px 50px -12px rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  border-radius: 4px;
 }
 
 .innerCard {
   position: relative;
-  margin: 4.5px;
-  background: #FDF8ED;
-  border: 1px solid #e8d5c4;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.297);
-  border-radius: 0;
+  margin: 6px;
+  background: linear-gradient(180deg, #FDFBF7 0%, #FAF7F2 100%);
+  border: 1px solid rgba(201, 169, 98, 0.2);
+  box-shadow:
+    0 4px 6px rgba(0, 0, 0, 0.05),
+    0 0 0 1px rgba(255, 255, 255, 0.8) inset;
+  border-radius: 2px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  max-height: calc(90vh - 40px);
+  max-height: calc(90vh - 52px);
 }
 
 /* Close button */
 .closeButton {
   position: absolute;
-  top: 16px;
-  right: 16px;
+  top: 20px;
+  right: 20px;
   z-index: var(--z-index--modal);
   background: rgba(255, 255, 255, 0.95);
-  border: none;
+  border: 1px solid rgba(201, 169, 98, 0.3);
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: #1a1a1a;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  transition: all 0.2s ease;
+  color: #0A1628;
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .closeButton:hover {
   background: #ffffff;
-  transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border-color: #C9A962;
+  transform: scale(1.08);
+  box-shadow:
+    0 6px 20px rgba(0, 0, 0, 0.2),
+    0 0 0 2px rgba(201, 169, 98, 0.3);
 }
 
 .closeButton:active {
   transform: scale(0.95);
 }
 
+.closeButton svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 2.5;
+}
+
 /* Image Section */
 .imageSection {
-  padding: 16px 16px 12px;
-  background: #FDF8ED;
+  padding: 20px 20px 16px;
+  background: linear-gradient(180deg, #FDFBF7 0%, #FAF7F2 100%);
 }
 
 .imageFrame {
@@ -106,15 +124,17 @@
   width: 100%;
   aspect-ratio: 4 / 3;
   background: #ffffff;
-  border: 5px solid #ffffff;
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.257);
+  border: 6px solid #ffffff;
+  border-radius: 2px;
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.12),
+    0 0 0 1px rgba(0, 0, 0, 0.04);
   overflow: hidden;
 }
 
 /* Content Section */
 .content {
-  padding: 20px 24px 24px;
+  padding: 20px 28px 28px;
   overflow-y: auto;
   flex: 1;
 }
@@ -123,23 +143,24 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: 16px;
+  margin-bottom: 16px;
 }
 
 .title {
-  font-family: var(--font-family--headings);
-  font-size: 28px;
-  font-weight: 600;
-  color: var(--color--tierra-reca);
-  line-height: 1.2;
+  font-family: 'Bodoni Moda', 'Playfair Display', Georgia, serif;
+  font-size: 32px;
+  font-weight: 500;
+  color: #0A1628;
+  line-height: 1.15;
   margin: 0;
   flex: 1;
+  letter-spacing: -0.01em;
 }
 
 .badges {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   flex-wrap: wrap;
   align-items: flex-start;
 }
@@ -147,112 +168,138 @@
 .badge {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   font-size: 18px;
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
-  padding: 4px 8px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  background: linear-gradient(145deg, #ffffff 0%, #f9f7f4 100%);
+  border: 1px solid rgba(201, 169, 98, 0.25);
+  border-radius: 8px;
+  padding: 6px 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
+}
+
+.badge:hover {
+  border-color: rgba(201, 169, 98, 0.5);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
 }
 
 .badgeLabel {
+  font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: 11px;
   font-weight: 600;
-  color: #6b7280;
+  color: #6B6B6B;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.05em;
 }
 
 .description {
-  font-size: 15px;
-  line-height: 1.5;
-  color: #4b5563;
-  margin: 0 0 16px 0;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 17px;
+  line-height: 1.65;
+  color: #4A4A4A;
+  margin: 0 0 20px 0;
 }
 
 .priceSection {
   display: flex;
-  align-items: flex-start;
-  gap: 4px;
-  padding: 14px 0 0;
-  border-top: 1px solid #e5e7eb;
+  align-items: baseline;
+  gap: 2px;
+  padding: 20px 0 0;
+  border-top: 1px solid rgba(201, 169, 98, 0.2);
 }
 
 .currency {
-  font-family: var(--font-family--headings);
-  font-weight: 700;
-  font-size: 20px;
-  color: #6b7280;
+  font-family: 'Bodoni Moda', 'Playfair Display', Georgia, serif;
+  font-weight: 400;
+  font-size: 24px;
+  color: #C9A962;
   line-height: 1;
-  margin-top: 2px;
 }
 
 .price {
-  font-family: var(--font-family--headings);
-  font-weight: 600;
-  font-size: 36px;
-  color: #1f2937;
+  font-family: 'Bodoni Moda', 'Playfair Display', Georgia, serif;
+  font-weight: 500;
+  font-size: 48px;
+  color: #0A1628;
   line-height: 1;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.02em;
 }
 
 /* Dark mode support */
+:global(.dark) .overlay {
+  background: rgba(0, 0, 0, 0.94);
+}
+
 :global(.dark) .outerLayer {
-  background: var(--color--dark-slate-mid);
-  border-color: var(--color--dark-slate-light);
+  background: linear-gradient(145deg, #1C2128 0%, #161B22 100%);
+  border-color: rgba(212, 184, 150, 0.2);
+  box-shadow:
+    0 25px 50px -12px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset;
 }
 
 :global(.dark) .innerCard {
-  background: var(--color--dark-slate-base);
-  border-color: var(--color--dark-slate-light);
+  background: linear-gradient(180deg, #21262D 0%, #1C2128 100%);
+  border-color: rgba(212, 184, 150, 0.1);
+  box-shadow:
+    0 4px 6px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset;
 }
 
 :global(.dark) .closeButton {
-  background: rgba(30, 41, 54, 0.95);
-  color: #ffffff;
+  background: rgba(33, 38, 45, 0.95);
+  border-color: rgba(212, 184, 150, 0.3);
+  color: #F0F6FC;
 }
 
 :global(.dark) .closeButton:hover {
-  background: var(--color--dark-slate-deep);
+  background: #2D333B;
+  border-color: #D4B896;
 }
 
 :global(.dark) .imageSection {
-  background: linear-gradient(to bottom, var(--color--dark-slate-base), var(--color--dark-slate-mid));
+  background: linear-gradient(180deg, #21262D 0%, #1C2128 100%);
 }
 
 :global(.dark) .imageFrame {
-  background: var(--color--dark-slate-deepest);
-  border-color: var(--color--dark-slate-mid);
+  background: #0D1117;
+  border-color: #30363D;
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.03);
 }
 
 :global(.dark) .title {
-  color: #f3f4f6;
+  color: #F0F6FC;
 }
 
 :global(.dark) .description {
-  color: #d1d5db;
+  color: #8B949E;
 }
 
 :global(.dark) .badge {
-  background: var(--color--dark-slate-mid);
-  border-color: var(--color--dark-slate-light);
+  background: linear-gradient(145deg, #2D333B 0%, #21262D 100%);
+  border-color: rgba(212, 184, 150, 0.15);
+}
+
+:global(.dark) .badge:hover {
+  border-color: rgba(212, 184, 150, 0.4);
 }
 
 :global(.dark) .badgeLabel {
-  color: #9ca3af;
+  color: #8B949E;
 }
 
 :global(.dark) .priceSection {
-  border-top-color: var(--color--dark-slate-light);
+  border-top-color: rgba(212, 184, 150, 0.15);
 }
 
 :global(.dark) .currency {
-  color: #9ca3af;
+  color: #D4B896;
 }
 
 :global(.dark) .price {
-  color: #f3f4f6;
+  color: #F0F6FC;
 }
 
 /* Responsive */
@@ -261,16 +308,29 @@
     max-width: 100%;
   }
 
+  .outerLayer {
+    border-radius: 2px;
+  }
+
+  .innerCard {
+    margin: 4px;
+    max-height: calc(90vh - 48px);
+  }
+
   .content {
-    padding: 20px 20px 24px;
+    padding: 16px 20px 24px;
   }
 
   .title {
-    font-size: 24px;
+    font-size: 26px;
   }
 
   .price {
-    font-size: 32px;
+    font-size: 40px;
+  }
+
+  .currency {
+    font-size: 20px;
   }
 
   .imageSection {
@@ -279,6 +339,18 @@
 
   .imageFrame {
     border-width: 4px;
+  }
+
+  .closeButton {
+    width: 40px;
+    height: 40px;
+    top: 16px;
+    right: 16px;
+  }
+
+  .closeButton svg {
+    width: 18px;
+    height: 18px;
   }
 }
 
@@ -289,7 +361,8 @@
     animation: none;
   }
 
-  .closeButton {
+  .closeButton,
+  .badge {
     transition: none;
   }
 }
