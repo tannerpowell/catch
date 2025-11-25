@@ -223,15 +223,26 @@ const createLocationPopup = (location: Location): HTMLElement => {
   return container;
 };
 
-// Approximate coordinates for each location (you can update these with exact coordinates)
+// Coordinates for each location [lng, lat] (Mapbox format)
 const locationCoords: Record<string, [number, number]> = {
-  'atascocita': [-95.1794, 29.9988],
-  'coit-campbell': [-96.7786, 32.9986],
-  'conroe': [-95.4560, 30.3119],
-  'denton': [-97.1331, 33.2148],
-  'garland': [-96.6389, 32.9126],
-  's-post-oak': [-95.4618, 29.6502],
-  'willowbrook': [-95.5586, 29.9691],
+  // Oklahoma locations
+  'okc-memorial': [-97.550766, 35.610210],
+  'midwest-city': [-97.405760, 35.440914],
+  'moore': [-97.491210, 35.327000],
+  // Texas locations
+  'arlington': [-97.196220, 32.675407],
+  'atascocita': [-95.177946, 29.993227],
+  'burleson': [-97.348927, 32.519184],
+  'coit-campbell': [-96.770851, 32.977688],
+  'conroe': [-95.478130, 30.317270],
+  'denton': [-97.150930, 33.229110],
+  'garland': [-96.651562, 32.949788],
+  'longview': [-94.747800, 32.521200],
+  'lubbock': [-101.921089, 33.519250],
+  's-post-oak': [-95.460240, 29.672800],
+  'tyler': [-95.289808, 32.331307],
+  'wichita-falls': [-98.520000, 33.880000],
+  'willowbrook': [-95.543372, 29.963846],
 };
 
 export default function LocationsMap({ locations, onLocationSelect }: LocationsMapProps) {
@@ -258,8 +269,8 @@ export default function LocationsMap({ locations, onLocationSelect }: LocationsM
     const mapInstance = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/light-v11',
-      center: [-96.0, 31.0], // Center of Texas
-      zoom: 6,
+      center: [-96.5, 32.5], // Center between Texas and Oklahoma locations
+      zoom: 5.5,
     });
 
     map.current = mapInstance;
