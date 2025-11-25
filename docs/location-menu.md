@@ -1,23 +1,28 @@
-# Location-Based Menu Feature Plan
+# Location-Based Menu Feature
 
-## Current Behavior
-- `/menu` and `/menu2` default to **Denton** location on page load
-- User must manually select their location from dropdown
-- Geolocation is implemented in `LocationsMap.tsx` for the `/locations` page
+## Current Implementation
 
-## Desired Behavior
-1. **Request user's geolocation** on page load
-2. **If permission granted**: Calculate nearest location and auto-select it
-3. **If permission denied/unavailable**: Fall back to Denton (current default)
+### Locations Page (`/locations`)
+- **"Find Nearest Location" button** triggers on-demand geolocation
+- Uses Haversine formula to calculate distance to each location
+- Flies map to user location and highlights nearest restaurant
+- Implemented in `components/catch/LocationsMap.tsx`
+
+### Menu Pages (`/menu` and `/menu2`)
+- Default to **Denton** location on page load
+- User manually selects their location from dropdown
+- **Future enhancement**: Auto-detect nearest location (see below)
 
 ## Location Coordinates
 
-All 16 locations have geo coordinates stored in two places:
+All 16 locations have geo coordinates stored in:
+
 1. **Sanity CMS** - `geo` field (geopoint type)
 2. **Fallback** - `lib/adapters/sanity-catch.ts` (`fallbackGeoCoordinates`)
-3. **Map Display** - `components/catch/LocationsMap.tsx` (`locationCoords`)
+3. **Map Display** - Derived from fallbackGeoCoordinates in `LocationsMap.tsx`
 
 ### Oklahoma Locations
+
 | Slug | Latitude | Longitude |
 |------|----------|-----------|
 | `okc-memorial` | 35.610210 | -97.550766 |
@@ -25,6 +30,7 @@ All 16 locations have geo coordinates stored in two places:
 | `moore` | 35.327000 | -97.491210 |
 
 ### Texas Locations
+
 | Slug | Latitude | Longitude |
 |------|----------|-----------|
 | `arlington` | 32.675407 | -97.196220 |
@@ -41,66 +47,52 @@ All 16 locations have geo coordinates stored in two places:
 | `wichita-falls` | 33.880000 | -98.520000 |
 | `willowbrook` | 29.963846 | -95.543372 |
 
-## Implementation Steps
+## Scripts
 
-### 1. Add Geolocation Hook
-Create `lib/hooks/useGeolocation.ts`:
+### Seed Geo Coordinates
+```bash
+npx tsx scripts/seed-geo-coordinates.ts
+```
+Updates existing Sanity locations with geo coordinates from `fallbackGeoCoordinates`.
+
+### Add New Locations
+```bash
+npx tsx scripts/add-new-locations.ts
+```
+Creates new location documents in Sanity with address, phone, hours, and geo data.
+
+## Future Enhancement: Auto-Detect on Menu Pages
+
+### Desired Behavior
+1. Request user's geolocation on `/menu` or `/menu2` page load
+2. If permission granted: Auto-select nearest location
+3. If denied/unavailable: Fall back to Denton default
+
+### Implementation Plan
+
+**1. Create Geolocation Hook** (`lib/hooks/useGeolocation.ts`):
 - Request `navigator.geolocation.getCurrentPosition()`
 - Return `{ latitude, longitude, loading, error }`
-- Handle permission denied gracefully
 
-### 2. Add Distance Calculator
-Create `lib/utils/distance.ts`:
-- Implement Haversine formula to calculate distance between two lat/lng points
-- Function signature: `getDistance(lat1, lng1, lat2, lng2): number` (returns km)
+**2. Create Distance Utility** (`lib/utils/findNearestLocation.ts`):
+- Use Haversine formula (already in LocationsMap.tsx)
+- Input: user coords + locations array
+- Output: nearest location slug
 
-### 3. Find Nearest Location
-Create `lib/utils/findNearestLocation.ts`:
-- Input: user's lat/lng, array of Location objects
-- Output: Location slug of nearest location
-- Iterate through locations, calculate distances, return closest
+**3. Update Menu Components**:
+```tsx
+const { latitude, longitude } = useGeolocation();
 
-### 4. Update Menu Components
-Modify `components/catch/Menu2PageClient.tsx`:
-- Import `useGeolocation` hook
-- Import `findNearestLocation` utility
-- On mount:
-  ```tsx
-  const { latitude, longitude, loading } = useGeolocation();
+useEffect(() => {
+  if (latitude && longitude && locations.length > 0) {
+    const nearestSlug = findNearestLocation(latitude, longitude, locations);
+    setSelectedSlug(nearestSlug);
+  }
+}, [latitude, longitude, locations]);
+```
 
-  useEffect(() => {
-    if (latitude && longitude && locations.length > 0) {
-      const nearestSlug = findNearestLocation(latitude, longitude, locations);
-      setSelectedSlug(nearestSlug);
-    }
-  }, [latitude, longitude, locations]);
-  ```
-- Keep Denton as initial default in `useState` (fallback)
-
-### 5. Update Menu1 (if needed)
-Apply same pattern to `/menu` page if it needs location detection
-
-## Technical Notes
-- **Permissions**: Browser will prompt user for location access
-- **Privacy**: Only calculate distance, don't store coordinates
-- **Performance**: Geolocation happens async, page loads immediately with Denton default
-- **UX**: User sees Denton briefly, then auto-switches to nearest location (if permission granted)
-- **Edge cases**: Handle errors silently (just stay on Denton default)
-
-## Files to Modify
-- `lib/hooks/useGeolocation.ts` (new)
-- `lib/utils/distance.ts` (new)
-- `lib/utils/findNearestLocation.ts` (new)
-- `components/catch/Menu2PageClient.tsx` (modify)
-- `app/menu/page.tsx` or menu client component (modify if needed)
-
-## Testing
-1. Grant location permission → Should select nearest location
-2. Deny location permission → Should stay on Denton
-3. Browser without geolocation API → Should stay on Denton
-4. Multiple locations → Verify correct distance calculations
-
-## Future Enhancements
-- Save user's preferred location to localStorage (override geolocation)
-- Show "We detected you're near [Location]. Switch to it?" toast
-- Add manual override button: "Use my location" in location dropdown
+### Technical Notes
+- **Privacy**: Only calculate distance, don't store user coordinates
+- **Performance**: Async geolocation, page loads immediately with default
+- **UX**: Brief flash of default location before auto-switch
+- **Edge cases**: Silent fallback to Denton on any error

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import styles from './LocationsMap.module.css';
+import { fallbackGeoCoordinates } from '@/lib/adapters/sanity-catch';
 
 interface Location {
   slug: string;
@@ -223,27 +224,10 @@ const createLocationPopup = (location: Location): HTMLElement => {
   return container;
 };
 
-// Coordinates for each location [lng, lat] (Mapbox format)
-const locationCoords: Record<string, [number, number]> = {
-  // Oklahoma locations
-  'okc-memorial': [-97.550766, 35.610210],
-  'midwest-city': [-97.405760, 35.440914],
-  'moore': [-97.491210, 35.327000],
-  // Texas locations
-  'arlington': [-97.196220, 32.675407],
-  'atascocita': [-95.177946, 29.993227],
-  'burleson': [-97.348927, 32.519184],
-  'coit-campbell': [-96.770851, 32.977688],
-  'conroe': [-95.478130, 30.317270],
-  'denton': [-97.150930, 33.229110],
-  'garland': [-96.651562, 32.949788],
-  'longview': [-94.747800, 32.521200],
-  'lubbock': [-101.921089, 33.519250],
-  's-post-oak': [-95.460240, 29.672800],
-  'tyler': [-95.289808, 32.331307],
-  'wichita-falls': [-98.520000, 33.880000],
-  'willowbrook': [-95.543372, 29.963846],
-};
+// Derive coordinates from shared fallbackGeoCoordinates (convert to Mapbox [lng, lat] format)
+const locationCoords: Record<string, [number, number]> = Object.fromEntries(
+  Object.entries(fallbackGeoCoordinates).map(([slug, { lat, lng }]) => [slug, [lng, lat]])
+);
 
 export default function LocationsMap({ locations, onLocationSelect }: LocationsMapProps) {
   const mapContainer = useRef<HTMLDivElement>(null);

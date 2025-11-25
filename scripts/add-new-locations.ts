@@ -9,6 +9,28 @@ import { fallbackGeoCoordinates } from '../lib/adapters/sanity-catch';
 
 const client = getSanityClient('2025-11-22');
 
+// Sanity location document type
+interface SanityLocationDocument {
+  _id: string;
+  _type: 'location';
+  name: string;
+  slug: { _type: 'slug'; current: string };
+  storeId: number;
+  addressLine1: string;
+  addressLine2?: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  phone: string;
+  hours?: Record<string, string>;
+  menuUrl?: string;
+  revelEstablishmentId?: string;
+  geo?: { _type: 'geopoint'; lat: number; lng: number };
+  onlineOrderingEnabled: boolean;
+  acceptingOrders: boolean;
+  orderTypes: string[];
+}
+
 // Standard hours for most locations
 const standardHours = {
   sunday: "11:00 AM–9:00 PM",
@@ -176,7 +198,7 @@ async function main() {
       onlineOrderingEnabled: false,
       acceptingOrders: true,
       orderTypes: ["pickup"],
-    } as any);
+    } satisfies SanityLocationDocument);
   }
 
   await transaction.commit();
