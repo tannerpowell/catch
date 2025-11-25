@@ -31,6 +31,17 @@ const fallbackLocationPhotography: Record<string, string> = {
 };
 const defaultFallbackHero = fallbackLocationPhotography.humble;
 
+// Fallback geo coordinates for each location
+const fallbackGeoCoordinates: Record<string, { lat: number; lng: number }> = {
+  "coit-campbell": { lat: 32.977688, lng: -96.770851 },
+  "conroe": { lat: 30.317270, lng: -95.478130 },
+  "s-post-oak": { lat: 29.672800, lng: -95.460240 },
+  "atascocita": { lat: 29.993227, lng: -95.177946 },
+  "garland": { lat: 32.949788, lng: -96.651562 },
+  "denton": { lat: 33.229110, lng: -97.150930 },
+  "willowbrook": { lat: 29.963846, lng: -95.543372 },
+};
+
 const badgeOptions = [
   "Family Favorite",
   "Salvadoran",
@@ -58,6 +69,11 @@ const BadgeSchema = z.enum(badgeOptions);
 //   ...
 // }).optional();
 
+const GeoPointSchema = z.object({
+  lat: z.number(),
+  lng: z.number()
+}).nullable().optional();
+
 const LocationSchema = z.object({
   _id: z.string(),
   name: z.string(),
@@ -74,7 +90,8 @@ const LocationSchema = z.object({
   uberEatsUrl: z.string().url().nullable().optional(),
   menuUrl: z.string().url().nullable().optional(),
   directionsUrl: z.string().url().nullable().optional(),
-  heroImage: z.string().nullable().optional() // Remove .url() validation
+  heroImage: z.string().nullable().optional(), // Remove .url() validation
+  geo: GeoPointSchema
 });
 
 const CategorySchema = z.object({
@@ -99,7 +116,7 @@ const ItemSchema = z.object({
 });
 
 const qCategories = groq`*[_type=="menuCategory"]|order(position asc){ "slug": slug.current, title, position, description }`;
-const qLocations = groq`*[_type=="location"]{ _id, name, "slug": slug.current, addressLine1, addressLine2, city, state, postalCode, phone, hours, revelUrl, doordashUrl, uberEatsUrl, menuUrl, directionsUrl, "heroImage": heroImage.asset->url }`;
+const qLocations = groq`*[_type=="location"]{ _id, name, "slug": slug.current, addressLine1, addressLine2, city, state, postalCode, phone, hours, revelUrl, doordashUrl, uberEatsUrl, menuUrl, directionsUrl, "heroImage": heroImage.asset->url, "geo": geo }`;
 const qItems = groq`*[_type=="menuItem"]{ _id, name, "slug": slug.current, description, "categorySlug": category->slug.current, "image": image.asset->url, badges, "basePrice": coalesce(basePrice, null), "overrides": coalesce(locationOverrides, [])[]{ "loc": location->slug.current, price, available } }`;
 
 function normalizeOverrides(arr: { loc: string; price?: number; available?: boolean }[] | undefined) {
@@ -160,7 +177,8 @@ const getLocationsCached = cache(async (): Promise<Location[]> => {
       menuUrl: l.menuUrl ?? undefined,
       directionsUrl: l.directionsUrl ?? undefined,
       heroImage: l.heroImage ?? fallbackHero(l.slug),
-      openToday: !!l.hours
+      openToday: !!l.hours,
+      geo: l.geo ?? fallbackGeoCoordinates[l.slug] ?? undefined
     }));
   } catch (error) {
     console.warn("Falling back to demo locations", error instanceof Error ? error.message : error);
@@ -213,7 +231,7 @@ export const adapter: BrandAdapter = {
     }
     try {
       const one = await client.fetch(
-        groq`*[_type=="location" && slug.current==$s][0]{ _id, name, "slug": slug.current, addressLine1, addressLine2, city, state, postalCode, phone, hours, menuUrl, directionsUrl }`,
+        groq`*[_type=="location" && slug.current==$s][0]{ _id, name, "slug": slug.current, addressLine1, addressLine2, city, state, postalCode, phone, hours, menuUrl, directionsUrl, "geo": geo }`,
         { s: slug }
       );
       if (!one) return undefined;
@@ -235,7 +253,8 @@ export const adapter: BrandAdapter = {
         directionsUrl: parsed.directionsUrl ?? undefined,
         heroImage: parsed.heroImage ?? fallbackHero(parsed.slug),
         openToday: !!parsed.hours,
-        hours: parsed.hours
+        hours: parsed.hours,
+        geo: parsed.geo ?? fallbackGeoCoordinates[parsed.slug] ?? undefined
       };
     } catch (error) {
       console.warn("Falling back to demo location", slug, error instanceof Error ? error.message : error);
