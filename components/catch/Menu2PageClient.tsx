@@ -108,6 +108,24 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
       (error) => {
         console.warn('Geolocation error:', error.message);
         setIsLocating(false);
+
+        // Map error codes to user-friendly messages
+        let errorMessage: string;
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            errorMessage = 'Location permission denied. Please enable location access in your browser settings to use Find Nearest.';
+            break;
+          case error.POSITION_UNAVAILABLE:
+            errorMessage = 'Unable to determine your location. Please check your device settings and try again.';
+            break;
+          case error.TIMEOUT:
+            errorMessage = 'Location request timed out. Please try again.';
+            break;
+          default:
+            errorMessage = `Location error: ${error.message}. Please try again or select a location manually.`;
+        }
+
+        alert(errorMessage);
       },
       {
         enableHighAccuracy: false,
@@ -140,31 +158,34 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
   useEffect(() => {
     if (typeof window === 'undefined' || !containerRef.current) return;
 
+    let mounted = true;
+
     // Dynamically import mixitup
     import('mixitup').then((mixitup) => {
-      if (containerRef.current && !mixitupRef.current) {
-        const dentonLocation = locations.find(l => l.slug === "denton");
-        const initialSlug = dentonLocation?.slug ?? locations[0]?.slug ?? "";
-        // Start with both location AND category filter (popular is default)
-        const initialFilter = `.location-${initialSlug}.category-${selectedCategory}`;
-        mixitupRef.current = mixitup.default(containerRef.current, {
-          selectors: {
-            target: '.mix-item'
-          },
-          animation: {
-            duration: 300,
-            effects: 'fade scale'
-          },
-          load: {
-            // Start with Denton location AND popular category selected
-            filter: initialFilter
-          }
-        });
-        setMixitupReady(true);
-      }
+      if (!mounted || !containerRef.current || mixitupRef.current) return;
+
+      const dentonLocation = locations.find(l => l.slug === "denton");
+      const initialSlug = dentonLocation?.slug ?? locations[0]?.slug ?? "";
+      // Start with both location AND category filter (popular is default)
+      const initialFilter = `.location-${initialSlug}.category-${selectedCategory}`;
+      mixitupRef.current = mixitup.default(containerRef.current, {
+        selectors: {
+          target: '.mix-item'
+        },
+        animation: {
+          duration: 300,
+          effects: 'fade scale'
+        },
+        load: {
+          // Start with Denton location AND popular category selected
+          filter: initialFilter
+        }
+      });
+      setMixitupReady(true);
     });
 
     return () => {
+      mounted = false;
       if (mixitupRef.current) {
         mixitupRef.current.destroy();
         mixitupRef.current = null;

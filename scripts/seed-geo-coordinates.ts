@@ -4,27 +4,35 @@
 import { createClient } from "@sanity/client";
 import dotenv from "dotenv";
 import path from "path";
+import { fallbackGeoCoordinates } from "@/lib/adapters/sanity-catch";
 
 dotenv.config({ path: path.resolve(".env.local") });
 
+// Validate required environment variables
+const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
+const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET;
+const token = process.env.SANITY_WRITE_TOKEN;
+
+if (!projectId) {
+  console.error("❌ Error: NEXT_PUBLIC_SANITY_PROJECT_ID is not defined in .env.local");
+  process.exit(1);
+}
+
+if (!token) {
+  console.error("❌ Error: SANITY_WRITE_TOKEN is not defined in .env.local");
+  process.exit(1);
+}
+
 const client = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || "production",
-  token: process.env.SANITY_WRITE_TOKEN!,
+  projectId,
+  dataset: dataset || "production",
+  token,
   apiVersion: "2024-08-01",
   useCdn: false,
 });
 
-// Location coordinates from official data
-const geoData: Record<string, { lat: number; lng: number }> = {
-  "coit-campbell": { lat: 32.977688, lng: -96.770851 },
-  "conroe": { lat: 30.317270, lng: -95.478130 },
-  "s-post-oak": { lat: 29.672800, lng: -95.460240 },
-  "atascocita": { lat: 29.993227, lng: -95.177946 },
-  "garland": { lat: 32.949788, lng: -96.651562 },
-  "denton": { lat: 33.229110, lng: -97.150930 },
-  "willowbrook": { lat: 29.963846, lng: -95.543372 },
-};
+// Import geo coordinates from adapter to avoid duplication
+const geoData = fallbackGeoCoordinates;
 
 async function main() {
   // Get all locations
@@ -34,6 +42,8 @@ async function main() {
 
   console.log(`Found ${locations.length} locations. Updating geo coordinates...\n`);
 
+  const errors: Array<{ slug: string; error: unknown }> = [];
+
   for (const loc of locations) {
     const geo = geoData[loc.slug];
     if (!geo) {
@@ -41,21 +51,30 @@ async function main() {
       continue;
     }
 
-    await client
-      .patch(loc._id)
-      .set({
-        geo: {
-          _type: "geopoint",
-          lat: geo.lat,
-          lng: geo.lng,
-        },
-      })
-      .commit();
+    try {
+      await client
+        .patch(loc._id)
+        .set({
+          geo: {
+            _type: "geopoint",
+            lat: geo.lat,
+            lng: geo.lng,
+          },
+        })
+        .commit();
 
-    console.log(`✅ Updated ${loc.slug}: ${geo.lat}, ${geo.lng}`);
+      console.log(`✅ Updated ${loc.slug}: ${geo.lat}, ${geo.lng}`);
+    } catch (error) {
+      console.error(`❌ Failed to update ${loc.slug}:`, error);
+      errors.push({ slug: loc.slug, error });
+    }
   }
 
-  console.log("\nDone!");
+  if (errors.length > 0) {
+    console.log(`\n⚠️  Completed with ${errors.length} error(s)`);
+    process.exit(1);
+  }
+  console.log("\n✅ Done!");
 }
 
 main().catch(console.error);

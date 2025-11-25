@@ -683,19 +683,19 @@
 
 /* Add to Cart Button */
 .dark .add-to-cart-btn {
-  background: #F0F6FC;
-  color: #0D1117;
+  background: var(--slate-100);
+  color: var(--slate-950);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .dark .add-to-cart-btn:hover:not(:disabled) {
-  background: #ffffff;
+  background: var(--slate-50);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
 .dark .add-to-cart-btn-disabled {
-  background: #2D333B !important;
-  color: #6B7280 !important;
+  background: var(--slate-800) !important;
+  color: var(--slate-500) !important;
   box-shadow: none;
 }
 

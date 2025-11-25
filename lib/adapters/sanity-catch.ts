@@ -32,7 +32,7 @@ const fallbackLocationPhotography: Record<string, string> = {
 const defaultFallbackHero = fallbackLocationPhotography.humble;
 
 // Fallback geo coordinates for each location
-const fallbackGeoCoordinates: Record<string, { lat: number; lng: number }> = {
+export const fallbackGeoCoordinates: Record<string, { lat: number; lng: number }> = {
   "coit-campbell": { lat: 32.977688, lng: -96.770851 },
   "conroe": { lat: 30.317270, lng: -95.478130 },
   "s-post-oak": { lat: 29.672800, lng: -95.460240 },
