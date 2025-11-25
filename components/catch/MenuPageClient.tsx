@@ -53,16 +53,18 @@ function formatPhone(phone: string): string {
  * @returns The menu page React element containing the hero, location filter UI, category pills, and grouped menu item sections.
  */
 export default function MenuPageClient({ categories, items, locations, imageMap }: MenuPageClientProps) {
-  // Default to first location (fallback if geolocation fails)
-  const [selectedSlug, setSelectedSlug] = useState<string>(locations[0]?.slug ?? "all");
+  // Default to Denton (fallback if geolocation fails)
+  const dentonLocation = locations.find(l => l.slug === "denton");
+  const [selectedSlug, setSelectedSlug] = useState<string>(dentonLocation?.slug ?? locations[0]?.slug ?? "all");
 
   // Get user's geolocation
   const { latitude, longitude } = useGeolocation();
 
   // Auto-select nearest location based on user's geolocation.
-  // Only run while we're still on the initial default location.
+  // Only run while we're still on the initial default location (Denton).
   useEffect(() => {
-    const initialDefaultSlug = locations[0]?.slug ?? "all";
+    const dentonLocation = locations.find(l => l.slug === "denton");
+    const initialDefaultSlug = dentonLocation?.slug ?? locations[0]?.slug ?? "all";
     if (
       latitude !== null &&
       latitude !== undefined &&

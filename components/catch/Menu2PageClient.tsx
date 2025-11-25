@@ -67,8 +67,9 @@ function isItemAvailableAtLocation(item: MenuItem, locationSlug: string): boolea
  * @returns The rendered menu page JSX element
  */
 export default function Menu2PageClient({ categories, items, locations, imageMap }: Menu2PageClientProps) {
-  // Default to first location (fallback if geolocation fails)
-  const [selectedSlug, setSelectedSlug] = useState<string>(locations[0]?.slug ?? "");
+  // Default to Denton (fallback if geolocation fails)
+  const dentonLocation = locations.find(l => l.slug === "denton");
+  const [selectedSlug, setSelectedSlug] = useState<string>(dentonLocation?.slug ?? locations[0]?.slug ?? "");
   // Default to "Popular" category
   const [selectedCategory, setSelectedCategory] = useState<string>("popular");
   // Color theme toggle: 'blue' or 'cream'
@@ -84,13 +85,15 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
   const { latitude, longitude } = useGeolocation();
 
   // Auto-select nearest location based on user's geolocation.
-  // Only run while we're still on the initial default location.
+  // Only run while we're still on the initial default location (Denton).
   useEffect(() => {
+    const dentonLocation = locations.find(l => l.slug === "denton");
+    const initialDefaultSlug = dentonLocation?.slug ?? locations[0]?.slug ?? "";
     if (
       latitude != null &&
       longitude != null &&
       locations.length > 0 &&
-      selectedSlug === (locations[0]?.slug ?? "")
+      selectedSlug === initialDefaultSlug
     ) {
       const nearestSlug = findNearestLocation(latitude, longitude, locations);
       if (nearestSlug) {
@@ -125,6 +128,8 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
     // Dynamically import mixitup
     import('mixitup').then((mixitup) => {
       if (containerRef.current && !mixitupRef.current) {
+        const dentonLocation = locations.find(l => l.slug === "denton");
+        const initialSlug = dentonLocation?.slug ?? locations[0]?.slug ?? "";
         mixitupRef.current = mixitup.default(containerRef.current, {
           selectors: {
             target: '.mix-item'
@@ -134,8 +139,8 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
             effects: 'fade scale'
           },
           load: {
-            // Start with first location selected
-            filter: `.location-${locations[0]?.slug ?? ''}`
+            // Start with Denton location selected
+            filter: `.location-${initialSlug}`
           }
         });
       }
