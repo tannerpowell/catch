@@ -2,10 +2,41 @@
 
 import { useState } from 'react';
 import ModifierSelectionModal from '@/components/cart/ModifierSelectionModal';
-import type { MenuItem, CartModifier } from '@/lib/types';
+import type { CartModifier } from '@/lib/types';
+
+// Local types for demo page (modifier system types for online ordering)
+interface ModifierOption {
+  _key: string;
+  name: string;
+  price?: number;
+  isDefault?: boolean;
+  available?: boolean;
+}
+
+interface ModifierGroup {
+  _id: string;
+  name: string;
+  slug: string;
+  required: boolean;
+  multiSelect: boolean;
+  maxSelections?: number;
+  options: ModifierOption[];
+}
+
+interface DemoMenuItem {
+  id: string;
+  name: string;
+  slug: string;
+  categorySlug: string;
+  description?: string;
+  price?: number;
+  image?: string;
+  allowSpecialInstructions?: boolean;
+  modifierGroups?: ModifierGroup[];
+}
 
 // Sample menu item with modifiers (like the Olo Whitefish Basket)
-const sampleMenuItem: MenuItem = {
+const sampleMenuItem: DemoMenuItem = {
   id: 'test-whitefish-basket',
   name: 'Whitefish Basket',
   slug: 'whitefish-basket',
@@ -86,7 +117,7 @@ const sampleMenuItem: MenuItem = {
 };
 
 // Simple item without modifiers
-const simpleMenuItem: MenuItem = {
+const simpleMenuItem: DemoMenuItem = {
   id: 'test-soft-drink',
   name: 'Soft Drink',
   slug: 'soft-drink',
