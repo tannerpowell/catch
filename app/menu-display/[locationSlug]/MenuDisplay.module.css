@@ -1,0 +1,176 @@
+/* ========================================
+   MENU DISPLAY - NYC Deli Aesthetic
+   Black letters, dotted leaders, subway tile feel
+   100 items across 2 screens
+   5 columns × 10 rows = 50 items/screen
+   ======================================== */
+
+/* DM Serif Display italic for that classic deli menu feel */
+/* Libre Franklin for slim, elegant numbers */
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@1&family=Libre+Franklin:wght@400;500&display=swap');
+
+.container {
+  --font-display: 'DM Serif Display', Georgia, serif;
+  --font-numbers: 'Libre Franklin', system-ui, sans-serif;
+
+  /* High contrast - black on off-white like subway tile */
+  --color-bg: #f9f8f5;
+  --color-text: #1a1a1a;
+  --color-price: #1a1a1a;
+  --color-dots: #1a1a1a;
+  --color-muted: #777;
+  --color-divider: #e0ddd6;
+  --color-category: #1A71B3; /* Menu2 blue */
+
+  position: fixed;
+  inset: 0;
+  background: var(--color-bg);
+  overflow: hidden;
+  cursor: none;
+
+  /* Padding from screen edges */
+  padding: 5% 3%;
+  box-sizing: border-box;
+}
+
+/* ========== Full-screen Menu Grid ========== */
+.menuContent {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0 1.5rem;
+  height: 100%;
+  width: 100%;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Distribute evenly top to bottom */
+  gap: 0;
+}
+
+.column:not(:last-child) {
+  border-right: 1px solid var(--color-divider);
+  padding-right: 1.5rem;
+}
+
+/* ========== Menu Item with Dot Leaders ========== */
+.menuItem {
+  display: flex;
+  align-items: baseline;
+  gap: 0;
+  padding: 0.05rem 0; /* Minimal padding for dense layout */
+  min-height: 0;
+  line-height: 1.1;
+}
+
+.itemName {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--color-text);
+  letter-spacing: 0.01em;
+  line-height: 1.25; /* More room for descenders like g, y, p */
+
+  /* Allow 2 lines for long names */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+/* Dot leader between name and price */
+.itemDots {
+  flex: 1;
+  min-width: 0.75rem;
+  height: 1em;
+  margin: 0 0.4rem;
+  background-image: radial-gradient(circle, var(--color-dots) 1.5px, transparent 1.5px);
+  background-size: 8px 8px;
+  background-position: 0 center;
+  background-repeat: repeat-x;
+  align-self: center;
+  opacity: 0.4;
+}
+
+.itemPrice {
+  font-family: var(--font-numbers);
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: var(--color-price);
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* ========== Category Header with Blue Lines ========== */
+.categoryHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--font-numbers);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--color-category);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding: 0.5rem 0 0.25rem;
+  margin-top: 0.25rem;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Blue lines on either side of category text */
+.categoryHeader::before,
+.categoryHeader::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--color-category);
+  opacity: 0.5;
+}
+
+.categoryHeader:first-child {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+/* ========== Minimal Page Indicator ========== */
+.pageIndicator {
+  position: fixed;
+  bottom: 0.75rem;
+  right: 1rem;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--color-muted);
+  letter-spacing: 0.1em;
+  opacity: 0.6;
+}
+
+/* ========== Animation ========== */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.menuContent {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* ========== 4K displays ========== */
+@media (min-width: 2560px) {
+  .itemName {
+    font-size: 1.9rem;
+  }
+  .itemPrice {
+    font-size: 1.7rem;
+  }
+  .menuContent {
+    padding: 2rem 3rem;
+  }
+}
