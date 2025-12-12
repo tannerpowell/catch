@@ -35,11 +35,11 @@ jobs:
       - name: Build Next.js
         run: npm run build
 
-      - name: Check icons exist in build
+      - name: Verify PWA icons exist in public directory
         run: |
-          test -f public/icons/icon-192x192.png || (echo "❌ icon-192x192.png missing from build" && exit 1)
-          test -f public/icons/icon-512x512.png || (echo "❌ icon-512x512.png missing from build" && exit 1)
-          echo "✅ All required PWA icons present in build"
+          test -f public/icons/icon-192x192.png || (echo "❌ icon-192x192.png missing" && exit 1)
+          test -f public/icons/icon-512x512.png || (echo "❌ icon-512x512.png missing" && exit 1)
+          echo "✅ All required PWA icons present"
 
       - name: Upload build artifacts
         if: always()

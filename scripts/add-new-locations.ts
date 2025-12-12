@@ -96,7 +96,7 @@ const NEW_LOCATIONS = [
     postalCode: "76017",
     phone: "+1 817-765-2226",
     hours: standardHours,
-    // Uses Google Food ordering
+    menuUrl: undefined, // TODO: Add Google Food ordering URL when available
   },
   {
     _id: "loc-burleson",
@@ -110,7 +110,7 @@ const NEW_LOCATIONS = [
     postalCode: "76028",
     phone: "+1 817-447-4302",
     hours: standardHours,
-    // Uses Google Food ordering
+    menuUrl: undefined, // TODO: Add Google Food ordering URL when available
   },
   {
     _id: "loc-longview",

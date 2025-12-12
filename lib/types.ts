@@ -51,9 +51,11 @@ export type Badge =
 
 export interface LocationOverride { price?: number; available?: boolean }
 
-// Legacy option types (kept for backward compatibility)
+/** @deprecated Use ModifierOption instead */
 export interface Option { id: string; name: string; priceDelta?: number }
+/** @deprecated Use ModifierGroup instead */
 export interface OptionGroup { id: string; name: string; required?: boolean; maxSelect?: number; options: Option[] }
+/** @deprecated Legacy combo component type */
 export interface ComboComponent { itemName: string; quantity: number; notes?: string }
 
 // === MODIFIER TYPES (for online ordering) ===
