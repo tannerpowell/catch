@@ -1,6 +1,6 @@
 import { createClient } from "@sanity/client";
 import groq from "groq";
-import type { Badge, BrandAdapter, Location, MenuCategory, MenuItem } from "@/lib/types";
+import type { Badge, BrandAdapter, Location, MenuCategory, MenuItem, ModifierGroup, ItemModifierOverride } from "@/lib/types";
 import { demoCategories, demoItems, demoLocations } from "@/lib/adapters/demo-data";
 import { z } from "zod";
 import { cache } from "react";
@@ -112,6 +112,36 @@ const CategorySchema = z.object({
   description: z.string().nullable().optional()
 });
 
+const ModifierOptionSchema = z.object({
+  _key: z.string(),
+  name: z.string(),
+  price: z.number().nullable().optional(),
+  isDefault: z.boolean().optional(),
+  available: z.boolean().optional(),
+  calories: z.number().nullable().optional()
+});
+
+const ModifierGroupSchema = z.object({
+  _id: z.string(),
+  name: z.string(),
+  slug: z.string(),
+  description: z.string().nullable().optional(),
+  required: z.boolean().optional(),
+  multiSelect: z.boolean().optional(),
+  minSelections: z.number().nullable().optional(),
+  maxSelections: z.number().nullable().optional(),
+  options: z.array(ModifierOptionSchema).optional(),
+  displayOrder: z.number().nullable().optional()
+});
+
+const ItemModifierOverrideSchema = z.object({
+  _key: z.string(),
+  modifierGroupId: z.string(),
+  optionName: z.string(),
+  price: z.number().nullable().optional(),
+  available: z.boolean().optional()
+});
+
 const ItemSchema = z.object({
   id: z.string(),
   name: z.string(),
@@ -121,14 +151,49 @@ const ItemSchema = z.object({
   price: z.number().nullable().optional(),
   badges: z.array(BadgeSchema).optional(),
   image: z.string().optional(),
+  availableEverywhere: z.boolean().optional(),
   locationOverrides: z
     .record(z.string(), z.object({ price: z.number().nullable().optional(), available: z.boolean().optional() }))
-    .optional()
+    .optional(),
+  modifierGroups: z.array(ModifierGroupSchema).optional(),
+  itemModifierOverrides: z.array(ItemModifierOverrideSchema).optional(),
+  allowSpecialInstructions: z.boolean().optional()
 });
 
 const qCategories = groq`*[_type=="menuCategory"]|order(position asc){ "slug": slug.current, title, position, description }`;
 const qLocations = groq`*[_type=="location"]{ _id, name, "slug": slug.current, addressLine1, addressLine2, city, state, postalCode, phone, hours, revelUrl, doordashUrl, uberEatsUrl, menuUrl, directionsUrl, "heroImage": heroImage.asset->url, "geo": geo }`;
-const qItems = groq`*[_type=="menuItem"]{ _id, name, "slug": slug.current, description, "categorySlug": category->slug.current, "image": image.asset->url, badges, "basePrice": coalesce(basePrice, null), "overrides": coalesce(locationOverrides, [])[]{ "loc": location->slug.current, price, available } }`;
+const qItems = groq`*[_type=="menuItem"]{
+  _id,
+  name,
+  "slug": slug.current,
+  description,
+  "categorySlug": category->slug.current,
+  "image": image.asset->url,
+  badges,
+  "basePrice": coalesce(basePrice, null),
+  availableEverywhere,
+  allowSpecialInstructions,
+  "overrides": coalesce(locationOverrides, [])[]{ "loc": location->slug.current, price, available },
+  "modifierGroups": modifierGroups[]->{
+    _id,
+    name,
+    "slug": slug.current,
+    description,
+    required,
+    multiSelect,
+    minSelections,
+    maxSelections,
+    displayOrder,
+    options[]{ _key, name, price, isDefault, available, calories }
+  } | order(displayOrder asc),
+  "itemModifierOverrides": itemModifierOverrides[]{
+    _key,
+    "modifierGroupId": modifierGroup->_id,
+    optionName,
+    price,
+    available
+  }
+}`;
 
 function normalizeOverrides(arr: { loc: string; price?: number; available?: boolean }[] | undefined) {
   const out: Record<string, { price?: number; available?: boolean }> = {};
@@ -197,6 +262,48 @@ const getLocationsCached = cache(async (): Promise<Location[]> => {
   }
 });
 
+function normalizeModifierGroups(groups: unknown[]): ModifierGroup[] | undefined {
+  if (!Array.isArray(groups) || groups.length === 0) return undefined;
+
+  return groups
+    .filter((g): g is Record<string, unknown> => g !== null && typeof g === 'object')
+    .map((g) => ({
+      _id: String(g._id || ''),
+      name: String(g.name || ''),
+      slug: String(g.slug || ''),
+      description: g.description ? String(g.description) : undefined,
+      required: Boolean(g.required),
+      multiSelect: Boolean(g.multiSelect),
+      minSelections: typeof g.minSelections === 'number' ? g.minSelections : undefined,
+      maxSelections: typeof g.maxSelections === 'number' ? g.maxSelections : undefined,
+      displayOrder: typeof g.displayOrder === 'number' ? g.displayOrder : undefined,
+      options: Array.isArray(g.options)
+        ? g.options.map((opt: Record<string, unknown>) => ({
+            _key: String(opt._key || ''),
+            name: String(opt.name || ''),
+            price: typeof opt.price === 'number' ? opt.price : undefined,
+            isDefault: Boolean(opt.isDefault),
+            available: opt.available !== false, // Default to true
+            calories: typeof opt.calories === 'number' ? opt.calories : undefined,
+          }))
+        : [],
+    }));
+}
+
+function normalizeItemModifierOverrides(overrides: unknown[]): ItemModifierOverride[] | undefined {
+  if (!Array.isArray(overrides) || overrides.length === 0) return undefined;
+
+  return overrides
+    .filter((o): o is Record<string, unknown> => o !== null && typeof o === 'object')
+    .map((o) => ({
+      _key: String(o._key || ''),
+      modifierGroupId: String(o.modifierGroupId || ''),
+      optionName: String(o.optionName || ''),
+      price: typeof o.price === 'number' ? o.price : undefined,
+      available: o.available !== false,
+    }));
+}
+
 const getItemsCached = cache(async (): Promise<MenuItem[]> => {
   if (!client) {
     return demoItems;
@@ -212,11 +319,15 @@ const getItemsCached = cache(async (): Promise<MenuItem[]> => {
       price: i.basePrice ?? null,
       badges: Array.isArray(i.badges) ? i.badges.filter(isBadge) : undefined,
       image: i.image ?? undefined,
+      availableEverywhere: i.availableEverywhere ?? false,
+      allowSpecialInstructions: i.allowSpecialInstructions ?? true,
       locationOverrides: normalizeOverrides(
         Array.isArray(i.overrides)
           ? i.overrides as { loc: string; price?: number; available?: boolean }[]
           : undefined
-      )
+      ),
+      modifierGroups: normalizeModifierGroups(i.modifierGroups as unknown[]),
+      itemModifierOverrides: normalizeItemModifierOverrides(i.itemModifierOverrides as unknown[]),
     }));
     return z.array(ItemSchema).parse(mapped) as MenuItem[];
   } catch (error) {

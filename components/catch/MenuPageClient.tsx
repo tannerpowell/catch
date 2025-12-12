@@ -5,6 +5,7 @@ import type { Location, MenuCategory, MenuItem } from "@/lib/types";
 import CategoryPills from "./CategoryPills";
 import MenuItemCard from "./MenuItemCard";
 import { findNearestLocation } from "@/lib/utils/findNearestLocation";
+import { isItemAvailableAtLocation } from "@/lib/utils/menuAvailability";
 
 interface MenuPageClientProps {
   categories: MenuCategory[];
@@ -100,13 +101,8 @@ export default function MenuPageClient({ categories, items, locations, imageMap 
     categories.forEach(cat => map.set(cat.slug, []));
 
     items.forEach(item => {
-      if (selectedSlug !== "all") {
-        if (item.locationOverrides && Object.keys(item.locationOverrides).length > 0) {
-          const override = item.locationOverrides[selectedSlug];
-          if (!override) return;
-          if (override.available === false) return;
-        }
-      }
+      // OPT-IN model: only show items explicitly available at this location
+      if (!isItemAvailableAtLocation(item, selectedSlug)) return;
 
       const itemSlug = item.slug || slugify(item.name);
       let bestImage = item.image;

@@ -4,6 +4,7 @@ import React, { useState, useMemo, useEffect, useRef, useCallback } from "react"
 import type { Location, MenuCategory, MenuItem } from "@/lib/types";
 import MenuItemCard from "./MenuItemCard";
 import { findNearestLocation } from "@/lib/utils/findNearestLocation";
+import { isItemAvailableAtLocation } from "@/lib/utils/menuAvailability";
 
 interface Menu2PageClientProps {
   categories: MenuCategory[];
@@ -19,19 +20,6 @@ function slugify(input: string) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/-+/g, "-")
     .replace(/(^-|-$)/g, "");
-}
-
-// Pure helper function to determine if item is available at a location
-// Hoisted outside component to avoid dependency array issues in useEffect hooks
-function isItemAvailableAtLocation(item: MenuItem, locationSlug: string): boolean {
-  if (locationSlug === "all") return true;
-
-  if (item.locationOverrides && Object.keys(item.locationOverrides).length > 0) {
-    const override = item.locationOverrides[locationSlug];
-    if (!override || override.available === false) return false;
-  }
-
-  return true;
 }
 
 /**
