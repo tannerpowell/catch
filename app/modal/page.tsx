@@ -1,8 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import ModifierSelectionModal from '@/components/cart/ModifierSelectionModal';
 import type { CartModifier } from '@/lib/types';
+
+// Dev-only test page - redirect to home in production
+const isDev = process.env.NODE_ENV === 'development';
 
 // Local types for demo page (modifier system types for online ordering)
 interface ModifierOption {
@@ -128,9 +132,22 @@ const simpleMenuItem: DemoMenuItem = {
 };
 
 export default function TestSheetPage() {
+  const router = useRouter();
   const [showModifierModal, setShowModifierModal] = useState(false);
   const [showSimpleModal, setShowSimpleModal] = useState(false);
   const [lastOrder, setLastOrder] = useState<string | null>(null);
+
+  // Redirect to home in production
+  useEffect(() => {
+    if (!isDev) {
+      router.replace('/');
+    }
+  }, [router]);
+
+  // Don't render in production
+  if (!isDev) {
+    return null;
+  }
 
   const handleAddToCart = (modifiers: CartModifier[], specialInstructions: string, quantity: number) => {
     const modifierSummary = modifiers.length > 0

@@ -360,6 +360,25 @@ a:hover {
   }
 }
 
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .lux-hero__badge,
+  .lux-hero__title-line,
+  .lux-hero__subtitle,
+  .lux-hero__actions,
+  .lux-hero__scroll {
+    animation: none !important;
+  }
+
+  .lux-hero__scroll-line {
+    animation: none !important;
+  }
+
+  .lux-btn {
+    transition: none !important;
+  }
+}
+
 /* Buttons */
 .lux-btn {
   display: inline-flex;

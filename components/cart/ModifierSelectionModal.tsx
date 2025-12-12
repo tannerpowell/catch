@@ -2,9 +2,22 @@
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import Image from 'next/image';
+// NOTE: @silk-hq/components requires a commercial license for commercial use.
+// Current license="non-commercial" is for development/evaluation only.
+// See: https://silk-hq.com/pricing for commercial licensing options.
 import { Sheet } from '@silk-hq/components';
 import styles from './ModifierSelectionModal.module.css';
 import type { MenuItem, ModifierGroup, ModifierOption, CartModifier } from '@/lib/types';
+
+// Track if component is mounted to prevent state updates after unmount
+function useMountedRef() {
+  const mounted = useRef(true);
+  useEffect(() => {
+    mounted.current = true;
+    return () => { mounted.current = false; };
+  }, []);
+  return mounted;
+}
 
 interface ModifierSelectionModalProps {
   isOpen: boolean;
@@ -29,6 +42,7 @@ export default function ModifierSelectionModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showScrollFade, setShowScrollFade] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const mountedRef = useMountedRef();
 
   const modifierGroups = useMemo(() => menuItem.modifierGroups || [], [menuItem.modifierGroups]);
   const hasModifiers = modifierGroups.length > 0;
@@ -85,6 +99,10 @@ export default function ModifierSelectionModal({
           return { ...prev, [group._id]: [...current, option.name] };
         }
       } else {
+        // For single-select: toggle off if already selected (only for non-required groups)
+        if (current.includes(option.name) && !group.required) {
+          return { ...prev, [group._id]: [] };
+        }
         return { ...prev, [group._id]: [option.name] };
       }
     });
@@ -151,11 +169,15 @@ export default function ModifierSelectionModal({
       });
     });
 
-    setTimeout(() => {
+    try {
       onAddToCart(cartModifiers, specialInstructions.trim(), quantity);
-      setIsSubmitting(false);
-    }, 200);
-  }, [isValid, isSubmitting, modifierGroups, selectedModifiers, specialInstructions, quantity, onAddToCart]);
+    } finally {
+      // Only update state if still mounted
+      if (mountedRef.current) {
+        setIsSubmitting(false);
+      }
+    }
+  }, [isValid, isSubmitting, modifierGroups, selectedModifiers, specialInstructions, quantity, onAddToCart, mountedRef]);
 
   return (
     <Sheet.Root
