@@ -12,6 +12,7 @@ export default [
       ".venv/**",
       "data/templates/**",
       "studio/.sanity/**",
+      "studio/dist/**",
       "scripts/**",
       "Mixitup/**",
       "archive/**",
