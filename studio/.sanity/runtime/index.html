@@ -73,17 +73,6 @@ Modifications to this file are automatically discarded.
     'margin: 0',
   ].join(';')
 
-  function _escapeHtml(str) {
-    if (!str) return ''
-    return str
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;')
-      .replace(/\//g, '&#x2F;')
-  }
-
   function _renderErrorOverlay(event) {
     var errorElement = document.querySelector('#__sanityError') || document.createElement('div')
     var error = event.error
@@ -94,15 +83,15 @@ Modifications to this file are automatically discarded.
     errorElement.id = '__sanityError'
     errorElement.innerHTML = [
       '<div style="' + ERROR_BOX_STYLE + '">',
-      '<div style="font-weight: 700;">Uncaught error: ' + _escapeHtml(error.message) + '</div>',
+      '<div style="font-weight: 700;">Uncaught error: ' + error.message + '</div>',
       '<div style="color: #515E72; font-size: 13px; line-height: 17px; margin: 10px 0;">' +
-        _escapeHtml(filename) +
+        filename +
         ':' +
         lineno +
         ':' +
         colno +
         '</div>',
-      '<pre style="' + ERROR_CODE_STYLE + '">' + _escapeHtml(error.stack) + '</pre>',
+      '<pre style="' + ERROR_CODE_STYLE + '">' + error.stack + '</pre>',
       '</div>',
     ].join('')
 
@@ -132,7 +121,7 @@ Modifications to this file are automatically discarded.
     })
   })
 
-  // Unhandled rejection listener
+  // Error listener
   window.addEventListener('unhandledrejection', (event) => {
     _handleError({
       type: 'rejection',
