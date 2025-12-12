@@ -15,7 +15,7 @@ declare module 'mixitup' {
     };
   }
 
-  interface MixItUpInstance {
+  export interface Mixer {
     filter(selector: string): Promise<unknown>;
     sort(sortString: string): Promise<unknown>;
     destroy(): void;
@@ -23,7 +23,7 @@ declare module 'mixitup' {
     getState(): unknown;
   }
 
-  function mixitup(container: HTMLElement | string, options?: MixItUpOptions): MixItUpInstance;
+  function mixitup(container: HTMLElement | string, options?: MixItUpOptions): Mixer;
 
   export default mixitup;
 }
