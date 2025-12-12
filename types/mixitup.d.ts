@@ -16,11 +16,11 @@ declare module 'mixitup' {
   }
 
   interface MixItUpInstance {
-    filter(selector: string): Promise<any>;
-    sort(sortString: string): Promise<any>;
+    filter(selector: string): Promise<unknown>;
+    sort(sortString: string): Promise<unknown>;
     destroy(): void;
-    dataset(): any[];
-    getState(): any;
+    dataset(): unknown[];
+    getState(): unknown;
   }
 
   function mixitup(container: HTMLElement | string, options?: MixItUpOptions): MixItUpInstance;

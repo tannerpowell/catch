@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import type { Order, OrderStatus } from '@/lib/types';
+import type { OrderStatus } from '@/lib/types';
 import { KitchenBoard } from '@/components/kitchen/KitchenBoard';
 import { RegisterServiceWorker } from './register-sw';
 import { useOrders } from '@/lib/contexts/OrdersContext';

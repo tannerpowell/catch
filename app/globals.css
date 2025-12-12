@@ -1,7 +1,7 @@
-@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Source+Sans+Pro:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Poppins:ital,wght@0,100..900;1,100..900&family=Italiana&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&display=swap");
 @import "./styles/components.css";
 @import "./styles/catch-base.css";
 @import "./styles/dark-theme.css";
+@import "@silk-hq/components/unlayered-styles.css";
 
 @tailwind base;
 @tailwind components;
@@ -56,8 +56,11 @@ html[data-route^="/kitchen"] main {
   --color-border-subtle: #e4cfc1;
 
   /* Typography */
-  --font-display: "Playfair Display", ui-serif, Georgia, "Times New Roman", serif;
-  --font-body: "Source Sans Pro", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display: var(--font-playfair-display, "Playfair Display"), ui-serif, Georgia, "Times New Roman", serif;
+  --font-body: var(--font-source-sans, "Source Sans Pro"), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-lux-display: var(--font-bodoni-moda, "Bodoni Moda"), var(--font-playfair-display, "Playfair Display"), Georgia, serif;
+  --font-lux-body: var(--font-cormorant-garamond, "Cormorant Garamond"), Georgia, serif;
+  --font-hand: var(--font-patrick-hand, "Patrick Hand"), cursive;
 
   --font-size-display-lg: 3rem;
   --font-size-display-md: 2.25rem;
@@ -225,9 +228,9 @@ a:hover {
   --lux-text: #1A1A1A;
   --lux-text-muted: #6B6B6B;
 
-  --font-lux-display: 'Bodoni Moda', 'Playfair Display', Georgia, serif;
-  --font-lux-accent: 'Italiana', serif;
-  --font-lux-body: 'Cormorant Garamond', Georgia, serif;
+  --font-lux-display: var(--font-bodoni-moda, "Bodoni Moda"), var(--font-playfair-display, "Playfair Display"), Georgia, serif;
+  --font-lux-accent: var(--font-italiana, "Italiana"), serif;
+  --font-lux-body: var(--font-cormorant-garamond, "Cormorant Garamond"), Georgia, serif;
 }
 
 /* Hero Section */

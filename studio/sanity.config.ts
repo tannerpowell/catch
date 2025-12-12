@@ -12,6 +12,7 @@ import {structureTool} from 'sanity/structure'
 import {apiVersion, dataset, projectId} from './sanity/env'
 import {schema} from './sanity/schemaTypes'
 import {structure} from './sanity/structure'
+import {menuManager} from './plugins/menu-manager'
 
 export default defineConfig({
   basePath: '/studio',
@@ -21,8 +22,19 @@ export default defineConfig({
   schema,
   plugins: [
     structureTool({structure}),
+    menuManager(),
     // Vision is for querying with GROQ from inside the Studio
     // https://www.sanity.io/docs/the-vision-plugin
     visionTool({defaultApiVersion: apiVersion}),
   ],
+  document: {
+    actions: (prev, context) => {
+      if (['menuItem', 'menuCategory'].includes(context.schemaType)) {
+        return prev.filter(
+          (action) => action.action !== 'delete' && action.action !== 'duplicate'
+        )
+      }
+      return prev
+    },
+  },
 })

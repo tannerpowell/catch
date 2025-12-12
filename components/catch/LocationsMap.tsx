@@ -232,7 +232,6 @@ const locationCoords: Record<string, [number, number]> = Object.fromEntries(
 export default function LocationsMap({ locations, onLocationSelect }: LocationsMapProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
-  const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [nearestLocation, setNearestLocation] = useState<string | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
   const [error, setError] = useState<string | null>(null);

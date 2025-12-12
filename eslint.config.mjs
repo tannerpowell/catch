@@ -9,6 +9,10 @@ export default [
       "node_modules/**",
       "out/**",
       "public/**",
+      ".venv/**",
+      "data/templates/**",
+      "studio/.sanity/**",
+      "scripts/**",
       "Mixitup/**",
       "archive/**",
       "*.config.js",
@@ -36,7 +40,18 @@ export default [
     rules: {
       "react/no-unescaped-entities": "off",
       "react/react-in-jsx-scope": "off",
-      "react/prop-types": "off"
+      "react/prop-types": "off",
+      "react-hooks/set-state-in-effect": "off",
+      "react-hooks/preserve-manual-memoization": "off"
+    }
+  },
+  {
+    files: ["scripts/**/*.{ts,tsx,js}"],
+    languageOptions: {
+      parserOptions: {
+        // Skip type-aware linting for scripts that are excluded from tsconfig to avoid slow projectService setup
+        projectService: false
+      }
     }
   }
 ];

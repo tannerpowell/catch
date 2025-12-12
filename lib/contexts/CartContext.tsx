@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import type { Location, CartItem, Cart, MenuItem } from '@/lib/types';
+import type { Location, CartItem, Cart } from '@/lib/types';
 
 interface CartContextType {
   cart: Cart | null;
@@ -77,22 +77,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!isHydrated || !cart) return;
 
-    // Defensive computation - handle malformed localStorage data
     const safeItems = Array.isArray(cart.items) ? cart.items : [];
-    const subtotal = safeItems.reduce((sum, item) => {
-      // Validate item structure
+    const subtotalRaw = safeItems.reduce((sum, item) => {
       if (!item || typeof item.price !== 'number' || typeof item.quantity !== 'number') {
         console.warn('[CartContext] Skipping malformed cart item:', item);
         return sum;
       }
 
       const itemTotal = item.price * item.quantity;
-
-      // Safely handle modifiers
       const safeModifiers = Array.isArray(item.modifiers) ? item.modifiers : [];
       const modifierTotal = safeModifiers.reduce((modSum, mod) => {
         if (mod && typeof mod.priceDelta === 'number') {
-          return modSum + (mod.priceDelta * item.quantity);
+          return modSum + mod.priceDelta * item.quantity;
         }
         return modSum;
       }, 0);
@@ -101,19 +97,23 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }, 0);
 
     const taxRate = cart.location?.taxRate || 0;
-    const tax = subtotal * taxRate;
-    const total = subtotal + tax + cart.tip + cart.deliveryFee;
+    const subtotal = Math.round(subtotalRaw * 100) / 100;
+    const tax = Math.round(subtotal * taxRate * 100) / 100;
+    const total = Math.round((subtotal + tax + cart.tip + cart.deliveryFee) * 100) / 100;
 
     setCart((prev) => {
       if (!prev) return prev;
+      const alreadyCurrent =
+        prev.subtotal === subtotal && prev.tax === tax && prev.total === total;
+      if (alreadyCurrent) return prev;
       return {
         ...prev,
-        subtotal: Math.round(subtotal * 100) / 100,
-        tax: Math.round(tax * 100) / 100,
-        total: Math.round(total * 100) / 100,
+        subtotal,
+        tax,
+        total,
       };
     });
-  }, [cart?.items, cart?.tip, cart?.deliveryFee, cart?.location, isHydrated]);
+  }, [isHydrated, cart]);
 
   // Persist cart to localStorage whenever it changes
   useEffect(() => {

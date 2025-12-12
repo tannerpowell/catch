@@ -10,6 +10,63 @@ import { Providers } from "./providers";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
+import {
+  Bodoni_Moda,
+  Cormorant_Garamond,
+  Italiana,
+  Patrick_Hand,
+  Playfair_Display,
+  Poppins,
+  Source_Sans_3
+} from "next/font/google";
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-playfair-display"
+});
+
+const sourceSans = Source_Sans_3({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-source-sans",
+  weight: ["400", "600", "700"]
+});
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-poppins",
+  weight: ["400", "500", "600", "700"]
+});
+
+const cormorant = Cormorant_Garamond({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-cormorant-garamond",
+  weight: ["400", "500", "600", "700"]
+});
+
+const bodoni = Bodoni_Moda({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-bodoni-moda",
+  weight: ["400", "500"]
+});
+
+const italiana = Italiana({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-italiana",
+  weight: ["400"]
+});
+
+const patrickHand = Patrick_Hand({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-patrick-hand",
+  weight: ["400"]
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://thecatchdfw.com'),
@@ -65,14 +122,19 @@ export const metadata: Metadata = {
  * @returns The root HTML structure for the application
  */
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const fontClassName = [
+    playfair.variable,
+    sourceSans.variable,
+    poppins.variable,
+    cormorant.variable,
+    bodoni.variable,
+    italiana.variable,
+    patrickHand.variable
+  ].join(" ");
+
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Patrick+Hand&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet" />
-      </head>
-      <body>
+      <body className={fontClassName}>
         <RouteMarker />
         <Providers>
           <HeaderSimple />

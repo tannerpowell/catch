@@ -1,5 +1,7 @@
 import { defineField, defineType } from "sanity";
 
+type OnlineOrderingContext = { parent?: { onlineOrderingEnabled?: boolean } };
+
 export default defineType({
   name: "location",
   title: "Location",
@@ -86,7 +88,7 @@ export default defineType({
       title: "Email",
       type: "string",
       description: "Location manager email (used for Stripe notifications and order alerts)",
-      validation: (rule) => rule.custom((email, context: any) => {
+      validation: (rule) => rule.custom((email, context: OnlineOrderingContext) => {
         const onlineOrderingEnabled = context.parent?.onlineOrderingEnabled;
 
         // Email is required when online ordering is enabled

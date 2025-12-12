@@ -1,6 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { Check } from 'lucide-react';
 
 interface SuccessModalProps {
@@ -18,8 +17,6 @@ interface SuccessModalProps {
  * @returns The modal JSX when `isOpen` is true, otherwise `null`
  */
 export function SuccessModal({ isOpen, onClose, itemName }: SuccessModalProps) {
-  const router = useRouter();
-
   if (!isOpen) return null;
 
   const handleGoToCart = () => {

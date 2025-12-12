@@ -7,9 +7,15 @@ import { ShoppingCart } from 'lucide-react';
 import { useCart } from '@/lib/contexts/CartContext';
 import { CartDrawer } from '@/components/cart/CartDrawer';
 
+type GsapGlobal = {
+  set: (targets: Element | NodeListOf<Element>, vars: Record<string, unknown>) => void;
+  to: (targets: Element | NodeListOf<Element>, vars: Record<string, unknown>) => void;
+};
+
 const navLinks = [
   { href: "/menu", label: "menu" },
   { href: "/menu2", label: "menu2" },
+  { href: "/modal", label: "modal" },
   { href: "/locations", label: "locations" },
   // { href: "/gift-cards", label: "gift cards" },
   // { href: "/our-story", label: "our story" },
@@ -38,7 +44,7 @@ export default function HeaderSimple() {
     document.body.appendChild(script);
 
     script.onload = () => {
-      const gsap = (window as any).gsap;
+      const gsap = (window as typeof window & { gsap?: GsapGlobal }).gsap;
       if (!gsap) return;
 
       const rightItems = document.querySelectorAll('.nav-right-link-wrapper');
@@ -104,7 +110,7 @@ export default function HeaderSimple() {
           <ul className="nav-links">
             {navLinks.map(item => (
               <li key={item.href}>
-                <Link href={item.href as any} className="catch-nav-link">
+                <Link href={item.href} className="catch-nav-link">
                   {item.label}
                 </Link>
               </li>

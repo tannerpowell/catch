@@ -5,7 +5,6 @@ import type { Order, OrderStatus } from '@/lib/types';
 
 interface OrderColumnProps {
   title: string;
-  status: string;
   orders: Order[];
   nextStatus: OrderStatus;
   actionLabel: string;
@@ -27,7 +26,6 @@ interface OrderColumnProps {
  */
 export function OrderColumn({
   title,
-  status,
   orders,
   nextStatus,
   actionLabel,

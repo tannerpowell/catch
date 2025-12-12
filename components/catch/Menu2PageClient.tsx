@@ -21,25 +21,6 @@ function slugify(input: string) {
     .replace(/(^-|-$)/g, "");
 }
 
-function formatPhone(phone: string): string {
-  // Remove all non-digit characters
-  const digits = phone.replace(/\D/g, '');
-  // Format as (XXX) XXX-XXXX
-  if (digits.length === 11 && digits[0] === '1') {
-    // Remove leading 1 for US numbers
-    const areaCode = digits.slice(1, 4);
-    const prefix = digits.slice(4, 7);
-    const lineNumber = digits.slice(7, 11);
-    return `(${areaCode}) ${prefix}-${lineNumber}`;
-  } else if (digits.length === 10) {
-    const areaCode = digits.slice(0, 3);
-    const prefix = digits.slice(3, 6);
-    const lineNumber = digits.slice(6, 10);
-    return `(${areaCode}) ${prefix}-${lineNumber}`;
-  }
-  return phone; // Return original if format doesn't match
-}
-
 // Pure helper function to determine if item is available at a location
 // Hoisted outside component to avoid dependency array issues in useEffect hooks
 function isItemAvailableAtLocation(item: MenuItem, locationSlug: string): boolean {
@@ -72,17 +53,13 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
   // Default to "Popular" category
   const [selectedCategory, setSelectedCategory] = useState<string>("popular");
   // Color theme toggle: 'blue' or 'cream'
-  const [colorTheme, setColorTheme] = useState<'blue' | 'cream'>('blue');
+  const [colorTheme] = useState<'blue' | 'cream'>('blue');
   // Location finding state
   const [isLocating, setIsLocating] = useState(false);
   // Track when MixItup is ready
   const [mixitupReady, setMixitupReady] = useState(false);
-  const mixitupRef = useRef<any>(null);
+  const mixitupRef = useRef<import("mixitup").Mixer | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const preloadedImagesRef = useRef<Set<string>>(new Set());
-  // Split into two separate refs for cleaner types (CodeRabbit suggestion)
-  const observerRef = useRef<IntersectionObserver | null>(null);
-  const itemImageMapRef = useRef<Map<string, string>>(new Map());
 
   // Find nearest location on user request (not auto)
   const handleFindNearest = useCallback(() => {
@@ -102,6 +79,8 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
         );
         if (nearestSlug) {
           setSelectedSlug(nearestSlug);
+        } else {
+          alert('Unable to determine the nearest location. Please select a location manually.');
         }
         setIsLocating(false);
       },
@@ -192,7 +171,7 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
         setMixitupReady(false);
       }
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- selectedCategory intentionally omitted to prevent MixItup recreation on category clicks
   }, [locations]);
 
   // Handle filtering when selectedSlug or selectedCategory changes
@@ -220,107 +199,17 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
     mixitupRef.current.filter(filterString);
   }, [selectedSlug, selectedCategory, mixitupReady]);
 
-  // Helper to preload Next.js optimized image
-  // Wrapped in useCallback to prevent stale closures in IntersectionObserver
-  const preloadImage = React.useCallback((src: string) => {
-    if (!src || preloadedImagesRef.current.has(src)) return;
-
-    // Use w=640 to match MenuItemCard's sizes attribute behavior
-    // MenuItemCard uses: "(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-    // Next.js will pick 640px for most viewports based on deviceSizes config
-    const optimizedUrl = `/_next/image?url=${encodeURIComponent(src)}&w=640&q=75`;
-    const link = document.createElement('link');
-    link.rel = 'preload';
-    link.as = 'image';
-    link.href = optimizedUrl;
-
-    // Clean up link after load to prevent accumulation
-    const cleanup = () => {
-      if (link.parentNode) link.parentNode.removeChild(link);
-    };
-    link.onload = cleanup;
-    link.onerror = cleanup;
-    setTimeout(cleanup, 30000); // Fallback cleanup after 30s
-
-    document.head.appendChild(link);
-
-    preloadedImagesRef.current.add(src);
-
-    // Track preload events for analytics (can be extended with external tracking service)
-    if (process.env.NODE_ENV === 'development') {
-      console.debug('[Image Preload]', { src, category: selectedCategory, location: selectedSlug });
-    }
-  }, [selectedCategory, selectedSlug]);
-
-  // Phase 1: Preload first 12 items immediately (above the fold for Popular + Denton)
-  useEffect(() => {
-    const visibleItems = allItemsWithMeta
-      .filter(item => {
-        const availableAtLocation = isItemAvailableAtLocation(item, selectedSlug);
-        const matchesCategory = !selectedCategory || item.categorySlug === selectedCategory;
-        return availableAtLocation && matchesCategory && item.image;
-      })
-      .slice(0, 12);
-
-    visibleItems.forEach(item => {
-      if (item.image) preloadImage(item.image);
-    });
-  }, [selectedSlug, selectedCategory, allItemsWithMeta, preloadImage]);
-
-  // Phase 2: Create IntersectionObserver once on mount
-  useEffect(() => {
-    if (typeof window === 'undefined' || !containerRef.current) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            const itemId = entry.target.getAttribute('data-item-id');
-            const src = itemId ? itemImageMapRef.current.get(itemId) : null;
-            if (src) {
-              preloadImage(src);
-              observer.unobserve(entry.target);
-            }
-          }
-        });
-      },
-      { rootMargin: '200px' }
-    );
-
-    const cards = containerRef.current.querySelectorAll('.mix-item');
-    cards.forEach(card => observer.observe(card));
-
-    observerRef.current = observer;
-
-    return () => {
-      observer.disconnect();
-      observerRef.current = null;
-    };
-  }, []); // Only create once on mount
-
-  // Re-observe when DOM updates (mixitup filtering changes)
-  useEffect(() => {
-    if (!observerRef.current || !containerRef.current) return;
-
-    const cards = containerRef.current.querySelectorAll('.mix-item');
-    cards.forEach(card => observerRef.current!.observe(card));
-  }, [selectedSlug, selectedCategory]);
-
-  // Phase 2b: Update itemImageMap when filters change (reuses observer)
-  useEffect(() => {
-    if (!observerRef.current) return;
-
-    const newMap = new Map(
+  const priorityItemIds = useMemo(() => {
+    return new Set(
       allItemsWithMeta
         .filter(item => {
           const availableAtLocation = isItemAvailableAtLocation(item, selectedSlug);
           const matchesCategory = !selectedCategory || item.categorySlug === selectedCategory;
           return availableAtLocation && matchesCategory && item.image;
         })
-        .map(item => [item.id, item.image!])
+        .slice(0, 12)
+        .map(item => item.id)
     );
-
-    itemImageMapRef.current = newMap;
   }, [selectedSlug, selectedCategory, allItemsWithMeta]);
 
   // Memoize selectedLocation lookup to avoid redundant computation
@@ -444,7 +333,7 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
           display: flex;
           align-items: center;
           justify-content: center;
-          font-family: "Patrick Hand", cursive;
+          font-family: var(--font-hand);
           font-size: 26px;
           font-weight: 400;
           box-shadow: 0 2px 3px rgba(0, 0, 0, 0.09);
@@ -482,6 +371,7 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
             onClick={handleFindNearest}
             disabled={isLocating}
             className="find-nearest-button"
+            type="button"
             style={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -522,6 +412,8 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
               onClick={() => setSelectedSlug(location.slug)}
               className="location-filter-button filter-button"
               data-active={selectedSlug === location.slug}
+              type="button"
+              aria-pressed={selectedSlug === location.slug}
               style={{ padding: '6px 12px', fontSize: '13px' }}
             >
               {location.name.replace('The Catch — ', '')}
@@ -544,6 +436,8 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
               onClick={() => setSelectedSlug(location.slug)}
               className="location-filter-button filter-button"
               data-active={selectedSlug === location.slug}
+              type="button"
+              aria-pressed={selectedSlug === location.slug}
               style={{ padding: '6px 12px', fontSize: '13px' }}
             >
               {location.name.replace('The Catch — ', '')}
@@ -567,10 +461,12 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
           onClick={() => setSelectedCategory("")}
           className="location-filter-button category-filter-button filter-button"
           data-active={selectedCategory === ""}
+          type="button"
+          aria-pressed={selectedCategory === ""}
         >
           All Categories
         </button>
-        {categories.map((cat, index) => {
+        {categories.map((cat) => {
           // Permanently hide Blazing Hen and Cajun Creation
           if (cat.slug === 'blazing-hen' || cat.slug === 'cajun-creation') {
             return null;
@@ -591,6 +487,8 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
                   onClick={() => setSelectedCategory(cat.slug)}
                   className="location-filter-button category-filter-button filter-button"
                   data-active={selectedCategory === cat.slug}
+                  type="button"
+                  aria-pressed={selectedCategory === cat.slug}
                 >
                   {cat.title.replace(/& more/i, '& More')}
                 </button>
@@ -604,6 +502,8 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
               onClick={() => setSelectedCategory(cat.slug)}
               className="location-filter-button category-filter-button filter-button"
               data-active={selectedCategory === cat.slug}
+              type="button"
+              aria-pressed={selectedCategory === cat.slug}
             >
               {cat.title.replace(/& more/i, '& More')}
             </button>
@@ -630,6 +530,7 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
               });
 
               const itemPrice = getItemPrice(item, selectedSlug);
+              const isPriority = priorityItemIds.has(item.id);
 
               // Guard against undefined location (should not happen in practice, but prevent runtime crashes)
               if (!selectedLocation) {
@@ -640,7 +541,7 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
               }
 
               return (
-                <div key={item.id} className={classes.join(' ')} data-item-id={item.id} style={{ position: 'relative' }}>
+                <div key={item.id} className={classes.join(' ')} style={{ position: 'relative' }}>
                   <MenuItemCard
                     menuItem={{ ...item, price: itemPrice }}
                     location={selectedLocation}
@@ -650,6 +551,7 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
                     image={item.image}
                     isAvailable={true}
                     badges={item.badges}
+                    priority={isPriority}
                   />
                   {itemPrice != null && (
                     <div className="price-badge">
