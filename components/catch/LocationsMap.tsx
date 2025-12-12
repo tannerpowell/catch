@@ -319,7 +319,6 @@ export default function LocationsMap({ locations, onLocationSelect }: LocationsM
           position.coords.longitude,
           position.coords.latitude,
         ];
-        setUserLocation(userCoords);
 
         // Calculate nearest location
         let nearest: string | null = null;
