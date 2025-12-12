@@ -13,7 +13,8 @@ import {
   Text,
   TextInput,
 } from "@sanity/ui";
-import { ArrayInputProps, PatchEvent, set, unset, useClient, useFormValue } from "sanity";
+import type { ArrayOfObjectsInputProps } from "sanity";
+import { PatchEvent, set, unset, useClient, useFormValue } from "sanity";
 
 interface LocationDoc {
   _id: string;
@@ -32,15 +33,9 @@ function createKey() {
   return Math.random().toString(36).slice(2, 10);
 }
 
-const rowStyles: React.CSSProperties = {
-  borderRadius: 10,
-  padding: "10px 12px",
-  border: "1px solid var(--card-border-color)",
-};
-
 const badgeTone = (enabled: boolean) => (enabled ? "positive" : "caution");
 
-export function LocationOverridesInput(props: ArrayInputProps) {
+export function LocationOverridesInput(props: ArrayOfObjectsInputProps) {
   const { value, onChange } = props;
   const client = useClient({ apiVersion: "2023-08-01" });
   const [locations, setLocations] = useState<LocationDoc[]>([]);
@@ -98,6 +93,80 @@ export function LocationOverridesInput(props: ArrayInputProps) {
     }));
   };
 
+  const grouped = useMemo(() => {
+    const dfwSlugs = new Set(["denton", "coit-campbell", "garland"]);
+    const dfw: LocationDoc[] = [];
+    const houston: LocationDoc[] = [];
+    const other: LocationDoc[] = [];
+    for (const loc of locations) {
+      const slug = loc.slug?.current;
+      if (slug && dfwSlugs.has(slug)) {
+        dfw.push(loc);
+      } else if (slug) {
+        houston.push(loc);
+      } else {
+        other.push(loc);
+      }
+    }
+    return [
+      { title: "Dallas–Fort Worth", items: dfw },
+      { title: "Houston Area", items: houston },
+      { title: "Other", items: other },
+    ].filter((g) => g.items.length > 0);
+  }, [locations]);
+
+  const renderRow = (loc: LocationDoc) => {
+    const current = overrides.find((ov) => ov.location?._ref === loc._id);
+    const enabled = Boolean(current);
+    return (
+      <Card
+        key={loc._id}
+        padding={3}
+        radius={3}
+        shadow={1}
+        tone="transparent"
+        style={{
+          border: "1px solid var(--card-border-color)",
+          background: enabled ? "color-mix(in srgb, var(--card-bg-color), 8% #0ea5e9)" : "var(--card-bg-color)",
+        }}
+      >
+        <Stack space={3}>
+          <Flex align="center" justify="space-between" style={{ flexWrap: "wrap" }}>
+            <Box>
+              <Text weight="semibold">{loc.name}</Text>
+              {loc.slug?.current && (
+                <Text size={1} muted>
+                  {loc.slug.current}
+                </Text>
+              )}
+            </Box>
+            <Inline space={2} style={{ alignItems: "center" }}>
+              <Badge tone={badgeTone(enabled)}>{enabled ? "Visible" : "Hidden"}</Badge>
+              <Switch
+                id={`loc-${loc._id}`}
+                checked={enabled}
+                onChange={(e) => handleToggle(loc._id, e.currentTarget.checked)}
+              />
+            </Inline>
+          </Flex>
+          <Stack space={1}>
+            <Text size={1} muted>
+              Price {basePrice != null ? `(base ${basePrice})` : "(uses base price)"}
+            </Text>
+            <TextInput
+              type="number"
+              step="0.01"
+              value={enabled && typeof current?.price === "number" ? String(current.price) : ""}
+              placeholder={basePrice != null ? String(basePrice) : "Base price"}
+              disabled={!enabled}
+              onChange={(e) => handlePriceChange(loc._id, parseFloat(e.currentTarget.value))}
+            />
+          </Stack>
+        </Stack>
+      </Card>
+    );
+  };
+
   return (
     <Stack space={4}>
       <Heading size={1}>Per-location</Heading>
@@ -111,55 +180,14 @@ export function LocationOverridesInput(props: ArrayInputProps) {
           </Flex>
         ) : (
           <Stack space={3}>
-            <Grid columns={[1, 1, 2]} gap={3}>
-              {locations.map((loc) => {
-                const current = overrides.find((ov) => ov.location?._ref === loc._id);
-                const enabled = Boolean(current);
-                return (
-                  <Card
-                    key={loc._id}
-                    style={{
-                      ...rowStyles,
-                      background: enabled ? "color-mix(in srgb, var(--card-bg-color), 10% #0ea5e9)" : undefined,
-                    }}
-                  >
-                    <Stack space={2}>
-                      <Flex align="center" justify="space-between" wrap="wrap">
-                        <Box>
-                          <Text weight="semibold">{loc.name}</Text>
-                          {loc.slug?.current && (
-                            <Text size={1} muted>
-                              {loc.slug.current}
-                            </Text>
-                          )}
-                        </Box>
-                        <Inline space={2}>
-                          <Badge tone={badgeTone(enabled)}>{enabled ? "Visible" : "Hidden"}</Badge>
-                          <Switch
-                            id={`loc-${loc._id}`}
-                            checked={enabled}
-                            onChange={(e) => handleToggle(loc._id, e.currentTarget.checked)}
-                          />
-                        </Inline>
-                      </Flex>
-                      <Stack space={1}>
-                        <Text size={1} muted>
-                          Price ({basePrice != null ? `base ${basePrice}` : "uses base price"})
-                        </Text>
-                        <TextInput
-                          type="number"
-                          step="0.01"
-                          value={enabled && typeof current?.price === "number" ? String(current.price) : ""}
-                          placeholder={basePrice != null ? String(basePrice) : "Base price"}
-                          disabled={!enabled}
-                          onChange={(e) => handlePriceChange(loc._id, parseFloat(e.currentTarget.value))}
-                        />
-                      </Stack>
-                    </Stack>
-                  </Card>
-                );
-              })}
-            </Grid>
+            {grouped.map((group) => (
+              <Stack key={group.title} space={2}>
+                <Text weight="semibold">{group.title}</Text>
+                <Grid columns={[1, 1, 2]} gap={3}>
+                  {group.items.map(renderRow)}
+                </Grid>
+              </Stack>
+            ))}
             {locations.length === 0 && (
               <Text size={1} muted>
                 No locations found.
