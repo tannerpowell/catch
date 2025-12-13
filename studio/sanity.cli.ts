@@ -3,15 +3,6 @@
 * Go to https://www.sanity.io/docs/cli to learn more.
 **/
 import { defineCliConfig } from 'sanity/cli'
-
-const projectId =
-  process.env.NEXT_PUBLIC_SANITY_PROJECT_ID ||
-  process.env.SANITY_STUDIO_PROJECT_ID ||
-  'cwo08xml'
-
-const dataset =
-  process.env.NEXT_PUBLIC_SANITY_DATASET ||
-  process.env.SANITY_STUDIO_DATASET ||
-  'production'
+import { projectId, dataset } from './sanity/env'
 
 export default defineCliConfig({ api: { projectId, dataset } })
