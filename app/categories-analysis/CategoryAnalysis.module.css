@@ -702,8 +702,15 @@
 }
 
 .menuItem {
+  /* Button reset */
+  appearance: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  /* Layout */
   display: flex;
   flex-direction: column;
+  width: 100%;
   padding: 0.5rem 0.75rem;
   background: var(--color-surface-card);
   border: 1px solid var(--color-border-subtle);
@@ -870,6 +877,11 @@
   transform: translateY(0);
 }
 
+.clickable:focus-visible {
+  outline: 2px solid var(--color-brand-primary, #3b82f6);
+  outline-offset: 2px;
+}
+
 /* ========== ITEM DETAIL MODAL ========== */
 .modalOverlay {
   position: fixed;
@@ -1019,7 +1031,7 @@
   color: var(--color-text-primary);
 }
 
-.locationGrid {
+.modalLocationGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 0.375rem;
@@ -1118,7 +1130,7 @@
     max-height: 90vh;
   }
 
-  .locationGrid {
+  .modalLocationGrid {
     grid-template-columns: 1fr;
   }
 }

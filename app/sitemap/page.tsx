@@ -1,5 +1,3 @@
-'use client';
-
 import Link from 'next/link';
 import type { Route } from 'next';
 import styles from './sitemap.module.css';

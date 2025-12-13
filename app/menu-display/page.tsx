@@ -14,5 +14,8 @@ export default async function MenuDisplayIndex() {
   const brand = getBrand();
   const locations = await brand.getLocations();
 
-  return <MenuDisplaySetupClient locations={locations} />;
+  // Only send slug and name to the client (avoid leaking sensitive fields)
+  const locationsForClient = locations.map(l => ({ slug: l.slug, name: l.name }));
+
+  return <MenuDisplaySetupClient locations={locationsForClient} />;
 }

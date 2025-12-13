@@ -360,7 +360,7 @@ export default function CategoryAnalysisClient({ data }: { data: AnalysisData })
         {viewMode === "properties" && (
           <section className={styles.dataSection}>
             <div className={styles.propertiesGrid}>
-              {data.propertyReports
+              {[...data.propertyReports]
                 .sort((a, b) => a.score - b.score) // Worst first
                 .map(report => (
                 <div key={report.locationSlug} className={styles.propertyCard}>
@@ -445,7 +445,8 @@ export default function CategoryAnalysisClient({ data }: { data: AnalysisData })
                 <p className={styles.menuSectionDesc}>Already available at all locations. These form the foundation.</p>
                 <div className={styles.menuItemsGrid}>
                   {data.universalMenuProposal.coreItems.map(item => (
-                    <div
+                    <button
+                      type="button"
                       key={item.id}
                       className={`${styles.menuItem} ${styles.core} ${styles.clickable}`}
                       onClick={() => setSelectedItem(item)}
@@ -457,7 +458,7 @@ export default function CategoryAnalysisClient({ data }: { data: AnalysisData })
                           {item.suggestedPrice ? `$${item.suggestedPrice.toFixed(2)}` : "MP"}
                         </span>
                       </div>
-                    </div>
+                    </button>
                   ))}
                 </div>
               </div>
@@ -474,7 +475,8 @@ export default function CategoryAnalysisClient({ data }: { data: AnalysisData })
                 <p className={styles.menuSectionDesc}>At 80%+ locations. Ready to roll out everywhere.</p>
                 <div className={styles.menuItemsGrid}>
                   {data.universalMenuProposal.recommendedItems.map(item => (
-                    <div
+                    <button
+                      type="button"
                       key={item.id}
                       className={`${styles.menuItem} ${styles.recommended} ${styles.clickable}`}
                       onClick={() => setSelectedItem(item)}
@@ -488,7 +490,7 @@ export default function CategoryAnalysisClient({ data }: { data: AnalysisData })
                           {item.suggestedPrice ? `$${item.suggestedPrice.toFixed(2)}` : "MP"}
                         </span>
                       </div>
-                    </div>
+                    </button>
                   ))}
                 </div>
               </div>
@@ -518,10 +520,11 @@ export default function CategoryAnalysisClient({ data }: { data: AnalysisData })
                     <div key={catTitle} className={styles.considerCategory}>
                       <h4 className={styles.considerCategoryTitle}>{catTitle}</h4>
                       <div className={styles.menuItemsGrid}>
-                        {byCategory[catTitle]
+                        {[...byCategory[catTitle]]
                           .sort((a, b) => b.currentCoverage - a.currentCoverage)
                           .map(item => (
-                          <div
+                          <button
+                            type="button"
                             key={item.id}
                             className={`${styles.menuItem} ${styles.consider} ${styles.clickable}`}
                             onClick={() => setSelectedItem(item)}
@@ -535,7 +538,7 @@ export default function CategoryAnalysisClient({ data }: { data: AnalysisData })
                                 {item.suggestedPrice ? `$${item.suggestedPrice.toFixed(2)}` : "MP"}
                               </span>
                             </div>
-                          </div>
+                          </button>
                         ))}
                       </div>
                     </div>
@@ -555,7 +558,8 @@ export default function CategoryAnalysisClient({ data }: { data: AnalysisData })
                 <p className={styles.menuSectionDesc}>Exclusive to one location. Consider removing or expanding.</p>
                 <div className={styles.menuItemsGrid}>
                   {data.universalMenuProposal.sunsetCandidates.map(item => (
-                    <div
+                    <button
+                      type="button"
                       key={item.id}
                       className={`${styles.menuItem} ${styles.sunset} ${styles.clickable}`}
                       onClick={() => setSelectedItem(item)}
@@ -570,7 +574,7 @@ export default function CategoryAnalysisClient({ data }: { data: AnalysisData })
                           {item.suggestedPrice ? `$${item.suggestedPrice.toFixed(2)}` : "MP"}
                         </span>
                       </div>
-                    </div>
+                    </button>
                   ))}
                 </div>
               </div>
@@ -696,7 +700,7 @@ export default function CategoryAnalysisClient({ data }: { data: AnalysisData })
                     {selectedItemAnalysis.locationCount}/{data.totalLocations}
                   </span>
                 </h3>
-                <div className={styles.locationGrid}>
+                <div className={styles.modalLocationGrid}>
                   {data.locations.map(loc => {
                     const itemLoc = selectedItemAnalysis.locations.find(l => l.slug === loc.locationSlug);
                     const isAvailable = !!itemLoc;

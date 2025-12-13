@@ -27,7 +27,7 @@ const [builderMode, setBuilderMode] = useState(false);
 
 Add a toggle button in the Universal Menu tab header:
 
-```
+```text
 [View Mode] [Builder Mode]
 ```
 
@@ -62,7 +62,7 @@ Each menu item card in Builder Mode gets:
 
 Floating/collapsible sidebar showing current proposal:
 
-```
+```text
 ┌─────────────────────────────┐
 │ PROPOSED MENU          [×] │
 ├─────────────────────────────┤
@@ -95,7 +95,7 @@ Features:
 
 Encode selected item IDs in URL query params:
 
-```
+```bash
 /categories-analysis?builder=1&items=abc123,def456,ghi789
 ```
 
@@ -140,7 +140,7 @@ Benefits:
 | PDF | Formal proposal document |
 
 Text format example:
-```
+```text
 PROPOSED UNIVERSAL MENU
 Generated: 2025-01-15
 
@@ -159,7 +159,7 @@ Total: 47 items
 
 Optional: Show how the proposed menu compares to each location's current menu:
 
-```
+```text
 ┌─────────────────────────────────────────┐
 │ LOCATION IMPACT                         │
 ├─────────────────────────────────────────┤

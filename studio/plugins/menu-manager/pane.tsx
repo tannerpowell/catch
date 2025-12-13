@@ -793,6 +793,7 @@ export function MenuManagerPane() {
         description: detail.description,
         basePrice: detail.basePrice,
         category: detail.category,
+        availableEverywhere: detail.availableEverywhere,
         locationOverrides: detail.locationOverrides,
         source: detail.source,
         externalId: detail.externalId,

@@ -49,7 +49,7 @@ export default async function MenuDisplayPage({ params }: Props) {
   );
 
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<div style={{ padding: '2rem', textAlign: 'center' }}>Loading menu display...</div>}>
       <MenuDisplayClient
         location={location}
         categories={categories}

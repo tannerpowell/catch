@@ -153,6 +153,13 @@ export default function MenuDisplayClient({ location, categories, items }: Props
     return () => clearInterval(rotateTimer);
   }, [totalPages, fixedPage]);
 
+  // Sync currentPage with fixedPage when URL changes
+  useEffect(() => {
+    if (fixedPage !== null) {
+      setCurrentPage(fixedPage);
+    }
+  }, [fixedPage]);
+
   // Get items for current page
   const pageItems = pages[currentPage] || [];
 

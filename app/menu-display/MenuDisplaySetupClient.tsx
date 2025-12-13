@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import type { Location } from "@/lib/types";
+import { useState, useRef, useEffect, type CSSProperties } from "react";
 import styles from "./MenuDisplaySetup.module.css";
 
+type LocationPreview = { slug: string; name: string };
+
 interface Props {
-  locations: Location[];
+  locations: LocationPreview[];
 }
 
 export default function MenuDisplaySetupClient({ locations }: Props) {
@@ -83,7 +84,7 @@ export default function MenuDisplaySetupClient({ locations }: Props) {
               <div className={styles.tvLabel}>Screen 1</div>
               <div
                 className={styles.tvScaleWrapper}
-                style={{ "--scale-factor": scaleFactor } as React.CSSProperties}
+                style={{ "--scale-factor": scaleFactor } as CSSProperties}
               >
                 <iframe
                   src={`/menu-display/${selectedSlug}?page=1`}
@@ -101,7 +102,7 @@ export default function MenuDisplaySetupClient({ locations }: Props) {
               <div className={styles.tvLabel}>Screen 2</div>
               <div
                 className={styles.tvScaleWrapper}
-                style={{ "--scale-factor": scaleFactor } as React.CSSProperties}
+                style={{ "--scale-factor": scaleFactor } as CSSProperties}
               >
                 <iframe
                   src={`/menu-display/${selectedSlug}?page=2`}
@@ -175,7 +176,9 @@ export default function MenuDisplaySetupClient({ locations }: Props) {
         <div className={styles.modalOverlay} onClick={() => setModalScreen(null)}>
           <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
             <div className={styles.modalTitle}>
-              {selectedLocation?.name.replace(/^The Catch\s*[—–-]\s*/i, "")} – Screen {modalScreen}
+              {(selectedLocation?.name
+                ? selectedLocation.name.replace(/^The Catch\s*[—–-]\s*/i, "")
+                : selectedSlug)} – Screen {modalScreen}
             </div>
             <button
               type="button"

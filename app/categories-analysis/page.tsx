@@ -680,7 +680,7 @@ export default async function CategoryAnalysisPage() {
   // Helper: spell out numbers <10
   const spellOutNumber = (n: number): string => {
     const words = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
-    return n < 10 ? words[n] : String(n);
+    return n >= 0 && n < 10 ? words[n] : String(n);
   };
 
   // Helper: extract size info from item name
@@ -1006,9 +1006,8 @@ export default async function CategoryAnalysisPage() {
   if (consolidatedCount > 0) {
     globalAnnotations.push(`Consolidated ${consolidatedCount} size/quantity variants into base items with modifiers`);
   }
-  globalAnnotations.push(`Based on ${eligibleItems.length} items at 80%+ locations (Core + Recommended)`);
+  globalAnnotations.push(`Based on ${eligibleItems.length} items at 50%+ locations (Core + Recommended + Consider)`);
   globalAnnotations.push(`Excluded ${sunsetCandidates.length} location-exclusive items`);
-  globalAnnotations.push(`Excluded ${considerItems.length} items at <80% of locations`);
 
   const proposedMenu: ProposedMenu = {
     categories: proposedCategories,
