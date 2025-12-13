@@ -58,6 +58,11 @@ const sections: SitemapSection[] = [
   },
 ];
 
+/**
+ * Renders the sitemap page showing categorized navigation links, optional descriptions, and badges.
+ *
+ * @returns The sitemap page JSX element containing section headers, lists of navigable links with optional badges and descriptions, and a footer.
+ */
 export default function SitemapPage() {
   return (
     <main className={styles.page}>

@@ -170,6 +170,13 @@ interface AnalysisData {
   itemClassificationCounts: Record<ItemClassification, number>;
 }
 
+/**
+ * Generates a comprehensive analysis of a brand's menu, categories, and locations and renders a client with that analysis.
+ *
+ * Builds analytics including category-location coverage, per-location property reports and alignment scores, item availability and classification, universal menu recommendations, and a proposed consolidated menu, then renders CategoryAnalysisClient with the assembled AnalysisData.
+ *
+ * @returns A React element that renders CategoryAnalysisClient populated with the computed AnalysisData
+ */
 export default async function CategoryAnalysisPage() {
   const brand = getBrand();
 
@@ -1039,7 +1046,13 @@ export default async function CategoryAnalysisPage() {
   return <CategoryAnalysisClient data={analysisData} />;
 }
 
-// Simple Levenshtein distance for detecting similar category names
+/**
+ * Compute the Levenshtein edit distance between two strings.
+ *
+ * @param a - The first string to compare
+ * @param b - The second string to compare
+ * @returns The minimum number of single-character insertions, deletions, or substitutions required to transform `a` into `b`
+ */
 function levenshteinDistance(a: string, b: string): number {
   const matrix: number[][] = [];
 

@@ -10,6 +10,11 @@ export const metadata: Metadata = {
 
 export const revalidate = 3600;
 
+/**
+ * Server component that fetches the current brand's locations and renders the menu display setup UI.
+ *
+ * @returns A React element rendering MenuDisplaySetupClient initialized with the brand's locations.
+ */
 export default async function MenuDisplayIndex() {
   const brand = getBrand();
   const locations = await brand.getLocations();

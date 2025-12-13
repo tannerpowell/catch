@@ -500,7 +500,21 @@ function SaveStatus({ saving, saved, error }: { saving: boolean; saved: boolean;
   return null
 }
 
-// Main component
+/**
+ * Render the Menu Manager pane for browsing, filtering, and editing menu items.
+ *
+ * Loads menu items, categories, and locations from Sanity and provides a three-column UI:
+ * left: filters (location, category); middle: searchable list of items; right: detail editor with
+ * tabs for Basics, Pricing & Availability, and Advanced settings. Supports image upload, formatting
+ * helpers, per-location price/availability overrides, and saving changes back to Sanity.
+ *
+ * Notable behavior:
+ * - Pricing & Availability uses an opt-in model: an item is available at a location only if
+ *   `availableEverywhere` is true on the item or there exists a per-location override with
+ *   `available === true`.
+ *
+ * @returns The rendered React element for the menu manager UI.
+ */
 export function MenuManagerPane() {
   const client = useClient({ apiVersion: '2023-08-01' })
   const imageBuilder = useMemo(() => imageUrlBuilder(client), [client])
@@ -586,6 +600,15 @@ export function MenuManagerPane() {
   useEffect(() => {
     if (!selectedId) return
     let cancelled = false
+    /**
+     * Load the selected menu item's detail from Sanity and update local component state.
+     *
+     * Sets loading state, clears previous errors and the saved flag before fetching. On success,
+     * stores the fetched MenuItemDetail in state and clears the loading flag; on failure, records
+     * an error message and clears the loading flag. Respects the `cancelled` flag to avoid
+     * applying state updates when the operation has been aborted. The fetched document includes
+     * availability and pricing fields such as `availableEverywhere` and `locationOverrides`.
+     */
     async function loadDetail() {
       setDetailLoading(true)
       setDetailError(null)

@@ -160,6 +160,14 @@ interface AnalysisData {
 type ViewMode = "categories" | "items" | "properties" | "proposed";
 type CategoryFilterMode = "all" | "shared" | "unique" | "orphan" | "universal";
 
+/**
+ * Render a client-side UI for exploring menu analysis across categories, items, properties, and a proposed universal menu.
+ *
+ * Displays an executive summary, view controls, filtered category grid, property reports, universal-menu item breakdowns (core / recommended / consider / sunset), a proposed menu by category, and an item detail modal driven by the provided analysis data.
+ *
+ * @param data - AnalysisData containing categories, locations, items, property reports, universal menu proposal, proposed menu, summary counts, and recommendations used to populate the UI.
+ * @returns The React element tree for the CategoryAnalysisClient component.
+ */
 export default function CategoryAnalysisClient({ data }: { data: AnalysisData }) {
   const [viewMode, setViewMode] = useState<ViewMode>("categories");
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilterMode>("all");

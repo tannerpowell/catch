@@ -8,6 +8,14 @@ interface Props {
   locations: Location[];
 }
 
+/**
+ * Renders the Menu TV Display Setup UI for selecting a location, previewing two TV screens, and opening a fullscreen preview.
+ *
+ * Renders a preview area with two scaled screen frames (Screen 1 and Screen 2), a selectable list of locations with quick links to each screen, setup notices for kiosk configuration, and a fullscreen modal for viewing an individual screen.
+ *
+ * @param locations - Array of Location objects used to populate the location selector, preview iframes, and the locations grid
+ * @returns The rendered React element for the Menu TV Display Setup interface
+ */
 export default function MenuDisplaySetupClient({ locations }: Props) {
   const [selectedSlug, setSelectedSlug] = useState(locations[0]?.slug || "");
   const selectedLocation = locations.find((l) => l.slug === selectedSlug);

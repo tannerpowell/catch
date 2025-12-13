@@ -9,6 +9,13 @@ const navLinks = [
   { label: "Private Events", href: "/private-events" },
 ] as const;
 
+/**
+ * Render the site's footer containing branding, navigation, social links, and legal links.
+ *
+ * Renders a grid-based footer with the site logo, a navigation link grid, social icons, horizontal and vertical dividers, and a bottom row with the dynamically generated current year plus Privacy Policy and Terms of Service links.
+ *
+ * @returns The footer JSX element containing branding, navigation, social links, and legal/copyright information.
+ */
 export default function FooterSimple() {
   return (
     <footer className="footer">

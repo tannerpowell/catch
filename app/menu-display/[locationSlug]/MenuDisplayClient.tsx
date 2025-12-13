@@ -37,6 +37,19 @@ function getEffectivePrice(item: MenuItem, locationSlug: string): number | null 
   return item.price ?? null;
 }
 
+/**
+ * Renders a multi-column menu display for a location with category headers, pagination, and optional auto-rotation.
+ *
+ * Renders menu items grouped by category into up to four columns with category headers and a compact page indicator.
+ * If the URL contains a `page` query parameter, that page is shown and automatic page rotation is disabled.
+ * When multiple pages exist and no `page` query parameter is present, pages auto-advance on a fixed interval.
+ * The component also triggers a full router refresh every five minutes to pick up menu changes.
+ *
+ * @param location - The current location used to resolve location-specific item prices
+ * @param categories - Ordered list of menu categories; categories with no items are omitted
+ * @param items - List of menu items; items are grouped by their `categorySlug` and displayed under their category
+ * @returns The rendered menu element containing up to four columns, category headers, items with prices, and a page indicator when applicable
+ */
 export default function MenuDisplayClient({ location, categories, items }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
