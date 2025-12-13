@@ -1,0 +1,506 @@
+/* ===== Modifier Selection Sheet ===== */
+/* Warm cream palette matching the site design */
+
+/* === Color Palette === */
+/* Primary blue: #1A71B3 */
+/* Cream: #f5ebe0, #FDF8ED, #f9f3eb */
+/* Text: #322723 */
+/* Borders: #ede3d5, #e8d5c4 */
+
+/* === Silk Sheet === */
+.sheetBackdrop {
+  background: rgba(50, 39, 35, 0.6);
+}
+
+.sheetView {
+  height: var(--silk-100-lvh-dvh-pct);
+}
+
+.sheetContent {
+  display: flex;
+  flex-direction: column;
+  max-height: 92vh;
+  min-height: 80vh;
+  max-width: 500px;
+  width: 100%;
+}
+
+.sheetBackground {
+  background: #f5ebe0;
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -8px 40px rgba(50, 39, 35, 0.12);
+}
+
+/* === Drag Handle === */
+.dragHandle {
+  display: flex;
+  justify-content: center;
+  padding: 12px 0 4px;
+  flex-shrink: 0;
+}
+
+.dragHandleBar {
+  width: 40px;
+  height: 4px;
+  background: #e0d0c0;
+  border-radius: 2px;
+}
+
+/* === Scroll Container === */
+.scrollWrapper {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.scrollContainer {
+  height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 4px 20px 16px;
+}
+
+/* Fade hint when more content below */
+.scrollFade {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 32px;
+  background: linear-gradient(to bottom, transparent, #f5ebe0);
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+.scrollFade.hidden {
+  opacity: 0;
+}
+
+/* === Header === */
+.header {
+  display: flex;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #ede3d5;
+  margin-bottom: 16px;
+}
+
+.headerImage {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  border-radius: 10px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #ede3d5;
+}
+
+.headerText {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.itemName {
+  font-size: 18px;
+  font-weight: 600;
+  color: #322723;
+  margin: 0 0 2px;
+  line-height: 1.2;
+}
+
+.itemDescription {
+  font-size: 13px;
+  color: #6b5d54;
+  margin: 0 0 4px;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.itemPrice {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1A71B3;
+}
+
+/* === Modifier Groups === */
+.modifierGroups {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modifierGroup {
+  /* Each group section */
+}
+
+.groupHeader {
+  margin-bottom: 8px;
+}
+
+.groupTitleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.groupTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #322723;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.requiredBadge {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #ede3d5;
+  color: #8b7355;
+  border: 1px solid #e0d0c0;
+}
+
+.requiredBadge.complete {
+  background: rgba(26, 113, 179, 0.1);
+  color: #1A71B3;
+  border-color: rgba(26, 113, 179, 0.3);
+}
+
+.groupHint {
+  font-size: 11px;
+  color: #8b7355;
+  margin: 4px 0 0;
+}
+
+/* === Options List === */
+.optionsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* Compact chip-style for short options (Size, Preparation) */
+.optionsListCompact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.optionItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #fdfaf5;
+  border: 1.5px solid #e0d0c0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+  text-align: left;
+  font-size: 14px;
+}
+
+.optionItem:hover {
+  border-color: #d5c9bc;
+  background: #fff;
+}
+
+.optionItem.selected {
+  background: #fff;
+  border-color: #1A71B3;
+}
+
+/* Compact chip variant */
+.optionItemCompact {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: #fdfaf5;
+  border: 1.5px solid #e0d0c0;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.optionItemCompact:hover {
+  border-color: #d5c9bc;
+  background: #fff;
+}
+
+.optionItemCompact.selected {
+  background: #1A71B3;
+  border-color: #1A71B3;
+  color: white;
+}
+
+.optionItemCompact.selected .optionPrice {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.optionInfo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.optionName {
+  font-size: 14px;
+  font-weight: 500;
+  color: #322723;
+}
+
+.optionItemCompact .optionName {
+  font-size: 13px;
+}
+
+.optionItemCompact.selected .optionName {
+  color: white;
+}
+
+.optionPrice {
+  font-size: 12px;
+  color: #1A71B3;
+  font-weight: 500;
+}
+
+.optionCheck {
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid #d5c9bc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.12s ease;
+}
+
+.optionCheck.radio {
+  border-radius: 50%;
+}
+
+.optionCheck.checkbox {
+  border-radius: 4px;
+}
+
+.optionItem.selected .optionCheck {
+  background: #1A71B3;
+  border-color: #1A71B3;
+  color: white;
+}
+
+.optionCheck svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* Hide check for compact chips - selection shown by fill */
+.optionItemCompact .optionCheck {
+  display: none;
+}
+
+/* === Special Instructions === */
+.instructionsSection {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #ede3d5;
+}
+
+.instructionsLabel {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #322723;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.instructionsInput {
+  width: 100%;
+  min-height: 60px;
+  padding: 10px 12px;
+  background: #fdfaf5;
+  border: 1px solid #e0d0c0;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #322723;
+  resize: none;
+  font-family: inherit;
+}
+
+.instructionsInput::placeholder {
+  color: #a89888;
+}
+
+.instructionsInput:focus {
+  outline: none;
+  border-color: #1A71B3;
+  box-shadow: 0 0 0 2px rgba(26, 113, 179, 0.1);
+}
+
+/* === Footer === */
+.footer {
+  flex-shrink: 0;
+  padding: 12px 20px;
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
+  background: #f5ebe0;
+  border-top: 1px solid #e0d0c0;
+}
+
+.validationMessage {
+  font-size: 12px;
+  color: #a67c52;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.footerRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* === Quantity Control === */
+.quantityControl {
+  display: flex;
+  align-items: center;
+  background: #fdfaf5;
+  border: 1px solid #e0d0c0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.quantityBtn {
+  width: 40px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  font-weight: 500;
+  color: #322723;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.quantityBtn:hover:not(:disabled) {
+  background: #f5ebe0;
+}
+
+.quantityBtn:disabled {
+  color: #d5c9bc;
+  cursor: not-allowed;
+}
+
+.quantityValue {
+  width: 28px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: #322723;
+}
+
+/* === Add Button === */
+.addButton {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+  height: 46px;
+  background: #322723;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-size: 15px;
+  font-weight: 600;
+  color: white;
+}
+
+.addButton:hover:not(:disabled) {
+  background: #453832;
+}
+
+.addButton:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.addButton.disabled {
+  background: #d5c9bc;
+  cursor: not-allowed;
+}
+
+.addButtonPrice {
+  font-weight: 600;
+}
+
+/* === Mobile === */
+@media (max-width: 640px) {
+  .sheetContent {
+    max-width: 100%;
+    max-height: 94vh;
+    min-height: 75vh;
+  }
+
+  .scrollContainer {
+    padding: 4px 16px 12px;
+  }
+
+  .header {
+    gap: 10px;
+    padding-bottom: 10px;
+    margin-bottom: 12px;
+  }
+
+  .headerImage {
+    width: 56px;
+    height: 56px;
+  }
+
+  .itemName {
+    font-size: 17px;
+  }
+
+  .modifierGroups {
+    gap: 14px;
+  }
+
+  .optionItem {
+    padding: 8px 10px;
+  }
+
+  .optionItemCompact {
+    padding: 6px 10px;
+  }
+
+  .footer {
+    padding: 10px 16px;
+    padding-bottom: max(14px, env(safe-area-inset-bottom));
+  }
+
+  .addButton {
+    height: 44px;
+    font-size: 14px;
+  }
+}

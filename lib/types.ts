@@ -51,9 +51,56 @@ export type Badge =
 
 export interface LocationOverride { price?: number; available?: boolean }
 
+/** @deprecated Use ModifierOption instead */
 export interface Option { id: string; name: string; priceDelta?: number }
+/** @deprecated Use ModifierGroup instead */
 export interface OptionGroup { id: string; name: string; required?: boolean; maxSelect?: number; options: Option[] }
+/** @deprecated Legacy combo component type */
 export interface ComboComponent { itemName: string; quantity: number; notes?: string }
+
+// === MODIFIER TYPES (for online ordering) ===
+
+/**
+ * A single option within a modifier group
+ * e.g., "Ranch", "MED +$11.49", "Fries"
+ */
+export interface ModifierOption {
+  _key: string;
+  name: string;
+  price?: number;         // Additional cost (e.g., 1.49 for +$1.49)
+  isDefault?: boolean;    // Pre-selected by default
+  available?: boolean;    // Can be toggled off
+  calories?: number;      // Optional nutrition info
+}
+
+/**
+ * A group of modifier options
+ * e.g., "Size", "Dressing", "One Side", "Add Ons"
+ */
+export interface ModifierGroup {
+  _id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  required: boolean;
+  multiSelect: boolean;   // Single-select vs multi-select
+  minSelections?: number; // For multi-select
+  maxSelections?: number; // For multi-select
+  options: ModifierOption[];
+  displayOrder?: number;
+}
+
+/**
+ * Item-specific override for a modifier option
+ * Allows different pricing per item (e.g., "MED" costs different for different baskets)
+ */
+export interface ItemModifierOverride {
+  _key: string;
+  modifierGroupId: string;
+  optionName: string;
+  price?: number;
+  available?: boolean;
+}
 
 export interface MenuItem {
   id: string;
@@ -66,9 +113,15 @@ export interface MenuItem {
   dietTags?: string[];
   image?: string;
   behindTheDishUrl?: string | null;
+  availableEverywhere?: boolean;
   locationOverrides?: Record<string, LocationOverride>;
+  // Legacy option groups (kept for backward compatibility)
   optionGroups?: OptionGroup[];
   comboComponents?: ComboComponent[];
+  // New modifier system (for online ordering)
+  modifierGroups?: ModifierGroup[];
+  itemModifierOverrides?: ItemModifierOverride[];
+  allowSpecialInstructions?: boolean;
 }
 
 export interface MenuCategory { slug: string; title: string; position?: number; description?: string }

@@ -1,5 +1,19 @@
 /* Dark Theme - shadcn Slate Palette */
 
+/* Exclude studio from dark theme overrides */
+html[data-route^="/studio"] .dark,
+html[data-route^="/studio"].dark {
+  /* Let Sanity Studio handle its own theming */
+  background-color: transparent !important;
+  color: inherit !important;
+}
+
+html[data-route^="/studio"] .dark body,
+html[data-route^="/studio"].dark body {
+  background-color: transparent !important;
+  color: inherit !important;
+}
+
 :root.dark {
   /* Slate palette from shadcn - backgrounds (darker shades) */
   --slate-950: #020617;
@@ -683,18 +697,19 @@
 
 /* Add to Cart Button */
 .dark .add-to-cart-btn {
-  background: #444444;
+  background: var(--slate-100);
+  color: var(--slate-950);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .dark .add-to-cart-btn:hover:not(:disabled) {
-  background: #555555;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  background: var(--slate-50);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
 .dark .add-to-cart-btn-disabled {
   background: var(--slate-800) !important;
-  color: var(--slate-600) !important;
+  color: var(--slate-500) !important;
   box-shadow: none;
 }
 

@@ -138,7 +138,7 @@ export default function CheckoutPage() {
           revelSynced: false,
           specialInstructions,
         });
-      } catch (orderErr) {
+      } catch {
         throw new Error('Failed to create order. Please try again.');
       }
 

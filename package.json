@@ -5,8 +5,8 @@
   "scripts": {
     "generate-icons": "node scripts/generate-pwa-icons.js",
     "verify-icons": "node scripts/verify-pwa-icons.js",
-    "dev": "npm run generate-icons && next dev --turbopack",
-    "build": "npm run generate-icons && npm run verify-icons && next build",
+    "dev": "next dev --turbopack",
+    "build": "next build",
     "start": "next start",
     "lint": "eslint .",
     "vercel:check": "tsx scripts/check-vercel-config.ts",
@@ -16,7 +16,8 @@
   },
   "dependencies": {
     "@sanity/client": "^6.20.1",
-    "@sanity/vision": "^4.10.2",
+    "@sanity/vision": "^4.20.3",
+    "@silk-hq/components": "^0.10.0",
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
     "clsx": "^2.1.1",
@@ -25,33 +26,38 @@
     "lucide-react": "^0.554.0",
     "mapbox-gl": "^3.16.0",
     "mixitup": "^3.3.2",
-    "next": "^16.0.3",
+    "next": "^16.0.7",
     "next-sanity": "^11.4.2",
     "next-themes": "^0.4.6",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "sanity": "^4.10.2",
+    "sanity": "^4.20.3",
     "sharp": "^0.34.4",
     "styled-components": "^6.1.19",
     "zod": "^3.23.8"
+  },
+  "overrides": {
+    "date-fns": "2.30.0"
   },
   "devDependencies": {
     "@eslint/compat": "^2.0.0",
     "@eslint/eslintrc": "^3.3.1",
     "@next/eslint-plugin-next": "^16.0.3",
     "@types/node": "^20.12.7",
-    "@types/react": "^18.2.66",
-    "@types/react-dom": "^18.2.22",
+    "@types/react": "^19.0.8",
+    "@types/react-dom": "^19.0.3",
     "@typescript-eslint/parser": "^8.47.0",
     "autoprefixer": "^10.4.18",
+    "baseline-browser-mapping": "^2.8.32",
     "eslint": "^9.39.1",
     "eslint-config-next": "^16.0.3",
     "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
     "playwright": "^1.55.1",
     "postcss": "^8.4.37",
     "tailwindcss": "^3.4.4",
     "ts-node": "^10.9.2",
     "tsx": "^4.19.2",
-    "typescript": "^5.4.5"
+    "typescript": "^5.6.3"
   }
 }

@@ -61,3 +61,15 @@ VERCEL.md
 revel-graphql-sample.json
 revel-products.json
 scraped-images.json
+data/menus/
+data/locations-*.csv
+data/thecatchseafood*/
+
+# Claude conversation logs (may contain secrets)
+Conversations/
+
+# Test artifacts
+test-results/
+
+# Demo/temp images
+data/templates/opus-*

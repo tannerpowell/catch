@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import styles from './LocationsMap.module.css';
+import { fallbackGeoCoordinates } from '@/lib/adapters/sanity-catch';
 
 interface Location {
   slug: string;
@@ -223,21 +224,14 @@ const createLocationPopup = (location: Location): HTMLElement => {
   return container;
 };
 
-// Approximate coordinates for each location (you can update these with exact coordinates)
-const locationCoords: Record<string, [number, number]> = {
-  'atascocita': [-95.1794, 29.9988],
-  'coit-campbell': [-96.7786, 32.9986],
-  'conroe': [-95.4560, 30.3119],
-  'denton': [-97.1331, 33.2148],
-  'garland': [-96.6389, 32.9126],
-  's-post-oak': [-95.4618, 29.6502],
-  'willowbrook': [-95.5586, 29.9691],
-};
+// Derive coordinates from shared fallbackGeoCoordinates (convert to Mapbox [lng, lat] format)
+const locationCoords: Record<string, [number, number]> = Object.fromEntries(
+  Object.entries(fallbackGeoCoordinates).map(([slug, { lat, lng }]) => [slug, [lng, lat]])
+);
 
 export default function LocationsMap({ locations, onLocationSelect }: LocationsMapProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
-  const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [nearestLocation, setNearestLocation] = useState<string | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -258,8 +252,8 @@ export default function LocationsMap({ locations, onLocationSelect }: LocationsM
     const mapInstance = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/light-v11',
-      center: [-96.0, 31.0], // Center of Texas
-      zoom: 6,
+      center: [-96.5, 32.5], // Center between Texas and Oklahoma locations
+      zoom: 5.5,
     });
 
     map.current = mapInstance;
@@ -325,7 +319,6 @@ export default function LocationsMap({ locations, onLocationSelect }: LocationsM
           position.coords.longitude,
           position.coords.latitude,
         ];
-        setUserLocation(userCoords);
 
         // Calculate nearest location
         let nearest: string | null = null;

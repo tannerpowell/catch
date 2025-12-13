@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState, useMemo, useEffect, useRef } from "react";
+import React, { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import type { Location, MenuCategory, MenuItem } from "@/lib/types";
 import MenuItemCard from "./MenuItemCard";
-import { useGeolocation } from "@/lib/hooks/useGeolocation";
 import { findNearestLocation } from "@/lib/utils/findNearestLocation";
+import { isItemAvailableAtLocation } from "@/lib/utils/menuAvailability";
 
 interface Menu2PageClientProps {
   categories: MenuCategory[];
@@ -20,38 +20,6 @@ function slugify(input: string) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/-+/g, "-")
     .replace(/(^-|-$)/g, "");
-}
-
-function formatPhone(phone: string): string {
-  // Remove all non-digit characters
-  const digits = phone.replace(/\D/g, '');
-  // Format as (XXX) XXX-XXXX
-  if (digits.length === 11 && digits[0] === '1') {
-    // Remove leading 1 for US numbers
-    const areaCode = digits.slice(1, 4);
-    const prefix = digits.slice(4, 7);
-    const lineNumber = digits.slice(7, 11);
-    return `(${areaCode}) ${prefix}-${lineNumber}`;
-  } else if (digits.length === 10) {
-    const areaCode = digits.slice(0, 3);
-    const prefix = digits.slice(3, 6);
-    const lineNumber = digits.slice(6, 10);
-    return `(${areaCode}) ${prefix}-${lineNumber}`;
-  }
-  return phone; // Return original if format doesn't match
-}
-
-// Pure helper function to determine if item is available at a location
-// Hoisted outside component to avoid dependency array issues in useEffect hooks
-function isItemAvailableAtLocation(item: MenuItem, locationSlug: string): boolean {
-  if (locationSlug === "all") return true;
-
-  if (item.locationOverrides && Object.keys(item.locationOverrides).length > 0) {
-    const override = item.locationOverrides[locationSlug];
-    if (!override || override.available === false) return false;
-  }
-
-  return true;
 }
 
 /**
@@ -73,34 +41,66 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
   // Default to "Popular" category
   const [selectedCategory, setSelectedCategory] = useState<string>("popular");
   // Color theme toggle: 'blue' or 'cream'
-  const [colorTheme, setColorTheme] = useState<'blue' | 'cream'>('blue');
-  const mixitupRef = useRef<any>(null);
+  const [colorTheme] = useState<'blue' | 'cream'>('blue');
+  // Location finding state
+  const [isLocating, setIsLocating] = useState(false);
+  // Track when MixItup is ready
+  const [mixitupReady, setMixitupReady] = useState(false);
+  const mixitupRef = useRef<import("mixitup").Mixer | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const preloadedImagesRef = useRef<Set<string>>(new Set());
-  // Split into two separate refs for cleaner types (CodeRabbit suggestion)
-  const observerRef = useRef<IntersectionObserver | null>(null);
-  const itemImageMapRef = useRef<Map<string, string>>(new Map());
 
-  // Get user's geolocation
-  const { latitude, longitude } = useGeolocation();
-
-  // Auto-select nearest location based on user's geolocation.
-  // Only run while we're still on the initial default location (Denton).
-  useEffect(() => {
-    const dentonLocation = locations.find(l => l.slug === "denton");
-    const initialDefaultSlug = dentonLocation?.slug ?? locations[0]?.slug ?? "";
-    if (
-      latitude != null &&
-      longitude != null &&
-      locations.length > 0 &&
-      selectedSlug === initialDefaultSlug
-    ) {
-      const nearestSlug = findNearestLocation(latitude, longitude, locations);
-      if (nearestSlug) {
-        setSelectedSlug(nearestSlug);
-      }
+  // Find nearest location on user request (not auto)
+  const handleFindNearest = useCallback(() => {
+    if (!navigator.geolocation) {
+      alert('Geolocation is not supported by your browser');
+      return;
     }
-  }, [latitude, longitude, locations, selectedSlug]);
+
+    setIsLocating(true);
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const nearestSlug = findNearestLocation(
+          position.coords.latitude,
+          position.coords.longitude,
+          locations
+        );
+        if (nearestSlug) {
+          setSelectedSlug(nearestSlug);
+        } else {
+          alert('Unable to determine the nearest location. Please select a location manually.');
+        }
+        setIsLocating(false);
+      },
+      (error) => {
+        console.warn('Geolocation error:', error.message);
+        setIsLocating(false);
+
+        // Map error codes to user-friendly messages
+        let errorMessage: string;
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            errorMessage = 'Location permission denied. Please enable location access in your browser settings to use Find Nearest.';
+            break;
+          case error.POSITION_UNAVAILABLE:
+            errorMessage = 'Unable to determine your location. Please check your device settings and try again.';
+            break;
+          case error.TIMEOUT:
+            errorMessage = 'Location request timed out. Please try again.';
+            break;
+          default:
+            errorMessage = `Location error: ${error.message}. Please try again or select a location manually.`;
+        }
+
+        alert(errorMessage);
+      },
+      {
+        enableHighAccuracy: false,
+        timeout: 5000,
+        maximumAge: 300000,
+      }
+    );
+  }, [locations]);
 
   // Prepare all items with their metadata for filtering
   const allItemsWithMeta = useMemo(() => {
@@ -125,40 +125,46 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
   useEffect(() => {
     if (typeof window === 'undefined' || !containerRef.current) return;
 
+    let mounted = true;
+
     // Dynamically import mixitup
     import('mixitup').then((mixitup) => {
-      if (containerRef.current && !mixitupRef.current) {
-        const dentonLocation = locations.find(l => l.slug === "denton");
-        const initialSlug = dentonLocation?.slug ?? locations[0]?.slug ?? "";
-        // Start with both location AND category filter (popular is default)
-        const initialFilter = `.location-${initialSlug}.category-${selectedCategory}`;
-        mixitupRef.current = mixitup.default(containerRef.current, {
-          selectors: {
-            target: '.mix-item'
-          },
-          animation: {
-            duration: 300,
-            effects: 'fade scale'
-          },
-          load: {
-            // Start with Denton location AND popular category selected
-            filter: initialFilter
-          }
-        });
-      }
+      if (!mounted || !containerRef.current || mixitupRef.current) return;
+
+      const dentonLocation = locations.find(l => l.slug === "denton");
+      const initialSlug = dentonLocation?.slug ?? locations[0]?.slug ?? "";
+      // Start with both location AND category filter (popular is default)
+      const initialFilter = `.location-${initialSlug}.category-${selectedCategory}`;
+      mixitupRef.current = mixitup.default(containerRef.current, {
+        selectors: {
+          target: '.mix-item'
+        },
+        animation: {
+          duration: 300,
+          effects: 'fade scale'
+        },
+        load: {
+          // Start with Denton location AND popular category selected
+          filter: initialFilter
+        }
+      });
+      setMixitupReady(true);
     });
 
     return () => {
+      mounted = false;
       if (mixitupRef.current) {
         mixitupRef.current.destroy();
         mixitupRef.current = null;
+        setMixitupReady(false);
       }
     };
-  }, [locations, selectedCategory]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- selectedCategory intentionally omitted to prevent MixItup recreation on category clicks
+  }, [locations]);
 
   // Handle filtering when selectedSlug or selectedCategory changes
   useEffect(() => {
-    if (!mixitupRef.current) return;
+    if (!mixitupReady || !mixitupRef.current) return;
 
     // Location is REQUIRED - always filter by the selected location
     if (!selectedSlug) {
@@ -179,109 +185,19 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
     }
 
     mixitupRef.current.filter(filterString);
-  }, [selectedSlug, selectedCategory]);
+  }, [selectedSlug, selectedCategory, mixitupReady]);
 
-  // Helper to preload Next.js optimized image
-  // Wrapped in useCallback to prevent stale closures in IntersectionObserver
-  const preloadImage = React.useCallback((src: string) => {
-    if (!src || preloadedImagesRef.current.has(src)) return;
-
-    // Use w=640 to match MenuItemCard's sizes attribute behavior
-    // MenuItemCard uses: "(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-    // Next.js will pick 640px for most viewports based on deviceSizes config
-    const optimizedUrl = `/_next/image?url=${encodeURIComponent(src)}&w=640&q=75`;
-    const link = document.createElement('link');
-    link.rel = 'preload';
-    link.as = 'image';
-    link.href = optimizedUrl;
-
-    // Clean up link after load to prevent accumulation
-    const cleanup = () => {
-      if (link.parentNode) link.parentNode.removeChild(link);
-    };
-    link.onload = cleanup;
-    link.onerror = cleanup;
-    setTimeout(cleanup, 30000); // Fallback cleanup after 30s
-
-    document.head.appendChild(link);
-
-    preloadedImagesRef.current.add(src);
-
-    // Track preload events for analytics (can be extended with external tracking service)
-    if (process.env.NODE_ENV === 'development') {
-      console.debug('[Image Preload]', { src, category: selectedCategory, location: selectedSlug });
-    }
-  }, [selectedCategory, selectedSlug]);
-
-  // Phase 1: Preload first 12 items immediately (above the fold for Popular + Denton)
-  useEffect(() => {
-    const visibleItems = allItemsWithMeta
-      .filter(item => {
-        const availableAtLocation = isItemAvailableAtLocation(item, selectedSlug);
-        const matchesCategory = !selectedCategory || item.categorySlug === selectedCategory;
-        return availableAtLocation && matchesCategory && item.image;
-      })
-      .slice(0, 12);
-
-    visibleItems.forEach(item => {
-      if (item.image) preloadImage(item.image);
-    });
-  }, [selectedSlug, selectedCategory, allItemsWithMeta, preloadImage]);
-
-  // Phase 2: Create IntersectionObserver once on mount
-  useEffect(() => {
-    if (typeof window === 'undefined' || !containerRef.current) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            const itemId = entry.target.getAttribute('data-item-id');
-            const src = itemId ? itemImageMapRef.current.get(itemId) : null;
-            if (src) {
-              preloadImage(src);
-              observer.unobserve(entry.target);
-            }
-          }
-        });
-      },
-      { rootMargin: '200px' }
-    );
-
-    const cards = containerRef.current.querySelectorAll('.mix-item');
-    cards.forEach(card => observer.observe(card));
-
-    observerRef.current = observer;
-
-    return () => {
-      observer.disconnect();
-      observerRef.current = null;
-    };
-  }, []); // Only create once on mount
-
-  // Re-observe when DOM updates (mixitup filtering changes)
-  useEffect(() => {
-    if (!observerRef.current || !containerRef.current) return;
-
-    const cards = containerRef.current.querySelectorAll('.mix-item');
-    cards.forEach(card => observerRef.current!.observe(card));
-  }, [selectedSlug, selectedCategory]);
-
-  // Phase 2b: Update itemImageMap when filters change (reuses observer)
-  useEffect(() => {
-    if (!observerRef.current) return;
-
-    const newMap = new Map(
+  const priorityItemIds = useMemo(() => {
+    return new Set(
       allItemsWithMeta
         .filter(item => {
           const availableAtLocation = isItemAvailableAtLocation(item, selectedSlug);
           const matchesCategory = !selectedCategory || item.categorySlug === selectedCategory;
           return availableAtLocation && matchesCategory && item.image;
         })
-        .map(item => [item.id, item.image!])
+        .slice(0, 12)
+        .map(item => item.id)
     );
-
-    itemImageMapRef.current = newMap;
   }, [selectedSlug, selectedCategory, allItemsWithMeta]);
 
   // Memoize selectedLocation lookup to avoid redundant computation
@@ -374,28 +290,14 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
           color: var(--slate-50);
           border-color: var(--slate-500);
         }
-        .theme-toggle-button {
-          background-color: transparent;
-          color: white;
-          border: 1px solid rgba(255, 255, 255, 0.3);
-          padding: 8px 16px;
-          border-radius: 4px;
-          font-size: 12px;
-          font-weight: 500;
-          letter-spacing: 1px;
-          text-transform: uppercase;
-          cursor: pointer;
-          transition: all 0.2s ease;
+        .find-nearest-button:hover:not(:disabled) {
+          background-color: rgba(255, 255, 255, 0.1);
+          border-color: rgba(255, 255, 255, 0.6);
         }
-        .dark .theme-toggle-button {
-          color: var(--slate-200);
+        .dark .find-nearest-button {
           border-color: var(--slate-600);
         }
-        .theme-toggle-button:hover {
-          background-color: rgba(255, 255, 255, 0.1);
-          border-color: rgba(255, 255, 255, 0.5);
-        }
-        .dark .theme-toggle-button:hover {
+        .dark .find-nearest-button:hover:not(:disabled) {
           background-color: var(--slate-700);
           border-color: var(--slate-500);
         }
@@ -419,7 +321,7 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
           display: flex;
           align-items: center;
           justify-content: center;
-          font-family: "Patrick Hand", cursive;
+          font-family: var(--font-hand);
           font-size: 26px;
           font-weight: 400;
           box-shadow: 0 2px 3px rgba(0, 0, 0, 0.09);
@@ -435,116 +337,110 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
           font-size: 23px;
         }
       `}</style>
-      {/* Location Filter Buttons */}
+      {/* Location Filter Bar */}
       <div className="filter-section-primary" style={{
         borderBottom: '1px solid var(--color--tierra-reca)',
         padding: '14px 20px',
         display: 'flex',
         flexDirection: 'column',
-        gap: '10px',
-        alignItems: 'center',
-        position: 'relative'
+        gap: '12px',
+        alignItems: 'center'
       }}>
-        {/* Theme Toggle Button */}
-        <button
-          onClick={() => setColorTheme(colorTheme === 'blue' ? 'cream' : 'blue')}
-          className="theme-toggle-button"
-          style={{
-            position: 'absolute',
-            top: '14px',
-            right: '20px'
-          }}
-        >
-          {colorTheme === 'blue' ? 'Cream Theme' : 'Blue Theme'}
-        </button>
-        {/* DFW Locations */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
+        {/* All Locations - Single Line */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          flexWrap: 'wrap',
+          justifyContent: 'center'
+        }}>
+          {/* Find Nearest CTA */}
+          <button
+            onClick={handleFindNearest}
+            disabled={isLocating}
+            className="find-nearest-button"
+            type="button"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '8px 14px',
+              background: 'transparent',
+              border: '1px solid rgba(255, 255, 255, 0.4)',
+              borderRadius: '4px',
+              color: 'white',
+              fontSize: '12px',
+              fontWeight: 500,
+              letterSpacing: '0.5px',
+              cursor: isLocating ? 'wait' : 'pointer',
+              transition: 'all 0.2s ease',
+              opacity: isLocating ? 0.7 : 1
+            }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="3" />
+              <path d="M12 2v4m0 12v4M2 12h4m12 0h4" />
+            </svg>
+            {isLocating ? 'Finding...' : 'Find Nearest'}
+          </button>
+
+          <span style={{ color: 'rgba(255,255,255,0.3)', margin: '0 4px' }}>|</span>
+
+          {/* DFW Label + Locations */}
           <span style={{
-            fontSize: '12px',
-            fontWeight: 500,
-            letterSpacing: '2px',
-            textTransform: 'uppercase'
-          }} className="text-white dark:text-slate-300 opacity-80">DFW:</span>
+            fontSize: '11px',
+            fontWeight: 600,
+            letterSpacing: '1.5px',
+            textTransform: 'uppercase',
+            marginRight: '2px'
+          }} className="text-white dark:text-slate-300 opacity-70">DFW:</span>
           {locations.filter(loc => ['denton', 'coit-campbell', 'garland'].includes(loc.slug)).map(location => (
             <button
               key={location.slug}
               onClick={() => setSelectedSlug(location.slug)}
               className="location-filter-button filter-button"
               data-active={selectedSlug === location.slug}
+              type="button"
+              aria-pressed={selectedSlug === location.slug}
+              style={{ padding: '6px 12px', fontSize: '13px' }}
             >
               {location.name.replace('The Catch — ', '')}
             </button>
           ))}
-        </div>
 
-        {/* Houston Locations */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
+          <span style={{ color: 'rgba(255,255,255,0.3)', margin: '0 4px' }}>|</span>
+
+          {/* Houston Label + Locations */}
           <span style={{
-            fontSize: '12px',
-            fontWeight: 500,
-            letterSpacing: '2px',
-            textTransform: 'uppercase'
-          }} className="text-white dark:text-slate-300 opacity-80">HOUSTON:</span>
+            fontSize: '11px',
+            fontWeight: 600,
+            letterSpacing: '1.5px',
+            textTransform: 'uppercase',
+            marginRight: '2px'
+          }} className="text-white dark:text-slate-300 opacity-70">HOUSTON:</span>
           {locations.filter(loc => !['denton', 'coit-campbell', 'garland'].includes(loc.slug)).map(location => (
             <button
               key={location.slug}
               onClick={() => setSelectedSlug(location.slug)}
               className="location-filter-button filter-button"
               data-active={selectedSlug === location.slug}
+              type="button"
+              aria-pressed={selectedSlug === location.slug}
+              style={{ padding: '6px 12px', fontSize: '13px' }}
             >
               {location.name.replace('The Catch — ', '')}
             </button>
           ))}
         </div>
 
-        {/* Location Info - Shows for selected location */}
-        {selectedLocation && (
-          <div style={{
-            fontSize: '12px',
-            fontWeight: 500,
-            letterSpacing: '2px',
-            textAlign: 'center',
-            marginTop: '8px'
-          }} className="text-white dark:text-slate-200 opacity-90">
-            <a
-              href={`https://maps.apple.com/?address=${encodeURIComponent(
-                `${selectedLocation.addressLine1}, ${selectedLocation.city}, ${selectedLocation.state} ${selectedLocation.postalCode}`
-              )}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:opacity-100 transition-opacity"
-              style={{
-                textDecoration: 'none',
-                cursor: 'pointer'
-              }}
-            >
-              {selectedLocation.addressLine1}, {selectedLocation.city}, {selectedLocation.state} {selectedLocation.postalCode}
-            </a>
-            {selectedLocation.phone && (
-              <>
-                &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;
-                <a
-                  href={`tel:${selectedLocation.phone}`}
-                  className="hover:opacity-100 transition-opacity"
-                  style={{
-                    textDecoration: 'none',
-                    cursor: 'pointer'
-                  }}
-                >
-                  {formatPhone(selectedLocation.phone)}
-                </a>
-              </>
-            )}
-          </div>
-        )}
       </div>
 
       {/* Category Filter Pills - Single-select */}
       <div className="filter-section-secondary" style={{
         borderBottom: '1px solid var(--color--tierra-reca)',
-        padding: '14px 20px',
+        padding: '10px 20px',
         display: 'flex',
-        gap: '8px',
+        gap: '6px',
         flexWrap: 'wrap',
         justifyContent: 'center',
         rowGap: '4px'
@@ -553,10 +449,12 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
           onClick={() => setSelectedCategory("")}
           className="location-filter-button category-filter-button filter-button"
           data-active={selectedCategory === ""}
+          type="button"
+          aria-pressed={selectedCategory === ""}
         >
           All Categories
         </button>
-        {categories.map((cat, index) => {
+        {categories.map((cat) => {
           // Permanently hide Blazing Hen and Cajun Creation
           if (cat.slug === 'blazing-hen' || cat.slug === 'cajun-creation') {
             return null;
@@ -577,6 +475,8 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
                   onClick={() => setSelectedCategory(cat.slug)}
                   className="location-filter-button category-filter-button filter-button"
                   data-active={selectedCategory === cat.slug}
+                  type="button"
+                  aria-pressed={selectedCategory === cat.slug}
                 >
                   {cat.title.replace(/& more/i, '& More')}
                 </button>
@@ -590,6 +490,8 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
               onClick={() => setSelectedCategory(cat.slug)}
               className="location-filter-button category-filter-button filter-button"
               data-active={selectedCategory === cat.slug}
+              type="button"
+              aria-pressed={selectedCategory === cat.slug}
             >
               {cat.title.replace(/& more/i, '& More')}
             </button>
@@ -616,6 +518,7 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
               });
 
               const itemPrice = getItemPrice(item, selectedSlug);
+              const isPriority = priorityItemIds.has(item.id);
 
               // Guard against undefined location (should not happen in practice, but prevent runtime crashes)
               if (!selectedLocation) {
@@ -626,7 +529,7 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
               }
 
               return (
-                <div key={item.id} className={classes.join(' ')} data-item-id={item.id} style={{ position: 'relative' }}>
+                <div key={item.id} className={classes.join(' ')} style={{ position: 'relative' }}>
                   <MenuItemCard
                     menuItem={{ ...item, price: itemPrice }}
                     location={selectedLocation}
@@ -636,6 +539,7 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
                     image={item.image}
                     isAvailable={true}
                     badges={item.badges}
+                    priority={isPriority}
                   />
                   {itemPrice != null && (
                     <div className="price-badge">

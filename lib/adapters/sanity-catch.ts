@@ -1,6 +1,6 @@
 import { createClient } from "@sanity/client";
 import groq from "groq";
-import type { Badge, BrandAdapter, Location, MenuCategory, MenuItem } from "@/lib/types";
+import type { Badge, BrandAdapter, Location, MenuCategory, MenuItem, ModifierGroup, ItemModifierOverride } from "@/lib/types";
 import { demoCategories, demoItems, demoLocations } from "@/lib/adapters/demo-data";
 import { z } from "zod";
 import { cache } from "react";
@@ -31,6 +31,28 @@ const fallbackLocationPhotography: Record<string, string> = {
 };
 const defaultFallbackHero = fallbackLocationPhotography.humble;
 
+// Fallback geo coordinates for each location
+export const fallbackGeoCoordinates: Record<string, { lat: number; lng: number }> = {
+  // Oklahoma locations
+  "okc-memorial": { lat: 35.610210, lng: -97.550766 },
+  "midwest-city": { lat: 35.440914, lng: -97.405760 },
+  "moore": { lat: 35.327000, lng: -97.491210 },
+  // Texas locations
+  "arlington": { lat: 32.675407, lng: -97.196220 },
+  "atascocita": { lat: 29.993227, lng: -95.177946 },
+  "burleson": { lat: 32.519184, lng: -97.348927 },
+  "coit-campbell": { lat: 32.977688, lng: -96.770851 },
+  "conroe": { lat: 30.317270, lng: -95.478130 },
+  "denton": { lat: 33.229110, lng: -97.150930 },
+  "garland": { lat: 32.949788, lng: -96.651562 },
+  "longview": { lat: 32.521200, lng: -94.747800 },
+  "lubbock": { lat: 33.519250, lng: -101.921089 },
+  "s-post-oak": { lat: 29.672800, lng: -95.460240 },
+  "tyler": { lat: 32.331307, lng: -95.289808 },
+  "wichita-falls": { lat: 33.880000, lng: -98.520000 },
+  "willowbrook": { lat: 29.963846, lng: -95.543372 },
+};
+
 const badgeOptions = [
   "Family Favorite",
   "Salvadoran",
@@ -58,6 +80,11 @@ const BadgeSchema = z.enum(badgeOptions);
 //   ...
 // }).optional();
 
+const GeoPointSchema = z.object({
+  lat: z.number(),
+  lng: z.number()
+}).nullable().optional();
+
 const LocationSchema = z.object({
   _id: z.string(),
   name: z.string(),
@@ -74,7 +101,8 @@ const LocationSchema = z.object({
   uberEatsUrl: z.string().url().nullable().optional(),
   menuUrl: z.string().url().nullable().optional(),
   directionsUrl: z.string().url().nullable().optional(),
-  heroImage: z.string().nullable().optional() // Remove .url() validation
+  heroImage: z.string().nullable().optional(), // Remove .url() validation
+  geo: GeoPointSchema
 });
 
 const CategorySchema = z.object({
@@ -82,6 +110,36 @@ const CategorySchema = z.object({
   title: z.string(),
   position: z.number().nullable().optional(),
   description: z.string().nullable().optional()
+});
+
+const ModifierOptionSchema = z.object({
+  _key: z.string(),
+  name: z.string(),
+  price: z.number().nullable().optional(),
+  isDefault: z.boolean().optional(),
+  available: z.boolean().optional(),
+  calories: z.number().nullable().optional()
+});
+
+const ModifierGroupSchema = z.object({
+  _id: z.string(),
+  name: z.string(),
+  slug: z.string(),
+  description: z.string().nullable().optional(),
+  required: z.boolean().optional(),
+  multiSelect: z.boolean().optional(),
+  minSelections: z.number().nullable().optional(),
+  maxSelections: z.number().nullable().optional(),
+  options: z.array(ModifierOptionSchema).optional(),
+  displayOrder: z.number().nullable().optional()
+});
+
+const ItemModifierOverrideSchema = z.object({
+  _key: z.string(),
+  modifierGroupId: z.string(),
+  optionName: z.string(),
+  price: z.number().nullable().optional(),
+  available: z.boolean().optional()
 });
 
 const ItemSchema = z.object({
@@ -93,14 +151,49 @@ const ItemSchema = z.object({
   price: z.number().nullable().optional(),
   badges: z.array(BadgeSchema).optional(),
   image: z.string().optional(),
+  availableEverywhere: z.boolean().optional(),
   locationOverrides: z
     .record(z.string(), z.object({ price: z.number().nullable().optional(), available: z.boolean().optional() }))
-    .optional()
+    .optional(),
+  modifierGroups: z.array(ModifierGroupSchema).optional(),
+  itemModifierOverrides: z.array(ItemModifierOverrideSchema).optional(),
+  allowSpecialInstructions: z.boolean().optional()
 });
 
 const qCategories = groq`*[_type=="menuCategory"]|order(position asc){ "slug": slug.current, title, position, description }`;
-const qLocations = groq`*[_type=="location"]{ _id, name, "slug": slug.current, addressLine1, addressLine2, city, state, postalCode, phone, hours, revelUrl, doordashUrl, uberEatsUrl, menuUrl, directionsUrl, "heroImage": heroImage.asset->url }`;
-const qItems = groq`*[_type=="menuItem"]{ _id, name, "slug": slug.current, description, "categorySlug": category->slug.current, "image": image.asset->url, badges, "basePrice": coalesce(basePrice, null), "overrides": coalesce(locationOverrides, [])[]{ "loc": location->slug.current, price, available } }`;
+const qLocations = groq`*[_type=="location"]{ _id, name, "slug": slug.current, addressLine1, addressLine2, city, state, postalCode, phone, hours, revelUrl, doordashUrl, uberEatsUrl, menuUrl, directionsUrl, "heroImage": heroImage.asset->url, "geo": geo }`;
+const qItems = groq`*[_type=="menuItem"]{
+  _id,
+  name,
+  "slug": slug.current,
+  description,
+  "categorySlug": category->slug.current,
+  "image": image.asset->url,
+  badges,
+  "basePrice": coalesce(basePrice, null),
+  availableEverywhere,
+  allowSpecialInstructions,
+  "overrides": coalesce(locationOverrides, [])[]{ "loc": location->slug.current, price, available },
+  "modifierGroups": modifierGroups[]->{
+    _id,
+    name,
+    "slug": slug.current,
+    description,
+    required,
+    multiSelect,
+    minSelections,
+    maxSelections,
+    displayOrder,
+    options[]{ _key, name, price, isDefault, available, calories }
+  } | order(displayOrder asc),
+  "itemModifierOverrides": itemModifierOverrides[]{
+    _key,
+    "modifierGroupId": modifierGroup->_id,
+    optionName,
+    price,
+    available
+  }
+}`;
 
 function normalizeOverrides(arr: { loc: string; price?: number; available?: boolean }[] | undefined) {
   const out: Record<string, { price?: number; available?: boolean }> = {};
@@ -160,13 +253,56 @@ const getLocationsCached = cache(async (): Promise<Location[]> => {
       menuUrl: l.menuUrl ?? undefined,
       directionsUrl: l.directionsUrl ?? undefined,
       heroImage: l.heroImage ?? fallbackHero(l.slug),
-      openToday: !!l.hours
+      openToday: !!l.hours,
+      geo: l.geo ?? fallbackGeoCoordinates[l.slug] ?? undefined
     }));
   } catch (error) {
     console.warn("Falling back to demo locations", error instanceof Error ? error.message : error);
     return demoLocations;
   }
 });
+
+function normalizeModifierGroups(groups: unknown[]): ModifierGroup[] | undefined {
+  if (!Array.isArray(groups) || groups.length === 0) return undefined;
+
+  return groups
+    .filter((g): g is Record<string, unknown> => g !== null && typeof g === 'object')
+    .map((g) => ({
+      _id: String(g._id || ''),
+      name: String(g.name || ''),
+      slug: String(g.slug || ''),
+      description: g.description ? String(g.description) : undefined,
+      required: Boolean(g.required),
+      multiSelect: Boolean(g.multiSelect),
+      minSelections: typeof g.minSelections === 'number' ? g.minSelections : undefined,
+      maxSelections: typeof g.maxSelections === 'number' ? g.maxSelections : undefined,
+      displayOrder: typeof g.displayOrder === 'number' ? g.displayOrder : undefined,
+      options: Array.isArray(g.options)
+        ? g.options.map((opt: Record<string, unknown>) => ({
+            _key: String(opt._key || ''),
+            name: String(opt.name || ''),
+            price: typeof opt.price === 'number' ? opt.price : undefined,
+            isDefault: Boolean(opt.isDefault),
+            available: opt.available !== false, // Default to true
+            calories: typeof opt.calories === 'number' ? opt.calories : undefined,
+          }))
+        : [],
+    }));
+}
+
+function normalizeItemModifierOverrides(overrides: unknown[]): ItemModifierOverride[] | undefined {
+  if (!Array.isArray(overrides) || overrides.length === 0) return undefined;
+
+  return overrides
+    .filter((o): o is Record<string, unknown> => o !== null && typeof o === 'object')
+    .map((o) => ({
+      _key: String(o._key || ''),
+      modifierGroupId: String(o.modifierGroupId || ''),
+      optionName: String(o.optionName || ''),
+      price: typeof o.price === 'number' ? o.price : undefined,
+      available: o.available !== false,
+    }));
+}
 
 const getItemsCached = cache(async (): Promise<MenuItem[]> => {
   if (!client) {
@@ -183,11 +319,15 @@ const getItemsCached = cache(async (): Promise<MenuItem[]> => {
       price: i.basePrice ?? null,
       badges: Array.isArray(i.badges) ? i.badges.filter(isBadge) : undefined,
       image: i.image ?? undefined,
+      availableEverywhere: i.availableEverywhere ?? false,
+      allowSpecialInstructions: i.allowSpecialInstructions ?? true,
       locationOverrides: normalizeOverrides(
         Array.isArray(i.overrides)
           ? i.overrides as { loc: string; price?: number; available?: boolean }[]
           : undefined
-      )
+      ),
+      modifierGroups: normalizeModifierGroups(i.modifierGroups as unknown[]),
+      itemModifierOverrides: normalizeItemModifierOverrides(i.itemModifierOverrides as unknown[]),
     }));
     return z.array(ItemSchema).parse(mapped) as MenuItem[];
   } catch (error) {
@@ -213,7 +353,7 @@ export const adapter: BrandAdapter = {
     }
     try {
       const one = await client.fetch(
-        groq`*[_type=="location" && slug.current==$s][0]{ _id, name, "slug": slug.current, addressLine1, addressLine2, city, state, postalCode, phone, hours, menuUrl, directionsUrl }`,
+        groq`*[_type=="location" && slug.current==$s][0]{ _id, name, "slug": slug.current, addressLine1, addressLine2, city, state, postalCode, phone, hours, menuUrl, directionsUrl, revelUrl, doordashUrl, uberEatsUrl, "geo": geo }`,
         { s: slug }
       );
       if (!one) return undefined;
@@ -235,7 +375,8 @@ export const adapter: BrandAdapter = {
         directionsUrl: parsed.directionsUrl ?? undefined,
         heroImage: parsed.heroImage ?? fallbackHero(parsed.slug),
         openToday: !!parsed.hours,
-        hours: parsed.hours
+        hours: parsed.hours,
+        geo: parsed.geo ?? fallbackGeoCoordinates[parsed.slug] ?? undefined
       };
     } catch (error) {
       console.warn("Falling back to demo location", slug, error instanceof Error ? error.message : error);

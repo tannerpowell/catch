@@ -5,7 +5,8 @@ import { ShoppingCart } from 'lucide-react';
 import { useCart } from '@/lib/contexts/CartContext';
 import { LocationSwitchModal } from './LocationSwitchModal';
 import { SuccessModal } from './SuccessModal';
-import type { MenuItem, Location } from '@/lib/types';
+import ModifierSelectionModal from './ModifierSelectionModal';
+import type { MenuItem, Location, CartModifier } from '@/lib/types';
 
 interface AddToCartButtonProps {
   menuItem: MenuItem;
@@ -40,6 +41,9 @@ export function AddToCartButton({
   const { cart, addToCart, clearCart, canAddFromLocation, isHydrated } = useCart();
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showModifierModal, setShowModifierModal] = useState(false);
+
+  const hasModifiers = menuItem.modifierGroups && menuItem.modifierGroups.length > 0;
 
   const handleAddToCart = () => {
     // Don't allow adding before hydration
@@ -61,7 +65,13 @@ export function AddToCartButton({
       return;
     }
 
-    // Add to cart
+    // If item has modifiers, show modifier selection modal
+    if (hasModifiers) {
+      setShowModifierModal(true);
+      return;
+    }
+
+    // Quick add for items without modifiers
     addToCart(
       {
         menuItem,
@@ -76,6 +86,28 @@ export function AddToCartButton({
     setShowSuccessModal(true);
   };
 
+  const handleModifierAddToCart = (modifiers: CartModifier[], specialInstructions: string, quantity: number) => {
+    if (!isValidPrice(menuItem.price)) return;
+
+    // Calculate total price including modifiers
+    const modifierTotal = modifiers.reduce((sum, m) => sum + m.priceDelta, 0);
+    const itemPrice = menuItem.price + modifierTotal;
+
+    addToCart(
+      {
+        menuItem,
+        quantity,
+        price: itemPrice,
+        modifiers,
+        specialInstructions: specialInstructions || undefined,
+      },
+      location
+    );
+
+    setShowModifierModal(false);
+    setShowSuccessModal(true);
+  };
+
   const handleConfirmSwitch = () => {
     // Validate price before adding to cart
     if (!isValidPrice(menuItem.price)) {
@@ -84,6 +116,15 @@ export function AddToCartButton({
     }
 
     clearCart();
+    setShowLocationModal(false);
+
+    // If item has modifiers, show modifier modal after clearing cart
+    if (hasModifiers) {
+      setShowModifierModal(true);
+      return;
+    }
+
+    // Quick add for items without modifiers
     addToCart(
       {
         menuItem,
@@ -131,6 +172,13 @@ export function AddToCartButton({
         isOpen={showSuccessModal}
         onClose={() => setShowSuccessModal(false)}
         itemName={menuItem.name}
+      />
+
+      <ModifierSelectionModal
+        isOpen={showModifierModal}
+        onClose={() => setShowModifierModal(false)}
+        onAddToCart={handleModifierAddToCart}
+        menuItem={menuItem}
       />
     </>
   );

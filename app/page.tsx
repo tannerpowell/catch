@@ -12,129 +12,243 @@ export const metadata: Metadata = {
   }
 };
 
-/**
- * Render the Gulf Coast Seafood homepage containing hero, featured dishes, story, and locations sections.
- *
- * @returns The React element for the homepage, including hero banner, static featured-dishes list, story CTA, and locations CTA with client-side navigation links.
- */
 export default function HomePage() {
   return (
-    <>
-      {/* Hero Section */}
-      <section className="section padding-large">
-        <div className="home-hero-wrapper">
-          <div className="hero-content-wrapper">
-            <h1 className="h1">Gulf Coast Seafood, Made Fresh</h1>
-            <p className="subhead">
-              From our kitchen to your table—baskets, boils, and house-made sides inspired by coastal Texas.
-            </p>
-            <Link href="/menu" className="button">
-              View Our Menu
+    <div className="home-luxury">
+      {/* Full viewport hero */}
+      <section className="lux-hero">
+        <div className="lux-hero__bg">
+          <Image
+            src="/dfw-images/the-catch-boil.jpeg"
+            alt="The Catch Seafood Boil"
+            fill
+            priority
+            style={{ objectFit: "cover" }}
+          />
+          <div className="lux-hero__overlay" />
+        </div>
+
+        <div className="lux-hero__content">
+          <div className="lux-hero__badge">Est. Houston, Texas</div>
+          <h1 className="lux-hero__title">
+            <span className="lux-hero__title-line">Gulf Coast</span>
+            <span className="lux-hero__title-line lux-hero__title-line--accent">Seafood</span>
+          </h1>
+          <p className="lux-hero__subtitle">
+            Hand-breaded baskets. Traditional boils. House-made everything.
+          </p>
+          <div className="lux-hero__actions">
+            <Link href="/menu" className="lux-btn lux-btn--primary">
+              View Menu
+            </Link>
+            <Link href="/locations" className="lux-btn lux-btn--ghost">
+              Find Location
             </Link>
           </div>
-          <div style={{ width: "100%", maxWidth: "600px", height: "400px", position: "relative" }}>
-            <Image
-              src="/dfw-images/Different menu items served on the table, top view.jpg"
-              alt="Fresh seafood platter"
-              fill
-              style={{ objectFit: "cover", borderRadius: "8px" }}
-              priority
-            />
-          </div>
+        </div>
+
+        <div className="lux-hero__scroll">
+          <span>Scroll</span>
+          <div className="lux-hero__scroll-line" />
         </div>
       </section>
 
-      {/* Featured Dishes Section */}
-      <section className="section padding-large bg-white dark:bg-slate-950">
-        <div style={{ maxWidth: "1400px", margin: "0 auto" }}>
-          <h2 className="h2" style={{ textAlign: "center", marginBottom: "60px" }}>
-            Catch of the Day
-          </h2>
-          <div className="home-recipes-list">
-            <div className="home-recipes-item-wrapper">
-              <div className="arch-image-wrapper">
-                <Image
-                  src="/dfw-images/catfish-basket.jpeg"
-                  alt="Fried Catfish Basket"
-                  fill
-                  style={{ objectFit: "cover" }}
-                />
-              </div>
-              <div className="home-recipe-content">
-                <h4 className="h4">Fried Catfish Basket</h4>
-                <p className="paragraph-small">
-                  Hand-breaded, fried golden, served with fries and hushpuppies
-                </p>
-              </div>
-            </div>
+      {/* Signature dishes */}
+      <section className="lux-signature">
+        <div className="lux-signature__header">
+          <span className="lux-eyebrow">From Our Kitchen</span>
+          <h2 className="lux-signature__title">Signature Dishes</h2>
+        </div>
 
-            <div className="home-recipes-item-wrapper">
-              <div className="arch-image-wrapper">
-                <Image
-                  src="/dfw-images/cajun-special.jpeg"
-                  alt="Cajun Special"
-                  fill
-                  style={{ objectFit: "cover" }}
-                />
-              </div>
-              <div className="home-recipe-content">
-                <h4 className="h4">Cajun Special</h4>
-                <p className="paragraph-small">
-                  Jumbo shrimp with corn, potatoes, and Cajun spices
-                </p>
-              </div>
+        <div className="lux-signature__grid">
+          <div className="lux-dish lux-dish--featured">
+            <div className="lux-dish__image">
+              <Image
+                src="/images/hero/The_Catch_Boil_.avif"
+                alt="The Catch Boil"
+                fill
+                style={{ objectFit: "cover" }}
+              />
+              <div className="lux-dish__number">01</div>
             </div>
+            <div className="lux-dish__content">
+              <h3 className="lux-dish__name">The Catch Boil</h3>
+              <p className="lux-dish__desc">
+                Jumbo shrimp, snow crab legs, crawfish, corn, and potatoes
+                bathed in our signature Cajun butter.
+              </p>
+              <span className="lux-dish__tag">House Favorite</span>
+            </div>
+          </div>
 
-            <div className="home-recipes-item-wrapper">
-              <div className="arch-image-wrapper">
-                <Image
-                  src="/dfw-images/french-quarter-plate.jpeg"
-                  alt="French Quarter Plate"
-                  fill
-                  style={{ objectFit: "cover" }}
-                />
-              </div>
-              <div className="home-recipe-content">
-                <h4 className="h4">French Quarter Plate</h4>
-                <p className="paragraph-small">
-                  A Louisiana-inspired seafood feast with all the fixings
-                </p>
-              </div>
+          <div className="lux-dish">
+            <div className="lux-dish__image">
+              <Image
+                src="/images/hero/Blackened_Catfish_.avif"
+                alt="Blackened Catfish"
+                fill
+                style={{ objectFit: "cover" }}
+              />
+              <div className="lux-dish__number">02</div>
+            </div>
+            <div className="lux-dish__content">
+              <h3 className="lux-dish__name">Blackened Catfish</h3>
+              <p className="lux-dish__desc">
+                Gulf catfish seared in cast iron with our secret Cajun spice blend.
+              </p>
+            </div>
+          </div>
+
+          <div className="lux-dish">
+            <div className="lux-dish__image">
+              <Image
+                src="/images/hero/Gator App.avif"
+                alt="Fried Gator Bites"
+                fill
+                style={{ objectFit: "cover" }}
+              />
+              <div className="lux-dish__number">03</div>
+            </div>
+            <div className="lux-dish__content">
+              <h3 className="lux-dish__name">Gator Bites</h3>
+              <p className="lux-dish__desc">
+                Tender Louisiana alligator, hand-breaded and fried golden.
+              </p>
+            </div>
+          </div>
+
+          <div className="lux-dish">
+            <div className="lux-dish__image">
+              <Image
+                src="/images/hero/Spicy Shrimp Pasta.avif"
+                alt="Spicy Shrimp Pasta"
+                fill
+                style={{ objectFit: "cover" }}
+              />
+              <div className="lux-dish__number">04</div>
+            </div>
+            <div className="lux-dish__content">
+              <h3 className="lux-dish__name">Spicy Shrimp Pasta</h3>
+              <p className="lux-dish__desc">
+                Gulf shrimp tossed in a creamy Cajun cream sauce.
+              </p>
+            </div>
+          </div>
+
+          <div className="lux-dish">
+            <div className="lux-dish__image">
+              <Image
+                src="/images/hero/Gator Po Boy.avif"
+                alt="Gator Po'Boy"
+                fill
+                style={{ objectFit: "cover" }}
+              />
+              <div className="lux-dish__number">05</div>
+            </div>
+            <div className="lux-dish__content">
+              <h3 className="lux-dish__name">Gator Po&apos;Boy</h3>
+              <p className="lux-dish__desc">
+                Crispy fried gator on a buttery toasted bun with Cajun remoulade.
+              </p>
             </div>
           </div>
         </div>
-      </section>
 
-      {/* Story/CTA Section */}
-      <section className="section padding-large">
-        <div style={{ maxWidth: "800px", margin: "0 auto", textAlign: "center" }}>
-          <h2 className="h2" style={{ marginBottom: "24px" }}>
-            Fresh From the Gulf
-          </h2>
-          <p className="paragraph" style={{ marginBottom: "32px", fontSize: "18px" }}>
-            At The Catch, we bring the flavors of the Texas coast to your plate. From hand-breaded baskets to
-            classic seafood boils, every dish is made with fresh ingredients and a passion for quality.
-          </p>
-          <Link href="/our-story" className="button">
-            Our Story
+        <div className="lux-signature__cta">
+          <Link href="/menu" className="lux-link">
+            Explore Full Menu
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
           </Link>
         </div>
       </section>
 
-      {/* Locations CTA */}
-      <section className="section bg-white dark:bg-slate-950">
-        <div style={{ maxWidth: "800px", margin: "0 auto", textAlign: "center" }}>
-          <h2 className="h2" style={{ marginBottom: "24px" }}>
-            Visit Us
+      {/* Story split section */}
+      <section className="lux-story">
+        <div className="lux-story__image">
+          <Image
+            src="/dfw-images/Different menu items served on the table, top view.jpg"
+            alt="Seafood spread"
+            fill
+            style={{ objectFit: "cover" }}
+          />
+        </div>
+        <div className="lux-story__content">
+          <span className="lux-eyebrow">Our Story</span>
+          <h2 className="lux-story__title">
+            Fresh From <br />
+            <em>The Gulf</em>
           </h2>
-          <p className="paragraph" style={{ marginBottom: "32px", fontSize: "18px" }}>
-            Find a location near you and experience Gulf Coast seafood done right.
+          <p className="lux-story__text">
+            Since opening our doors in Houston, we&apos;ve been serving up the authentic
+            flavors of the Texas Gulf Coast. Every basket is hand-breaded, every boil
+            is made to order, and every bite tells the story of our coastal heritage.
           </p>
-          <Link href="/locations" className="button">
-            Find a Location
+          <p className="lux-story__text">
+            From the freshest Gulf shrimp to traditional Louisiana crawfish, we source
+            only the finest seafood to bring you a taste of the coast—no matter how
+            far you are from the water.
+          </p>
+          <Link href="/our-story" className="lux-link">
+            Read Our Story
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
           </Link>
         </div>
       </section>
-    </>
+
+      {/* Locations ribbon */}
+      <section className="lux-locations">
+        <div className="lux-locations__inner">
+          <div className="lux-locations__content">
+            <span className="lux-eyebrow lux-eyebrow--light">Seven Locations</span>
+            <h2 className="lux-locations__title">Find Your Table</h2>
+            <p className="lux-locations__text">
+              From Houston to Dallas-Fort Worth, there&apos;s a seat waiting for you.
+            </p>
+            <Link href="/locations" className="lux-btn lux-btn--light">
+              View All Locations
+            </Link>
+          </div>
+          <div className="lux-locations__list">
+            <div className="lux-locations__city">
+              <span className="lux-locations__city-name">Houston</span>
+              <span className="lux-locations__city-count">4 Locations</span>
+            </div>
+            <div className="lux-locations__city">
+              <span className="lux-locations__city-name">Dallas-Fort Worth</span>
+              <span className="lux-locations__city-count">3 Locations</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Final CTA */}
+      <section className="lux-cta">
+        <div className="lux-cta__bg">
+          <Image
+            src="/images/hero/Key Lime Pie.avif"
+            alt="Key Lime Pie"
+            fill
+            style={{ objectFit: "cover" }}
+          />
+          <div className="lux-cta__overlay" />
+        </div>
+        <div className="lux-cta__content">
+          <h2 className="lux-cta__title">Ready to Feast?</h2>
+          <p className="lux-cta__text">
+            Order online for pickup or find a location near you.
+          </p>
+          <div className="lux-cta__actions">
+            <Link href="/menu" className="lux-btn lux-btn--primary">
+              Order Now
+            </Link>
+          </div>
+        </div>
+      </section>
+
+    </div>
   );
 }

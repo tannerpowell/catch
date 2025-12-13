@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
     if (!isValid) {
       return NextResponse.json({ error: 'Invalid secret' }, { status: 401 });
     }
-  } catch (error) {
+  } catch {
     // If timingSafeEqual throws (lengths don't match after padding, etc.)
     // return 401 without revealing the error
     return NextResponse.json({ error: 'Invalid secret' }, { status: 401 });

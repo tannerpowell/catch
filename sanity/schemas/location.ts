@@ -86,8 +86,9 @@ export default defineType({
       title: "Email",
       type: "string",
       description: "Location manager email (used for Stripe notifications and order alerts)",
-      validation: (rule) => rule.custom((email, context: any) => {
-        const onlineOrderingEnabled = context.parent?.onlineOrderingEnabled;
+      validation: (rule) => rule.custom((email, context) => {
+        const parent = context.parent as { onlineOrderingEnabled?: boolean } | undefined;
+        const onlineOrderingEnabled = parent?.onlineOrderingEnabled;
 
         // Email is required when online ordering is enabled
         if (onlineOrderingEnabled && !email) {
