@@ -717,7 +717,23 @@ export function MenuManagerPane() {
   const upsertOverride = (locationId: string, updater: (current?: LocationOverride) => LocationOverride | null) => {
     if (!detail) return
     const current = overrides.find((ov) => ov.location?._ref === locationId)
-    const next = updater(current)
+    let next = updater(current)
+
+    // Remove semantically redundant overrides (centralized logic)
+    // In opt-in mode (availableEverywhere !== true):
+    //   - available: false with no price is redundant (that's the default)
+    // In opt-out mode (availableEverywhere === true):
+    //   - available: true with no price is redundant (that's the default)
+    if (next) {
+      const hasPrice = typeof next.price === 'number'
+      const isRedundant = detail.availableEverywhere === true
+        ? next.available === true && !hasPrice
+        : next.available === false && !hasPrice
+      if (isRedundant) {
+        next = null
+      }
+    }
+
     const remaining = overrides.filter((ov) => ov.location?._ref !== locationId)
     const nextArray = next ? [...remaining, next] : remaining
     setDetail((d) => (d ? { ...d, locationOverrides: nextArray.length ? nextArray : undefined } : d))
@@ -725,29 +741,18 @@ export function MenuManagerPane() {
   }
 
   const handleAvailabilityToggle = (locationId: string, available: boolean) => {
-    upsertOverride(locationId, (current) => {
-      const hasPrice = typeof current?.price === 'number'
+    // In opt-out mode (availableEverywhere === true), toggling off is not supported
+    // Items are always available at all locations when availableEverywhere is enabled
+    if (detail?.availableEverywhere === true && available === false) {
+      return  // Ignore attempts to toggle off in opt-out mode
+    }
 
-      // Determine if this override is semantically redundant
-      // In opt-in mode (availableEverywhere !== true):
-      //   - Setting available: false is redundant (that's the default)
-      // In opt-out mode (availableEverywhere === true):
-      //   - Setting available: true is redundant (that's the default)
-      const isRedundant = detail?.availableEverywhere === true
-        ? available === true && !hasPrice  // opt-out mode: true is default
-        : available === false && !hasPrice  // opt-in mode: false is default
-
-      if (isRedundant) {
-        return null  // Remove the override entirely
-      }
-
-      return {
-        _key: current?._key || createKey(),
-        location: { _type: 'reference', _ref: locationId },
-        available,
-        price: current?.price,
-      }
-    })
+    upsertOverride(locationId, (current) => ({
+      _key: current?._key || createKey(),
+      location: { _type: 'reference', _ref: locationId },
+      available,
+      price: current?.price,
+    }))
   }
 
   const handlePriceChange = (locationId: string, value: string) => {
@@ -1513,11 +1518,11 @@ export function MenuManagerPane() {
                         <Stack space={2}>
                           <FieldLabel
                             label="Available Everywhere"
-                            tooltip="When enabled, this item is available at all locations unless explicitly disabled per-location. When disabled, availability must be opted-in per location."
+                            tooltip="When enabled, this item is available at all locations and cannot be disabled on individual locations. When disabled, availability must be opted-in per location."
                           />
                           <Text size={1} muted>
                             {detail.availableEverywhere
-                              ? 'Opt-out model — available at all locations by default'
+                              ? 'Available at all locations (per-location toggles set prices only)'
                               : 'Opt-in model — must enable per location'}
                           </Text>
                         </Stack>
