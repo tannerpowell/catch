@@ -30,9 +30,12 @@ export function CategoryNav({
     searchInputRef.current?.focus();
   }, [onSearchChange]);
 
-  // Filter out hidden categories
+  // Filter out deprecated/inactive categories that still exist in the CMS
+  // These categories are kept for historical data but should not appear in navigation
+  // TODO: Consider adding a 'hidden' field to the category schema instead
+  const HIDDEN_CATEGORY_SLUGS = ['blazing-hen', 'cajun-creation'];
   const visibleCategories = categories.filter(
-    cat => cat.slug !== 'blazing-hen' && cat.slug !== 'cajun-creation'
+    cat => !HIDDEN_CATEGORY_SLUGS.includes(cat.slug)
   );
 
   return (

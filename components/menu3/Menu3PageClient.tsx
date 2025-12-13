@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useRef } from 'react';
 import type { Location, MenuCategory, MenuItem } from '@/lib/types';
 import { LocationBar } from './LocationBar';
 import { CategoryNav } from './CategoryNav';
@@ -94,9 +94,14 @@ export default function Menu3PageClient({
     setPeekPrice(price);
   }, []);
 
-  // Apply filter when MixItUp is ready
+  // Track whether initial filter has been applied (only runs once when MixItUp becomes ready)
+  const hasAppliedInitialFilter = useRef(false);
+
+  // Apply filter only once when MixItUp becomes ready for the first time
+  // Subsequent filter changes are handled by handleLocationChange/handleCategoryChange
   React.useEffect(() => {
-    if (mixitupReady) {
+    if (mixitupReady && !hasAppliedInitialFilter.current) {
+      hasAppliedInitialFilter.current = true;
       applyFilter(selectedSlug, selectedCategory);
     }
   }, [mixitupReady, selectedSlug, selectedCategory, applyFilter]);

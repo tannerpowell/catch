@@ -7,6 +7,7 @@ import { MenuItemModal } from './MenuItemModal';
 import ModifierSelectionModal from '@/components/cart/ModifierSelectionModal';
 import { useCart } from '@/lib/contexts/CartContext';
 import { isItemAvailableAtLocation, getItemPriceAtLocation } from '@/lib/utils/menuAvailability';
+import { slugify } from '@/lib/utils/slugify';
 
 interface MenuListProps {
   items: MenuItem[];
@@ -16,15 +17,6 @@ interface MenuListProps {
   containerRef: React.MutableRefObject<HTMLDivElement | null>;
   onItemHover: (item: MenuItem | null, price: number | null) => void;
   imageMap: Record<string, string>;
-}
-
-function slugify(input: string) {
-  return input
-    .toLowerCase()
-    .normalize('NFKD')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/(^-|-$)/g, '');
 }
 
 /**

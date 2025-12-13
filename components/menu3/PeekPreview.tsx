@@ -86,8 +86,17 @@ export function PeekPreview({
 
   const badges = item.badges?.slice(0, 4);
 
+  // Use inline styles for float positioning to avoid styled-jsx template recalculation
+  const floatStyles = mode === 'float' ? {
+    top: floatPosition?.top ?? 100,
+    left: floatPosition?.left ?? 100,
+  } : undefined;
+
   const content = (
-    <div className={`menu3-peek ${mode === 'float' ? 'menu3-peek--float' : 'menu3-peek--dock'}`}>
+    <div
+      className={`menu3-peek ${mode === 'float' ? 'menu3-peek--float' : 'menu3-peek--dock'}`}
+      style={floatStyles}
+    >
       {/* Image */}
       {item.image && (
         <div className="menu3-peek-image">
@@ -182,8 +191,7 @@ export function PeekPreview({
 
         .menu3-peek--float {
           position: fixed;
-          top: ${floatPosition?.top || 100}px;
-          left: ${floatPosition?.left || 100}px;
+          /* top/left set via inline styles to avoid recalculation */
           width: 260px;
           border-radius: 16px;
           box-shadow:

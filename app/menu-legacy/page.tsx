@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import MenuPageClient from "@/components/catch/MenuPageClient";
 import { getBrand } from "@/lib/brand";
+import { slugify } from "@/lib/utils/slugify";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -18,15 +19,6 @@ export const metadata: Metadata = {
 export const revalidate = 3600;
 
 type ImageMap = Record<string, string>;
-
-function slugify(input: string) {
-  return input
-    .toLowerCase()
-    .normalize("NFKD")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/-+/g, "-")
-    .replace(/(^-|-$)/g, "");
-}
 
 function buildDfwImageMap(): ImageMap {
   const dir = path.resolve("public/dfw-images");
