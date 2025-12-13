@@ -7,7 +7,7 @@ Tax is calculated **in the cart** (not via Stripe):
 1. **Tax rates** are stored per location in Sanity as a decimal (e.g., 0.0825 for 8.25%)
 2. **CartContext** calculates: `tax = subtotal * location.taxRate`
 3. **Orders** store both the calculated `tax` amount and `taxRate` snapshot
-4. **Stripe** receives only the final total - no tax breakdown
+4. **Stripe** receives the final total along with `tax` and `taxRate` metadata (see `app/checkout/page.tsx`)
 
 ### Data Available Per Order
 
@@ -58,7 +58,7 @@ Before choosing a solution, we need to understand:
 - Handles tax rate updates automatically
 
 **Cons:**
-- 0.5% per transaction fee
+- Per-transaction fee (see current Stripe Tax pricing)
 - Less control over calculation
 
 **Implementation:** Replace cart-based tax calc with Stripe Tax API
@@ -78,7 +78,7 @@ Before choosing a solution, we need to understand:
 - Good for multi-state
 
 **Cons:**
-- Additional vendor/cost (~$19-99/mo + per-transaction)
+- Additional vendor cost (see TaxJar pricing for current rates)
 - Another integration to maintain
 
 ---
@@ -151,7 +151,7 @@ Each location should have the correct combined rate. Current rates are set via `
 
 ### Option A: Single Stripe Account (All Locations)
 
-One Stripe account handles payments for all 4-6 locations under an owner.
+One Stripe account handles payments for all locations under an owner.
 
 **Pros:**
 - Simpler setup and management
@@ -218,12 +218,12 @@ You operate as a "platform" with connected accounts per location.
 
 | Scenario | Recommendation |
 |----------|----------------|
-| Same owner, same LLC, 4-6 locations | **Single account** - use metadata to track location |
+| Same owner, same LLC, multiple locations | **Single account** - use metadata to track location |
 | Same owner, separate LLCs per location | **Stripe Connect** or separate accounts |
 | Franchise / different owners | **Stripe Connect** |
 | Plans to scale to many locations/owners | **Stripe Connect** (future-proof) |
 
-For The Catch with ~16 locations under (presumably) one or a few owners, **single account with location metadata** is likely simplest unless there are separate legal entities involved.
+For The Catch with multiple locations under one or a few owners, **single account with location metadata** is likely simplest unless there are separate legal entities involved.
 
 ---
 
@@ -231,13 +231,13 @@ For The Catch with ~16 locations under (presumably) one or a few owners, **singl
 
 ### Customer iOS App (Ordering)
 
-*Difficulty: Low-Medium*
+**Difficulty:** Low-Medium
 
 The web app is already built with React/Next.js. Options:
 
 | Approach | Effort | Result |
 |----------|--------|--------|
-| **PWA (Progressive Web App)** | ~1-2 days | Add to Home Screen, can support offline/push with service worker. No App Store. |
+| **PWA (Progressive Web App)** | ~1-2 days | Add to Home Screen; offline/push require additional setup (service worker, push API); iOS push support is limited. No App Store. |
 | **Capacitor/Ionic wrapper** | ~1-2 weeks | Wrap existing web app in native shell. App Store distribution. |
 | **React Native rebuild** | ~2-3 months | Full native app, best UX. Reuse types/logic, rebuild UI. |
 | **Expo** | ~1-2 months | React Native but faster. Good middle ground. |
@@ -261,7 +261,7 @@ The web app is already built with React/Next.js. Options:
 
 ### iPad App (Back-of-House / Kitchen Display)
 
-*Difficulty: Very Low*
+**Difficulty:** Very Low
 
 The kitchen display (`/kitchen`) already exists and works on iPad:
 - Real-time order updates via polling

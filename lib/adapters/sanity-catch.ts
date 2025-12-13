@@ -81,8 +81,8 @@ const BadgeSchema = z.enum(badgeOptions);
 // }).optional();
 
 const GeoPointSchema = z.object({
-  lat: z.number(),
-  lng: z.number()
+  lat: z.number().finite().min(-90).max(90),
+  lng: z.number().finite().min(-180).max(180)
 }).nullable().optional();
 
 const LocationSchema = z.object({
@@ -262,15 +262,17 @@ const getLocationsCached = cache(async (): Promise<Location[]> => {
   }
 });
 
-function normalizeModifierGroups(groups: unknown[]): ModifierGroup[] | undefined {
+function normalizeModifierGroups(groups: unknown): ModifierGroup[] | undefined {
   if (!Array.isArray(groups) || groups.length === 0) return undefined;
 
-  return groups
+  const normalized = groups
     .filter((g): g is Record<string, unknown> => g !== null && typeof g === 'object')
+    // Drop groups missing required identifiers
+    .filter((g) => g._id && g.slug && g.name)
     .map((g) => ({
-      _id: String(g._id || ''),
-      name: String(g.name || ''),
-      slug: String(g.slug || ''),
+      _id: String(g._id),
+      name: String(g.name),
+      slug: String(g.slug),
       description: g.description ? String(g.description) : undefined,
       required: Boolean(g.required),
       multiSelect: Boolean(g.multiSelect),
@@ -278,30 +280,38 @@ function normalizeModifierGroups(groups: unknown[]): ModifierGroup[] | undefined
       maxSelections: typeof g.maxSelections === 'number' ? g.maxSelections : undefined,
       displayOrder: typeof g.displayOrder === 'number' ? g.displayOrder : undefined,
       options: Array.isArray(g.options)
-        ? g.options.map((opt: Record<string, unknown>) => ({
-            _key: String(opt._key || ''),
-            name: String(opt.name || ''),
-            price: typeof opt.price === 'number' ? opt.price : undefined,
-            isDefault: Boolean(opt.isDefault),
-            available: opt.available !== false, // Default to true
-            calories: typeof opt.calories === 'number' ? opt.calories : undefined,
-          }))
+        ? g.options
+            .filter((opt: Record<string, unknown>) => opt._key && opt.name)
+            .map((opt: Record<string, unknown>) => ({
+              _key: String(opt._key),
+              name: String(opt.name),
+              price: typeof opt.price === 'number' ? opt.price : undefined,
+              isDefault: Boolean(opt.isDefault),
+              available: opt.available !== false, // Default to true
+              calories: typeof opt.calories === 'number' ? opt.calories : undefined,
+            }))
         : [],
     }));
+
+  return normalized.length > 0 ? normalized : undefined;
 }
 
-function normalizeItemModifierOverrides(overrides: unknown[]): ItemModifierOverride[] | undefined {
+function normalizeItemModifierOverrides(overrides: unknown): ItemModifierOverride[] | undefined {
   if (!Array.isArray(overrides) || overrides.length === 0) return undefined;
 
-  return overrides
+  const normalized = overrides
     .filter((o): o is Record<string, unknown> => o !== null && typeof o === 'object')
+    // Drop overrides missing required identifiers
+    .filter((o) => o._key && o.modifierGroupId && o.optionName)
     .map((o) => ({
-      _key: String(o._key || ''),
-      modifierGroupId: String(o.modifierGroupId || ''),
-      optionName: String(o.optionName || ''),
+      _key: String(o._key),
+      modifierGroupId: String(o.modifierGroupId),
+      optionName: String(o.optionName),
       price: typeof o.price === 'number' ? o.price : undefined,
       available: o.available !== false,
     }));
+
+  return normalized.length > 0 ? normalized : undefined;
 }
 
 const getItemsCached = cache(async (): Promise<MenuItem[]> => {
@@ -326,8 +336,8 @@ const getItemsCached = cache(async (): Promise<MenuItem[]> => {
           ? i.overrides as { loc: string; price?: number; available?: boolean }[]
           : undefined
       ),
-      modifierGroups: normalizeModifierGroups(i.modifierGroups as unknown[]),
-      itemModifierOverrides: normalizeItemModifierOverrides(i.itemModifierOverrides as unknown[]),
+      modifierGroups: normalizeModifierGroups(i.modifierGroups),
+      itemModifierOverrides: normalizeItemModifierOverrides(i.itemModifierOverrides),
     }));
     return z.array(ItemSchema).parse(mapped) as MenuItem[];
   } catch (error) {
@@ -353,7 +363,7 @@ export const adapter: BrandAdapter = {
     }
     try {
       const one = await client.fetch(
-        groq`*[_type=="location" && slug.current==$s][0]{ _id, name, "slug": slug.current, addressLine1, addressLine2, city, state, postalCode, phone, hours, menuUrl, directionsUrl, revelUrl, doordashUrl, uberEatsUrl, "geo": geo }`,
+        groq`*[_type=="location" && slug.current==$s][0]{ _id, name, "slug": slug.current, addressLine1, addressLine2, city, state, postalCode, phone, hours, menuUrl, directionsUrl, revelUrl, doordashUrl, uberEatsUrl, "heroImage": heroImage.asset->url, "geo": geo }`,
         { s: slug }
       );
       if (!one) return undefined;

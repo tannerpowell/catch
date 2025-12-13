@@ -108,7 +108,7 @@ export default function ModifierSelectionModal({
     });
   }, []);
 
-  // Calculate total price
+  // Calculate total price (include 0 and negative price deltas)
   const totalPrice = useMemo(() => {
     let base = menuItem.price || 0;
 
@@ -116,7 +116,7 @@ export default function ModifierSelectionModal({
       const selected = selectedModifiers[group._id] || [];
       selected.forEach((optName) => {
         const opt = group.options.find((o) => o.name === optName);
-        if (opt?.price) {
+        if (typeof opt?.price === 'number') {
           base += opt.price;
         }
       });
@@ -151,7 +151,7 @@ export default function ModifierSelectionModal({
       .map((g) => g.name);
   }, [modifierGroups, selectedModifiers]);
 
-  const handleAddToCart = useCallback(() => {
+  const handleAddToCart = useCallback(async () => {
     if (!isValid || isSubmitting) return;
 
     setIsSubmitting(true);
@@ -164,13 +164,13 @@ export default function ModifierSelectionModal({
         cartModifiers.push({
           name: group.name,
           option: optName,
-          priceDelta: opt?.price || 0,
+          priceDelta: typeof opt?.price === 'number' ? opt.price : 0,
         });
       });
     });
 
     try {
-      onAddToCart(cartModifiers, specialInstructions.trim(), quantity);
+      await onAddToCart(cartModifiers, specialInstructions.trim(), quantity);
     } finally {
       // Only update state if still mounted
       if (mountedRef.current) {
@@ -232,8 +232,10 @@ export default function ModifierSelectionModal({
                     const isComplete = group.required ? selected.length > 0 : true;
 
                     // Use compact chips for groups with short option names (<=12 chars avg)
-                    const avgNameLength = group.options.reduce((sum, o) => sum + o.name.length, 0) / group.options.length;
-                    const useCompact = !group.multiSelect && avgNameLength <= 12 && group.options.length <= 5;
+                    const avgNameLength = group.options.length > 0
+                      ? group.options.reduce((sum, o) => sum + o.name.length, 0) / group.options.length
+                      : 0;
+                    const useCompact = !group.multiSelect && avgNameLength <= 12 && group.options.length > 0 && group.options.length <= 5;
 
                     return (
                       <div key={group._id} className={styles.modifierGroup}>
@@ -263,6 +265,7 @@ export default function ModifierSelectionModal({
                               if (useCompact) {
                                 return (
                                   <button
+                                    type="button"
                                     key={option._key}
                                     className={`${styles.optionItemCompact} ${isSelected ? styles.selected : ''}`}
                                     onClick={() => handleOptionSelect(group, option)}
@@ -277,6 +280,7 @@ export default function ModifierSelectionModal({
 
                               return (
                                 <button
+                                  type="button"
                                   key={option._key}
                                   className={`${styles.optionItem} ${isSelected ? styles.selected : ''}`}
                                   onClick={() => handleOptionSelect(group, option)}
@@ -335,6 +339,7 @@ export default function ModifierSelectionModal({
                 {/* Quantity */}
                 <div className={styles.quantityControl}>
                   <button
+                    type="button"
                     className={styles.quantityBtn}
                     onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                     disabled={quantity <= 1}
@@ -343,6 +348,7 @@ export default function ModifierSelectionModal({
                   </button>
                   <span className={styles.quantityValue}>{quantity}</span>
                   <button
+                    type="button"
                     className={styles.quantityBtn}
                     onClick={() => setQuantity((q) => q + 1)}
                   >
@@ -352,6 +358,7 @@ export default function ModifierSelectionModal({
 
                 {/* Add button */}
                 <button
+                  type="button"
                   className={`${styles.addButton} ${!isValid ? styles.disabled : ''}`}
                   onClick={handleAddToCart}
                   disabled={!isValid || isSubmitting}

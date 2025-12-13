@@ -1,42 +1,11 @@
 import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
-import { timingSafeEqual } from "crypto";
+import { validateSecret } from "@/lib/auth/validate-secret";
 
 export async function POST(request: NextRequest) {
   const secret = request.nextUrl.searchParams.get('secret');
 
-  // Timing-safe secret comparison to prevent timing attacks
-  const providedSecret = secret || '';
-  const expectedSecret = process.env.REVALIDATION_SECRET || '';
-
-  // Create buffers for comparison
-  let bufProvided: Buffer;
-  let bufExpected: Buffer;
-
-  try {
-    bufProvided = Buffer.from(providedSecret);
-    bufExpected = Buffer.from(expectedSecret);
-
-    // Ensure both buffers are the same length
-    // Use a constant-length comparison even if lengths differ
-    const bufferLength = Math.max(bufProvided.length, bufExpected.length);
-
-    // Create same-length buffers for comparison
-    const paddedProvided = Buffer.alloc(bufferLength);
-    const paddedExpected = Buffer.alloc(bufferLength);
-
-    bufProvided.copy(paddedProvided);
-    bufExpected.copy(paddedExpected);
-
-    // Perform timing-safe comparison
-    const isValid = timingSafeEqual(paddedProvided, paddedExpected);
-
-    if (!isValid) {
-      return NextResponse.json({ error: 'Invalid secret' }, { status: 401 });
-    }
-  } catch {
-    // If timingSafeEqual throws (lengths don't match after padding, etc.)
-    // return 401 without revealing the error
+  if (!validateSecret(secret, process.env.REVALIDATION_SECRET)) {
     return NextResponse.json({ error: 'Invalid secret' }, { status: 401 });
   }
 
