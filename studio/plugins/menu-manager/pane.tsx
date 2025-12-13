@@ -81,7 +81,7 @@ interface MenuItemDetail {
   basePrice?: number
   category?: { _type: 'reference'; _ref: string }
   availableEverywhere?: boolean
-  locationOverrides?: unknown
+  locationOverrides?: LocationOverride[]
   source?: string
   externalId?: string
   image?: SanityImageSource
@@ -563,6 +563,7 @@ export function MenuManagerPane() {
               source: i.source,
               image: i.image,
               imageUrl: i.imageUrl,
+              availableEverywhere: i.availableEverywhere,
               categoryTitle: i.category?.title,
               categorySlug: i.category?.slug?.current,
               locationOverrides: i.locationOverrides,
@@ -725,12 +726,29 @@ export function MenuManagerPane() {
   }
 
   const handleAvailabilityToggle = (locationId: string, available: boolean) => {
-    upsertOverride(locationId, (current) => ({
-      _key: current?._key || createKey(),
-      location: { _type: 'reference', _ref: locationId },
-      available,
-      price: current?.price,
-    }))
+    upsertOverride(locationId, (current) => {
+      const hasPrice = typeof current?.price === 'number'
+
+      // Determine if this override is semantically redundant
+      // In opt-in mode (availableEverywhere !== true):
+      //   - Setting available: false is redundant (that's the default)
+      // In opt-out mode (availableEverywhere === true):
+      //   - Setting available: true is redundant (that's the default)
+      const isRedundant = detail?.availableEverywhere === true
+        ? available === true && !hasPrice  // opt-out mode: true is default
+        : available === false && !hasPrice  // opt-in mode: false is default
+
+      if (isRedundant) {
+        return null  // Remove the override entirely
+      }
+
+      return {
+        _key: current?._key || createKey(),
+        location: { _type: 'reference', _ref: locationId },
+        available,
+        price: current?.price,
+      }
+    })
   }
 
   const handlePriceChange = (locationId: string, value: string) => {
@@ -811,10 +829,10 @@ export function MenuManagerPane() {
       await patch.commit({ autoGenerateArrayKeys: true })
       setSaved(true)
       setSaving(false)
-      // Update list item thumbnail
+      // Update list item with saved values
       setItems(prev => prev.map(item =>
         item._id === detail._id
-          ? { ...item, image: detail.image, imageUrl: detail.imageUrl }
+          ? { ...item, image: detail.image, imageUrl: detail.imageUrl, availableEverywhere: detail.availableEverywhere }
           : item
       ))
       setTimeout(() => setSaved(false), 3000)
@@ -1533,7 +1551,7 @@ export function MenuManagerPane() {
                                     key={loc._id}
                                     location={loc}
                                     available={isAvailable}
-                                    hasOverride={Boolean(current?.price)}
+                                    hasOverride={typeof current?.price === 'number'}
                                     currentPrice={current?.price}
                                     basePrice={detail.basePrice}
                                     onAvailabilityToggle={(available) => handleAvailabilityToggle(loc._id, available)}
@@ -1574,7 +1592,7 @@ export function MenuManagerPane() {
                                     key={loc._id}
                                     location={loc}
                                     available={isAvailable}
-                                    hasOverride={Boolean(current?.price)}
+                                    hasOverride={typeof current?.price === 'number'}
                                     currentPrice={current?.price}
                                     basePrice={detail.basePrice}
                                     onAvailabilityToggle={(available) => handleAvailabilityToggle(loc._id, available)}
