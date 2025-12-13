@@ -1507,7 +1507,31 @@ export function MenuManagerPane() {
 
                 {/* Pricing & Availability Tab - Two column layout: DFW+Houston left, Oklahoma+Other right */}
                 <TabPanel id="location" aria-labelledby="location-tab" hidden={tab !== 1}>
-                  <Stack space={3}>
+                  <Stack space={4}>
+                    {/* Available Everywhere Toggle */}
+                    <Card padding={3} radius={2} style={{ background: 'var(--card-skeleton-color-from)' }}>
+                      <Flex align="center" justify="space-between">
+                        <Stack space={2}>
+                          <FieldLabel
+                            label="Available Everywhere"
+                            tooltip="When enabled, this item is available at all locations unless explicitly disabled per-location. When disabled, availability must be opted-in per location."
+                          />
+                          <Text size={1} muted>
+                            {detail.availableEverywhere
+                              ? 'Opt-out model — available at all locations by default'
+                              : 'Opt-in model — must enable per location'}
+                          </Text>
+                        </Stack>
+                        <IOSToggle
+                          checked={detail.availableEverywhere === true}
+                          onChange={(checked) => {
+                            setDetail((d) => (d ? { ...d, availableEverywhere: checked } : d))
+                            setSaved(false)
+                          }}
+                        />
+                      </Flex>
+                    </Card>
+
                     <Text size={1} muted>
                       Toggle availability and set custom prices. Base price: <strong style={{ fontFamily: 'monospace' }}>${detail.basePrice?.toFixed(2) || '—'}</strong>
                     </Text>
