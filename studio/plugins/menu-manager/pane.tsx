@@ -63,6 +63,7 @@ interface MenuItemLite {
   source?: string
   image?: SanityImageSource
   imageUrl?: string
+  availableEverywhere?: boolean
   locationOverrides?: LocationOverride[]
 }
 
@@ -546,7 +547,7 @@ export function MenuManagerPane() {
         const [itemsResp, catsResp] = await Promise.all([
           client.fetch(
             `*[_type == "menuItem" && !(_id in path('drafts.**'))]{
-              _id, name, basePrice, source, image, imageUrl,
+              _id, name, basePrice, source, image, imageUrl, availableEverywhere,
               category->{title,slug},
               locationOverrides
             }|order(name asc)`
@@ -686,19 +687,21 @@ export function MenuManagerPane() {
       const matchesCat = categoryFilter ? item.categorySlug === categoryFilter : true
 
       // Location filter: check if item is available at the selected location
-      // Match the website logic from Menu2PageClient.tsx:
-      // - If item has locationOverrides with entries:
-      //   - If no override for this location OR override.available === false → NOT available
-      // - If item has no locationOverrides → available everywhere
+      // OPT-IN MODEL (matches lib/utils/menuAvailability.ts):
+      // - If availableEverywhere === true: available UNLESS explicitly opted out
+      // - Otherwise: must have explicit available: true for this location
       let isAvailable = true
       if (locationFilter) {
         const overrides = item.locationOverrides || []
-        if (overrides.length > 0) {
-          const locationOverride = overrides.find(ov => ov.location?._ref === locationFilter)
-          // Must have an override AND it must not be explicitly unavailable
-          isAvailable = Boolean(locationOverride) && locationOverride?.available !== false
+        const locationOverride = overrides.find(ov => ov.location?._ref === locationFilter)
+
+        if (item.availableEverywhere === true) {
+          // Available everywhere UNLESS explicitly opted out for this location
+          isAvailable = locationOverride?.available !== false
+        } else {
+          // OPT-IN: must have explicit available: true
+          isAvailable = locationOverride?.available === true
         }
-        // If no overrides exist, item shows everywhere (isAvailable stays true)
       }
 
       // When showUnlisted is true and a location is selected, show items NOT at that location
@@ -1519,8 +1522,12 @@ export function MenuManagerPane() {
                               </Box>
                               {group.items.map((loc) => {
                                 const current = overrides.find((ov) => ov.location?._ref === loc._id)
-                                // OPT-IN MODEL: available only if availableEverywhere OR explicit available: true
-                                const isAvailable = detail.availableEverywhere === true || current?.available === true
+                                // OPT-IN MODEL with per-location opt-out support:
+                                // - If availableEverywhere: available UNLESS explicitly opted out
+                                // - Otherwise: must have explicit available: true
+                                const isAvailable = detail.availableEverywhere === true
+                                  ? current?.available !== false
+                                  : current?.available === true
                                 return (
                                   <LocationRow
                                     key={loc._id}
@@ -1556,8 +1563,12 @@ export function MenuManagerPane() {
                               </Box>
                               {group.items.map((loc) => {
                                 const current = overrides.find((ov) => ov.location?._ref === loc._id)
-                                // OPT-IN MODEL: available only if availableEverywhere OR explicit available: true
-                                const isAvailable = detail.availableEverywhere === true || current?.available === true
+                                // OPT-IN MODEL with per-location opt-out support:
+                                // - If availableEverywhere: available UNLESS explicitly opted out
+                                // - Otherwise: must have explicit available: true
+                                const isAvailable = detail.availableEverywhere === true
+                                  ? current?.available !== false
+                                  : current?.available === true
                                 return (
                                   <LocationRow
                                     key={loc._id}
