@@ -212,11 +212,13 @@ function formatMenuItemDescription(desc: string): string {
 function IOSToggle({
   checked,
   onChange,
-  size = 'default'
+  size = 'default',
+  disabled = false
 }: {
   checked: boolean
   onChange: (checked: boolean) => void
   size?: 'small' | 'default'
+  disabled?: boolean
 }) {
   // Sizes based on iOS 26 pill toggle dimensions
   const dimensions = size === 'small'
@@ -230,14 +232,16 @@ function IOSToggle({
         display: 'inline-block',
         width: dimensions.width,
         height: dimensions.height,
-        cursor: 'pointer',
+        cursor: disabled ? 'not-allowed' : 'pointer',
         flexShrink: 0,
+        opacity: disabled ? 0.5 : 1,
       }}
     >
       <input
         type="checkbox"
         checked={checked}
-        onChange={(e) => onChange(e.target.checked)}
+        disabled={disabled}
+        onChange={(e) => !disabled && onChange(e.target.checked)}
         style={{
           opacity: 0,
           width: 0,
@@ -248,7 +252,7 @@ function IOSToggle({
       <span
         style={{
           position: 'absolute',
-          cursor: 'pointer',
+          cursor: disabled ? 'not-allowed' : 'pointer',
           top: 0,
           left: 0,
           right: 0,
@@ -393,6 +397,7 @@ function ListItem({
 function LocationRow({
   location,
   available,
+  availabilityDisabled = false,
   hasOverride,
   currentPrice,
   basePrice,
@@ -401,6 +406,7 @@ function LocationRow({
 }: {
   location: LocationDoc
   available: boolean
+  availabilityDisabled?: boolean
   hasOverride: boolean
   currentPrice?: number
   basePrice?: number
@@ -409,6 +415,13 @@ function LocationRow({
 }) {
   // Extract short name (remove "The Catch — " prefix if present)
   const shortName = location.name.replace(/^The Catch\s*[—–-]\s*/i, '')
+
+  // Tooltip text depends on whether availability can be toggled
+  const tooltipText = availabilityDisabled
+    ? 'Available everywhere (cannot be disabled per-location)'
+    : available
+      ? 'Available at this location'
+      : 'Not offered here'
 
   return (
     <Flex
@@ -425,7 +438,7 @@ function LocationRow({
       <Tooltip
         content={
           <Box padding={2}>
-            <Text size={1}>{available ? 'Available at this location' : 'Not offered here'}</Text>
+            <Text size={1}>{tooltipText}</Text>
           </Box>
         }
         placement="top"
@@ -436,6 +449,7 @@ function LocationRow({
             checked={available}
             onChange={onAvailabilityToggle}
             size="small"
+            disabled={availabilityDisabled}
           />
         </Box>
       </Tooltip>
@@ -761,7 +775,9 @@ export function MenuManagerPane() {
     upsertOverride(locationId, (current) => ({
       _key: current?._key || createKey(),
       location: { _type: 'reference', _ref: locationId },
-      available: current?.available ?? true,
+      // In opt-out mode, omit available field (it's redundant - always available)
+      // In opt-in mode, default to true when setting a price (implies intent to sell)
+      available: detail?.availableEverywhere === true ? undefined : (current?.available ?? true),
       price: nextPrice,
     }))
   }
@@ -1579,6 +1595,7 @@ export function MenuManagerPane() {
                                     key={loc._id}
                                     location={loc}
                                     available={isAvailable}
+                                    availabilityDisabled={detail.availableEverywhere === true}
                                     hasOverride={typeof current?.price === 'number'}
                                     currentPrice={current?.price}
                                     basePrice={detail.basePrice}
@@ -1620,6 +1637,7 @@ export function MenuManagerPane() {
                                     key={loc._id}
                                     location={loc}
                                     available={isAvailable}
+                                    availabilityDisabled={detail.availableEverywhere === true}
                                     hasOverride={typeof current?.price === 'number'}
                                     currentPrice={current?.price}
                                     basePrice={detail.basePrice}
