@@ -96,7 +96,7 @@ const NEW_LOCATIONS = [
     postalCode: "76017",
     phone: "+1 817-765-2226",
     hours: standardHours,
-    menuUrl: undefined, // TODO: Add Google Food ordering URL when available
+    // menuUrl not yet available for Google Food ordering
   },
   {
     _id: "loc-burleson",
@@ -110,7 +110,7 @@ const NEW_LOCATIONS = [
     postalCode: "76028",
     phone: "+1 817-447-4302",
     hours: standardHours,
-    menuUrl: undefined, // TODO: Add Google Food ordering URL when available
+    // menuUrl not yet available for Google Food ordering
   },
   {
     _id: "loc-longview",
@@ -224,4 +224,7 @@ async function main() {
   console.log("\n⚠️  NOTE: Some storeIds are placeholders (201-207). Update with actual POS IDs!");
 }
 
-main().catch(console.error);
+main().catch((err) => {
+  console.error(err);
+  process.exitCode = 1;
+});

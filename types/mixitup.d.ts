@@ -15,12 +15,21 @@ declare module 'mixitup' {
     };
   }
 
+  export interface MixItUpState {
+    activeFilter: string | null;
+    activeSort: string | null;
+    totalShow: number;
+    totalHide: number;
+    hasFailed: boolean;
+  }
+
   export interface Mixer {
-    filter(selector: string): Promise<unknown>;
-    sort(sortString: string): Promise<unknown>;
+    filter(selector: string): Promise<MixItUpState>;
+    sort(sortString: string): Promise<MixItUpState>;
     destroy(): void;
-    dataset(): unknown[];
-    getState(): unknown;
+    /** Returns currently matching elements as an array */
+    dataset(): HTMLElement[];
+    getState(): MixItUpState;
   }
 
   function mixitup(container: HTMLElement | string, options?: MixItUpOptions): Mixer;

@@ -1345,7 +1345,12 @@ export function MenuManagerPane() {
                               type="number"
                               step="0.01"
                               value={detail.basePrice ?? ''}
-                              onChange={(e) => setDetail((d) => (d ? { ...d, basePrice: parseFloat(e.currentTarget.value) } : d))}
+                              onChange={(e) => {
+                                const val = e.currentTarget.value
+                                const nextPrice = val === '' ? undefined : parseFloat(val)
+                                if (nextPrice !== undefined && Number.isNaN(nextPrice)) return
+                                setDetail((d) => (d ? { ...d, basePrice: nextPrice } : d))
+                              }}
                               placeholder="0.00"
                               fontSize={1}
                               padding={3}
