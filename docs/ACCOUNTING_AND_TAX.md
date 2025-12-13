@@ -231,13 +231,13 @@ For The Catch with ~16 locations under (presumably) one or a few owners, **singl
 
 ### Customer iOS App (Ordering)
 
-**Difficulty: Low-Medium**
+*Difficulty: Low-Medium*
 
 The web app is already built with React/Next.js. Options:
 
 | Approach | Effort | Result |
 |----------|--------|--------|
-| **PWA (Progressive Web App)** | ~1-2 days | Add to Home Screen, works offline, push notifications. No App Store. |
+| **PWA (Progressive Web App)** | ~1-2 days | Add to Home Screen, can support offline/push with service worker. No App Store. |
 | **Capacitor/Ionic wrapper** | ~1-2 weeks | Wrap existing web app in native shell. App Store distribution. |
 | **React Native rebuild** | ~2-3 months | Full native app, best UX. Reuse types/logic, rebuild UI. |
 | **Expo** | ~1-2 months | React Native but faster. Good middle ground. |
@@ -261,7 +261,7 @@ The web app is already built with React/Next.js. Options:
 
 ### iPad App (Back-of-House / Kitchen Display)
 
-**Difficulty: Very Low**
+*Difficulty: Very Low*
 
 The kitchen display (`/kitchen`) already exists and works on iPad:
 - Real-time order updates via polling
@@ -295,7 +295,7 @@ The kitchen display (`/kitchen`) already exists and works on iPad:
 
 ### Unified System Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────────────────┐
 │                      Sanity CMS                         │
 │         (Menu, Locations, Orders, Config)               │

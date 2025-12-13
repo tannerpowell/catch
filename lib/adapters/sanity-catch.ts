@@ -353,7 +353,7 @@ export const adapter: BrandAdapter = {
     }
     try {
       const one = await client.fetch(
-        groq`*[_type=="location" && slug.current==$s][0]{ _id, name, "slug": slug.current, addressLine1, addressLine2, city, state, postalCode, phone, hours, menuUrl, directionsUrl, "geo": geo }`,
+        groq`*[_type=="location" && slug.current==$s][0]{ _id, name, "slug": slug.current, addressLine1, addressLine2, city, state, postalCode, phone, hours, menuUrl, directionsUrl, revelUrl, doordashUrl, uberEatsUrl, "geo": geo }`,
         { s: slug }
       );
       if (!one) return undefined;
