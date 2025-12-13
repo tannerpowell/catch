@@ -1,8 +1,19 @@
 import fs from "node:fs";
 import path from "node:path";
-import Menu2PageClient from "@/components/catch/Menu2PageClient";
+import MenuPageClient from "@/components/catch/MenuPageClient";
 import { getBrand } from "@/lib/brand";
 import { slugify } from "@/lib/utils/slugify";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Menu — Fresh Seafood Baskets & Boils",
+  description: "Explore our menu of fresh Gulf Coast seafood: catfish baskets, shrimp boils, crawfish tails, snow crab, and house-made sides. Cajun-inspired flavors made fresh daily.",
+  openGraph: {
+    title: "The Catch Menu — Fresh Seafood Baskets & Boils",
+    description: "Explore our menu of fresh Gulf Coast seafood: catfish baskets, shrimp boils, crawfish tails, and more.",
+    images: ["/dfw-images/Different%20menu%20items%20served%20on%20the%20table,%20top%20view.jpg"]
+  }
+};
 
 // Enable ISR - regenerate page every hour
 export const revalidate = 3600;
@@ -22,32 +33,18 @@ function buildDfwImageMap(): ImageMap {
   return map;
 }
 
-/**
- * Render the menu page by fetching brand categories, items, and locations, preparing an image map, and supplying them to the client component.
- *
- * The fetched locations are sorted with the location whose slug is `denton` placed first, followed by the remaining locations ordered alphabetically by name.
- *
- * @returns A React element that renders Menu2PageClient with the fetched `categories`, `items`, sorted `locations` (Denton first), and the DFW `imageMap`.
- */
-export default async function Menu2Page() {
+export default async function MenuPage() {
   const brand = getBrand();
-  const [categories, items, rawLocations] = await Promise.all([
+  const [categories, items, locations] = await Promise.all([
     brand.getCategories(),
     brand.getItems(),
     brand.getLocations()
   ]);
 
-  // Sort locations with Denton first (default), then alphabetically
-  const locations = [...rawLocations].sort((a, b) => {
-    if (a.slug === 'denton') return -1;
-    if (b.slug === 'denton') return 1;
-    return a.name.localeCompare(b.name);
-  });
-
   const dfwImageMap = buildDfwImageMap();
 
   return (
-    <Menu2PageClient
+    <MenuPageClient
       categories={categories}
       items={items}
       locations={locations}

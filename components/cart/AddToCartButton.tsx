@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { ShoppingCart } from 'lucide-react';
 import { useCart } from '@/lib/contexts/CartContext';
 import { LocationSwitchModal } from './LocationSwitchModal';
-import { SuccessModal } from './SuccessModal';
 import ModifierSelectionModal from './ModifierSelectionModal';
 import type { MenuItem, Location, CartModifier } from '@/lib/types';
 
@@ -24,13 +23,14 @@ function isValidPrice(price: number | null | undefined): price is number {
 }
 
 /**
- * Render an "Add to Cart" button that adds the provided menu item to the cart, prompts to switch locations when necessary, and shows a success confirmation.
+ * Render an "Add to Cart" button that adds the provided menu item to the cart
+ * and prompts to switch locations when necessary.
  *
  * @param menuItem - The menu item to add when the button is pressed.
  * @param location - The location to associate with the cart addition.
  * @param className - Optional additional CSS class names to apply to the button.
  * @param disabled - If `true`, the button is rendered disabled and interaction is prevented.
- * @returns The button element plus any modals used for location switching and success confirmation.
+ * @returns The button element plus any modals used for location switching and modifier selection.
  */
 export function AddToCartButton({
   menuItem,
@@ -40,7 +40,6 @@ export function AddToCartButton({
 }: AddToCartButtonProps) {
   const { cart, addToCart, clearCart, canAddFromLocation, isHydrated } = useCart();
   const [showLocationModal, setShowLocationModal] = useState(false);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showModifierModal, setShowModifierModal] = useState(false);
 
   const hasModifiers = menuItem.modifierGroups && menuItem.modifierGroups.length > 0;
@@ -48,13 +47,11 @@ export function AddToCartButton({
   const handleAddToCart = () => {
     // Don't allow adding before hydration
     if (!isHydrated || !cart) {
-      console.warn('Cannot add to cart before hydration complete');
       return;
     }
 
     // Validate price before adding to cart
     if (!isValidPrice(menuItem.price)) {
-      console.warn('Cannot add item with invalid price:', menuItem.name);
       return;
     }
 
@@ -66,6 +63,8 @@ export function AddToCartButton({
     }
 
     // If item has modifiers, show modifier selection modal
+    // (Note: Items with modifiers should go directly to ModifierSelectionModal
+    // from MenuList, but this handles edge cases)
     if (hasModifiers) {
       setShowModifierModal(true);
       return;
@@ -82,11 +81,11 @@ export function AddToCartButton({
       location
     );
 
-    // Show success modal
-    setShowSuccessModal(true);
+    // Cart badge animation provides sufficient feedback
   };
 
   const handleModifierAddToCart = (modifiers: CartModifier[], specialInstructions: string, quantity: number) => {
+    if (!isHydrated || !cart) return;
     if (!isValidPrice(menuItem.price)) return;
 
     // Calculate total price including modifiers
@@ -105,7 +104,7 @@ export function AddToCartButton({
     );
 
     setShowModifierModal(false);
-    setShowSuccessModal(true);
+    // Cart badge animation provides sufficient feedback
   };
 
   const handleConfirmSwitch = () => {
@@ -134,7 +133,7 @@ export function AddToCartButton({
       },
       location
     );
-    setShowSuccessModal(true);
+    // Cart badge animation provides sufficient feedback
   };
 
   // Don't show button if no price (market price or unavailable)
@@ -167,12 +166,6 @@ export function AddToCartButton({
           onConfirm={handleConfirmSwitch}
         />
       )}
-
-      <SuccessModal
-        isOpen={showSuccessModal}
-        onClose={() => setShowSuccessModal(false)}
-        itemName={menuItem.name}
-      />
 
       <ModifierSelectionModal
         isOpen={showModifierModal}

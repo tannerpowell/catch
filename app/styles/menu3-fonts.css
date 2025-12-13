@@ -1,0 +1,175 @@
+/* ============================================
+   MENU3 TYPOGRAPHY - Louize Font Family
+   ============================================
+
+   Premium typographic system for the menu3 route.
+   Louize Italic for item names creates the "lettering
+   painted on subway tile" aesthetic.
+
+   NOTE: Louize font files should be placed in /public/fonts/louize/
+   When files are available, uncomment the @font-face declarations.
+   Currently falls back to Bodoni Moda Italic for similar editorial feel.
+*/
+
+/* ============================================
+   @FONT-FACE DECLARATIONS (when fonts are available)
+
+   Expected files in /public/fonts/louize/:
+   - Louize-Regular.woff2
+   - Louize-Italic.woff2
+   - Louize-Medium.woff2
+   - Louize-MediumItalic.woff2
+   ============================================ */
+
+/*
+@font-face {
+  font-family: 'Louize';
+  src: url('/fonts/louize/Louize-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Louize';
+  src: url('/fonts/louize/Louize-Italic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Louize';
+  src: url('/fonts/louize/Louize-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Louize';
+  src: url('/fonts/louize/Louize-MediumItalic.woff2') format('woff2');
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+*/
+
+/* ============================================
+   CSS CUSTOM PROPERTIES - Typography System
+   ============================================ */
+
+:root {
+  /* Primary display font - Louize with fallbacks */
+  --font-menu-display: 'Louize', var(--font-bodoni-moda, 'Bodoni Moda'), 'Didot', 'Georgia', serif;
+
+  /* Editorial body font - elegant serif for descriptions */
+  --font-menu-body: var(--font-cormorant-garamond, 'Cormorant Garamond'), 'Georgia', serif;
+
+  /* UI chrome font - geometric sans for nav/buttons */
+  --font-menu-ui: var(--font-poppins, 'Poppins'), system-ui, -apple-system, sans-serif;
+
+  /* Monospace for prices (tabular numerals) */
+  --font-menu-mono: 'SF Mono', 'Menlo', 'Monaco', 'Consolas', monospace;
+}
+
+/* ============================================
+   TYPE SCALE
+
+   Location strip: 11px, tight letterspacing
+   Category list: 12px, readable
+   Item name: 18-20px, Louize Italic
+   Description: 13px, higher line-height, muted
+   Price: 16px, tabular numerals
+   ============================================ */
+
+/* Location strip */
+.menu3-type-location {
+  font-family: var(--font-menu-ui);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Category navigation */
+.menu3-type-category {
+  font-family: var(--font-menu-ui);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Item name - the hero */
+.menu3-type-item-name {
+  font-family: var(--font-menu-display);
+  font-size: 22px;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0.005em;
+  line-height: 1.2;
+}
+
+/* Item description */
+.menu3-type-description {
+  font-family: var(--font-menu-body);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.45;
+  color: var(--menu3-text-muted, #5a5a5a);
+}
+
+/* Price display */
+.menu3-type-price {
+  font-family: var(--font-menu-mono);
+  font-size: 18px;
+  font-weight: 500;
+  font-feature-settings: 'tnum' 1;
+  letter-spacing: 0;
+}
+
+/* Search input */
+.menu3-type-search {
+  font-family: var(--font-menu-ui);
+  font-size: 15px;
+  font-weight: 400;
+}
+
+/* Section headers */
+.menu3-type-section {
+  font-family: var(--font-menu-ui);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* Modal item name - larger */
+.menu3-type-modal-name {
+  font-family: var(--font-menu-display);
+  font-size: clamp(26px, 4vw, 36px);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0.005em;
+  line-height: 1.15;
+}
+
+/* Peek card item name */
+.menu3-type-peek-name {
+  font-family: var(--font-menu-display);
+  font-size: 24px;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0.005em;
+  line-height: 1.2;
+}
+
+/* Badge/tag text */
+.menu3-type-badge {
+  font-family: var(--font-menu-ui);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}

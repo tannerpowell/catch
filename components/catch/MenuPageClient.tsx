@@ -6,21 +6,13 @@ import CategoryPills from "./CategoryPills";
 import MenuItemCard from "./MenuItemCard";
 import { findNearestLocation } from "@/lib/utils/findNearestLocation";
 import { isItemAvailableAtLocation } from "@/lib/utils/menuAvailability";
+import { slugify } from "@/lib/utils/slugify";
 
 interface MenuPageClientProps {
   categories: MenuCategory[];
   items: MenuItem[];
   locations: Location[];
   imageMap: Record<string, string>;
-}
-
-function slugify(input: string) {
-  return input
-    .toLowerCase()
-    .normalize("NFKD")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/-+/g, "-")
-    .replace(/(^-|-$)/g, "");
 }
 
 function formatPhone(phone: string): string {

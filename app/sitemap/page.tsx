@@ -20,8 +20,9 @@ const sections: SitemapSection[] = [
     title: 'ORDERING',
     description: 'Browse our menu and place your order',
     links: [
-      { href: '/menu' as Route, label: 'Menu', description: 'Full menu with categories and filtering' },
-      { href: '/menu2' as Route, label: 'Menu (Alternate)', description: 'Card-based menu layout' },
+      { href: '/menu' as Route, label: 'Menu', description: 'Premium 3-pane menu with instant filtering' },
+      { href: '/menu2' as Route, label: 'Menu (Cards)', description: 'Card-based menu layout' },
+      { href: '/menu-legacy' as Route, label: 'Menu (Legacy)', description: 'Original menu with categories' },
       { href: '/locations' as Route, label: 'Locations', description: 'Find a restaurant near you' },
       { href: '/checkout' as Route, label: 'Checkout', description: 'Complete your order' },
       { href: '/order-confirmation' as Route, label: 'Order Confirmation', description: 'Order status and details' },
