@@ -79,6 +79,7 @@ interface MenuItemDetail {
   description?: string
   basePrice?: number
   category?: { _type: 'reference'; _ref: string }
+  availableEverywhere?: boolean
   locationOverrides?: unknown
   source?: string
   externalId?: string
@@ -594,7 +595,7 @@ export function MenuManagerPane() {
         const doc = await client.fetch<MenuItemDetail>(
           `*[_id == $id][0]{
             _id, name, slug, description, basePrice, category,
-            locationOverrides, source, externalId, image, imageUrl
+            availableEverywhere, locationOverrides, source, externalId, image, imageUrl
           }`,
           { id: selectedId }
         )
@@ -1244,7 +1245,7 @@ export function MenuManagerPane() {
                     id="location-tab"
                     aria-controls="location"
                     icon={MapPin}
-                    label="Location Pricing"
+                    label="Pricing & Availability"
                     selected={tab === 1}
                     onClick={() => setTab(1)}
                     fontSize={1}
@@ -1482,7 +1483,7 @@ export function MenuManagerPane() {
                   </Box>
                 </TabPanel>
 
-                {/* Location Pricing Tab - Two column layout: DFW+Houston left, Oklahoma+Other right */}
+                {/* Pricing & Availability Tab - Two column layout: DFW+Houston left, Oklahoma+Other right */}
                 <TabPanel id="location" aria-labelledby="location-tab" hidden={tab !== 1}>
                   <Stack space={3}>
                     <Text size={1} muted>
@@ -1517,7 +1518,8 @@ export function MenuManagerPane() {
                               </Box>
                               {group.items.map((loc) => {
                                 const current = overrides.find((ov) => ov.location?._ref === loc._id)
-                                const isAvailable = current ? current.available !== false : true
+                                // OPT-IN MODEL: available only if availableEverywhere OR explicit available: true
+                                const isAvailable = detail.availableEverywhere === true || current?.available === true
                                 return (
                                   <LocationRow
                                     key={loc._id}
@@ -1553,7 +1555,8 @@ export function MenuManagerPane() {
                               </Box>
                               {group.items.map((loc) => {
                                 const current = overrides.find((ov) => ov.location?._ref === loc._id)
-                                const isAvailable = current ? current.available !== false : true
+                                // OPT-IN MODEL: available only if availableEverywhere OR explicit available: true
+                                const isAvailable = detail.availableEverywhere === true || current?.available === true
                                 return (
                                   <LocationRow
                                     key={loc._id}

@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { getBrand } from "@/lib/brand";
 import { notFound } from "next/navigation";
 import MenuDisplayClient from "./MenuDisplayClient";
@@ -14,7 +15,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const location = await brand.getLocationBySlug(locationSlug);
 
   return {
-    title: location ? `Menu Display — ${location.name}` : "Menu Display",
+    title: location ? `Menu TV Display — ${location.name}` : "Menu TV Display",
     robots: { index: false, follow: false }
   };
 }
@@ -48,10 +49,12 @@ export default async function MenuDisplayPage({ params }: Props) {
   );
 
   return (
-    <MenuDisplayClient
-      location={location}
-      categories={categories}
-      items={locationItems}
-    />
+    <Suspense fallback={null}>
+      <MenuDisplayClient
+        location={location}
+        categories={categories}
+        items={locationItems}
+      />
+    </Suspense>
   );
 }

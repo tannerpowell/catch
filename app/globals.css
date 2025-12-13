@@ -24,6 +24,19 @@ html[data-route^="/kitchen"] main {
   padding: 0;
 }
 
+/* Hide header, footer, and theme toggle on menu-display/[location] routes (TV displays) */
+html[data-route^="/menu-display/"] .header,
+html[data-route^="/menu-display/"] .footer,
+html[data-route^="/menu-display/"] .full-page-menu,
+html[data-route^="/menu-display/"] [class*="ThemeToggle"] {
+  display: none !important;
+}
+
+html[data-route^="/menu-display/"] main {
+  margin: 0;
+  padding: 0;
+}
+
 /* Theme tokens (Catch x Gulf-inspired palette) */
 :root {
   /* Slate palette (light mode uses lighter shades) */
