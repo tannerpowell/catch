@@ -36,6 +36,15 @@ export default function Menu3PageClient({
   locations,
   imageMap,
 }: Menu3PageClientProps) {
+  // Guard against empty locations array
+  if (!locations.length) {
+    return (
+      <div className="menu3-page menu3-empty">
+        <p>No locations available.</p>
+      </div>
+    );
+  }
+
   // Location state
   const defaultLocation = locations.find(l => l.slug === 'denton') || locations[0];
   const {

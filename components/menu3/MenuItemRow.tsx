@@ -90,7 +90,7 @@ export const MenuItemRow = forwardRef<HTMLButtonElement, MenuItemRowProps>(
           )}
           {hasModifiers && (
             <span className="menu3-item-customize" title="Customizable" aria-label="Has options">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <line x1="4" y1="21" x2="4" y2="14" />
                 <line x1="4" y1="10" x2="4" y2="3" />
                 <line x1="12" y1="21" x2="12" y2="12" />

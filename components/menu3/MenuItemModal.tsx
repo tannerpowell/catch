@@ -337,6 +337,8 @@ export function MenuItemModal({
 
         .menu3-modal-badge {
           padding: 4px 10px;
+          /* Fallback for browsers without color-mix() support */
+          background: rgba(128, 128, 128, 0.12);
           background: color-mix(in srgb, var(--badge-color) 12%, transparent);
           color: var(--badge-color);
           border-radius: 4px;

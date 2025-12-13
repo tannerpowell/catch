@@ -49,7 +49,8 @@ export function MenuList({
   }, []);
 
   const { addToCart } = useCart();
-  const selectedLocation = locations.find(l => l.slug === selectedLocationSlug) || locations[0];
+  // Guard: find selected location, fallback to first, or undefined if empty
+  const selectedLocation = locations.find(l => l.slug === selectedLocationSlug) ?? locations[0] ?? null;
 
   // Prepare items with images and metadata
   const preparedItems = useMemo(() => {
@@ -133,7 +134,7 @@ export function MenuList({
 
   // Handle modifier modal add to cart
   const handleModifierAddToCart = useCallback((modifiers: CartModifier[], specialInstructions: string, quantity: number) => {
-    if (!modifierItem) return;
+    if (!modifierItem || !selectedLocation) return;
 
     // Use location-specific pricing
     const basePrice = getItemPriceAtLocation(modifierItem, selectedLocationSlug);
@@ -199,7 +200,7 @@ export function MenuList({
       </div>
 
       {/* Detail Modal */}
-      {modalItem && (
+      {modalItem && selectedLocation && (
         <MenuItemModal
           item={modalItem}
           price={modalPrice}

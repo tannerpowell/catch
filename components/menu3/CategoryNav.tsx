@@ -96,29 +96,29 @@ export function CategoryNav({
         Categories
       </div>
 
-      {/* Category list */}
-      <ul className="menu3-category-list" role="listbox" aria-label="Filter by category">
+      {/* Category list - using menu/menuitemradio for interactive button group */}
+      <ul className="menu3-category-list" role="menu" aria-label="Filter by category">
         {/* All Categories option */}
-        <li>
+        <li role="none">
           <button
             type="button"
             className={`menu3-category-item menu3-type-category ${selectedCategory === '' ? 'is-active' : ''}`}
             onClick={() => onCategoryChange('')}
-            role="option"
-            aria-selected={selectedCategory === ''}
+            role="menuitemradio"
+            aria-checked={selectedCategory === ''}
           >
             <span className="menu3-category-item-text">All Categories</span>
           </button>
         </li>
 
         {visibleCategories.map(category => (
-          <li key={category.slug}>
+          <li key={category.slug} role="none">
             <button
               type="button"
               className={`menu3-category-item menu3-type-category ${selectedCategory === category.slug ? 'is-active' : ''}`}
               onClick={() => onCategoryChange(category.slug)}
-              role="option"
-              aria-selected={selectedCategory === category.slug}
+              role="menuitemradio"
+              aria-checked={selectedCategory === category.slug}
             >
               <span className="menu3-category-item-text">{category.title}</span>
             </button>

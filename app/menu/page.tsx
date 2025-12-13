@@ -32,6 +32,7 @@ function buildDfwImageMap(): ImageMap {
     for (const file of entries) {
       const base = file.replace(/\.[^.]+$/, '');
       const key = slugify(base);
+      if (!key) continue; // Skip files that produce empty slugs
       map[key] = `/dfw-images/${file}`;
     }
     return map;

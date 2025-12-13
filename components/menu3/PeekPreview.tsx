@@ -87,10 +87,25 @@ export function PeekPreview({
   const badges = item.badges?.slice(0, 4);
 
   // Use inline styles for float positioning to avoid styled-jsx template recalculation
-  const floatStyles = mode === 'float' ? {
-    top: floatPosition?.top ?? 100,
-    left: floatPosition?.left ?? 100,
-  } : undefined;
+  // Clamp to viewport bounds to prevent off-screen positioning
+  const floatStyles = mode === 'float' ? (() => {
+    const cardWidth = 260;
+    const cardHeight = 350; // Approximate max height
+    const padding = 16;
+    const viewportWidth = typeof window !== 'undefined' ? window.innerWidth : 1024;
+    const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : 768;
+
+    const top = Math.min(
+      Math.max(floatPosition?.top ?? 100, padding),
+      viewportHeight - cardHeight - padding
+    );
+    const left = Math.min(
+      Math.max(floatPosition?.left ?? 100, padding),
+      viewportWidth - cardWidth - padding
+    );
+
+    return { top, left };
+  })() : undefined;
 
   const content = (
     <div
@@ -256,6 +271,8 @@ export function PeekPreview({
 
         .menu3-peek-badge {
           padding: 3px 8px;
+          /* Fallback for browsers without color-mix() support */
+          background: rgba(128, 128, 128, 0.12);
           background: color-mix(in srgb, var(--badge-color) 12%, transparent);
           color: var(--badge-color);
           border-radius: 4px;
