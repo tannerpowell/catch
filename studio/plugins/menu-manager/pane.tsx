@@ -735,14 +735,16 @@ export function MenuManagerPane() {
 
     // Remove semantically redundant overrides (centralized logic)
     // In opt-in mode (availableEverywhere !== true):
-    //   - available: false with no price is redundant (that's the default)
+    //   - available: false or undefined with no price is redundant (that's the default)
     // In opt-out mode (availableEverywhere === true):
-    //   - available: true with no price is redundant (that's the default)
+    //   - available: true or undefined with no price is redundant (that's the default)
     if (next) {
       const hasPrice = typeof next.price === 'number'
-      const isRedundant = detail.availableEverywhere === true
-        ? next.available === true && !hasPrice
-        : next.available === false && !hasPrice
+      const isRedundant = !hasPrice && (
+        detail.availableEverywhere === true
+          ? next.available !== false  // Keep only if has price or explicitly false
+          : next.available !== true   // Keep only if has price or explicitly true
+      )
       if (isRedundant) {
         next = null
       }
