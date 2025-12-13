@@ -399,7 +399,7 @@ html[data-route^="/studio"].dark body {
 }
 
 .dark .footer-logo {
-  filter: brightness(1) invert(0) !important;
+  /* No filter - render PNG as-is */
 }
 
 .dark .social-link {

@@ -63,6 +63,7 @@ interface MenuItemLite {
   source?: string
   image?: SanityImageSource
   imageUrl?: string
+  availableEverywhere?: boolean
   locationOverrides?: LocationOverride[]
 }
 
@@ -79,7 +80,8 @@ interface MenuItemDetail {
   description?: string
   basePrice?: number
   category?: { _type: 'reference'; _ref: string }
-  locationOverrides?: unknown
+  availableEverywhere?: boolean
+  locationOverrides?: LocationOverride[]
   source?: string
   externalId?: string
   image?: SanityImageSource
@@ -210,11 +212,13 @@ function formatMenuItemDescription(desc: string): string {
 function IOSToggle({
   checked,
   onChange,
-  size = 'default'
+  size = 'default',
+  disabled = false
 }: {
   checked: boolean
   onChange: (checked: boolean) => void
   size?: 'small' | 'default'
+  disabled?: boolean
 }) {
   // Sizes based on iOS 26 pill toggle dimensions
   const dimensions = size === 'small'
@@ -228,14 +232,16 @@ function IOSToggle({
         display: 'inline-block',
         width: dimensions.width,
         height: dimensions.height,
-        cursor: 'pointer',
+        cursor: disabled ? 'not-allowed' : 'pointer',
         flexShrink: 0,
+        opacity: disabled ? 0.5 : 1,
       }}
     >
       <input
         type="checkbox"
         checked={checked}
-        onChange={(e) => onChange(e.target.checked)}
+        disabled={disabled}
+        onChange={(e) => !disabled && onChange(e.target.checked)}
         style={{
           opacity: 0,
           width: 0,
@@ -246,7 +252,7 @@ function IOSToggle({
       <span
         style={{
           position: 'absolute',
-          cursor: 'pointer',
+          cursor: disabled ? 'not-allowed' : 'pointer',
           top: 0,
           left: 0,
           right: 0,
@@ -391,6 +397,7 @@ function ListItem({
 function LocationRow({
   location,
   available,
+  availabilityDisabled = false,
   hasOverride,
   currentPrice,
   basePrice,
@@ -399,6 +406,7 @@ function LocationRow({
 }: {
   location: LocationDoc
   available: boolean
+  availabilityDisabled?: boolean
   hasOverride: boolean
   currentPrice?: number
   basePrice?: number
@@ -407,6 +415,13 @@ function LocationRow({
 }) {
   // Extract short name (remove "The Catch — " prefix if present)
   const shortName = location.name.replace(/^The Catch\s*[—–-]\s*/i, '')
+
+  // Tooltip text depends on whether availability can be toggled
+  const tooltipText = availabilityDisabled
+    ? 'Available everywhere (cannot be disabled per-location)'
+    : available
+      ? 'Available at this location'
+      : 'Not offered here'
 
   return (
     <Flex
@@ -423,7 +438,7 @@ function LocationRow({
       <Tooltip
         content={
           <Box padding={2}>
-            <Text size={1}>{available ? 'Available at this location' : 'Not offered here'}</Text>
+            <Text size={1}>{tooltipText}</Text>
           </Box>
         }
         placement="top"
@@ -434,6 +449,7 @@ function LocationRow({
             checked={available}
             onChange={onAvailabilityToggle}
             size="small"
+            disabled={availabilityDisabled}
           />
         </Box>
       </Tooltip>
@@ -545,7 +561,7 @@ export function MenuManagerPane() {
         const [itemsResp, catsResp] = await Promise.all([
           client.fetch(
             `*[_type == "menuItem" && !(_id in path('drafts.**'))]{
-              _id, name, basePrice, source, image, imageUrl,
+              _id, name, basePrice, source, image, imageUrl, availableEverywhere,
               category->{title,slug},
               locationOverrides
             }|order(name asc)`
@@ -561,6 +577,7 @@ export function MenuManagerPane() {
               source: i.source,
               image: i.image,
               imageUrl: i.imageUrl,
+              availableEverywhere: i.availableEverywhere,
               categoryTitle: i.category?.title,
               categorySlug: i.category?.slug?.current,
               locationOverrides: i.locationOverrides,
@@ -594,7 +611,7 @@ export function MenuManagerPane() {
         const doc = await client.fetch<MenuItemDetail>(
           `*[_id == $id][0]{
             _id, name, slug, description, basePrice, category,
-            locationOverrides, source, externalId, image, imageUrl
+            availableEverywhere, locationOverrides, source, externalId, image, imageUrl
           }`,
           { id: selectedId }
         )
@@ -685,19 +702,20 @@ export function MenuManagerPane() {
       const matchesCat = categoryFilter ? item.categorySlug === categoryFilter : true
 
       // Location filter: check if item is available at the selected location
-      // Match the website logic from Menu2PageClient.tsx:
-      // - If item has locationOverrides with entries:
-      //   - If no override for this location OR override.available === false → NOT available
-      // - If item has no locationOverrides → available everywhere
+      // Matches lib/utils/menuAvailability.ts OPT-IN MODEL:
+      // - If availableEverywhere === true: always available (no per-location opt-out)
+      // - Otherwise: must have explicit available: true for this location
       let isAvailable = true
       if (locationFilter) {
-        const overrides = item.locationOverrides || []
-        if (overrides.length > 0) {
+        if (item.availableEverywhere === true) {
+          // Universal items show everywhere - no per-location opt-out
+          isAvailable = true
+        } else {
+          // OPT-IN: must have explicit available: true
+          const overrides = item.locationOverrides || []
           const locationOverride = overrides.find(ov => ov.location?._ref === locationFilter)
-          // Must have an override AND it must not be explicitly unavailable
-          isAvailable = Boolean(locationOverride) && locationOverride?.available !== false
+          isAvailable = locationOverride?.available === true
         }
-        // If no overrides exist, item shows everywhere (isAvailable stays true)
       }
 
       // When showUnlisted is true and a location is selected, show items NOT at that location
@@ -713,7 +731,25 @@ export function MenuManagerPane() {
   const upsertOverride = (locationId: string, updater: (current?: LocationOverride) => LocationOverride | null) => {
     if (!detail) return
     const current = overrides.find((ov) => ov.location?._ref === locationId)
-    const next = updater(current)
+    let next = updater(current)
+
+    // Remove semantically redundant overrides (centralized logic)
+    // In opt-in mode (availableEverywhere !== true):
+    //   - available: false or undefined with no price is redundant (that's the default)
+    // In opt-out mode (availableEverywhere === true):
+    //   - available: true or undefined with no price is redundant (that's the default)
+    if (next) {
+      const hasPrice = typeof next.price === 'number'
+      const isRedundant = !hasPrice && (
+        detail.availableEverywhere === true
+          ? next.available !== false  // Keep only if has price or explicitly false
+          : next.available !== true   // Keep only if has price or explicitly true
+      )
+      if (isRedundant) {
+        next = null
+      }
+    }
+
     const remaining = overrides.filter((ov) => ov.location?._ref !== locationId)
     const nextArray = next ? [...remaining, next] : remaining
     setDetail((d) => (d ? { ...d, locationOverrides: nextArray.length ? nextArray : undefined } : d))
@@ -721,6 +757,12 @@ export function MenuManagerPane() {
   }
 
   const handleAvailabilityToggle = (locationId: string, available: boolean) => {
+    // In opt-out mode (availableEverywhere === true), toggling off is not supported
+    // Items are always available at all locations when availableEverywhere is enabled
+    if (detail?.availableEverywhere === true && available === false) {
+      return  // Ignore attempts to toggle off in opt-out mode
+    }
+
     upsertOverride(locationId, (current) => ({
       _key: current?._key || createKey(),
       location: { _type: 'reference', _ref: locationId },
@@ -735,7 +777,9 @@ export function MenuManagerPane() {
     upsertOverride(locationId, (current) => ({
       _key: current?._key || createKey(),
       location: { _type: 'reference', _ref: locationId },
-      available: current?.available ?? true,
+      // In opt-out mode, omit available field (it's redundant - always available)
+      // In opt-in mode, default to true when setting a price (implies intent to sell)
+      available: detail?.availableEverywhere === true ? undefined : (current?.available ?? true),
       price: nextPrice,
     }))
   }
@@ -792,6 +836,7 @@ export function MenuManagerPane() {
         description: detail.description,
         basePrice: detail.basePrice,
         category: detail.category,
+        availableEverywhere: detail.availableEverywhere,
         locationOverrides: detail.locationOverrides,
         source: detail.source,
         externalId: detail.externalId,
@@ -806,10 +851,10 @@ export function MenuManagerPane() {
       await patch.commit({ autoGenerateArrayKeys: true })
       setSaved(true)
       setSaving(false)
-      // Update list item thumbnail
+      // Update list item with saved values
       setItems(prev => prev.map(item =>
         item._id === detail._id
-          ? { ...item, image: detail.image, imageUrl: detail.imageUrl }
+          ? { ...item, image: detail.image, imageUrl: detail.imageUrl, availableEverywhere: detail.availableEverywhere }
           : item
       ))
       setTimeout(() => setSaved(false), 3000)
@@ -1244,7 +1289,7 @@ export function MenuManagerPane() {
                     id="location-tab"
                     aria-controls="location"
                     icon={MapPin}
-                    label="Location Pricing"
+                    label="Pricing & Availability"
                     selected={tab === 1}
                     onClick={() => setTab(1)}
                     fontSize={1}
@@ -1482,9 +1527,33 @@ export function MenuManagerPane() {
                   </Box>
                 </TabPanel>
 
-                {/* Location Pricing Tab - Two column layout: DFW+Houston left, Oklahoma+Other right */}
+                {/* Pricing & Availability Tab - Two column layout: DFW+Houston left, Oklahoma+Other right */}
                 <TabPanel id="location" aria-labelledby="location-tab" hidden={tab !== 1}>
-                  <Stack space={3}>
+                  <Stack space={4}>
+                    {/* Available Everywhere Toggle */}
+                    <Card padding={3} radius={2} style={{ background: 'var(--card-skeleton-color-from)' }}>
+                      <Flex align="center" justify="space-between">
+                        <Stack space={2}>
+                          <FieldLabel
+                            label="Available Everywhere"
+                            tooltip="When enabled, this item is available at all locations and cannot be disabled on individual locations. When disabled, availability must be opted-in per location."
+                          />
+                          <Text size={1} muted>
+                            {detail.availableEverywhere
+                              ? 'Available at all locations (per-location toggles set prices only)'
+                              : 'Opt-in model — must enable per location'}
+                          </Text>
+                        </Stack>
+                        <IOSToggle
+                          checked={detail.availableEverywhere === true}
+                          onChange={(checked) => {
+                            setDetail((d) => (d ? { ...d, availableEverywhere: checked } : d))
+                            setSaved(false)
+                          }}
+                        />
+                      </Flex>
+                    </Card>
+
                     <Text size={1} muted>
                       Toggle availability and set custom prices. Base price: <strong style={{ fontFamily: 'monospace' }}>${detail.basePrice?.toFixed(2) || '—'}</strong>
                     </Text>
@@ -1517,13 +1586,19 @@ export function MenuManagerPane() {
                               </Box>
                               {group.items.map((loc) => {
                                 const current = overrides.find((ov) => ov.location?._ref === loc._id)
-                                const isAvailable = current ? current.available !== false : true
+                                // Matches lib/utils/menuAvailability.ts OPT-IN MODEL:
+                                // - If availableEverywhere: always available (no per-location opt-out)
+                                // - Otherwise: must have explicit available: true
+                                const isAvailable = detail.availableEverywhere === true
+                                  ? true
+                                  : current?.available === true
                                 return (
                                   <LocationRow
                                     key={loc._id}
                                     location={loc}
                                     available={isAvailable}
-                                    hasOverride={Boolean(current?.price)}
+                                    availabilityDisabled={detail.availableEverywhere === true}
+                                    hasOverride={typeof current?.price === 'number'}
                                     currentPrice={current?.price}
                                     basePrice={detail.basePrice}
                                     onAvailabilityToggle={(available) => handleAvailabilityToggle(loc._id, available)}
@@ -1553,13 +1628,19 @@ export function MenuManagerPane() {
                               </Box>
                               {group.items.map((loc) => {
                                 const current = overrides.find((ov) => ov.location?._ref === loc._id)
-                                const isAvailable = current ? current.available !== false : true
+                                // Matches lib/utils/menuAvailability.ts OPT-IN MODEL:
+                                // - If availableEverywhere: always available (no per-location opt-out)
+                                // - Otherwise: must have explicit available: true
+                                const isAvailable = detail.availableEverywhere === true
+                                  ? true
+                                  : current?.available === true
                                 return (
                                   <LocationRow
                                     key={loc._id}
                                     location={loc}
                                     available={isAvailable}
-                                    hasOverride={Boolean(current?.price)}
+                                    availabilityDisabled={detail.availableEverywhere === true}
+                                    hasOverride={typeof current?.price === 'number'}
                                     currentPrice={current?.price}
                                     basePrice={detail.basePrice}
                                     onAvailabilityToggle={(available) => handleAvailabilityToggle(loc._id, available)}

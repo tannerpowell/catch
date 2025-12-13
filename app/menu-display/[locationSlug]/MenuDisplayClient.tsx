@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import type { Location, MenuCategory, MenuItem } from "@/lib/types";
 import styles from "./MenuDisplay.module.css";
 
@@ -39,7 +39,10 @@ function getEffectivePrice(item: MenuItem, locationSlug: string): number | null 
 
 export default function MenuDisplayClient({ location, categories, items }: Props) {
   const router = useRouter();
-  const [currentPage, setCurrentPage] = useState(0);
+  const searchParams = useSearchParams();
+  const pageParam = searchParams.get("page");
+  const fixedPage = pageParam ? parseInt(pageParam, 10) - 1 : null; // Convert to 0-indexed
+  const [currentPage, setCurrentPage] = useState(fixedPage ?? 0);
 
   // Build flat list of all menu items with category headers
   const displayItems = useMemo(() => {
@@ -141,14 +144,21 @@ export default function MenuDisplayClient({ location, categories, items }: Props
     return () => clearInterval(refreshTimer);
   }, [router]);
 
-  // Auto-rotate pages if more than one page
+  // Auto-rotate pages if more than one page AND no fixed page specified
   useEffect(() => {
-    if (totalPages <= 1) return;
+    if (totalPages <= 1 || fixedPage !== null) return;
     const rotateTimer = setInterval(() => {
       setCurrentPage((prev) => (prev + 1) % totalPages);
     }, PAGE_ROTATION_INTERVAL);
     return () => clearInterval(rotateTimer);
-  }, [totalPages]);
+  }, [totalPages, fixedPage]);
+
+  // Sync currentPage with fixedPage when URL changes
+  useEffect(() => {
+    if (fixedPage !== null) {
+      setCurrentPage(fixedPage);
+    }
+  }, [fixedPage]);
 
   // Get items for current page
   const pageItems = pages[currentPage] || [];
@@ -185,8 +195,8 @@ export default function MenuDisplayClient({ location, categories, items }: Props
         ))}
       </main>
 
-      {/* Minimal page indicator */}
-      {totalPages > 1 && (
+      {/* Minimal page indicator - only show when rotating (no fixed page) */}
+      {totalPages > 1 && fixedPage === null && (
         <div className={styles.pageIndicator}>
           {currentPage + 1} / {totalPages}
         </div>

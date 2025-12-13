@@ -26,7 +26,6 @@ export default function FooterSimple() {
             width={200}
             height={64}
             className="footer-logo"
-            style={{ filter: "brightness(0) invert(1)" }}
           />
         </div>
 
