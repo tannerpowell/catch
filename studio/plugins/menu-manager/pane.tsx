@@ -688,19 +688,18 @@ export function MenuManagerPane() {
       const matchesCat = categoryFilter ? item.categorySlug === categoryFilter : true
 
       // Location filter: check if item is available at the selected location
-      // OPT-IN MODEL (matches lib/utils/menuAvailability.ts):
-      // - If availableEverywhere === true: available UNLESS explicitly opted out
+      // Matches lib/utils/menuAvailability.ts OPT-IN MODEL:
+      // - If availableEverywhere === true: always available (no per-location opt-out)
       // - Otherwise: must have explicit available: true for this location
       let isAvailable = true
       if (locationFilter) {
-        const overrides = item.locationOverrides || []
-        const locationOverride = overrides.find(ov => ov.location?._ref === locationFilter)
-
         if (item.availableEverywhere === true) {
-          // Available everywhere UNLESS explicitly opted out for this location
-          isAvailable = locationOverride?.available !== false
+          // Universal items show everywhere - no per-location opt-out
+          isAvailable = true
         } else {
           // OPT-IN: must have explicit available: true
+          const overrides = item.locationOverrides || []
+          const locationOverride = overrides.find(ov => ov.location?._ref === locationFilter)
           isAvailable = locationOverride?.available === true
         }
       }
@@ -1564,11 +1563,11 @@ export function MenuManagerPane() {
                               </Box>
                               {group.items.map((loc) => {
                                 const current = overrides.find((ov) => ov.location?._ref === loc._id)
-                                // OPT-IN MODEL with per-location opt-out support:
-                                // - If availableEverywhere: available UNLESS explicitly opted out
+                                // Matches lib/utils/menuAvailability.ts OPT-IN MODEL:
+                                // - If availableEverywhere: always available (no per-location opt-out)
                                 // - Otherwise: must have explicit available: true
                                 const isAvailable = detail.availableEverywhere === true
-                                  ? current?.available !== false
+                                  ? true
                                   : current?.available === true
                                 return (
                                   <LocationRow
@@ -1605,11 +1604,11 @@ export function MenuManagerPane() {
                               </Box>
                               {group.items.map((loc) => {
                                 const current = overrides.find((ov) => ov.location?._ref === loc._id)
-                                // OPT-IN MODEL with per-location opt-out support:
-                                // - If availableEverywhere: available UNLESS explicitly opted out
+                                // Matches lib/utils/menuAvailability.ts OPT-IN MODEL:
+                                // - If availableEverywhere: always available (no per-location opt-out)
                                 // - Otherwise: must have explicit available: true
                                 const isAvailable = detail.availableEverywhere === true
-                                  ? current?.available !== false
+                                  ? true
                                   : current?.available === true
                                 return (
                                   <LocationRow
