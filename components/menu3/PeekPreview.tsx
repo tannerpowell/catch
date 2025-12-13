@@ -2,7 +2,8 @@
 
 import React from 'react';
 import Image from 'next/image';
-import type { MenuItem, Badge } from '@/lib/types';
+import type { MenuItem } from '@/lib/types';
+import { BADGE_INFO } from '@/lib/constants/badges';
 
 interface PeekPreviewProps {
   item: MenuItem | null;
@@ -13,19 +14,6 @@ interface PeekPreviewProps {
   floatPosition?: { top: number; left: number };
   onClose?: () => void;
 }
-
-// Badge display info
-const BADGE_INFO: Partial<Record<Badge, { label: string; color: string }>> = {
-  'Spicy': { label: 'Spicy', color: '#e74c3c' },
-  'Vegetarian': { label: 'Vegetarian', color: '#27ae60' },
-  'Gluten-Free': { label: 'GF', color: '#8e44ad' },
-  'Family Favorite': { label: 'Favorite', color: '#f39c12' },
-  'Cajun': { label: 'Cajun', color: '#d35400' },
-  'Fried': { label: 'Fried', color: '#c9a96a' },
-  'Grilled': { label: 'Grilled', color: '#6d4c41' },
-  'Boiled': { label: 'Boiled', color: '#3498db' },
-  'Market Price': { label: 'Market Price', color: '#7f8c8d' },
-};
 
 /**
  * Peek preview card shown on hover/focus.
@@ -109,7 +97,6 @@ export function PeekPreview({
             fill
             sizes={mode === 'dock' ? '280px' : '200px'}
             style={{ objectFit: 'cover' }}
-            priority
           />
         </div>
       )}

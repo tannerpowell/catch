@@ -23,13 +23,14 @@ function isValidPrice(price: number | null | undefined): price is number {
 }
 
 /**
- * Render an "Add to Cart" button that adds the provided menu item to the cart, prompts to switch locations when necessary, and shows a success confirmation.
+ * Render an "Add to Cart" button that adds the provided menu item to the cart
+ * and prompts to switch locations when necessary.
  *
  * @param menuItem - The menu item to add when the button is pressed.
  * @param location - The location to associate with the cart addition.
  * @param className - Optional additional CSS class names to apply to the button.
  * @param disabled - If `true`, the button is rendered disabled and interaction is prevented.
- * @returns The button element plus any modals used for location switching and success confirmation.
+ * @returns The button element plus any modals used for location switching and modifier selection.
  */
 export function AddToCartButton({
   menuItem,
@@ -84,6 +85,7 @@ export function AddToCartButton({
   };
 
   const handleModifierAddToCart = (modifiers: CartModifier[], specialInstructions: string, quantity: number) => {
+    if (!isHydrated || !cart) return;
     if (!isValidPrice(menuItem.price)) return;
 
     // Calculate total price including modifiers

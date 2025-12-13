@@ -1,20 +1,19 @@
 'use client';
 
-import React, { useState, useMemo, useCallback, useRef } from 'react';
+import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import type { MenuItem, Location, CartModifier } from '@/lib/types';
 import { MenuItemRow } from './MenuItemRow';
 import { MenuItemModal } from './MenuItemModal';
 import ModifierSelectionModal from '@/components/cart/ModifierSelectionModal';
 import { useCart } from '@/lib/contexts/CartContext';
 import { isItemAvailableAtLocation, getItemPriceAtLocation } from '@/lib/utils/menuAvailability';
-import { useHoverIntent } from '@/lib/hooks/useHoverIntent';
 
 interface MenuListProps {
   items: MenuItem[];
   locations: Location[];
   selectedLocationSlug: string;
   searchTerm: string;
-  containerRef: React.RefObject<HTMLDivElement>;
+  containerRef: React.MutableRefObject<HTMLDivElement | null>;
   onItemHover: (item: MenuItem | null, price: number | null) => void;
   imageMap: Record<string, string>;
 }
@@ -46,7 +45,16 @@ export function MenuList({
   const [modalPrice, setModalPrice] = useState<number | null>(null);
   const [modifierItem, setModifierItem] = useState<MenuItem | null>(null);
   const [hoveredItemId, setHoveredItemId] = useState<string | null>(null);
-  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Cleanup hover timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const { addToCart } = useCart();
   const selectedLocation = locations.find(l => l.slug === selectedLocationSlug) || locations[0];
@@ -133,10 +141,14 @@ export function MenuList({
 
   // Handle modifier modal add to cart
   const handleModifierAddToCart = useCallback((modifiers: CartModifier[], specialInstructions: string, quantity: number) => {
-    if (!modifierItem || modifierItem.price == null) return;
+    if (!modifierItem) return;
+
+    // Use location-specific pricing
+    const basePrice = getItemPriceAtLocation(modifierItem, selectedLocationSlug);
+    if (basePrice == null) return;
 
     const modifierTotal = modifiers.reduce((sum, m) => sum + m.priceDelta, 0);
-    const itemPrice = modifierItem.price + modifierTotal;
+    const itemPrice = basePrice + modifierTotal;
 
     addToCart(
       {
@@ -150,7 +162,7 @@ export function MenuList({
     );
 
     setModifierItem(null);
-  }, [modifierItem, addToCart, selectedLocation]);
+  }, [modifierItem, addToCart, selectedLocation, selectedLocationSlug]);
 
   // Normalize search term
   const normalizedSearch = searchTerm.toLowerCase().trim();
@@ -207,12 +219,14 @@ export function MenuList({
       )}
 
       {/* Modifier Modal - for items with modifiers */}
-      <ModifierSelectionModal
-        isOpen={!!modifierItem}
-        onClose={() => setModifierItem(null)}
-        onAddToCart={handleModifierAddToCart}
-        menuItem={modifierItem || { id: '', name: '', slug: '', categorySlug: '', price: 0 } as MenuItem}
-      />
+      {modifierItem && (
+        <ModifierSelectionModal
+          isOpen={true}
+          onClose={() => setModifierItem(null)}
+          onAddToCart={handleModifierAddToCart}
+          menuItem={modifierItem}
+        />
+      )}
 
       <style jsx>{`
         .menu3-list {

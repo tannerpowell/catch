@@ -13,7 +13,6 @@ import type { MenuItem, ModifierGroup, ModifierOption, CartModifier } from '@/li
 function useMountedRef() {
   const mounted = useRef(true);
   useEffect(() => {
-    mounted.current = true;
     return () => { mounted.current = false; };
   }, []);
   return mounted;

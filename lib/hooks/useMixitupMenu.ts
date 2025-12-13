@@ -12,7 +12,7 @@ interface UseMixitupMenuOptions {
 
 interface UseMixitupMenuReturn {
   /** Ref to attach to the container element */
-  containerRef: React.RefObject<HTMLDivElement>;
+  containerRef: React.MutableRefObject<HTMLDivElement | null>;
   /** Whether MixItUp is initialized and ready */
   isReady: boolean;
   /** Apply a filter. Uses compound selectors for location + category */
@@ -77,8 +77,8 @@ export function useMixitupMenu(options: UseMixitupMenuOptions = {}): UseMixitupM
     import('mixitup').then((mixitup) => {
       if (!mounted || !containerRef.current || mixerRef.current) return;
 
-      // Build initial filter string
-      let initialFilter = 'all';
+      // Build initial filter string - use 'none' if no location (location-first UX)
+      let initialFilter = 'none';
       if (initialLocation) {
         initialFilter = `.location-${initialLocation}`;
         if (initialCategory) {
@@ -101,6 +101,9 @@ export function useMixitupMenu(options: UseMixitupMenuOptions = {}): UseMixitupM
       });
 
       setIsReady(true);
+    }).catch((err) => {
+      // eslint-disable-next-line no-console
+      console.error('Failed to load MixItUp', err);
     });
 
     return () => {
@@ -170,7 +173,8 @@ export function useMixitupMenu(options: UseMixitupMenuOptions = {}): UseMixitupM
   const relayout = useCallback(() => {
     if (mixerRef.current) {
       const { location, category } = currentFilterRef.current;
-      let filterString = location ? `.location-${location}` : 'all';
+      // Use 'none' if no location (consistent with applyFilter behavior)
+      let filterString = location ? `.location-${location}` : 'none';
       if (location && category) {
         filterString += `.category-${category}`;
       }
@@ -179,7 +183,7 @@ export function useMixitupMenu(options: UseMixitupMenuOptions = {}): UseMixitupM
   }, []);
 
   return {
-    containerRef: containerRef as React.RefObject<HTMLDivElement>,
+    containerRef,
     isReady,
     applyFilter,
     applySearch,

@@ -44,8 +44,9 @@ export function useHoverIntent(options: UseHoverIntentOptions = {}): UseHoverInt
   const { delayIn = 120, delayOut = 200 } = options;
 
   const [isHovered, setIsHovered] = useState(false);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isFocusedRef = useRef(false);
+  const isPointerOverRef = useRef(false);
 
   // Clean up timeout on unmount
   useEffect(() => {
@@ -64,6 +65,7 @@ export function useHoverIntent(options: UseHoverIntentOptions = {}): UseHoverInt
   }, []);
 
   const onMouseEnter = useCallback(() => {
+    isPointerOverRef.current = true;
     clearPendingTimeout();
     timeoutRef.current = setTimeout(() => {
       setIsHovered(true);
@@ -71,6 +73,7 @@ export function useHoverIntent(options: UseHoverIntentOptions = {}): UseHoverInt
   }, [delayIn, clearPendingTimeout]);
 
   const onMouseLeave = useCallback(() => {
+    isPointerOverRef.current = false;
     clearPendingTimeout();
     // Don't hide if still focused via keyboard
     if (isFocusedRef.current) return;
@@ -89,6 +92,9 @@ export function useHoverIntent(options: UseHoverIntentOptions = {}): UseHoverInt
   const onBlur = useCallback(() => {
     isFocusedRef.current = false;
     clearPendingTimeout();
+    // Don't hide if pointer is still over the element
+    if (isPointerOverRef.current) return;
+
     timeoutRef.current = setTimeout(() => {
       setIsHovered(false);
     }, delayOut);

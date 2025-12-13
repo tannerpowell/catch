@@ -96,8 +96,8 @@ export function useNearestLocation(options: UseNearestLocationOptions): UseNeare
         let shortestDistance = Infinity;
 
         for (const location of locations) {
-          // Skip locations without geo coordinates
-          if (!location.geo?.lat || !location.geo?.lng) continue;
+          // Skip locations without geo coordinates (use null check, not truthiness - 0 is valid)
+          if (location.geo?.lat == null || location.geo?.lng == null) continue;
 
           const distance = getDistance(latitude, longitude, location.geo.lat, location.geo.lng);
           if (distance < shortestDistance) {

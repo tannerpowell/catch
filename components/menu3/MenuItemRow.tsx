@@ -81,6 +81,7 @@ export const MenuItemRow = forwardRef<HTMLButtonElement, MenuItemRowProps>(
                   key={badge}
                   className="menu3-item-badge"
                   title={badge}
+                  aria-hidden="true"
                 >
                   {BADGE_ICONS[badge] || badge.charAt(0)}
                 </span>

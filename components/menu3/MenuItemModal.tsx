@@ -2,8 +2,9 @@
 
 import React, { useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
-import type { MenuItem, Badge, Location } from '@/lib/types';
+import type { MenuItem, Location } from '@/lib/types';
 import { AddToCartButton } from '@/components/cart/AddToCartButton';
+import { BADGE_INFO } from '@/lib/constants/badges';
 
 interface MenuItemModalProps {
   item: MenuItem;
@@ -14,19 +15,6 @@ interface MenuItemModalProps {
   /** Called when user wants to add an item with modifiers - parent handles the modifier modal */
   onOpenModifiers?: (item: MenuItem) => void;
 }
-
-// Badge display info
-const BADGE_INFO: Partial<Record<Badge, { label: string; color: string }>> = {
-  'Spicy': { label: 'Spicy', color: '#e74c3c' },
-  'Vegetarian': { label: 'Vegetarian', color: '#27ae60' },
-  'Gluten-Free': { label: 'Gluten-Free', color: '#8e44ad' },
-  'Family Favorite': { label: 'Family Favorite', color: '#f39c12' },
-  'Cajun': { label: 'Cajun', color: '#d35400' },
-  'Fried': { label: 'Fried', color: '#c9a96a' },
-  'Grilled': { label: 'Grilled', color: '#6d4c41' },
-  'Boiled': { label: 'Boiled', color: '#3498db' },
-  'Market Price': { label: 'Market Price', color: '#7f8c8d' },
-};
 
 /**
  * Full detail modal for menu items.
@@ -58,7 +46,8 @@ export function MenuItemModal({
       // Store previously focused element
       previousActiveElement.current = document.activeElement;
 
-      // Lock body scroll
+      // Lock body scroll (preserve original value)
+      const originalOverflow = document.body.style.overflow;
       document.body.style.overflow = 'hidden';
 
       // Add ESC listener
@@ -70,7 +59,7 @@ export function MenuItemModal({
       }, 50);
 
       return () => {
-        document.body.style.overflow = '';
+        document.body.style.overflow = originalOverflow;
         document.removeEventListener('keydown', handleKeyDown);
 
         // Restore focus

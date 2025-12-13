@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "The Catch Menu — Fresh Seafood Baskets & Boils",
     description: "Explore our menu of fresh Gulf Coast seafood: catfish baskets, shrimp boils, crawfish tails, and more.",
-    images: ["/dfw-images/Different menu items served on the table, top view.jpg"]
+    images: ["/dfw-images/Different%20menu%20items%20served%20on%20the%20table,%20top%20view.jpg"]
   }
 };
 

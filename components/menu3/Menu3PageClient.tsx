@@ -152,7 +152,7 @@ export default function Menu3PageClient({
             locations={locations}
             selectedLocationSlug={selectedSlug}
             searchTerm={searchTerm}
-            containerRef={containerRef as React.RefObject<HTMLDivElement>}
+            containerRef={containerRef}
             onItemHover={handleItemHover}
             imageMap={imageMap}
           />

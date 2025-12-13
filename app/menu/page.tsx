@@ -13,6 +13,11 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: 'Menu | The Catch',
   description: 'Browse our full menu of Gulf Coast seafood - baskets, boils, salads, and more. Fresh seafood at 16 locations across Texas and Oklahoma.',
+  openGraph: {
+    title: 'The Catch Menu — Fresh Seafood Baskets & Boils',
+    description: 'Explore our menu of fresh Gulf Coast seafood: catfish baskets, shrimp boils, crawfish tails, and more.',
+    images: ['/dfw-images/Different%20menu%20items%20served%20on%20the%20table,%20top%20view.jpg'],
+  },
 };
 
 type ImageMap = Record<string, string>;
@@ -27,16 +32,22 @@ function slugify(input: string) {
 }
 
 function buildDfwImageMap(): ImageMap {
-  const dir = path.resolve('public/dfw-images');
-  if (!fs.existsSync(dir)) return {};
-  const entries = fs.readdirSync(dir).filter(f => /\.(png|jpe?g|webp|avif)$/i.test(f));
-  const map: ImageMap = {};
-  for (const file of entries) {
-    const base = file.replace(/\.[^.]+$/, '');
-    const key = slugify(base);
-    map[key] = `/dfw-images/${file}`;
+  try {
+    const dir = path.resolve('public/dfw-images');
+    if (!fs.existsSync(dir)) return {};
+    const entries = fs.readdirSync(dir).filter(f => /\.(png|jpe?g|webp|avif)$/i.test(f));
+    const map: ImageMap = {};
+    for (const file of entries) {
+      const base = file.replace(/\.[^.]+$/, '');
+      const key = slugify(base);
+      map[key] = `/dfw-images/${file}`;
+    }
+    return map;
+  } catch {
+    // eslint-disable-next-line no-console
+    console.error('Failed to build DFW image map');
+    return {};
   }
-  return map;
 }
 
 /**
