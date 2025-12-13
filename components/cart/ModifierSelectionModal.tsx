@@ -187,14 +187,33 @@ export default function ModifierSelectionModal({
     >
       <Sheet.Portal>
         <Sheet.View className={styles.sheetView} nativeEdgeSwipePrevention={true}>
-          <Sheet.Backdrop className={styles.sheetBackdrop} themeColorDimming="auto" />
+          <Sheet.Backdrop className={styles.sheetBackdrop} />
           <Sheet.Content className={styles.sheetContent}>
             <Sheet.BleedingBackground className={styles.sheetBackground} />
 
-            {/* Drag handle */}
-            <div className={styles.dragHandle}>
-              <div className={styles.dragHandleBar} />
+            {/* Header row with drag handle and close button */}
+            <div className={styles.headerRow}>
+              <div className={styles.dragHandle}>
+                <div className={styles.dragHandleBar} />
+              </div>
+              <button
+                type="button"
+                className={styles.closeButton}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onClose();
+                }}
+                aria-label="Close"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 6 6 18M6 6l12 12" />
+                </svg>
+              </button>
             </div>
+
+            {/* Sheet title */}
+            <div className={styles.sheetTitle}>Customize Your Order</div>
 
             {/* Scrollable content */}
             <div className={styles.scrollWrapper}>
@@ -203,7 +222,7 @@ export default function ModifierSelectionModal({
                 className={styles.scrollContainer}
                 onScroll={handleScroll}
               >
-              {/* Header */}
+              {/* Item header */}
               <div className={styles.header}>
                 {menuItem.image && (
                   <div className={styles.headerImage}>
