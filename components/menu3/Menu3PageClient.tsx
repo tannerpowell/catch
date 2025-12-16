@@ -30,14 +30,13 @@ interface Menu3PageClientProps {
  * - Horizontal category chips
  * - Tap-to-peek behavior
  */
-export default function Menu3PageClient({
-  categories,
-  items,
-  locations,
-  imageMap,
-}: Menu3PageClientProps) {
-  // Guard against empty locations array
-  if (!locations.length) {
+/**
+ * Wrapper component that handles the empty locations case.
+ * This is necessary to comply with React's rules of hooks -
+ * the inner component uses hooks that must be called unconditionally.
+ */
+export default function Menu3PageClient(props: Menu3PageClientProps) {
+  if (!props.locations.length) {
     return (
       <div className="menu3-page menu3-empty">
         <p>No locations available.</p>
@@ -45,7 +44,20 @@ export default function Menu3PageClient({
     );
   }
 
-  // Location state
+  return <Menu3PageClientInner {...props} />;
+}
+
+/**
+ * Inner component containing all hooks and rendering logic.
+ * Only rendered when locations array is non-empty.
+ */
+function Menu3PageClientInner({
+  categories,
+  items,
+  locations,
+  imageMap,
+}: Menu3PageClientProps) {
+  // Location state - safe to access locations[0] since wrapper guarantees non-empty
   const defaultLocation = locations.find(l => l.slug === 'denton') || locations[0];
   const {
     selectedSlug,

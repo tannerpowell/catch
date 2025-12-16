@@ -96,35 +96,32 @@ export function CategoryNav({
         Categories
       </div>
 
-      {/* Category list - using menu/menuitemradio for interactive button group */}
-      <ul className="menu3-category-list" role="menu" aria-label="Filter by category">
+      {/* Category list - using radiogroup/radio for mutually exclusive selection */}
+      <div className="menu3-category-list" role="radiogroup" aria-label="Filter by category">
         {/* All Categories option */}
-        <li role="none">
-          <button
-            type="button"
-            className={`menu3-category-item menu3-type-category ${selectedCategory === '' ? 'is-active' : ''}`}
-            onClick={() => onCategoryChange('')}
-            role="menuitemradio"
-            aria-checked={selectedCategory === ''}
-          >
-            <span className="menu3-category-item-text">All Categories</span>
-          </button>
-        </li>
+        <button
+          type="button"
+          className={`menu3-category-item menu3-type-category ${selectedCategory === '' ? 'is-active' : ''}`}
+          onClick={() => onCategoryChange('')}
+          role="radio"
+          aria-checked={selectedCategory === ''}
+        >
+          <span className="menu3-category-item-text">All Categories</span>
+        </button>
 
         {visibleCategories.map(category => (
-          <li key={category.slug} role="none">
-            <button
-              type="button"
-              className={`menu3-category-item menu3-type-category ${selectedCategory === category.slug ? 'is-active' : ''}`}
-              onClick={() => onCategoryChange(category.slug)}
-              role="menuitemradio"
-              aria-checked={selectedCategory === category.slug}
-            >
-              <span className="menu3-category-item-text">{category.title}</span>
-            </button>
-          </li>
+          <button
+            key={category.slug}
+            type="button"
+            className={`menu3-category-item menu3-type-category ${selectedCategory === category.slug ? 'is-active' : ''}`}
+            onClick={() => onCategoryChange(category.slug)}
+            role="radio"
+            aria-checked={selectedCategory === category.slug}
+          >
+            <span className="menu3-category-item-text">{category.title}</span>
+          </button>
         ))}
-      </ul>
+      </div>
 
       <style jsx>{`
         .menu3-category-nav {
@@ -226,7 +223,7 @@ export function CategoryNav({
           transition: all 0.15s ease;
         }
 
-        .menu3-category-list li:last-child .menu3-category-item {
+        .menu3-category-item:last-child {
           border-bottom: none;
         }
 
