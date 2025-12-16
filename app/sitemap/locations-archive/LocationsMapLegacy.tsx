@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import styles from './LocationsMap.module.css';
+import styles from './LocationsMapLegacy.module.css';
 import { fallbackGeoCoordinates } from '@/lib/adapters/sanity-catch';
 
 interface Location {
@@ -22,9 +22,6 @@ interface Location {
 interface LocationsMapProps {
   locations: Location[];
   onLocationSelect?: (slug: string) => void;
-  minimal?: boolean; // Hide controls overlay
-  userCoords?: [number, number] | null; // [lng, lat] - user's location
-  nearestCoords?: [number, number] | null; // [lng, lat] - nearest restaurant location
 }
 
 // Format phone for display
@@ -232,7 +229,7 @@ const locationCoords: Record<string, [number, number]> = Object.fromEntries(
   Object.entries(fallbackGeoCoordinates).map(([slug, { lat, lng }]) => [slug, [lng, lat]])
 );
 
-export default function LocationsMap({ locations, onLocationSelect, minimal = false, userCoords = null, nearestCoords = null }: LocationsMapProps) {
+export default function LocationsMapLegacy({ locations, onLocationSelect }: LocationsMapProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const [nearestLocation, setNearestLocation] = useState<string | null>(null);
@@ -252,28 +249,11 @@ export default function LocationsMap({ locations, onLocationSelect, minimal = fa
 
     mapboxgl.accessToken = mapboxToken;
 
-    // Calculate bounds to fit all locations
-    const bounds = new mapboxgl.LngLatBounds();
-    locations.forEach((location) => {
-      const coords = locationCoords[location.slug];
-      if (coords) {
-        bounds.extend(coords);
-      }
-    });
-
     const mapInstance = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/dark-v11',
-      center: bounds.getCenter(),
-      zoom: 5,
-    });
-
-    // Fit to bounds with padding once map loads
-    mapInstance.on('load', () => {
-      mapInstance.fitBounds(bounds, {
-        padding: { top: 50, bottom: 50, left: 50, right: 50 },
-        maxZoom: 8,
-      });
+      style: 'mapbox://styles/mapbox/light-v11',
+      center: [-96.5, 32.5], // Center between Texas and Oklahoma locations
+      zoom: 5.5,
     });
 
     map.current = mapInstance;
@@ -323,34 +303,6 @@ export default function LocationsMap({ locations, onLocationSelect, minimal = fa
       map.current = null;
     };
   }, [locations]);
-
-  // Handle external user coordinates (from parent geo button)
-  useEffect(() => {
-    if (!userCoords || !map.current) return;
-
-    // Add user location marker (gold color)
-    new mapboxgl.Marker({ color: '#C9A962' })
-      .setLngLat(userCoords)
-      .addTo(map.current);
-
-    // If we have nearest coords, fit bounds to show both user and restaurant
-    if (nearestCoords) {
-      const bounds = new mapboxgl.LngLatBounds();
-      bounds.extend(userCoords);
-      bounds.extend(nearestCoords);
-
-      map.current.fitBounds(bounds, {
-        padding: { top: 60, bottom: 60, left: 60, right: 60 },
-        maxZoom: 12,
-      });
-    } else {
-      // Just zoom to user location
-      map.current.flyTo({
-        center: userCoords,
-        zoom: 10,
-      });
-    }
-  }, [userCoords, nearestCoords]);
 
   const findNearestLocation = () => {
     // Clear previous errors
@@ -422,74 +374,72 @@ export default function LocationsMap({ locations, onLocationSelect, minimal = fa
 
   return (
     <div className={styles.mapWrapper}>
-      {!minimal && (
-        <div className={styles.mapControls}>
-          <button onClick={findNearestLocation} className={styles.findButton}>
-            Find Nearest Location
-          </button>
-          {error && (
-            <div className={styles.errorMessage} role="alert">
-              {error}
-              <button
-                onClick={() => setError(null)}
-                className={styles.closeError}
-                aria-label="Close error message"
-              >
-                ×
-              </button>
+      <div className={styles.mapControls}>
+        <button onClick={findNearestLocation} className={styles.findButton}>
+          Find Nearest Location
+        </button>
+        {error && (
+          <div className={styles.errorMessage} role="alert">
+            {error}
+            <button
+              onClick={() => setError(null)}
+              className={styles.closeError}
+              aria-label="Close error message"
+            >
+              ×
+            </button>
+          </div>
+        )}
+        {selectedLocation && (
+          <div className={styles.locationInfo}>
+            <div className={styles.locationName}>
+              {nearestLocation === selectedLocation.slug && 'Nearest: '}
+              {selectedLocation.name}
             </div>
-          )}
-          {selectedLocation && (
-            <div className={styles.locationInfo}>
-              <div className={styles.locationName}>
-                {nearestLocation === selectedLocation.slug && 'Nearest: '}
-                {selectedLocation.name}
-              </div>
-              <div className={styles.locationDetails}>
+            <div className={styles.locationDetails}>
+              <a
+                href={getAppleMapsUrl(selectedLocation)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.detailLink}
+              >
+                {selectedLocation.addressLine1}<br />
+                {selectedLocation.city}, {selectedLocation.state} {selectedLocation.postalCode}
+              </a>
+            </div>
+            <div className={styles.actionButtons}>
+              <a
+                href={getAppleMapsUrl(selectedLocation)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.primaryButton}
+              >
+                Directions
+              </a>
+              {selectedLocation.phone && (
                 <a
-                  href={getAppleMapsUrl(selectedLocation)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.detailLink}
-                >
-                  {selectedLocation.addressLine1}<br />
-                  {selectedLocation.city}, {selectedLocation.state} {selectedLocation.postalCode}
-                </a>
-              </div>
-              <div className={styles.actionButtons}>
-                <a
-                  href={getAppleMapsUrl(selectedLocation)}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href={`tel:${selectedLocation.phone}`}
                   className={styles.primaryButton}
                 >
-                  Directions
+                  {formatPhone(selectedLocation.phone)}
                 </a>
-                {selectedLocation.phone && (
-                  <a
-                    href={`tel:${selectedLocation.phone}`}
-                    className={styles.primaryButton}
-                  >
-                    {formatPhone(selectedLocation.phone)}
-                  </a>
-                )}
-              </div>
-              <div className={styles.orderLinks}>
-                {selectedLocation.doordashUrl && (
-                  <a href={selectedLocation.doordashUrl} target="_blank" rel="noopener noreferrer" className={styles.orderLink}>
-                    DoorDash
-                  </a>
-                )}
-                {selectedLocation.uberEatsUrl && (
-                  <a href={selectedLocation.uberEatsUrl} target="_blank" rel="noopener noreferrer" className={styles.orderLink}>
-                    Uber Eats
-                  </a>
-                )}
-              </div>
+              )}
             </div>
-          )}
-        </div>
-      )}
+            <div className={styles.orderLinks}>
+              {selectedLocation.doordashUrl && (
+                <a href={selectedLocation.doordashUrl} target="_blank" rel="noopener noreferrer" className={styles.orderLink}>
+                  DoorDash
+                </a>
+              )}
+              {selectedLocation.uberEatsUrl && (
+                <a href={selectedLocation.uberEatsUrl} target="_blank" rel="noopener noreferrer" className={styles.orderLink}>
+                  Uber Eats
+                </a>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
       <div ref={mapContainer} className={styles.mapContainer} />
     </div>
   );

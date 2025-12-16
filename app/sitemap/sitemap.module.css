@@ -216,17 +216,17 @@
 }
 
 /* Dark mode - increase contrast for WCAG AA compliance */
-:global([data-theme="dark"]) .badge[data-badge="dev"] {
+:global(.dark) .badge[data-badge="dev"] {
   background: rgba(99, 102, 241, 0.25);
   color: #a5b4fc; /* Lighter indigo for dark backgrounds */
 }
 
-:global([data-theme="dark"]) .badge[data-badge="staff"] {
+:global(.dark) .badge[data-badge="staff"] {
   background: rgba(16, 185, 129, 0.25);
   color: #6ee7b7; /* Lighter emerald for dark backgrounds */
 }
 
-:global([data-theme="dark"]) .badge[data-badge="cms"] {
+:global(.dark) .badge[data-badge="cms"] {
   background: rgba(236, 72, 153, 0.25);
   color: #f9a8d4; /* Lighter pink for dark backgrounds */
 }

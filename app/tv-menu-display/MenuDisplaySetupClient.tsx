@@ -87,7 +87,7 @@ export default function MenuDisplaySetupClient({ locations }: Props) {
                 style={{ "--scale-factor": scaleFactor } as CSSProperties}
               >
                 <iframe
-                  src={`/menu-display/${selectedSlug}?page=1`}
+                  src={`/tv-menu-display/${selectedSlug}?page=1`}
                   className={styles.tvScreen}
                   title={`${selectedLocation?.name} - Page 1`}
                 />
@@ -105,7 +105,7 @@ export default function MenuDisplaySetupClient({ locations }: Props) {
                 style={{ "--scale-factor": scaleFactor } as CSSProperties}
               >
                 <iframe
-                  src={`/menu-display/${selectedSlug}?page=2`}
+                  src={`/tv-menu-display/${selectedSlug}?page=2`}
                   className={styles.tvScreen}
                   title={`${selectedLocation?.name} - Page 2`}
                 />
@@ -126,7 +126,7 @@ export default function MenuDisplaySetupClient({ locations }: Props) {
                 </div>
                 <div className={styles.screenButtons}>
                   <a
-                    href={`/menu-display/${loc.slug}?page=1`}
+                    href={`/tv-menu-display/${loc.slug}?page=1`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className={styles.screenButton}
@@ -134,7 +134,7 @@ export default function MenuDisplaySetupClient({ locations }: Props) {
                     Screen 1
                   </a>
                   <a
-                    href={`/menu-display/${loc.slug}?page=2`}
+                    href={`/tv-menu-display/${loc.slug}?page=2`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className={styles.screenButton}
@@ -165,7 +165,7 @@ export default function MenuDisplaySetupClient({ locations }: Props) {
               For a true kiosk experience, launch Chrome with these flags:
             </p>
             <code className={styles.codeBlock}>
-              /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --kiosk --noerrdialogs --disable-infobars &quot;https://yourdomain.com/menu-display/conroe&quot;
+              /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --kiosk --noerrdialogs --disable-infobars &quot;https://yourdomain.com/tv-menu-display/conroe&quot;
             </code>
           </div>
         </section>
@@ -189,7 +189,7 @@ export default function MenuDisplaySetupClient({ locations }: Props) {
               ✕
             </button>
             <iframe
-              src={`/menu-display/${selectedSlug}?page=${modalScreen}`}
+              src={`/tv-menu-display/${selectedSlug}?page=${modalScreen}`}
               className={styles.modalIframe}
               title={`${selectedLocation?.name} - Page ${modalScreen}`}
             />

@@ -42,7 +42,8 @@ const sections: SitemapSection[] = [
     description: 'Back-of-house tools',
     links: [
       { href: '/kitchen' as Route, label: 'Kitchen Display', description: 'iPad order management system', badge: 'Staff' },
-      { href: '/menu-display' as Route, label: 'Menu TV Display', description: 'Digital menu boards for locations', badge: 'Staff' },
+      { href: '/tv-menu-display' as Route, label: 'TV Menu Display', description: 'Digital menu boards for locations', badge: 'Staff' },
+      { href: '/print-menu' as Route, label: 'Print Menu', description: 'Generate printable PDF menus', badge: 'Staff' },
       { href: '/categories-analysis' as Route, label: 'Menu Analysis', description: 'Property reports and universal menu planning', badge: 'Staff' },
     ],
   },
@@ -53,6 +54,13 @@ const sections: SitemapSection[] = [
       { href: '/modal' as Route, label: 'Modifier Modal', description: 'Test the item customization sheet', badge: 'Dev' },
       { href: '/test' as Route, label: 'Component Test', description: 'Test page for components', badge: 'Dev' },
       { href: '/studio' as Route, label: 'Sanity Studio', description: 'Content management system', badge: 'CMS' },
+    ],
+  },
+  {
+    title: 'ARCHIVES',
+    description: 'Previous page designs',
+    links: [
+      { href: '/sitemap/locations-archive' as Route, label: 'Locations (Legacy)', description: 'Previous map + list layout', badge: 'Archive' },
     ],
   },
 ];

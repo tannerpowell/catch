@@ -1,0 +1,32 @@
+.contentWrapper {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 60fr 40fr;
+  gap: 60px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 60px 60px;
+  min-height: 100vh;
+}
+
+.mapColumn {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .contentWrapper {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    padding: 60px 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .contentWrapper {
+    padding: 40px 24px;
+  }
+}

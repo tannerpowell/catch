@@ -201,26 +201,13 @@ export default function HomePage() {
 
       {/* Locations ribbon */}
       <section className="lux-locations">
-        <div className="lux-locations__inner">
+        <div className="lux-locations__inner lux-locations__inner--centered">
           <div className="lux-locations__content">
-            <span className="lux-eyebrow lux-eyebrow--light">Seven Locations</span>
-            <h2 className="lux-locations__title">Find Your Table</h2>
-            <p className="lux-locations__text">
-              From Houston to Dallas-Fort Worth, there&apos;s a seat waiting for you.
-            </p>
+            <h2 className="lux-locations__count">17 Locations</h2>
+            <p className="lux-locations__subtitle">across Texas &amp; Oklahoma</p>
             <Link href="/locations" className="lux-btn lux-btn--light">
-              View All Locations
+              Find Your Table
             </Link>
-          </div>
-          <div className="lux-locations__list">
-            <div className="lux-locations__city">
-              <span className="lux-locations__city-name">Houston</span>
-              <span className="lux-locations__city-count">4 Locations</span>
-            </div>
-            <div className="lux-locations__city">
-              <span className="lux-locations__city-name">Dallas-Fort Worth</span>
-              <span className="lux-locations__city-count">3 Locations</span>
-            </div>
           </div>
         </div>
       </section>

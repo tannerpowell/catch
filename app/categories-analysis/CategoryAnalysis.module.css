@@ -838,27 +838,27 @@
 }
 
 /* Dark mode badge adjustments */
-:global([data-theme="dark"]) .badge.universal {
+:global(.dark) .badge.universal {
   background: rgba(16, 185, 129, 0.25);
 }
 
-:global([data-theme="dark"]) .badge.shared {
+:global(.dark) .badge.shared {
   background: rgba(99, 102, 241, 0.25);
 }
 
-:global([data-theme="dark"]) .badge.unique {
+:global(.dark) .badge.unique {
   background: rgba(245, 158, 11, 0.25);
 }
 
-:global([data-theme="dark"]) .badge.orphan {
+:global(.dark) .badge.orphan {
   background: rgba(239, 68, 68, 0.25);
 }
 
-:global([data-theme="dark"]) .badge.tweaked {
+:global(.dark) .badge.tweaked {
   background: rgba(99, 102, 241, 0.25);
 }
 
-:global([data-theme="dark"]) .locationTag.hasOverride {
+:global(.dark) .locationTag.hasOverride {
   background: rgba(99, 102, 241, 0.2);
 }
 
@@ -1136,15 +1136,15 @@
 }
 
 /* Dark mode modal adjustments */
-:global([data-theme="dark"]) .modalOverlay {
+:global(.dark) .modalOverlay {
   background: rgba(0, 0, 0, 0.7);
 }
 
-:global([data-theme="dark"]) .locationAvailItem.available {
+:global(.dark) .locationAvailItem.available {
   background: rgba(16, 185, 129, 0.15);
 }
 
-:global([data-theme="dark"]) .locationAvailItem.unavailable {
+:global(.dark) .locationAvailItem.unavailable {
   background: rgba(255, 255, 255, 0.03);
 }
 
@@ -1309,10 +1309,10 @@
 }
 
 /* Dark mode proposed menu */
-:global([data-theme="dark"]) .modifier {
+:global(.dark) .modifier {
   background: rgba(99, 102, 241, 0.2);
 }
 
-:global([data-theme="dark"]) .consolidatedBadge {
+:global(.dark) .consolidatedBadge {
   background: rgba(16, 185, 129, 0.2);
 }

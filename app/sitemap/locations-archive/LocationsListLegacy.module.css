@@ -1,0 +1,158 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.toggle button {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  font-family: var(--font-family--headings);
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 0;
+}
+
+.toggle button:hover {
+  color: white;
+}
+
+.toggle button.active {
+  color: white;
+}
+
+.divider {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 14px;
+}
+
+.clearButton {
+  font-size: 12px !important;
+  opacity: 0.7;
+}
+
+.locationsList {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  overflow-y: auto;
+  max-height: calc(100vh - 200px);
+  padding-right: 20px;
+}
+
+.locationsList::-webkit-scrollbar {
+  width: 4px;
+}
+
+.locationsList::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+
+.locationsList::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+}
+
+.locationsList::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.locationItem {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding-bottom: 24px;
+}
+
+.locationItem:last-child {
+  border-bottom: none;
+}
+
+.locationName {
+  font-family: var(--font-family--headings);
+  font-size: 14px;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 12px;
+  letter-spacing: 0.15em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.locationDetails {
+  font-size: 16px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 10px;
+}
+
+.locationLink {
+  color: white;
+  text-decoration: none;
+  transition: all 0.2s;
+  border-bottom: 1px solid transparent;
+}
+
+.locationLink:hover {
+  border-bottom-color: white;
+}
+
+.phoneLink {
+  display: inline-block;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  color: white;
+  font-weight: 700;
+  font-size: 17px;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.phoneLink:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: white;
+  transform: translateY(-1px);
+}
+
+.locationLinks {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.orderLink {
+  padding: 8px 20px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  color: white;
+  text-decoration: none;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.orderLink:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: white;
+}

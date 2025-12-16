@@ -1,0 +1,383 @@
+/**
+ * The Catch Track Design System
+ *
+ * A collection of utility classes implementing the 3D "inset track" pattern
+ * inspired by the events page toggle. This creates depth through:
+ * - Subtle inset backgrounds (rgba warm overlays)
+ * - Padding creating visual "rails"
+ * - Elevation shadows on active states
+ * - Smooth, premium transitions
+ *
+ * Usage:
+ * - .catch-track: Container with inset appearance
+ * - .catch-track-item: Items within the track
+ * - .catch-inset-input: Form inputs with subtle depression
+ * - .catch-card-elevated: Cards with hover lift effect
+ */
+
+/* ============================================
+   CSS CUSTOM PROPERTIES
+   ============================================ */
+
+:root {
+  /* Track colors - hover "lights up" with white */
+  --catch-track-bg: rgba(50, 39, 35, 0.04);
+  --catch-track-bg-hover: rgba(255, 255, 255, 0.7);
+  --catch-track-border: rgba(50, 39, 35, 0.06);
+  --catch-track-active-shadow: 0 3px 10px rgba(43, 122, 155, 0.2);
+
+  /* Input colors */
+  --catch-input-bg: rgba(50, 39, 35, 0.02);
+  --catch-input-shadow: inset 0 1px 3px rgba(50, 39, 35, 0.04);
+  --catch-focus-ring: 0 0 0 4px rgba(43, 122, 155, 0.1);
+
+  /* Card colors */
+  --catch-card-shadow: 0 1px 3px rgba(50, 39, 35, 0.05);
+  --catch-card-shadow-hover: 0 8px 24px rgba(50, 39, 35, 0.08);
+  --catch-card-lift: -3px;
+
+  /* Transitions */
+  --catch-transition-smooth: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  --catch-transition-fast: all 0.2s ease;
+}
+
+/* Dark mode adjustments */
+.dark {
+  --catch-track-bg: rgba(255, 255, 255, 0.04);
+  --catch-track-bg-hover: rgba(255, 255, 255, 0.06);
+  --catch-track-border: rgba(255, 255, 255, 0.08);
+  --catch-track-active-shadow: 0 4px 12px rgba(43, 122, 155, 0.35);
+
+  --catch-input-bg: rgba(255, 255, 255, 0.03);
+  --catch-input-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+  --catch-focus-ring: 0 0 0 4px rgba(43, 122, 155, 0.2);
+
+  --catch-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  --catch-card-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* ============================================
+   CATCH TRACK - The Inset Container
+   ============================================ */
+
+.catch-track {
+  display: flex;
+  gap: 12px;
+  padding: 8px;
+  background: var(--catch-track-bg);
+  border-radius: 12px;
+  border: 1px solid var(--catch-track-border);
+}
+
+.catch-track--pill {
+  border-radius: 20px;
+  padding: 4px;
+  gap: 4px;
+}
+
+.catch-track--vertical {
+  flex-direction: column;
+  gap: 2px;
+}
+
+.catch-track--compact {
+  padding: 6px;
+  gap: 8px;
+}
+
+/* ============================================
+   CATCH TRACK ITEMS
+   ============================================ */
+
+.catch-track-item {
+  flex: 1;
+  padding: 14px 24px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  font-family: var(--font-family--headings, 'Poppins', sans-serif);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--color--tierra-reca, #322723);
+  cursor: pointer;
+  transition: var(--catch-transition-smooth);
+  letter-spacing: 0.02em;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.catch-track-item:hover:not(.active):not(:disabled) {
+  background: var(--catch-track-bg-hover);
+  box-shadow: 0 1px 4px rgba(50, 39, 35, 0.05);
+}
+
+.catch-track-item:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color--chile-rojo, #2B7A9B);
+}
+
+.catch-track-item.active,
+.catch-track-item[aria-selected="true"] {
+  background: var(--color--chile-rojo, #2B7A9B);
+  color: white;
+  box-shadow: var(--catch-track-active-shadow);
+}
+
+.catch-track-item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Pill variant items - for filter chips */
+.catch-track--pill .catch-track-item {
+  padding: 6px 14px;
+  border-radius: 16px;
+  flex: 0 0 auto;
+  font-size: 13px;
+}
+
+/* Compact variant items */
+.catch-track--compact .catch-track-item {
+  padding: 8px 16px;
+  font-size: 13px;
+}
+
+/* Vertical items - dense sidebar navigation */
+.catch-track--vertical .catch-track-item {
+  flex: 0 0 auto;
+  text-align: left;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.catch-track--vertical .catch-track-item.active {
+  background: white;
+  color: var(--color--tierra-reca, #322723);
+  box-shadow: 0 1px 4px rgba(50, 39, 35, 0.08);
+}
+
+/* ============================================
+   CATCH INSET INPUT
+   ============================================ */
+
+.catch-inset-input {
+  width: 100%;
+  padding: 14px 18px;
+  background: var(--catch-input-bg);
+  border: 1px solid var(--catch-track-border);
+  border-radius: 10px;
+  font-size: 15px;
+  color: var(--color--tierra-reca, #322723);
+  box-shadow: var(--catch-input-shadow);
+  transition: var(--catch-transition-smooth);
+  outline: none;
+}
+
+.catch-inset-input::placeholder {
+  color: var(--color-text-muted, #7c6a63);
+}
+
+.catch-inset-input:hover {
+  border-color: rgba(50, 39, 35, 0.15);
+}
+
+.catch-inset-input:focus {
+  background: white;
+  border-color: var(--color--chile-rojo, #2B7A9B);
+  box-shadow: var(--catch-focus-ring);
+}
+
+/* With icon padding */
+.catch-inset-input--with-icon {
+  padding-left: 48px;
+}
+
+/* Textarea variant */
+textarea.catch-inset-input {
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* ============================================
+   CATCH CARD ELEVATED
+   ============================================ */
+
+.catch-card-elevated {
+  background: white;
+  border: 1px solid var(--catch-track-border);
+  border-radius: 16px;
+  box-shadow: var(--catch-card-shadow);
+  transition: var(--catch-transition-smooth);
+}
+
+.catch-card-elevated:hover {
+  transform: translateY(var(--catch-card-lift));
+  box-shadow: var(--catch-card-shadow-hover);
+}
+
+/* Interactive card */
+.catch-card-elevated--interactive {
+  cursor: pointer;
+}
+
+.catch-card-elevated--interactive:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(43, 122, 155, 0.15), var(--catch-card-shadow-hover);
+}
+
+/* Selected state */
+.catch-card-elevated.selected,
+.catch-card-elevated[aria-selected="true"] {
+  border-color: var(--color--chile-rojo, #2B7A9B);
+  box-shadow: 0 0 0 3px rgba(43, 122, 155, 0.15), var(--catch-card-shadow-hover);
+}
+
+/* Compact card */
+.catch-card-elevated--compact {
+  border-radius: 12px;
+}
+
+/* No hover lift */
+.catch-card-elevated--static:hover {
+  transform: none;
+}
+
+/* ============================================
+   CATCH BUTTON
+   ============================================ */
+
+.catch-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 28px;
+  background: var(--color--chile-rojo, #2B7A9B);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-family: var(--font-family--headings, 'Poppins', sans-serif);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: var(--catch-transition-smooth);
+}
+
+.catch-btn:hover {
+  background: color-mix(in srgb, var(--color--chile-rojo, #2B7A9B) 85%, black);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(43, 122, 155, 0.3);
+}
+
+.catch-btn:active {
+  transform: translateY(0);
+}
+
+.catch-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(43, 122, 155, 0.3);
+}
+
+/* Secondary button */
+.catch-btn--secondary {
+  background: transparent;
+  color: var(--color--tierra-reca, #322723);
+  border: 1px solid var(--catch-track-border);
+}
+
+.catch-btn--secondary:hover {
+  background: var(--catch-track-bg);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(50, 39, 35, 0.08);
+}
+
+/* Ghost button */
+.catch-btn--ghost {
+  background: transparent;
+  color: var(--color--chile-rojo, #2B7A9B);
+  padding: 10px 16px;
+}
+
+.catch-btn--ghost:hover {
+  background: rgba(43, 122, 155, 0.08);
+  transform: none;
+  box-shadow: none;
+}
+
+/* ============================================
+   CATCH BADGE
+   ============================================ */
+
+.catch-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  background: rgba(43, 122, 155, 0.1);
+  color: var(--color--chile-rojo, #2B7A9B);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.catch-badge--neutral {
+  background: var(--catch-track-bg);
+  color: var(--color--tierra-reca, #322723);
+}
+
+.catch-badge--success {
+  background: rgba(118, 189, 166, 0.15);
+  color: #2a7a5a;
+}
+
+/* ============================================
+   UTILITIES
+   ============================================ */
+
+/* Warm background utility */
+.bg-catch-warm {
+  background: var(--color--crema-fresca, #FDF8ED);
+}
+
+.bg-catch-warm-subtle {
+  background: rgba(50, 39, 35, 0.02);
+}
+
+.bg-catch-warm-inset {
+  background: var(--catch-track-bg);
+}
+
+/* Warm border utility */
+.border-catch-warm {
+  border: 1px solid var(--catch-track-border);
+}
+
+/* Text utilities */
+.text-catch-primary {
+  color: var(--color--tierra-reca, #322723);
+}
+
+.text-catch-secondary {
+  color: var(--color-text-secondary, #5b4a42);
+}
+
+.text-catch-muted {
+  color: var(--color-text-muted, #7c6a63);
+}
+
+.text-catch-accent {
+  color: var(--color--chile-rojo, #2B7A9B);
+}
+
+/* Transition utility */
+.transition-catch {
+  transition: var(--catch-transition-smooth);
+}
+
+/* Focus ring utility */
+.focus-catch:focus-visible {
+  outline: none;
+  box-shadow: var(--catch-focus-ring);
+}

@@ -166,7 +166,7 @@ function Menu3PageClientInner({
         <main className="menu3-main">
           <div className="menu3-main-header">
             <h1 className="menu3-main-title menu3-type-section">
-              {selectedLocation?.name.replace('The Catch — ', '').replace('The Catch - ', '') || 'Menu'}
+              VIEWING {selectedLocation?.name.replace('The Catch — ', '').replace('The Catch - ', '').toUpperCase() || 'MENU'} MENU
             </h1>
             <span className="menu3-item-count menu3-type-section">
               {visibleItemCount} items
@@ -198,20 +198,21 @@ function Menu3PageClientInner({
 
       <style jsx>{`
         .menu3-page {
+          /* Warm cream palette - matches site theme */
           --menu3-location-bar-bg: #1a1a1a;
-          --menu3-sidebar-bg: #f0f0f0;
-          --menu3-main-bg: #ffffff;
-          --menu3-preview-bg: #f5f5f5;
+          --menu3-sidebar-bg: rgba(50, 39, 35, 0.03);
+          --menu3-main-bg: #FDF8ED;
+          --menu3-preview-bg: rgba(50, 39, 35, 0.02);
           --menu3-card-bg: #ffffff;
-          --menu3-border: rgba(0, 0, 0, 0.06);
-          --menu3-text: #1a1a1a;
-          --menu3-text-secondary: #555;
-          --menu3-text-muted: #888;
-          --menu3-accent: #1a1a1a;
-          --menu3-hover-bg: rgba(0, 0, 0, 0.02);
-          --menu3-active-bg: rgba(0, 0, 0, 0.04);
-          --menu3-search-bg: rgba(0, 0, 0, 0.03);
-          --menu3-image-placeholder: #f0f0f0;
+          --menu3-border: rgba(50, 39, 35, 0.06);
+          --menu3-text: #322723;
+          --menu3-text-secondary: #5b4a42;
+          --menu3-text-muted: #7c6a63;
+          --menu3-accent: #2B7A9B;
+          --menu3-hover-bg: rgba(255, 255, 255, 0.6);
+          --menu3-active-bg: rgba(255, 255, 255, 0.8);
+          --menu3-search-bg: rgba(50, 39, 35, 0.02);
+          --menu3-image-placeholder: rgba(50, 39, 35, 0.04);
 
           display: flex;
           flex-direction: column;
@@ -219,7 +220,7 @@ function Menu3PageClientInner({
           background: var(--menu3-main-bg);
         }
 
-        /* Subway tile texture */
+        /* Subtle warm texture - matches site */
         .menu3-page::before {
           content: '';
           position: fixed;
@@ -227,12 +228,9 @@ function Menu3PageClientInner({
           pointer-events: none;
           z-index: 0;
           background:
-            /* Subtle grid lines */
-            linear-gradient(90deg, rgba(0, 0, 0, 0.015) 1px, transparent 1px),
-            linear-gradient(rgba(0, 0, 0, 0.015) 1px, transparent 1px),
-            /* Very faint noise overlay */
-            url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.02'/%3E%3C/svg%3E");
-          background-size: 40px 40px, 40px 40px, 200px 200px;
+            /* Very faint warm noise overlay */
+            url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.015'/%3E%3C/svg%3E");
+          background-size: 200px 200px;
         }
 
         /* 3-Pane Layout */
@@ -333,27 +331,25 @@ function Menu3PageClientInner({
         /* Dark mode support */
         :global(.dark) .menu3-page {
           --menu3-location-bar-bg: #0d0d0d;
-          --menu3-sidebar-bg: #111;
-          --menu3-main-bg: #0a0a0a;
-          --menu3-preview-bg: #0d0d0d;
-          --menu3-card-bg: #1a1a1a;
+          --menu3-sidebar-bg: rgba(255, 255, 255, 0.03);
+          --menu3-main-bg: #0f1720;
+          --menu3-preview-bg: rgba(255, 255, 255, 0.02);
+          --menu3-card-bg: #1a2332;
           --menu3-border: rgba(255, 255, 255, 0.06);
           --menu3-text: #f0f0f0;
-          --menu3-text-secondary: #aaa;
-          --menu3-text-muted: #666;
-          --menu3-accent: #f0f0f0;
-          --menu3-hover-bg: rgba(255, 255, 255, 0.02);
-          --menu3-active-bg: rgba(255, 255, 255, 0.04);
+          --menu3-text-secondary: #b8c4d0;
+          --menu3-text-muted: #7a8a9a;
+          --menu3-accent: #4a9aba;
+          --menu3-hover-bg: rgba(255, 255, 255, 0.06);
+          --menu3-active-bg: rgba(255, 255, 255, 0.08);
           --menu3-search-bg: rgba(255, 255, 255, 0.03);
-          --menu3-image-placeholder: #1a1a1a;
+          --menu3-image-placeholder: rgba(255, 255, 255, 0.05);
         }
 
         :global(.dark) .menu3-page::before {
           background:
-            linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-            linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-            url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-          background-size: 40px 40px, 40px 40px, 200px 200px;
+            url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.02'/%3E%3C/svg%3E");
+          background-size: 200px 200px;
         }
       `}</style>
     </div>

@@ -15,9 +15,9 @@ type GsapGlobal = {
 const navLinks = [
   { href: "/menu", label: "menu" },
   { href: "/menu2", label: "menu2" },
+  { href: "/tv-menu-display", label: "tv menu" },
+  { href: "/print-menu", label: "print menu" },
   { href: "/locations", label: "locations" },
-  // { href: "/gift-cards", label: "gift cards" },
-  // { href: "/our-story", label: "our story" },
   { href: "/private-events", label: "events" },
   { href: "/sitemap", label: "sitemap" }
 ] as const;
@@ -233,6 +233,26 @@ export default function HeaderSimple() {
               </div>
               <Link href="/menu2" className="link-block full-page-nav" onClick={() => setMobileMenuOpen(false)}>
                 <h3 className="h3">Menu2</h3>
+              </Link>
+            </div>
+            <div className="nav-right-link-wrapper">
+              <div className="nav-right-accent-wrapper">
+                <div className="accent claro-maiz-right-aligned">
+                  tv<br/>display
+                </div>
+              </div>
+              <Link href="/tv-menu-display" className="link-block full-page-nav" onClick={() => setMobileMenuOpen(false)}>
+                <h3 className="h3">TV Menu</h3>
+              </Link>
+            </div>
+            <div className="nav-right-link-wrapper">
+              <div className="nav-right-accent-wrapper">
+                <div className="accent claro-maiz-right-aligned">
+                  print<br/>menus
+                </div>
+              </div>
+              <Link href="/print-menu" className="link-block full-page-nav" onClick={() => setMobileMenuOpen(false)}>
+                <h3 className="h3">Print Menu</h3>
               </Link>
             </div>
             <div className="nav-right-link-wrapper">
