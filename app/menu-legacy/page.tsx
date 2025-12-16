@@ -1,8 +1,6 @@
-import fs from "node:fs";
-import path from "node:path";
 import MenuPageClient from "@/components/catch/MenuPageClient";
 import { getBrand } from "@/lib/brand";
-import { slugify } from "@/lib/utils/slugify";
+import { buildDfwImageMap } from "@/lib/utils/imageMap";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -17,21 +15,6 @@ export const metadata: Metadata = {
 
 // Enable ISR - regenerate page every hour
 export const revalidate = 3600;
-
-type ImageMap = Record<string, string>;
-
-function buildDfwImageMap(): ImageMap {
-  const dir = path.resolve("public/dfw-images");
-  if (!fs.existsSync(dir)) return {};
-  const entries = fs.readdirSync(dir).filter(f => /\.(png|jpe?g|webp|avif)$/i.test(f));
-  const map: ImageMap = {};
-  for (const file of entries) {
-    const base = file.replace(/\.[^.]+$/, "");
-    const key = slugify(base);
-    map[key] = `/dfw-images/${file}`;
-  }
-  return map;
-}
 
 export default async function MenuPage() {
   const brand = getBrand();

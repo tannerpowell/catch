@@ -135,7 +135,7 @@ const styles = `
     width: 40px;
     height: 40px;
     border: 3px solid rgba(50, 39, 35, 0.1);
-    border-top-color: var(--color--chile-rojo, #2B7A9B);
+    border-top-color: var(--color--ocean-blue, #2B7A9B);
     border-radius: 50%;
     animation: spin 1s linear infinite;
   }
@@ -145,7 +145,7 @@ const styles = `
   }
 
   .confirmation-icon {
-    color: var(--color--chile-rojo, #2B7A9B);
+    color: var(--color--ocean-blue, #2B7A9B);
     margin-bottom: 24px;
   }
 
@@ -215,7 +215,7 @@ const styles = `
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: var(--color--chile-rojo, #2B7A9B);
+    color: var(--color--ocean-blue, #2B7A9B);
     margin-bottom: 12px;
   }
 
@@ -231,7 +231,7 @@ const styles = `
   }
 
   .confirmation-link {
-    color: var(--color--chile-rojo, #2B7A9B);
+    color: var(--color--ocean-blue, #2B7A9B);
     font-weight: 500;
     text-decoration: none;
     border-bottom: 1px solid transparent;
@@ -239,7 +239,7 @@ const styles = `
   }
 
   .confirmation-link:hover {
-    border-bottom-color: var(--color--chile-rojo, #2B7A9B);
+    border-bottom-color: var(--color--ocean-blue, #2B7A9B);
   }
 
   .confirmation-actions {
@@ -263,7 +263,7 @@ const styles = `
   }
 
   .confirmation-btn--primary {
-    background: var(--color--chile-rojo, #2B7A9B);
+    background: var(--color--ocean-blue, #2B7A9B);
     color: white;
   }
 

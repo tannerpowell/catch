@@ -54,8 +54,8 @@ html[data-route^="/studio"].dark body {
   --color--dark-slate-light: var(--slate-600);
 
   /* Accent colors - OCEAN BLUE instead of red */
-  --color--chile-rojo-dark: #38bdf8;  /* Ocean blue light for dark mode */
-  --color--chile-rojo: #38bdf8;       /* Override base for dark mode */
+  --color--ocean-blue-dark: #38bdf8;  /* Ocean blue light for dark mode */
+  --color--ocean-blue: #38bdf8;       /* Override base for dark mode */
   --color--claro-maiz-dark: var(--ocean-300);
   --color--tierra-reca-dark: var(--slate-300);
 

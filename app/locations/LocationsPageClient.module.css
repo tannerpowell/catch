@@ -47,10 +47,10 @@
   align-items: center;
   gap: 6px;
   background: transparent;
-  border: 1px solid var(--color--chile-rojo, #2B7A9B);
+  border: 1px solid var(--color--ocean-blue, #2B7A9B);
   border-radius: 16px;
   padding: 6px 14px;
-  color: var(--color--chile-rojo, #2B7A9B);
+  color: var(--color--ocean-blue, #2B7A9B);
   font-family: var(--font-family--headings);
   font-size: 11px;
   font-weight: 600;
@@ -62,7 +62,7 @@
 }
 
 .geoButton:hover:not(:disabled) {
-  background: var(--color--chile-rojo, #2B7A9B);
+  background: var(--color--ocean-blue, #2B7A9B);
   color: white;
 }
 
@@ -101,14 +101,14 @@
 }
 
 .regionTabActive {
-  background: var(--color--chile-rojo, #2B7A9B);
-  border-color: var(--color--chile-rojo, #2B7A9B);
+  background: var(--color--ocean-blue, #2B7A9B);
+  border-color: var(--color--ocean-blue, #2B7A9B);
   color: white;
 }
 
 .regionTabActive:hover {
-  background: var(--color--chile-rojo, #2B7A9B);
-  border-color: var(--color--chile-rojo, #2B7A9B);
+  background: var(--color--ocean-blue, #2B7A9B);
+  border-color: var(--color--ocean-blue, #2B7A9B);
   color: white;
 }
 
@@ -122,7 +122,7 @@
   justify-content: center;
   gap: 10px;
   padding: 14px 20px;
-  background: var(--color--chile-rojo, #2B7A9B);
+  background: var(--color--ocean-blue, #2B7A9B);
   color: white;
   font-size: 14px;
 }
@@ -188,7 +188,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.15em;
-  color: var(--color--chile-rojo, #2B7A9B);
+  color: var(--color--ocean-blue, #2B7A9B);
   margin: 0 0 12px;
 }
 
@@ -223,7 +223,7 @@
   padding: 14px 12px;
   border-radius: 6px;
   border-bottom-color: transparent;
-  border-left: 3px solid var(--color--chile-rojo, #2B7A9B);
+  border-left: 3px solid var(--color--ocean-blue, #2B7A9B);
 }
 
 /* ================================================================
@@ -279,7 +279,7 @@
   text-transform: uppercase;
   border-radius: 10px;
   background: rgba(43, 122, 155, 0.15);
-  color: var(--color--chile-rojo, #2B7A9B);
+  color: var(--color--ocean-blue, #2B7A9B);
 }
 
 /* Meta Line (address, phone) */
@@ -310,13 +310,13 @@
 .phoneLink {
   font-size: 13px;
   font-weight: 500;
-  color: var(--color--chile-rojo, #2B7A9B);
+  color: var(--color--ocean-blue, #2B7A9B);
   text-decoration: none;
   transition: color 0.15s ease;
 }
 
 .phoneLink:hover {
-  color: color-mix(in srgb, var(--color--chile-rojo, #2B7A9B) 80%, black);
+  color: color-mix(in srgb, var(--color--ocean-blue, #2B7A9B) 80%, black);
 }
 
 /* ================================================================
@@ -362,7 +362,7 @@
 
 .actionPrimary {
   padding: 4px 12px;
-  background: var(--color--chile-rojo, #2B7A9B);
+  background: var(--color--ocean-blue, #2B7A9B);
   color: white;
   text-decoration: none;
   border-radius: 3px;
@@ -374,7 +374,7 @@
 }
 
 .actionPrimary:hover {
-  background: color-mix(in srgb, var(--color--chile-rojo, #2B7A9B) 85%, black);
+  background: color-mix(in srgb, var(--color--ocean-blue, #2B7A9B) 85%, black);
   color: white;
 }
 

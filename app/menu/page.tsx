@@ -1,8 +1,6 @@
-import fs from 'node:fs';
-import path from 'node:path';
 import Menu3PageClient from '@/components/menu3/Menu3PageClient';
 import { getBrand } from '@/lib/brand';
-import { slugify } from '@/lib/utils/slugify';
+import { buildDfwImageMap } from '@/lib/utils/imageMap';
 import type { Metadata } from 'next';
 
 // Import menu3 typography styles
@@ -20,28 +18,6 @@ export const metadata: Metadata = {
     images: ['/dfw-images/Different%20menu%20items%20served%20on%20the%20table,%20top%20view.jpg'],
   },
 };
-
-type ImageMap = Record<string, string>;
-
-function buildDfwImageMap(): ImageMap {
-  try {
-    const dir = path.resolve('public/dfw-images');
-    if (!fs.existsSync(dir)) return {};
-    const entries = fs.readdirSync(dir).filter(f => /\.(png|jpe?g|webp|avif)$/i.test(f));
-    const map: ImageMap = {};
-    for (const file of entries) {
-      const base = file.replace(/\.[^.]+$/, '');
-      const key = slugify(base);
-      if (!key) continue; // Skip files that produce empty slugs
-      map[key] = `/dfw-images/${file}`;
-    }
-    return map;
-  } catch {
-    // eslint-disable-next-line no-console
-    console.error('Failed to build DFW image map');
-    return {};
-  }
-}
 
 /**
  * Premium 3-pane menu page.

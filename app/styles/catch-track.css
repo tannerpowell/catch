@@ -113,12 +113,12 @@
 
 .catch-track-item:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 2px var(--color--chile-rojo, #2B7A9B);
+  box-shadow: 0 0 0 2px var(--color--ocean-blue, #2B7A9B);
 }
 
 .catch-track-item.active,
 .catch-track-item[aria-selected="true"] {
-  background: var(--color--chile-rojo, #2B7A9B);
+  background: var(--color--ocean-blue, #2B7A9B);
   color: white;
   box-shadow: var(--catch-track-active-shadow);
 }
@@ -184,7 +184,7 @@
 
 .catch-inset-input:focus {
   background: white;
-  border-color: var(--color--chile-rojo, #2B7A9B);
+  border-color: var(--color--ocean-blue, #2B7A9B);
   box-shadow: var(--catch-focus-ring);
 }
 
@@ -229,7 +229,7 @@ textarea.catch-inset-input {
 /* Selected state */
 .catch-card-elevated.selected,
 .catch-card-elevated[aria-selected="true"] {
-  border-color: var(--color--chile-rojo, #2B7A9B);
+  border-color: var(--color--ocean-blue, #2B7A9B);
   box-shadow: 0 0 0 3px rgba(43, 122, 155, 0.15), var(--catch-card-shadow-hover);
 }
 
@@ -253,7 +253,7 @@ textarea.catch-inset-input {
   justify-content: center;
   gap: 8px;
   padding: 14px 28px;
-  background: var(--color--chile-rojo, #2B7A9B);
+  background: var(--color--ocean-blue, #2B7A9B);
   color: white;
   border: none;
   border-radius: 10px;
@@ -266,7 +266,7 @@ textarea.catch-inset-input {
 }
 
 .catch-btn:hover {
-  background: color-mix(in srgb, var(--color--chile-rojo, #2B7A9B) 85%, black);
+  background: color-mix(in srgb, var(--color--ocean-blue, #2B7A9B) 85%, black);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(43, 122, 155, 0.3);
 }
@@ -296,7 +296,7 @@ textarea.catch-inset-input {
 /* Ghost button */
 .catch-btn--ghost {
   background: transparent;
-  color: var(--color--chile-rojo, #2B7A9B);
+  color: var(--color--ocean-blue, #2B7A9B);
   padding: 10px 16px;
 }
 
@@ -315,7 +315,7 @@ textarea.catch-inset-input {
   align-items: center;
   padding: 4px 12px;
   background: rgba(43, 122, 155, 0.1);
-  color: var(--color--chile-rojo, #2B7A9B);
+  color: var(--color--ocean-blue, #2B7A9B);
   border-radius: 20px;
   font-size: 12px;
   font-weight: 600;
@@ -368,7 +368,7 @@ textarea.catch-inset-input {
 }
 
 .text-catch-accent {
-  color: var(--color--chile-rojo, #2B7A9B);
+  color: var(--color--ocean-blue, #2B7A9B);
 }
 
 /* Transition utility */

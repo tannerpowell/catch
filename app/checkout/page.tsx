@@ -440,7 +440,7 @@ const styles = `
 
   .checkout-input:focus {
     outline: none;
-    border-color: var(--color--chile-rojo, #2B7A9B);
+    border-color: var(--color--ocean-blue, #2B7A9B);
     background: white;
     box-shadow: 0 0 0 3px rgba(43, 122, 155, 0.1);
   }
@@ -479,7 +479,7 @@ const styles = `
   }
 
   .checkout-order-type-btn.active {
-    background: var(--color--chile-rojo, #2B7A9B);
+    background: var(--color--ocean-blue, #2B7A9B);
     color: white;
     box-shadow: 0 3px 10px rgba(43, 122, 155, 0.2);
   }
@@ -501,7 +501,7 @@ const styles = `
   }
 
   .checkout-btn--primary {
-    background: var(--color--chile-rojo, #2B7A9B);
+    background: var(--color--ocean-blue, #2B7A9B);
     color: white;
   }
 

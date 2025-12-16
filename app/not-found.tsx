@@ -43,7 +43,7 @@ export default function NotFound() {
           <h1 style={{
             fontFamily: 'var(--font-family--headings)',
             fontSize: '120px',
-            color: 'var(--color--chile-rojo)',
+            color: 'var(--color--ocean-blue)',
             marginBottom: '8px',
             lineHeight: '1',
             fontWeight: '700',
@@ -77,7 +77,7 @@ export default function NotFound() {
               href="/"
               style={{
                 padding: '14px 32px',
-                backgroundColor: 'var(--color--chile-rojo)',
+                backgroundColor: 'var(--color--ocean-blue)',
                 color: 'white',
                 border: 'none',
                 borderRadius: '8px',
