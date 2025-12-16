@@ -205,7 +205,7 @@ export function MenuItemModal({
               </button>
             ) : (
               <AddToCartButton
-                menuItem={item}
+                menuItem={price != null ? { ...item, price } : item}
                 location={location}
                 className="menu3-modal-action-btn menu3-modal-action-btn--primary"
               />

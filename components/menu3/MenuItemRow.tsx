@@ -62,7 +62,7 @@ export const MenuItemRow = forwardRef<HTMLButtonElement, MenuItemRowProps>(
         onFocus={onFocus}
         onBlur={onBlur}
         onClick={onClick}
-        aria-label={`${item.name}${price ? `, $${price.toFixed(2)}` : ''}`}
+        aria-label={`${item.name}${price != null ? `, $${price.toFixed(2)}` : ''}`}
       >
         {/* Image indicator (subtle) */}
         {hasImage && (
