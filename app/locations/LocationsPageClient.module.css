@@ -1,0 +1,597 @@
+/* Locations Page - Light/Dark Theme Support
+ * Light: Warm cream (matches /sitemap and /design-demo)
+ * Dark: Deep navy (current look)
+ */
+
+/* ================================================================
+   MAP
+   ================================================================ */
+
+.mapWrapper {
+  width: 100%;
+  height: 400px;
+  background: var(--color-border-subtle);
+}
+
+.mapLoading {
+  width: 100%;
+  height: 400px;
+  background: linear-gradient(135deg, var(--color-border-subtle) 0%, var(--color-surface-page) 100%);
+}
+
+@media (max-width: 768px) {
+  .mapWrapper,
+  .mapLoading {
+    height: 300px;
+  }
+}
+
+/* ================================================================
+   REGION TABS - Light Mode (warm cream)
+   ================================================================ */
+
+.regionTabs {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  padding: 16px;
+  background: var(--color-surface-card);
+  border-bottom: 1px solid var(--color-border-subtle);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.geoButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid var(--color--chile-rojo, #2B7A9B);
+  border-radius: 16px;
+  padding: 6px 14px;
+  color: var(--color--chile-rojo, #2B7A9B);
+  font-family: var(--font-family--headings);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.geoButton:hover:not(:disabled) {
+  background: var(--color--chile-rojo, #2B7A9B);
+  color: white;
+}
+
+.geoButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.tabDivider {
+  width: 1px;
+  height: 20px;
+  background: var(--color-border-subtle);
+  margin: 0 6px;
+}
+
+.regionTab {
+  background: transparent;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 16px;
+  padding: 6px 14px;
+  color: var(--color-text-secondary);
+  font-family: var(--font-family--headings);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.regionTab:hover {
+  background: rgba(50, 39, 35, 0.04);
+  border-color: var(--color-text-muted);
+  color: var(--color-text-primary);
+}
+
+.regionTabActive {
+  background: var(--color--chile-rojo, #2B7A9B);
+  border-color: var(--color--chile-rojo, #2B7A9B);
+  color: white;
+}
+
+.regionTabActive:hover {
+  background: var(--color--chile-rojo, #2B7A9B);
+  border-color: var(--color--chile-rojo, #2B7A9B);
+  color: white;
+}
+
+/* ================================================================
+   NEAREST LOCATION BANNER - Light Mode
+   ================================================================ */
+
+.nearestBanner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 20px;
+  background: var(--color--chile-rojo, #2B7A9B);
+  color: white;
+  font-size: 14px;
+}
+
+.nearestBanner svg {
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+.nearestBanner strong {
+  font-weight: 600;
+}
+
+.nearestBannerClose {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0 0 0 10px;
+  opacity: 0.7;
+  transition: opacity 0.15s ease;
+}
+
+.nearestBannerClose:hover {
+  opacity: 1;
+}
+
+/* ================================================================
+   LOCATIONS CONTAINER - Light Mode (warm cream)
+   ================================================================ */
+
+.locationsContainer {
+  background: var(--color-surface-page, #faf7f3);
+  padding: 24px 20px 48px;
+  min-height: 40vh;
+}
+
+@media (min-width: 768px) {
+  .locationsContainer {
+    padding: 32px 40px 60px;
+  }
+}
+
+/* ================================================================
+   REGION SECTIONS
+   ================================================================ */
+
+.regionSection {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.regionSection + .regionSection {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.regionTitle {
+  font-family: var(--font-family--headings);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--color--chile-rojo, #2B7A9B);
+  margin: 0 0 12px;
+}
+
+/* ================================================================
+   LOCATIONS LIST - Light Mode
+   ================================================================ */
+
+.locationsList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+
+@media (min-width: 768px) {
+  .locationsList {
+    grid-template-columns: 1fr 1fr;
+    column-gap: 40px;
+  }
+}
+
+.locationItem {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.locationItemNearest {
+  background: rgba(43, 122, 155, 0.08);
+  margin: 0 -12px;
+  padding: 14px 12px;
+  border-radius: 6px;
+  border-bottom-color: transparent;
+  border-left: 3px solid var(--color--chile-rojo, #2B7A9B);
+}
+
+/* ================================================================
+   LOCATION DETAILS - Light Mode
+   ================================================================ */
+
+.locationHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.locationName {
+  font-family: var(--font-family--headings);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  letter-spacing: 0.01em;
+}
+
+/* Open/Closed Badge */
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-radius: 10px;
+}
+
+.statusOpen {
+  background: rgba(16, 185, 129, 0.15);
+  color: #059669;
+}
+
+.statusClosed {
+  background: rgba(148, 163, 184, 0.15);
+  color: #64748b;
+}
+
+.statusNearest {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-radius: 10px;
+  background: rgba(43, 122, 155, 0.15);
+  color: var(--color--chile-rojo, #2B7A9B);
+}
+
+/* Meta Line (address, phone) */
+.locationMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.addressLink {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.addressLink:hover {
+  color: var(--color-text-primary);
+}
+
+.metaDivider {
+  color: var(--color-border-subtle);
+  font-size: 10px;
+}
+
+.phoneLink {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color--chile-rojo, #2B7A9B);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.phoneLink:hover {
+  color: color-mix(in srgb, var(--color--chile-rojo, #2B7A9B) 80%, black);
+}
+
+/* ================================================================
+   HOURS DISPLAY
+   ================================================================ */
+
+.locationHours {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+  font-size: 12px;
+}
+
+.hoursLabel {
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.hoursText {
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.hoursDivider {
+  color: var(--color-border-subtle);
+}
+
+/* ================================================================
+   ACTION BUTTONS - Light Mode
+   ================================================================ */
+
+.locationActions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.actionPrimary {
+  padding: 4px 12px;
+  background: var(--color--chile-rojo, #2B7A9B);
+  color: white;
+  text-decoration: none;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all 0.15s ease;
+}
+
+.actionPrimary:hover {
+  background: color-mix(in srgb, var(--color--chile-rojo, #2B7A9B) 85%, black);
+  color: white;
+}
+
+.actionSecondary {
+  padding: 4px 12px;
+  background: rgba(50, 39, 35, 0.04);
+  border: 1px solid var(--color-border-subtle);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all 0.15s ease;
+}
+
+.actionSecondary:hover {
+  background: rgba(50, 39, 35, 0.08);
+  border-color: var(--color-text-muted);
+  color: var(--color-text-primary);
+}
+
+/* ================================================================
+   MOBILE ADJUSTMENTS
+   ================================================================ */
+
+@media (max-width: 640px) {
+  .regionTabs {
+    justify-content: flex-start;
+    padding: 12px 16px;
+  }
+
+  .regionTab {
+    padding: 5px 12px;
+    font-size: 10px;
+  }
+
+  .locationsContainer {
+    padding: 20px 16px 40px;
+  }
+
+  .locationName {
+    font-size: 16px;
+  }
+
+  .addressLink,
+  .phoneLink {
+    font-size: 12px;
+  }
+}
+
+/* ================================================================
+   DARK MODE - Original Navy Style (preserved exactly)
+   ================================================================ */
+
+:global(.dark) .mapWrapper {
+  background: #1a1f2e;
+}
+
+:global(.dark) .mapLoading {
+  background: linear-gradient(135deg, #1a1f2e 0%, #0f1720 100%);
+}
+
+:global(.dark) .regionTabs {
+  background: #0f1720;
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+:global(.dark) .geoButton {
+  border-color: var(--ocean-400, #38bdf8);
+  color: var(--ocean-400, #38bdf8);
+}
+
+:global(.dark) .geoButton:hover:not(:disabled) {
+  background: var(--ocean-400, #38bdf8);
+  color: var(--slate-900);
+}
+
+:global(.dark) .tabDivider {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+:global(.dark) .regionTab {
+  border-color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.6);
+}
+
+:global(.dark) .regionTab:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+:global(.dark) .regionTabActive {
+  background: var(--ocean-500, #2B7A9B);
+  border-color: var(--ocean-500, #2B7A9B);
+  color: white;
+}
+
+:global(.dark) .regionTabActive:hover {
+  background: var(--ocean-500, #2B7A9B);
+  border-color: var(--ocean-500, #2B7A9B);
+  color: white;
+}
+
+:global(.dark) .nearestBanner {
+  background: var(--ocean-500, #2B7A9B);
+}
+
+:global(.dark) .locationsContainer {
+  background: #0f1720 !important;
+}
+
+:global(.dark) .regionSection {
+  background: transparent !important;
+  background-color: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Ensure section elements inside container inherit correct bg */
+:global(.dark) .locationsContainer section {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+:global(.dark) .regionSection + .regionSection {
+  border-top-color: rgba(255, 255, 255, 0.08);
+}
+
+:global(.dark) .locationsList {
+  background: transparent !important;
+}
+
+:global(.dark) .regionTitle {
+  color: var(--ocean-400, #38bdf8);
+}
+
+:global(.dark) .locationItem {
+  background: transparent;
+  border-bottom-color: rgba(255, 255, 255, 0.06);
+}
+
+:global(.dark) .locationItemNearest {
+  background: rgba(56, 189, 248, 0.1);
+  border-left-color: var(--ocean-400, #38bdf8);
+}
+
+:global(.dark) .locationName {
+  color: white;
+}
+
+:global(.dark) .statusOpen {
+  background: rgba(16, 185, 129, 0.2);
+  color: #6ee7b7;
+}
+
+:global(.dark) .statusClosed {
+  background: rgba(148, 163, 184, 0.2);
+  color: #94a3b8;
+}
+
+:global(.dark) .statusNearest {
+  background: rgba(56, 189, 248, 0.2);
+  color: #7dd3fc;
+}
+
+:global(.dark) .addressLink {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+:global(.dark) .addressLink:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+:global(.dark) .metaDivider {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+:global(.dark) .phoneLink {
+  color: var(--ocean-400, #38bdf8);
+}
+
+:global(.dark) .phoneLink:hover {
+  color: var(--ocean-300, #7dd3fc);
+}
+
+:global(.dark) .hoursLabel {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+:global(.dark) .hoursText {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+:global(.dark) .hoursDivider {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+:global(.dark) .actionPrimary {
+  background: var(--ocean-500, #2B7A9B);
+}
+
+:global(.dark) .actionPrimary:hover {
+  background: var(--ocean-600, #0284c7);
+  color: white;
+}
+
+:global(.dark) .actionSecondary {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+:global(.dark) .actionSecondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: white;
+}

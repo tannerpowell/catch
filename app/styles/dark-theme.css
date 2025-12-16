@@ -1,4 +1,8 @@
-/* Dark Theme - shadcn Slate Palette */
+/* Dark Theme - Slate + Ocean Blue Palette
+ *
+ * A cohesive dark mode that complements the warm cream light theme
+ * with deep slate backgrounds and ocean blue accents.
+ */
 
 /* Exclude studio from dark theme overrides */
 html[data-route^="/studio"] .dark,
@@ -30,6 +34,18 @@ html[data-route^="/studio"].dark body {
   --slate-100: #f1f5f9;
   --slate-50: #f8fafc;
 
+  /* Ocean Blue palette - primary accent for dark mode */
+  --ocean-50: #f0f9ff;
+  --ocean-100: #e0f2fe;
+  --ocean-200: #bae6fd;
+  --ocean-300: #7dd3fc;
+  --ocean-400: #38bdf8;
+  --ocean-500: #2B7A9B;  /* Base ocean blue from design demo */
+  --ocean-600: #0284c7;
+  --ocean-700: #0369a1;
+  --ocean-800: #075985;
+  --ocean-900: #0c4a6e;
+
   /* Primary backgrounds using Slate */
   --color--dark-slate-deepest: var(--slate-950);
   --color--dark-slate-deep: var(--slate-900);
@@ -37,10 +53,16 @@ html[data-route^="/studio"].dark body {
   --color--dark-slate-mid: var(--slate-700);
   --color--dark-slate-light: var(--slate-600);
 
-  /* Accent colors adjusted for dark mode */
-  --color--chile-rojo-dark: #ff6b5a;
-  --color--claro-maiz-dark: oklch(0.80 0.05 240);
+  /* Accent colors - OCEAN BLUE instead of red */
+  --color--chile-rojo-dark: #38bdf8;  /* Ocean blue light for dark mode */
+  --color--chile-rojo: #38bdf8;       /* Override base for dark mode */
+  --color--claro-maiz-dark: var(--ocean-300);
   --color--tierra-reca-dark: var(--slate-300);
+
+  /* Semantic accent colors */
+  --color-accent-primary: var(--ocean-400);
+  --color-accent-primary-soft: var(--ocean-300);
+  --color-accent-hover: var(--ocean-300);
 
   /* Text colors using Slate */
   --text-primary: var(--slate-50);
@@ -68,7 +90,7 @@ html[data-route^="/studio"].dark body {
 }
 
 .dark .catch-eyebrow {
-  color: var(--color--chile-rojo-dark);
+  color: var(--ocean-400);
 }
 
 .dark .catch-heading-1,
@@ -101,12 +123,12 @@ html[data-route^="/studio"].dark body {
 
 .dark .catch-category-pill:hover {
   color: var(--slate-100);
-  border-bottom-color: var(--color--chile-rojo-dark);
+  border-bottom-color: var(--ocean-400);
 }
 
 .dark .catch-category-pill.active {
   color: var(--slate-50);
-  border-bottom-color: var(--color--chile-rojo-dark);
+  border-bottom-color: var(--ocean-400);
 }
 
 /* Select dropdowns */
@@ -157,7 +179,7 @@ html[data-route^="/studio"].dark body {
 
 .dark .catch-nav-link:hover,
 .dark .nav-link:hover {
-  color: var(--color--chile-rojo-dark);
+  color: var(--ocean-400);
 }
 
 /* Menu icon */
@@ -259,7 +281,7 @@ html[data-route^="/studio"].dark body {
 }
 
 .dark .button:hover {
-  background-color: var(--color--chile-rojo-dark);
+  background-color: var(--ocean-500);
 }
 
 .dark .button.crema-fresca-small {
@@ -293,7 +315,7 @@ html[data-route^="/studio"].dark body {
 .dark input:focus,
 .dark textarea:focus,
 .dark select:focus {
-  border-color: var(--color--chile-rojo-dark);
+  border-color: var(--ocean-400);
   background-color: var(--slate-700);
 }
 
@@ -304,11 +326,11 @@ html[data-route^="/studio"].dark body {
 
 /* Links */
 .dark a {
-  color: var(--color--chile-rojo-dark);
+  color: var(--ocean-400);
 }
 
 .dark a:hover {
-  color: var(--color--claro-maiz-dark);
+  color: var(--ocean-300);
 }
 
 /* Sections */
@@ -333,7 +355,7 @@ html[data-route^="/studio"].dark body {
 .dark .catch-category-button.active {
   background-color: var(--slate-700);
   color: var(--slate-50);
-  border-color: var(--color--chile-rojo-dark);
+  border-color: var(--ocean-400);
 }
 
 /* Location and menu filter buttons */
@@ -436,15 +458,15 @@ html[data-route^="/studio"].dark body {
 
 .dark .nav-cart-button:hover {
   background: var(--slate-800);
-  border-color: var(--color--chile-rojo-dark);
-  color: var(--color--chile-rojo-dark);
-  box-shadow: 0 2px 8px rgba(255, 107, 90, 0.15);
+  border-color: var(--ocean-400);
+  color: var(--ocean-400);
+  box-shadow: 0 2px 8px rgba(56, 189, 248, 0.15);
 }
 
 .dark .nav-cart-badge {
-  background: var(--color--chile-rojo-dark);
+  background: var(--ocean-500);
   border-color: var(--slate-900);
-  box-shadow: 0 1px 4px rgba(255, 107, 90, 0.3);
+  box-shadow: 0 1px 4px rgba(56, 189, 248, 0.3);
 }
 
 /* Cart Drawer */
@@ -463,7 +485,7 @@ html[data-route^="/studio"].dark body {
 }
 
 .dark .cart-drawer-header-content svg {
-  color: var(--color--chile-rojo-dark);
+  color: var(--ocean-400);
 }
 
 .dark .cart-drawer-title {
@@ -560,11 +582,11 @@ html[data-route^="/studio"].dark body {
 
 .dark .cart-item-modifier {
   background: var(--slate-750);
-  border-left-color: var(--color--chile-rojo-dark);
+  border-left-color: var(--ocean-400);
 }
 
 .dark .cart-item-modifier-price {
-  color: var(--color--chile-rojo-dark);
+  color: var(--ocean-400);
 }
 
 .dark .cart-item-instructions {
@@ -586,10 +608,10 @@ html[data-route^="/studio"].dark body {
 }
 
 .dark .cart-item-quantity-btn:hover {
-  background: var(--color--chile-rojo-dark);
+  background: var(--ocean-500);
   color: white;
-  border-color: var(--color--chile-rojo-dark);
-  box-shadow: 0 2px 6px rgba(255, 107, 90, 0.4);
+  border-color: var(--ocean-500);
+  box-shadow: 0 2px 6px rgba(56, 189, 248, 0.4);
 }
 
 .dark .cart-item-quantity-value {
@@ -619,7 +641,7 @@ html[data-route^="/studio"].dark body {
 }
 
 .dark .cart-total-final span:last-child {
-  color: var(--color--chile-rojo-dark);
+  color: var(--ocean-400);
 }
 
 /* Footer */
@@ -683,12 +705,12 @@ html[data-route^="/studio"].dark body {
 }
 
 .dark .modal-btn-primary {
-  background: linear-gradient(135deg, var(--color--chile-rojo-dark) 0%, #d9534f 100%);
-  box-shadow: 0 4px 12px rgba(255, 107, 90, 0.4);
+  background: linear-gradient(135deg, var(--ocean-500) 0%, var(--ocean-600) 100%);
+  box-shadow: 0 4px 12px rgba(56, 189, 248, 0.4);
 }
 
 .dark .modal-btn-primary:hover {
-  box-shadow: 0 6px 20px rgba(255, 107, 90, 0.5);
+  box-shadow: 0 6px 20px rgba(56, 189, 248, 0.5);
 }
 
 .dark .modal-message {
@@ -768,13 +790,13 @@ html[data-route^="/studio"].dark body {
 }
 
 .dark .checkout-submit-btn {
-  background: linear-gradient(135deg, var(--color--chile-rojo-dark) 0%, #d9534f 100%);
-  box-shadow: 0 4px 16px rgba(255, 107, 90, 0.4);
+  background: linear-gradient(135deg, var(--ocean-500) 0%, var(--ocean-600) 100%);
+  box-shadow: 0 4px 16px rgba(56, 189, 248, 0.4);
 }
 
 .dark .checkout-submit-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #d9534f 0%, var(--color--chile-rojo-dark) 100%);
-  box-shadow: 0 8px 24px rgba(255, 107, 90, 0.5);
+  background: linear-gradient(135deg, var(--ocean-600) 0%, var(--ocean-500) 100%);
+  box-shadow: 0 8px 24px rgba(56, 189, 248, 0.5);
 }
 
 .dark .checkout-submit-btn:disabled {
@@ -797,4 +819,110 @@ html[data-route^="/studio"].dark body {
   background-color: rgba(59, 130, 246, 0.1);
   border-color: rgba(59, 130, 246, 0.2);
   color: var(--slate-200);
+}
+
+/* ================================================================
+   MENU3 DARK MODE
+   ================================================================ */
+
+/* Menu3 CSS custom properties for dark mode */
+:root.dark {
+  --menu3-bg: var(--slate-900);
+  --menu3-sidebar-bg: var(--slate-850);
+  --menu3-text: var(--slate-100);
+  --menu3-text-muted: var(--slate-400);
+  --menu3-border: rgba(255, 255, 255, 0.08);
+  --menu3-search-bg: rgba(255, 255, 255, 0.05);
+  --menu3-hover-bg: rgba(255, 255, 255, 0.06);
+  --menu3-accent: var(--ocean-400);
+
+  /* Active category - slate instead of white for better dark mode contrast */
+  --menu3-active-bg: var(--slate-700);
+  --menu3-active-text: var(--slate-50);
+  --menu3-active-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Menu3 container */
+.dark .menu3-page {
+  background: var(--slate-900);
+}
+
+/* Menu3 sidebar */
+.dark .menu3-sidebar,
+.dark .menu3-category-nav {
+  background: var(--slate-850);
+  border-color: var(--slate-800);
+}
+
+/* Menu3 search input */
+.dark .menu3-search-input {
+  background: var(--menu3-search-bg);
+  border-color: var(--menu3-border);
+  color: var(--slate-100);
+}
+
+.dark .menu3-search-input::placeholder {
+  color: var(--slate-500);
+}
+
+.dark .menu3-search-input:focus {
+  background: var(--slate-800);
+  border-color: var(--ocean-400);
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+}
+
+/* Menu3 category items */
+.dark .menu3-category-item {
+  color: var(--slate-400);
+}
+
+.dark .menu3-category-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--slate-200);
+}
+
+.dark .menu3-category-item.is-active {
+  background: var(--slate-700);
+  color: var(--slate-50);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Mobile category chips - use accent color for active */
+@media (max-width: 1023px) {
+  .dark .menu3-category-list {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.06);
+  }
+
+  .dark .menu3-category-item.is-active {
+    background: var(--ocean-500);
+    color: white;
+    box-shadow: 0 2px 8px rgba(56, 189, 248, 0.3);
+  }
+}
+
+/* Menu3 main content area */
+.dark .menu3-main {
+  background: var(--slate-900);
+}
+
+/* Menu3 item rows */
+.dark .menu3-item-row {
+  border-bottom-color: var(--slate-800);
+}
+
+.dark .menu3-item-row:hover {
+  background: var(--slate-850);
+}
+
+.dark .menu3-item-name {
+  color: var(--slate-100);
+}
+
+.dark .menu3-item-description {
+  color: var(--slate-400);
+}
+
+.dark .menu3-item-price {
+  color: var(--ocean-400);
 }
