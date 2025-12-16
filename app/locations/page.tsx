@@ -3,6 +3,7 @@ import styles from './page.module.css';
 import LocationsPageClient from './LocationsPageClient';
 import type { Metadata } from "next";
 
+// TODO: Location count "17" is hardcoded in description - update when locations change
 export const metadata: Metadata = {
   title: "Locations — Texas & Oklahoma",
   description: "Find The Catch seafood restaurant near you. 17 locations across Texas and Oklahoma including Houston, Dallas-Fort Worth, Oklahoma City, East Texas, and West Texas.",

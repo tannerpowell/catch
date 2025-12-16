@@ -6,6 +6,8 @@ import type { Location, MenuCategory, MenuItem } from "@/lib/types";
 import { LocationBar } from "@/components/menu3/LocationBar";
 import { useNearestLocation } from "@/lib/hooks/useNearestLocation";
 import { isItemAvailableAtLocation } from "@/lib/utils/menuAvailability";
+import { formatPrice, getEffectivePrice } from "@/lib/utils/price";
+import { HIDDEN_CATEGORY_SLUGS } from "@/lib/constants/categories";
 import { paginateItems, type ColumnData } from "./MenuPdfDocument";
 
 // Dynamic import for react-pdf (client-side only, no SSR)
@@ -49,20 +51,6 @@ export interface DisplayItem {
   price: string;
   isCategory?: boolean;
   categorySlug?: string;
-}
-
-// Ghost kitchen categories - excluded from print/TV menus
-const HIDDEN_CATEGORY_SLUGS = ['blazing-hen', 'cajun-creation'];
-
-function formatPrice(price: number | null | undefined): string {
-  if (price == null) return "MKT";
-  return price % 1 === 0 ? `${price}` : price.toFixed(2);
-}
-
-function getEffectivePrice(item: MenuItem, locationSlug: string): number | null {
-  const override = item.locationOverrides?.[locationSlug];
-  if (override?.price != null) return override.price;
-  return item.price ?? null;
 }
 
 // Render a column of items

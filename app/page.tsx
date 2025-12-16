@@ -200,6 +200,7 @@ export default function HomePage() {
       </section>
 
       {/* Locations ribbon */}
+      {/* TODO: Location count is hardcoded - update when locations change or fetch dynamically */}
       <section className="lux-locations">
         <div className="lux-locations__inner lux-locations__inner--centered">
           <div className="lux-locations__content">

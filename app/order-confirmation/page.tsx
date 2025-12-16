@@ -33,7 +33,7 @@ function OrderConfirmationContent() {
         <h1 className="confirmation-title">Order Confirmed!</h1>
 
         {!orderNumber && (
-          <div className="confirmation-warning">
+          <div className="confirmation-warning" role="alert">
             <p className="confirmation-warning-title">
               Order confirmation details could not be retrieved.
             </p>

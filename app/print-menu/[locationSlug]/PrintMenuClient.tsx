@@ -4,6 +4,8 @@ import { useMemo } from "react";
 import dynamic from "next/dynamic";
 import type { Location, MenuCategory, MenuItem } from "@/lib/types";
 import { isItemAvailableAtLocation } from "@/lib/utils/menuAvailability";
+import { formatPrice, getEffectivePrice } from "@/lib/utils/price";
+import { HIDDEN_CATEGORY_SLUGS } from "@/lib/constants/categories";
 import { paginateItems, type ColumnData } from "../MenuPdfDocument";
 import type { DisplayItem } from "../PrintMenuPageClient";
 
@@ -40,20 +42,6 @@ interface Props {
   location: Location;
   categories: MenuCategory[];
   items: MenuItem[];
-}
-
-// Ghost kitchen categories - excluded from print/TV menus
-const HIDDEN_CATEGORY_SLUGS = ['blazing-hen', 'cajun-creation'];
-
-function formatPrice(price: number | null | undefined): string {
-  if (price == null) return "MKT";
-  return price % 1 === 0 ? `${price}` : price.toFixed(2);
-}
-
-function getEffectivePrice(item: MenuItem, locationSlug: string): number | null {
-  const override = item.locationOverrides?.[locationSlug];
-  if (override?.price != null) return override.price;
-  return item.price ?? null;
 }
 
 // Render a column of items

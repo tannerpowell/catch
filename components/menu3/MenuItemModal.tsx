@@ -110,7 +110,6 @@ export function MenuItemModal({
       <div
         ref={modalRef}
         className="menu3-modal"
-        role="document"
       >
         {/* Close button */}
         <button
