@@ -25,22 +25,22 @@ const COLUMN_WIDTH = (PAGE_WIDTH - 2 * MARGIN_LR - GUTTER) / 2; // 252pt
 // Height calculations based on actual CSS:
 // Page: 14in = 1008pt, top 0.5" (36pt), bottom 0.675" (49pt), usable = 923pt per column
 // Header: ~50pt (title + location + margin-bottom)
-// Safety buffer: 20pt to ensure we never overflow
+// Safety buffer: increased to 40pt to ensure we never overflow
 const HEADER_HEIGHT = 50;
-const SAFETY_BUFFER = 20;
-const CONTENT_HEIGHT = PAGE_HEIGHT - MARGIN_TOP - MARGIN_BOTTOM - SAFETY_BUFFER; // 903pt per column
-const CONTENT_HEIGHT_FIRST_PAGE = CONTENT_HEIGHT - HEADER_HEIGHT; // 853pt (with header)
+const SAFETY_BUFFER = 40;
+const CONTENT_HEIGHT = PAGE_HEIGHT - MARGIN_TOP - MARGIN_BOTTOM - SAFETY_BUFFER; // 883pt per column
+const CONTENT_HEIGHT_FIRST_PAGE = CONTENT_HEIGHT - HEADER_HEIGHT; // 833pt (with header)
 
-// Item heights based on actual CSS measurements:
-// .print-menu-item: font-size 11pt, line-height 1.35, padding 3pt top/bottom
-// = 11 * 1.35 + 6 = ~21pt per item
-// .print-menu-category: font-size 9pt, padding-top 15px (~11pt), padding-bottom 5pt
-// = 9 + 11 + 5 = ~25pt, but with line decorations ~28pt
-// First category has no padding-top = ~17pt
-const ITEM_HEIGHT = 21;
-const CATEGORY_HEIGHT = 28;
-const CATEGORY_FIRST_HEIGHT = 17;
-const CONTD_HEIGHT = 17; // Same as first category (no top padding)
+// Item heights based on actual rendered PDF measurements:
+// menuItem: fontSize 11pt, lineHeight 1.4 (explicit), paddingVertical 2pt
+// = 11 * 1.4 + 4 = ~19.4pt, rounded up to 20pt for safety
+// categoryHeader: fontSize 9pt, paddingTop 15pt, marginBottom 4pt
+// = 9 + 15 + 4 = ~28pt, plus line decoration height ~30pt
+// First category has no paddingTop = ~19pt
+const ITEM_HEIGHT = 22;
+const CATEGORY_HEIGHT = 30;
+const CATEGORY_FIRST_HEIGHT = 19;
+const CONTD_HEIGHT = 19; // Same as first category (no top padding)
 
 // PDF Styles - using built-in fonts (Helvetica, Times-Roman)
 const styles = StyleSheet.create({
@@ -114,6 +114,7 @@ const styles = StyleSheet.create({
   itemName: {
     fontFamily: "Times-Roman",
     fontSize: 11,
+    lineHeight: 1.4,
     color: "#1a1a1a",
     flexShrink: 1,
   },
