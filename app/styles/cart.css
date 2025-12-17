@@ -146,7 +146,7 @@
 }
 
 .cart-drawer-header-content svg {
-  color: var(--cart-accent);
+  color: #2B7A9B; /* Ocean blue */
   animation: slideInLeft 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
