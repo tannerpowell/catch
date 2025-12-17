@@ -402,7 +402,7 @@ export function MenuItemModal({
           min-height: 348px;
           background: white;
           border: 4px solid white;
-          border-radius: 6px;
+          border-radius: 2px; /* Formula: innerCard(10px) - padding(16px) ≈ 0, use 2px for softness */
           overflow: hidden;
           box-shadow:
             0 4px 20px rgba(50, 39, 35, 0.15),
