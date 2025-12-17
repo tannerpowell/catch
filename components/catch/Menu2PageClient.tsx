@@ -5,21 +5,13 @@ import type { Location, MenuCategory, MenuItem } from "@/lib/types";
 import MenuItemCard from "./MenuItemCard";
 import { findNearestLocation } from "@/lib/utils/findNearestLocation";
 import { isItemAvailableAtLocation } from "@/lib/utils/menuAvailability";
+import { slugify } from "@/lib/utils/slugify";
 
 interface Menu2PageClientProps {
   categories: MenuCategory[];
   items: MenuItem[];
   locations: Location[];
   imageMap: Record<string, string>;
-}
-
-function slugify(input: string) {
-  return input
-    .toLowerCase()
-    .normalize("NFKD")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/-+/g, "-")
-    .replace(/(^-|-$)/g, "");
 }
 
 /**
