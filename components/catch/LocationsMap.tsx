@@ -251,20 +251,25 @@ export default function LocationsMap({ locations, onLocationSelect, minimal = fa
       }
     });
 
+    // Fallback if no valid coordinates found
+    const hasValidBounds = !bounds.isEmpty();
+
     const mapInstance = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/dark-v11',
-      center: bounds.getCenter(),
+      center: hasValidBounds ? bounds.getCenter() : [-97.5, 33.0], // Default to central TX/OK
       zoom: 5,
     });
 
-    // Fit to bounds with padding once map loads
-    mapInstance.on('load', () => {
-      mapInstance.fitBounds(bounds, {
-        padding: { top: 50, bottom: 50, left: 50, right: 50 },
-        maxZoom: 8,
+    // Fit to bounds with padding once map loads (only if we have valid bounds)
+    if (hasValidBounds) {
+      mapInstance.on('load', () => {
+        mapInstance.fitBounds(bounds, {
+          padding: { top: 50, bottom: 50, left: 50, right: 50 },
+          maxZoom: 8,
+        });
       });
-    });
+    }
 
     map.current = mapInstance;
 
@@ -329,8 +334,8 @@ export default function LocationsMap({ locations, onLocationSelect, minimal = fa
       userMarkerRef.current = null;
     }
 
-    // Add user location marker (gold color)
-    const marker = new mapboxgl.Marker({ color: '#C9A962' })
+    // Add user location marker (ocean blue for consistency)
+    const marker = new mapboxgl.Marker({ color: '#2B7A9B' })
       .setLngLat(userCoords)
       .addTo(map.current);
     userMarkerRef.current = marker;
@@ -474,9 +479,9 @@ export default function LocationsMap({ locations, onLocationSelect, minimal = fa
                 >
                   Directions
                 </a>
-                {selectedLocation.phone && (
+                {selectedLocation.phone && sanitizeUrl(`tel:${selectedLocation.phone}`) && (
                   <a
-                    href={`tel:${selectedLocation.phone}`}
+                    href={sanitizeUrl(`tel:${selectedLocation.phone}`)!}
                     className={styles.primaryButton}
                   >
                     {formatPhone(selectedLocation.phone)}

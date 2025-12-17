@@ -4,6 +4,7 @@ import { useState, useMemo, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import { fallbackGeoCoordinates } from '@/lib/adapters/sanity-catch';
 import { formatPhone } from '@/lib/utils/formatPhone';
+import { getDistance } from '@/lib/utils/distance';
 import styles from './LocationsPageClient.module.css';
 
 const LocationsMap = dynamic(() => import('@/components/catch/LocationsMap'), {
@@ -138,23 +139,17 @@ function getDisplayHours(hours: Location['hours']): { weekday: string; weekend: 
 export default function LocationsPageClient({ locations }: LocationsPageClientProps) {
   const [region, setRegion] = useState<RegionKey>('ALL');
   const [isLocating, setIsLocating] = useState(false);
+  const [geoError, setGeoError] = useState<string | null>(null);
   const [nearestSlug, setNearestSlug] = useState<string | null>(null);
   const [userCoords, setUserCoords] = useState<[number, number] | null>(null);
 
-  // Haversine distance calculation
-  const calculateDistance = useCallback((lat1: number, lon1: number, lat2: number, lon2: number) => {
-    const R = 6371;
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-      Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  }, []);
-
   const handleFindNearest = useCallback(() => {
-    if (!navigator.geolocation) return;
+    if (!navigator.geolocation) {
+      setGeoError('Geolocation is not supported by your browser');
+      return;
+    }
     setIsLocating(true);
+    setGeoError(null);
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -169,7 +164,8 @@ export default function LocationsPageClient({ locations }: LocationsPageClientPr
         locations.forEach(location => {
           const coords = fallbackGeoCoordinates[location.slug];
           if (!coords) return;
-          const distance = calculateDistance(latitude, longitude, coords.lat, coords.lng);
+          // Use shared getDistance utility from lib/utils/distance.ts
+          const distance = getDistance(latitude, longitude, coords.lat, coords.lng);
           if (distance < minDistance) {
             minDistance = distance;
             nearest = location.slug;
@@ -183,9 +179,22 @@ export default function LocationsPageClient({ locations }: LocationsPageClientPr
       (error) => {
         console.error('Geolocation error:', error);
         setIsLocating(false);
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            setGeoError('Location access denied. Please select a location manually.');
+            break;
+          case error.POSITION_UNAVAILABLE:
+            setGeoError('Unable to determine your location. Please try again.');
+            break;
+          case error.TIMEOUT:
+            setGeoError('Location request timed out. Please try again.');
+            break;
+          default:
+            setGeoError('An error occurred while getting your location.');
+        }
       }
     );
-  }, [locations, calculateDistance]);
+  }, [locations]);
 
   // Get nearest location object for banner
   const nearestLocation = useMemo(() => {
@@ -261,6 +270,20 @@ export default function LocationsPageClient({ locations }: LocationsPageClientPr
           </button>
         ))}
       </nav>
+
+      {/* Geolocation Error Message */}
+      {geoError && (
+        <div className={styles.geoError} role="alert">
+          <span>{geoError}</span>
+          <button
+            onClick={() => setGeoError(null)}
+            className={styles.geoErrorClose}
+            aria-label="Dismiss error"
+          >
+            ×
+          </button>
+        </div>
+      )}
 
       {/* Nearest Location Banner */}
       {nearestLocation && (

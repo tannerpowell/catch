@@ -113,6 +113,37 @@
 }
 
 /* ================================================================
+   GEOLOCATION ERROR MESSAGE - Light Mode
+   ================================================================ */
+
+.geoError {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 20px;
+  background: #fef2f2;
+  color: #b91c1c;
+  font-size: 14px;
+  border-bottom: 1px solid #fecaca;
+}
+
+.geoErrorClose {
+  background: none;
+  border: none;
+  color: #b91c1c;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0;
+  opacity: 0.7;
+  transition: opacity 0.15s ease;
+}
+
+.geoErrorClose:hover {
+  opacity: 1;
+}
+
+/* ================================================================
    NEAREST LOCATION BANNER - Light Mode
    ================================================================ */
 
@@ -479,6 +510,16 @@
   background: var(--ocean-500, #2B7A9B);
   border-color: var(--ocean-500, #2B7A9B);
   color: white;
+}
+
+:global(.dark) .geoError {
+  background: rgba(153, 27, 27, 0.2);
+  color: #fca5a5;
+  border-bottom-color: rgba(153, 27, 27, 0.3);
+}
+
+:global(.dark) .geoErrorClose {
+  color: #fca5a5;
 }
 
 :global(.dark) .nearestBanner {
