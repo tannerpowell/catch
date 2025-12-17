@@ -83,11 +83,11 @@ const createLocationPopup = (location: Location): HTMLElement => {
     addressParts.push(location.addressLine1);
   }
   // Build city/state/zip line only with defined parts
-  const cityStateZip = [
-    location.city,
-    location.state ? (location.city ? `, ${location.state}` : location.state) : null,
-    location.postalCode
-  ].filter(Boolean).join(' ').replace(' , ', ', ');
+  const cityStateParts: string[] = [];
+  if (location.city) cityStateParts.push(location.city);
+  if (location.state) cityStateParts.push(location.state);
+  const cityState = cityStateParts.join(', ');
+  const cityStateZip = [cityState, location.postalCode].filter(Boolean).join(' ');
   if (cityStateZip) {
     addressParts.push(cityStateZip);
   }
@@ -408,9 +408,9 @@ export default function LocationsMapLegacy({ locations, onLocationSelect }: Loca
               >
                 Directions
               </a>
-              {selectedLocation.phone && (
+              {selectedLocation.phone && sanitizeUrl(`tel:${selectedLocation.phone}`) && (
                 <a
-                  href={`tel:${selectedLocation.phone}`}
+                  href={sanitizeUrl(`tel:${selectedLocation.phone}`)!}
                   className={styles.primaryButton}
                 >
                   {formatPhone(selectedLocation.phone)}
