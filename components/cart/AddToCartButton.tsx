@@ -81,7 +81,7 @@ export function AddToCartButton({
       location
     );
 
-    // Cart badge animation provides sufficient feedback
+    // Cart badge bounce animation provides visual feedback
   };
 
   const handleModifierAddToCart = (modifiers: CartModifier[], specialInstructions: string, quantity: number) => {
@@ -104,7 +104,7 @@ export function AddToCartButton({
     );
 
     setShowModifierModal(false);
-    // Cart badge animation provides sufficient feedback
+    // Cart badge bounce animation provides visual feedback
   };
 
   const handleConfirmSwitch = () => {
@@ -133,7 +133,7 @@ export function AddToCartButton({
       },
       location
     );
-    // Cart badge animation provides sufficient feedback
+    // Cart badge bounce animation provides visual feedback
   };
 
   // Don't show button if no price (market price or unavailable)

@@ -49,19 +49,11 @@ interface UseNearestLocationReturn {
 export function useNearestLocation(options: UseNearestLocationOptions): UseNearestLocationReturn {
   const { locations, defaultSlug, persistSelection = true } = options;
 
-  // Initialize from localStorage or default
-  const [selectedSlug, setSelectedSlugState] = useState<string>(() => {
-    if (typeof window === 'undefined') {
-      return defaultSlug || locations[0]?.slug || '';
-    }
-    if (persistSelection) {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored && locations.some(l => l.slug === stored)) {
-        return stored;
-      }
-    }
-    return defaultSlug || locations[0]?.slug || '';
-  });
+  // Initialize with SSR-safe deterministic value to avoid hydration mismatch
+  // localStorage hydration happens in useEffect below
+  const [selectedSlug, setSelectedSlugState] = useState<string>(
+    defaultSlug || locations[0]?.slug || ''
+  );
 
   const [isLocating, setIsLocating] = useState(false);
   const [geoError, setGeoError] = useState<string | null>(null);
@@ -139,15 +131,18 @@ export function useNearestLocation(options: UseNearestLocationOptions): UseNeare
     );
   }, [locations, setSelectedSlug]);
 
-  // Hydrate from localStorage after mount
+  // Hydrate from localStorage after mount (client-side only)
+  // This runs after initial render to sync with persisted preference
   useEffect(() => {
     if (persistSelection && typeof window !== 'undefined') {
       const stored = localStorage.getItem(STORAGE_KEY);
+      // Only update if stored value is valid and different from current
       if (stored && locations.some(l => l.slug === stored) && stored !== selectedSlug) {
         setSelectedSlugState(stored);
       }
     }
-  }, [locations, persistSelection, selectedSlug]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- Only run on mount, not on selectedSlug changes
+  }, [locations, persistSelection]);
 
   // Get the selected location object
   const selectedLocation = locations.find(l => l.slug === selectedSlug);

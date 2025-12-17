@@ -31,7 +31,8 @@
   color: white;
 }
 
-.toggle button.active {
+.toggle button.active,
+.active {
   color: white;
 }
 

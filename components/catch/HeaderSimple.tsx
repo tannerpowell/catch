@@ -2,9 +2,43 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { ShoppingCart } from 'lucide-react';
 import { useCart } from '@/lib/contexts/CartContext';
+
+// Extracted as a separate function outside component to avoid re-creation
+const useBadgeAnimation = (itemCount: number) => {
+  const [animating, setAnimating] = useState(false);
+  const prevCountRef = useRef(itemCount);
+  const animationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    // Only animate when count increases (item added)
+    if (itemCount > prevCountRef.current) {
+      setAnimating(true);
+
+      // Clear any existing timeout
+      if (animationTimeoutRef.current) {
+        clearTimeout(animationTimeoutRef.current);
+      }
+
+      // Clear animation state after animation completes
+      animationTimeoutRef.current = setTimeout(() => {
+        setAnimating(false);
+      }, 600); // Match bounce animation duration
+    }
+    prevCountRef.current = itemCount;
+
+    return () => {
+      if (animationTimeoutRef.current) {
+        clearTimeout(animationTimeoutRef.current);
+      }
+    };
+  }, [itemCount]);
+
+  return animating;
+};
+
 import { CartDrawer } from '@/components/cart/CartDrawer';
 
 type GsapGlobal = {
@@ -33,6 +67,7 @@ export default function HeaderSimple() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const { itemCount } = useCart();
+  const badgeAnimating = useBadgeAnimation(itemCount);
   const hasAnimatedRef = useRef(false);
 
   useEffect(() => {
@@ -122,7 +157,7 @@ export default function HeaderSimple() {
           >
             <ShoppingCart size={20} />
             {itemCount > 0 && (
-              <span className="nav-cart-badge">{itemCount}</span>
+              <span className={`nav-cart-badge${badgeAnimating ? ' nav-cart-badge-bounce' : ''}`}>{itemCount}</span>
             )}
           </button>
         </div>

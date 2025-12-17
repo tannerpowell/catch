@@ -5,6 +5,7 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import styles from './LocationsMapLegacy.module.css';
 import { fallbackGeoCoordinates } from '@/lib/adapters/sanity-catch';
+import { formatPhone } from '@/lib/utils/formatPhone';
 
 interface Location {
   slug: string;
@@ -23,18 +24,6 @@ interface LocationsMapProps {
   locations: Location[];
   onLocationSelect?: (slug: string) => void;
 }
-
-// Format phone for display
-const formatPhone = (phone: string) => {
-  const digits = phone.replace(/\D/g, '');
-  if (digits.length === 10) {
-    return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
-  }
-  if (digits.length === 11 && digits[0] === '1') {
-    return `(${digits.slice(1, 4)}) ${digits.slice(4, 7)}-${digits.slice(7, 11)}`;
-  }
-  return phone;
-};
 
 // Build Apple Maps URL
 const getAppleMapsUrl = (location: Location) => {
@@ -232,6 +221,7 @@ const locationCoords: Record<string, [number, number]> = Object.fromEntries(
 export default function LocationsMapLegacy({ locations, onLocationSelect }: LocationsMapProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
+  const userMarkerRef = useRef<mapboxgl.Marker | null>(null);
   const [nearestLocation, setNearestLocation] = useState<string | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -299,6 +289,11 @@ export default function LocationsMapLegacy({ locations, onLocationSelect }: Loca
     });
 
     return () => {
+      // Clean up user marker
+      if (userMarkerRef.current) {
+        userMarkerRef.current.remove();
+        userMarkerRef.current = null;
+      }
       mapInstance.remove();
       map.current = null;
     };
@@ -359,8 +354,13 @@ export default function LocationsMapLegacy({ locations, onLocationSelect }: Loca
             zoom: 10,
           });
 
-          // Add user location marker
-          new mapboxgl.Marker({ color: '#2B7A9B' })
+          // Remove existing user marker before adding new one
+          if (userMarkerRef.current) {
+            userMarkerRef.current.remove();
+          }
+
+          // Add user location marker and store in ref
+          userMarkerRef.current = new mapboxgl.Marker({ color: '#2B7A9B' })
             .setLngLat(userCoords)
             .addTo(currentMap);
         }

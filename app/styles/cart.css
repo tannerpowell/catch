@@ -74,6 +74,29 @@
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
 }
 
+/* Badge bounce animation when item is added to cart */
+.nav-cart-badge-bounce {
+  animation: cartBadgeBounce 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes cartBadgeBounce {
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.4);
+  }
+  50% {
+    transform: scale(0.9);
+  }
+  75% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
 /* ====================
    CART DRAWER
    ==================== */
