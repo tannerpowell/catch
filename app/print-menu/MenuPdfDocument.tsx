@@ -7,9 +7,36 @@ import {
   Text,
   View,
   StyleSheet,
+  Font,
   pdf,
 } from "@react-pdf/renderer";
 import type { DisplayItem } from "./PrintMenuPageClient";
+
+// Register Google Fonts to match website styling
+// DM Serif Display - for item names (serif, elegant)
+Font.register({
+  family: "DM Serif Display",
+  src: "https://fonts.gstatic.com/s/dmseriftext/v12/rnCu-xZa_krGokauCeNq1wWyafOPXHIJErY.ttf",
+});
+
+// Libre Franklin - for prices and UI (sans-serif, clean)
+Font.register({
+  family: "Libre Franklin",
+  fonts: [
+    {
+      src: "https://fonts.gstatic.com/s/librefranklin/v14/jizOREVItHgc8qDIbSTKq4XkRg8T88bjFuXOnduh.ttf",
+      fontWeight: 400,
+    },
+    {
+      src: "https://fonts.gstatic.com/s/librefranklin/v14/jizOREVItHgc8qDIbSTKq4XkRg8T88bjFuXOnduhL4E.ttf",
+      fontWeight: 600,
+    },
+    {
+      src: "https://fonts.gstatic.com/s/librefranklin/v14/jizOREVItHgc8qDIbSTKq4XkRg8T88bjFuXOnduhLYE.ttf",
+      fontWeight: 700,
+    },
+  ],
+});
 
 // 8.5" x 14" = 612pt x 1008pt
 // 0.5" margins all around = 36pt
@@ -42,7 +69,7 @@ const CATEGORY_HEIGHT = 30;
 const CATEGORY_FIRST_HEIGHT = 19;
 const CONTD_HEIGHT = 19; // Same as first category (no top padding)
 
-// PDF Styles - using built-in fonts (Helvetica, Times-Roman)
+// PDF Styles - using registered Google Fonts to match website
 const styles = StyleSheet.create({
   page: {
     width: PAGE_WIDTH,
@@ -52,7 +79,7 @@ const styles = StyleSheet.create({
     paddingLeft: MARGIN_LR,
     paddingRight: MARGIN_LR,
     backgroundColor: "#f9f8f5",
-    fontFamily: "Helvetica",
+    fontFamily: "Libre Franklin",
   },
   header: {
     flexDirection: "row",
@@ -61,12 +88,12 @@ const styles = StyleSheet.create({
     marginBottom: 18,
   },
   headerTitle: {
-    fontFamily: "Times-Roman",
+    fontFamily: "DM Serif Display",
     fontSize: 24,
     color: "#1a1a1a",
   },
   headerLocation: {
-    fontFamily: "Helvetica",
+    fontFamily: "Libre Franklin",
     fontSize: 11,
     color: "#666",
     textTransform: "uppercase",
@@ -99,7 +126,8 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   categoryText: {
-    fontFamily: "Helvetica-Bold",
+    fontFamily: "Libre Franklin",
+    fontWeight: 600,
     fontSize: 9,
     color: "#1A71B3",
     textTransform: "uppercase",
@@ -112,7 +140,7 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
   },
   itemName: {
-    fontFamily: "Times-Roman",
+    fontFamily: "DM Serif Display",
     fontSize: 11,
     lineHeight: 1.4,
     color: "#1a1a1a",
@@ -128,7 +156,7 @@ const styles = StyleSheet.create({
     minWidth: 10,
   },
   itemPrice: {
-    fontFamily: "Helvetica",
+    fontFamily: "Libre Franklin",
     fontSize: 10,
     color: "#1a1a1a",
     textAlign: "right",
@@ -139,7 +167,7 @@ const styles = StyleSheet.create({
     right: 27, // 0.375"
     fontSize: 11,
     color: "#666",
-    fontFamily: "Helvetica",
+    fontFamily: "Libre Franklin",
   },
 });
 
