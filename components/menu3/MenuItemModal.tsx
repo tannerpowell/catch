@@ -16,6 +16,24 @@ interface MenuItemModalProps {
   onOpenModifiers?: (item: MenuItem) => void;
 }
 
+/** Format category slug for display with proper accents */
+function formatCategoryName(slug: string): string {
+  // Handle special cases with proper diacritical marks
+  const specialCases: Record<string, string> = {
+    'a-la-carte': 'À La Carte',
+    'a-la-carté': 'À La Carte',
+  };
+
+  if (specialCases[slug.toLowerCase()]) {
+    return specialCases[slug.toLowerCase()];
+  }
+
+  // Default: convert slug to title case
+  return slug
+    .replace(/-/g, ' ')
+    .replace(/\b\w/g, char => char.toUpperCase());
+}
+
 /**
  * Premium menu item detail modal.
  * Gulf Coast Editorial design with layered card effect.
@@ -147,7 +165,7 @@ export function MenuItemModal({
             {/* Eyebrow category */}
             {item.categorySlug && (
               <div className="modal-eyebrow">
-                {item.categorySlug.replace(/-/g, ' ')}
+                {formatCategoryName(item.categorySlug)}
               </div>
             )}
 
@@ -282,8 +300,8 @@ export function MenuItemModal({
           width: 100%;
           background: var(--modal-cream-dark);
           border: 1px solid rgba(50, 39, 35, 0.12);
-          border-radius: 20px;
-          padding: 8px;
+          border-radius: 16px;
+          padding: 6px;
           box-shadow:
             0 0 0 1px rgba(255, 255, 255, 0.5) inset,
             0 25px 60px rgba(50, 39, 35, 0.35),
@@ -309,7 +327,7 @@ export function MenuItemModal({
           grid-template-columns: 1fr 1fr;
           background: var(--modal-cream);
           border: 1px solid rgba(50, 39, 35, 0.08);
-          border-radius: 14px;
+          border-radius: 10px;
           overflow: hidden;
           box-shadow:
             0 4px 20px rgba(50, 39, 35, 0.1),
@@ -375,7 +393,7 @@ export function MenuItemModal({
           min-height: 348px;
           background: white;
           border: 4px solid white;
-          border-radius: 8px;
+          border-radius: 6px;
           overflow: hidden;
           box-shadow:
             0 4px 20px rgba(50, 39, 35, 0.15),
@@ -570,8 +588,8 @@ export function MenuItemModal({
 
           .modal-outer-frame {
             max-height: 92vh;
-            padding: 6px;
-            border-radius: 20px 20px 0 0;
+            padding: 6px 6px 0 6px;
+            border-radius: 16px 16px 0 0;
             animation: modalEnterMobile 0.4s cubic-bezier(0.4, 0, 0.2, 1);
           }
 
@@ -588,7 +606,7 @@ export function MenuItemModal({
 
           .modal-inner-card {
             grid-template-columns: 1fr;
-            border-radius: 16px 16px 0 0;
+            border-radius: 10px 10px 0 0;
             max-height: calc(92vh - 12px);
             overflow-y: auto;
           }
