@@ -6,6 +6,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import styles from './LocationsMapLegacy.module.css';
 import { fallbackGeoCoordinates } from '@/lib/adapters/sanity-catch';
 import { formatPhone } from '@/lib/utils/formatPhone';
+import { getDistance } from '@/lib/utils/distance';
 
 interface Location {
   slug: string;
@@ -49,32 +50,6 @@ const sanitizeUrl = (url: string | undefined): string | null => {
     // Invalid URL format
   }
   return null;
-};
-
-// Calculate geographic distance using haversine formula
-const degreesToRadians = (degrees: number): number => {
-  return (degrees * Math.PI) / 180;
-};
-
-const calculateHaversineDistance = (
-  lat1: number,
-  lon1: number,
-  lat2: number,
-  lon2: number
-): number => {
-  const R = 6371; // Earth's radius in kilometers
-  const dLat = degreesToRadians(lat2 - lat1);
-  const dLon = degreesToRadians(lon2 - lon1);
-
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(degreesToRadians(lat1)) *
-      Math.cos(degreesToRadians(lat2)) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
-
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
 };
 
 // Create popup DOM safely using document.createElement
@@ -263,9 +238,9 @@ export default function LocationsMapLegacy({ locations, onLocationSelect }: Loca
       el.setAttribute('aria-label', `Location: ${location.name}`);
 
       // Handler function for both click and keyboard events
+      // Only set selectedLocation, not nearestLocation (which is for "Find Nearest" feature)
       const handleActivation = () => {
         setSelectedLocation(location);
-        setNearestLocation(location.slug);
       };
 
       // Click handler for marker
@@ -324,11 +299,12 @@ export default function LocationsMapLegacy({ locations, onLocationSelect }: Loca
           if (!coords) return;
 
           // coords are [lon, lat], userCoords are [lon, lat]
-          const distance = calculateHaversineDistance(
+          // Use shared getDistance utility from lib/utils/distance.ts
+          const distance = getDistance(
             userCoords[1], // lat1
-            userCoords[0], // lon1
+            userCoords[0], // lng1
             coords[1],     // lat2
-            coords[0]      // lon2
+            coords[0]      // lng2
           );
 
           if (distance < minDistance) {
