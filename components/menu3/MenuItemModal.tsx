@@ -126,10 +126,10 @@ export function MenuItemModal({
       aria-labelledby="modal-title"
     >
       {/* Layered Card Structure */}
-      <div className="modal-outer-frame">
+      <div className={`modal-outer-frame ${!item.image ? 'modal-outer-frame--compact' : ''}`}>
         <div
           ref={modalRef}
-          className="modal-inner-card"
+          className={`modal-inner-card ${!item.image ? 'modal-inner-card--no-image' : ''}`}
         >
           {/* Close button */}
           <button
@@ -332,6 +332,15 @@ export function MenuItemModal({
           box-shadow:
             0 4px 20px rgba(50, 39, 35, 0.1),
             inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        /* Compact variant for items without images */
+        .modal-outer-frame--compact {
+          max-width: 520px;
+        }
+
+        .modal-inner-card--no-image {
+          grid-template-columns: 1fr;
         }
 
         /* Close button - refined circular style */

@@ -12,8 +12,8 @@
   --cart-text-light: #999;
   --cart-border: #d6c9bb;
   --cart-border-light: #e8dfd4;
-  --cart-accent: #C41E3A;
-  --cart-accent-hover: #9a1529;
+  --cart-accent: #2B7A9B;
+  --cart-accent-hover: #236a87;
   --cart-button-bg: #333333;
   --cart-button-hover: #1a1a1a;
   --cart-success: #4caf50;
@@ -770,35 +770,35 @@
   gap: 0.65rem;
   width: 100%;
   padding: 1rem 2rem;
-  background: #0A1628;
-  color: #FAF7F2;
+  background: linear-gradient(135deg, #2B7A9B 0%, #3d8fb0 100%);
+  color: #ffffff;
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: 1rem;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   border: none;
-  border-radius: 2px;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   white-space: nowrap;
-  box-shadow: 0 4px 12px rgba(10, 22, 40, 0.25);
+  box-shadow: 0 4px 14px rgba(43, 122, 155, 0.35);
 }
 
 .add-to-cart-btn:hover:not(:disabled) {
-  background: #162033;
+  background: linear-gradient(135deg, #236a87 0%, #2B7A9B 100%);
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(10, 22, 40, 0.35);
+  box-shadow: 0 6px 20px rgba(43, 122, 155, 0.45);
 }
 
 .add-to-cart-btn:active:not(:disabled) {
   transform: translateY(0);
-  box-shadow: 0 2px 8px rgba(10, 22, 40, 0.2);
+  box-shadow: 0 2px 8px rgba(43, 122, 155, 0.25);
 }
 
 .add-to-cart-btn:focus-visible {
-  outline: 2px solid #C9A962;
-  outline-offset: 3px;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(43, 122, 155, 0.3), 0 0 0 4px #2B7A9B;
 }
 
 .add-to-cart-btn-disabled {
