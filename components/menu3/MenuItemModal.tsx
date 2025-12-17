@@ -17,9 +17,9 @@ interface MenuItemModalProps {
 }
 
 /**
- * Full detail modal for menu items.
+ * Premium menu item detail modal.
+ * Gulf Coast Editorial design with layered card effect.
  * Accessible: focus trap, ESC closes, aria labels.
- * Includes placeholder for future modifiers.
  */
 export function MenuItemModal({
   item,
@@ -101,157 +101,200 @@ export function MenuItemModal({
 
   return (
     <div
-      className="menu3-modal-backdrop"
+      className="modal-backdrop"
       onClick={handleBackdropClick}
       role="dialog"
       aria-modal="true"
-      aria-labelledby="menu3-modal-title"
+      aria-labelledby="modal-title"
     >
-      <div
-        ref={modalRef}
-        className="menu3-modal"
-      >
-        {/* Close button */}
-        <button
-          ref={closeButtonRef}
-          type="button"
-          onClick={onClose}
-          className="menu3-modal-close"
-          aria-label="Close modal"
+      {/* Layered Card Structure */}
+      <div className="modal-outer-frame">
+        <div
+          ref={modalRef}
+          className="modal-inner-card"
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M18 6 6 18M6 6l12 12" />
-          </svg>
-        </button>
-
-        {/* Image */}
-        {item.image && (
-          <div className="menu3-modal-image">
-            <Image
-              src={item.image}
-              alt={item.name}
-              fill
-              sizes="(max-width: 768px) 100vw, 50vw"
-              style={{ objectFit: 'cover' }}
-              priority
-            />
-          </div>
-        )}
-
-        {/* Content */}
-        <div className="menu3-modal-content">
-          {/* Name */}
-          <h2
-            id="menu3-modal-title"
-            className="menu3-modal-name menu3-type-modal-name"
+          {/* Close button */}
+          <button
+            ref={closeButtonRef}
+            type="button"
+            onClick={onClose}
+            className="modal-close"
+            aria-label="Close modal"
           >
-            {item.name}
-          </h2>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+              <path d="M18 6 6 18M6 6l12 12" />
+            </svg>
+          </button>
 
-          {/* Price */}
-          <div className="menu3-modal-price menu3-type-price">
-            {price !== null ? (
-              <>
-                <span className="menu3-modal-price-dollar">$</span>
-                {price.toFixed(2)}
-              </>
-            ) : (
-              <span className="menu3-modal-price-mp">Market Price</span>
-            )}
-          </div>
-
-          {/* Badges */}
-          {badges && badges.length > 0 && (
-            <div className="menu3-modal-badges">
-              {badges.map(badge => {
-                const info = BADGE_INFO[badge];
-                return (
-                  <span
-                    key={badge}
-                    className="menu3-modal-badge menu3-type-badge"
-                    style={{ '--badge-color': info?.color || '#888' } as React.CSSProperties}
-                  >
-                    {info?.label || badge}
-                  </span>
-                );
-              })}
+          {/* Image with frame effect */}
+          {item.image && (
+            <div className="modal-image-wrapper">
+              <div className="modal-image-frame">
+                <Image
+                  src={item.image}
+                  alt={item.name}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 45vw"
+                  style={{ objectFit: 'cover' }}
+                  priority
+                />
+              </div>
             </div>
           )}
 
-          {/* Description */}
-          {item.description && (
-            <p className="menu3-modal-description">
-              {item.description}
-            </p>
-          )}
+          {/* Content */}
+          <div className="modal-content">
+            {/* Eyebrow category */}
+            {item.categorySlug && (
+              <div className="modal-eyebrow">
+                {item.categorySlug.replace(/-/g, ' ')}
+              </div>
+            )}
 
-          {/* Actions */}
-          <div className="menu3-modal-actions">
-            <button
-              type="button"
-              className="menu3-modal-action-btn menu3-modal-action-btn--secondary"
-              onClick={onClose}
-            >
-              Close
-            </button>
-            {item.modifierGroups && item.modifierGroups.length > 0 && onOpenModifiers ? (
+            {/* Name */}
+            <h2 id="modal-title" className="modal-name">
+              {item.name}
+            </h2>
+
+            {/* Price */}
+            <div className="modal-price">
+              {price !== null ? (
+                <>
+                  <span className="modal-price-currency">$</span>
+                  <span className="modal-price-amount">{price.toFixed(2)}</span>
+                </>
+              ) : (
+                <span className="modal-price-market">Market Price</span>
+              )}
+            </div>
+
+            {/* Divider */}
+            <div className="modal-divider" />
+
+            {/* Description */}
+            {item.description && (
+              <p className="modal-description">
+                {item.description}
+              </p>
+            )}
+
+            {/* Badges */}
+            {badges && badges.length > 0 && (
+              <div className="modal-badges">
+                {badges.map(badge => {
+                  const info = BADGE_INFO[badge];
+                  return (
+                    <span
+                      key={badge}
+                      className="modal-badge"
+                      style={{ '--badge-color': info?.color || '#7c6a63' } as React.CSSProperties}
+                    >
+                      {info?.label || badge}
+                    </span>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Spacer */}
+            <div className="modal-spacer" />
+
+            {/* Actions */}
+            <div className="modal-actions">
               <button
                 type="button"
-                className="menu3-modal-action-btn menu3-modal-action-btn--primary"
-                onClick={() => onOpenModifiers(item)}
+                className="modal-btn modal-btn-secondary"
+                onClick={onClose}
               >
-                Customize
+                Close
               </button>
-            ) : (
-              <AddToCartButton
-                menuItem={price != null ? { ...item, price } : item}
-                location={location}
-                className="menu3-modal-action-btn menu3-modal-action-btn--primary"
-              />
-            )}
+              {item.modifierGroups && item.modifierGroups.length > 0 && onOpenModifiers ? (
+                <button
+                  type="button"
+                  className="modal-btn modal-btn-primary"
+                  onClick={() => onOpenModifiers(item)}
+                >
+                  <span>Customize</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </button>
+              ) : (
+                <AddToCartButton
+                  menuItem={price != null ? { ...item, price } : item}
+                  location={location}
+                  className="modal-btn modal-btn-primary"
+                />
+              )}
+            </div>
           </div>
         </div>
       </div>
 
       <style jsx>{`
-        .menu3-modal-backdrop {
+        /* ============================================
+           GULF COAST EDITORIAL MODAL
+           Layered card design with warm ocean palette
+           ============================================ */
+
+        .modal-backdrop {
+          --modal-cream: #FDF8ED;
+          --modal-cream-dark: #f5efe5;
+          --modal-tierra: #322723;
+          --modal-tierra-secondary: #5b4a42;
+          --modal-tierra-muted: #7c6a63;
+          --modal-ocean: #2B7A9B;
+          --modal-ocean-light: #3d8fb0;
+          --modal-ocean-glow: rgba(43, 122, 155, 0.15);
+
           position: fixed;
           inset: 0;
           display: flex;
           align-items: center;
           justify-content: center;
-          padding: 20px;
-          background: rgba(0, 0, 0, 0.6);
-          backdrop-filter: blur(4px);
+          padding: 24px;
           z-index: 2000;
-          animation: modalBackdropFadeIn 0.2s ease-out;
+          animation: backdropReveal 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+          /* Warm tinted backdrop with subtle texture */
+          background:
+            radial-gradient(ellipse at 30% 20%, rgba(43, 122, 155, 0.08) 0%, transparent 50%),
+            radial-gradient(ellipse at 70% 80%, rgba(50, 39, 35, 0.06) 0%, transparent 50%),
+            rgba(50, 39, 35, 0.75);
+          backdrop-filter: blur(8px);
         }
 
-        @keyframes modalBackdropFadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-
-        .menu3-modal {
-          position: relative;
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          max-width: 900px;
-          max-height: 90vh;
-          width: 100%;
-          background: white;
-          border-radius: 18px;
-          overflow: hidden;
-          box-shadow:
-            0 25px 50px rgba(0, 0, 0, 0.25),
-            0 10px 20px rgba(0, 0, 0, 0.15);
-          animation: modalSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        @keyframes modalSlideIn {
+        @keyframes backdropReveal {
           from {
             opacity: 0;
-            transform: translateY(20px) scale(0.98);
+            backdrop-filter: blur(0px);
+          }
+          to {
+            opacity: 1;
+            backdrop-filter: blur(8px);
+          }
+        }
+
+        /* Outer frame - creates layered depth like voucherfied */
+        .modal-outer-frame {
+          position: relative;
+          max-width: 920px;
+          width: 100%;
+          background: var(--modal-cream-dark);
+          border: 1px solid rgba(50, 39, 35, 0.12);
+          border-radius: 20px;
+          padding: 8px;
+          box-shadow:
+            0 0 0 1px rgba(255, 255, 255, 0.5) inset,
+            0 25px 60px rgba(50, 39, 35, 0.35),
+            0 10px 30px rgba(50, 39, 35, 0.2);
+          animation: modalEnter 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes modalEnter {
+          from {
+            opacity: 0;
+            transform: translateY(30px) scale(0.95);
           }
           to {
             opacity: 1;
@@ -259,167 +302,348 @@ export function MenuItemModal({
           }
         }
 
-        /* Close button */
-        .menu3-modal-close {
+        /* Inner card - the main content area */
+        .modal-inner-card {
+          position: relative;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          background: var(--modal-cream);
+          border: 1px solid rgba(50, 39, 35, 0.08);
+          border-radius: 14px;
+          overflow: hidden;
+          box-shadow:
+            0 4px 20px rgba(50, 39, 35, 0.1),
+            inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        /* Close button - refined circular style */
+        .modal-close {
           position: absolute;
           top: 16px;
           right: 16px;
           display: flex;
           align-items: center;
           justify-content: center;
-          width: 40px;
-          height: 40px;
+          width: 42px;
+          height: 42px;
           padding: 0;
-          background: rgba(255, 255, 255, 0.95);
-          border: none;
+          background: var(--modal-cream);
+          border: 1px solid rgba(50, 39, 35, 0.1);
           border-radius: 50%;
-          color: var(--menu3-text, #333);
+          color: var(--modal-tierra-muted);
           cursor: pointer;
           z-index: 10;
-          transition: all 0.15s ease;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+          transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow:
+            0 2px 8px rgba(50, 39, 35, 0.1),
+            inset 0 1px 0 rgba(255, 255, 255, 0.9);
         }
 
-        .menu3-modal-close:hover {
+        .modal-close:hover {
           background: white;
-          transform: scale(1.05);
+          color: var(--modal-tierra);
+          transform: scale(1.08);
+          box-shadow:
+            0 4px 16px rgba(50, 39, 35, 0.15),
+            inset 0 1px 0 rgba(255, 255, 255, 1);
         }
 
-        .menu3-modal-close:focus-visible {
+        .modal-close:focus-visible {
           outline: none;
-          box-shadow: 0 0 0 3px var(--menu3-accent, #333), 0 2px 8px rgba(0, 0, 0, 0.15);
+          box-shadow:
+            0 0 0 3px var(--modal-ocean-glow),
+            0 0 0 4px var(--modal-ocean),
+            0 4px 16px rgba(50, 39, 35, 0.15);
         }
 
-        /* Image */
-        .menu3-modal-image {
+        /* Image section with frame effect */
+        .modal-image-wrapper {
           position: relative;
-          min-height: 300px;
-          background: var(--menu3-image-placeholder, #f5f5f5);
+          min-height: 380px;
+          padding: 16px;
+          background: linear-gradient(
+            135deg,
+            rgba(50, 39, 35, 0.03) 0%,
+            rgba(50, 39, 35, 0.06) 100%
+          );
         }
 
-        /* Content */
-        .menu3-modal-content {
+        .modal-image-frame {
+          position: relative;
+          width: 100%;
+          height: 100%;
+          min-height: 348px;
+          background: white;
+          border: 4px solid white;
+          border-radius: 8px;
+          overflow: hidden;
+          box-shadow:
+            0 4px 20px rgba(50, 39, 35, 0.15),
+            0 1px 3px rgba(50, 39, 35, 0.1);
+        }
+
+        /* Content section */
+        .modal-content {
           display: flex;
           flex-direction: column;
-          padding: 32px;
+          padding: 40px 36px 32px;
           overflow-y: auto;
+          max-height: 85vh;
         }
 
-        .menu3-modal-name {
-          margin: 0 0 8px;
-          color: var(--menu3-text, #1a1a1a);
+        /* Eyebrow category label */
+        .modal-eyebrow {
+          font-family: var(--font-family--headings, 'Poppins', system-ui, sans-serif);
+          font-size: 11px;
+          font-weight: 600;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          color: var(--modal-ocean);
+          margin-bottom: 12px;
         }
 
-        .menu3-modal-price {
-          font-size: 22px;
-          color: var(--menu3-text, #1a1a1a);
-          margin-bottom: 16px;
+        /* Item name - editorial serif style */
+        .modal-name {
+          font-family: var(--font-display, 'Playfair Display', Georgia, serif);
+          font-size: 32px;
+          font-weight: 500;
+          letter-spacing: -0.02em;
+          line-height: 1.2;
+          color: var(--modal-tierra);
+          margin: 0 0 16px;
         }
 
-        .menu3-modal-price-dollar {
-          font-size: 0.85em;
-          opacity: 0.6;
+        /* Price styling */
+        .modal-price {
+          display: flex;
+          align-items: baseline;
+          gap: 2px;
+          margin-bottom: 24px;
         }
 
-        .menu3-modal-price-mp {
-          font-size: 0.85em;
-          color: var(--menu3-text-muted, #888);
+        .modal-price-currency {
+          font-family: var(--font-family--headings, 'Poppins', system-ui, sans-serif);
+          font-size: 18px;
+          font-weight: 500;
+          color: var(--modal-tierra-muted);
         }
 
-        /* Badges */
-        .menu3-modal-badges {
+        .modal-price-amount {
+          font-family: var(--font-family--headings, 'Poppins', system-ui, sans-serif);
+          font-size: 28px;
+          font-weight: 600;
+          color: var(--modal-tierra);
+          letter-spacing: -0.01em;
+        }
+
+        .modal-price-market {
+          font-family: var(--font-family--headings, 'Poppins', system-ui, sans-serif);
+          font-size: 16px;
+          font-weight: 500;
+          font-style: italic;
+          color: var(--modal-tierra-muted);
+        }
+
+        /* Decorative divider */
+        .modal-divider {
+          width: 48px;
+          height: 3px;
+          background: linear-gradient(90deg, var(--modal-ocean), var(--modal-ocean-light));
+          border-radius: 2px;
+          margin-bottom: 24px;
+          opacity: 0.8;
+        }
+
+        /* Description text */
+        .modal-description {
+          font-family: var(--font-body, 'Source Sans 3', system-ui, sans-serif);
+          font-size: 15px;
+          line-height: 1.7;
+          color: var(--modal-tierra-secondary);
+          margin: 0 0 20px;
+        }
+
+        /* Badge pills */
+        .modal-badges {
           display: flex;
           flex-wrap: wrap;
           gap: 8px;
-          margin-bottom: 20px;
+          margin-bottom: 8px;
         }
 
-        .menu3-modal-badge {
-          padding: 4px 10px;
-          /* Fallback for browsers without color-mix() support */
-          background: rgba(128, 128, 128, 0.12);
-          background: color-mix(in srgb, var(--badge-color) 12%, transparent);
+        .modal-badge {
+          font-family: var(--font-family--headings, 'Poppins', system-ui, sans-serif);
+          font-size: 11px;
+          font-weight: 600;
+          letter-spacing: 0.03em;
+          text-transform: uppercase;
+          padding: 6px 12px;
+          border-radius: 6px;
           color: var(--badge-color);
-          border-radius: 4px;
+          background: linear-gradient(
+            135deg,
+            color-mix(in srgb, var(--badge-color) 8%, transparent) 0%,
+            color-mix(in srgb, var(--badge-color) 12%, transparent) 100%
+          );
+          border: 1px solid color-mix(in srgb, var(--badge-color) 20%, transparent);
         }
 
-        /* Description */
-        .menu3-modal-description {
-          font-family: var(--font-menu-ui);
-          font-size: 15px;
-          line-height: 1.65;
-          color: var(--menu3-text-secondary, #555);
-          margin: 0 0 24px;
+        /* Spacer to push actions to bottom */
+        .modal-spacer {
+          flex: 1;
+          min-height: 16px;
         }
 
-        /* Actions */
-        .menu3-modal-actions {
+        /* Action buttons */
+        .modal-actions {
           display: flex;
           gap: 12px;
-          margin-top: auto;
+          padding-top: 16px;
+          border-top: 1px solid rgba(50, 39, 35, 0.08);
         }
 
-        .menu3-modal-action-btn {
-          padding: 14px 24px;
-          font-family: var(--font-menu-ui);
+        .modal-btn {
+          font-family: var(--font-family--headings, 'Poppins', system-ui, sans-serif);
           font-size: 14px;
           font-weight: 600;
           letter-spacing: 0.02em;
+          padding: 14px 24px;
+          border-radius: 10px;
           border: none;
-          border-radius: 8px;
           cursor: pointer;
-          transition: all 0.15s ease;
+          transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .menu3-modal-action-btn--secondary {
-          background: var(--menu3-hover-bg, rgba(0, 0, 0, 0.05));
-          color: var(--menu3-text, #333);
+        .modal-btn-secondary {
+          background: transparent;
+          color: var(--modal-tierra-muted);
+          border: 1px solid rgba(50, 39, 35, 0.15);
         }
 
-        .menu3-modal-action-btn--secondary:hover {
-          background: rgba(0, 0, 0, 0.08);
+        .modal-btn-secondary:hover {
+          background: rgba(50, 39, 35, 0.04);
+          border-color: rgba(50, 39, 35, 0.25);
+          color: var(--modal-tierra);
         }
 
-        .menu3-modal-action-btn--primary {
+        .modal-btn-primary {
           flex: 1;
           display: inline-flex;
           align-items: center;
           justify-content: center;
           gap: 8px;
-          background: var(--menu3-accent, #1a1a1a);
+          background: linear-gradient(
+            135deg,
+            var(--modal-ocean) 0%,
+            var(--modal-ocean-light) 100%
+          );
           color: white;
+          box-shadow:
+            0 4px 14px rgba(43, 122, 155, 0.35),
+            inset 0 1px 0 rgba(255, 255, 255, 0.15);
         }
 
-        .menu3-modal-action-btn--primary:hover {
-          background: #333;
+        .modal-btn-primary:hover {
+          transform: translateY(-2px);
+          box-shadow:
+            0 6px 20px rgba(43, 122, 155, 0.45),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2);
         }
 
-        .menu3-modal-action-btn:focus-visible {
+        .modal-btn-primary:active {
+          transform: translateY(0);
+        }
+
+        .modal-btn:focus-visible {
           outline: none;
-          box-shadow: 0 0 0 3px var(--menu3-accent, #333);
+          box-shadow:
+            0 0 0 3px var(--modal-ocean-glow),
+            0 0 0 4px var(--modal-ocean);
         }
 
-        /* Mobile: single column */
+        /* Mobile: single column layout */
         @media (max-width: 768px) {
-          .menu3-modal {
+          .modal-backdrop {
+            padding: 16px;
+            align-items: flex-end;
+          }
+
+          .modal-outer-frame {
+            max-height: 92vh;
+            padding: 6px;
+            border-radius: 20px 20px 0 0;
+            animation: modalEnterMobile 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+          }
+
+          @keyframes modalEnterMobile {
+            from {
+              opacity: 0;
+              transform: translateY(100%);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+
+          .modal-inner-card {
             grid-template-columns: 1fr;
-            max-height: 95vh;
+            border-radius: 16px 16px 0 0;
+            max-height: calc(92vh - 12px);
+            overflow-y: auto;
           }
 
-          .menu3-modal-image {
-            min-height: 200px;
+          .modal-image-wrapper {
+            min-height: 220px;
             max-height: 35vh;
+            padding: 12px;
           }
 
-          .menu3-modal-content {
-            padding: 24px;
+          .modal-image-frame {
+            min-height: unset;
+            height: 100%;
           }
 
-          .menu3-modal-close {
+          .modal-content {
+            padding: 28px 24px 32px;
+            max-height: unset;
+            overflow: visible;
+          }
+
+          .modal-name {
+            font-size: 26px;
+          }
+
+          .modal-close {
             top: 12px;
             right: 12px;
-            width: 36px;
-            height: 36px;
+            width: 38px;
+            height: 38px;
+          }
+
+          .modal-actions {
+            flex-direction: column;
+          }
+
+          .modal-btn-secondary {
+            order: 2;
+          }
+
+          .modal-btn-primary {
+            order: 1;
+          }
+        }
+
+        /* Reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+          .modal-backdrop,
+          .modal-outer-frame {
+            animation: none;
+          }
+
+          .modal-btn,
+          .modal-close {
+            transition: none;
           }
         }
       `}</style>
