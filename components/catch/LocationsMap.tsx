@@ -5,6 +5,7 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import styles from './LocationsMap.module.css';
 import { fallbackGeoCoordinates } from '@/lib/adapters/sanity-catch';
+import { formatPhone } from '@/lib/utils/formatPhone';
 
 interface Location {
   slug: string;
@@ -26,18 +27,6 @@ interface LocationsMapProps {
   userCoords?: [number, number] | null; // [lng, lat] - user's location
   nearestCoords?: [number, number] | null; // [lng, lat] - nearest restaurant location
 }
-
-// Format phone for display
-const formatPhone = (phone: string) => {
-  const digits = phone.replace(/\D/g, '');
-  if (digits.length === 10) {
-    return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
-  }
-  if (digits.length === 11 && digits[0] === '1') {
-    return `(${digits.slice(1, 4)}) ${digits.slice(4, 7)}-${digits.slice(7, 11)}`;
-  }
-  return phone;
-};
 
 // Build Apple Maps URL
 const getAppleMapsUrl = (location: Location) => {
@@ -235,6 +224,7 @@ const locationCoords: Record<string, [number, number]> = Object.fromEntries(
 export default function LocationsMap({ locations, onLocationSelect, minimal = false, userCoords = null, nearestCoords = null }: LocationsMapProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
+  const userMarkerRef = useRef<mapboxgl.Marker | null>(null);
   const [nearestLocation, setNearestLocation] = useState<string | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -319,6 +309,11 @@ export default function LocationsMap({ locations, onLocationSelect, minimal = fa
     });
 
     return () => {
+      // Clean up user marker
+      if (userMarkerRef.current) {
+        userMarkerRef.current.remove();
+        userMarkerRef.current = null;
+      }
       mapInstance.remove();
       map.current = null;
     };
@@ -328,10 +323,17 @@ export default function LocationsMap({ locations, onLocationSelect, minimal = fa
   useEffect(() => {
     if (!userCoords || !map.current) return;
 
+    // Remove previous user marker to prevent accumulation
+    if (userMarkerRef.current) {
+      userMarkerRef.current.remove();
+      userMarkerRef.current = null;
+    }
+
     // Add user location marker (gold color)
-    new mapboxgl.Marker({ color: '#C9A962' })
+    const marker = new mapboxgl.Marker({ color: '#C9A962' })
       .setLngLat(userCoords)
       .addTo(map.current);
+    userMarkerRef.current = marker;
 
     // If we have nearest coords, fit bounds to show both user and restaurant
     if (nearestCoords) {
@@ -407,10 +409,17 @@ export default function LocationsMap({ locations, onLocationSelect, minimal = fa
             zoom: 10,
           });
 
+          // Remove previous user marker to prevent accumulation
+          if (userMarkerRef.current) {
+            userMarkerRef.current.remove();
+            userMarkerRef.current = null;
+          }
+
           // Add user location marker
-          new mapboxgl.Marker({ color: '#2B7A9B' })
+          const marker = new mapboxgl.Marker({ color: '#2B7A9B' })
             .setLngLat(userCoords)
             .addTo(currentMap);
+          userMarkerRef.current = marker;
         }
       },
       (error) => {

@@ -7,28 +7,13 @@ import MenuItemCard from "./MenuItemCard";
 import { findNearestLocation } from "@/lib/utils/findNearestLocation";
 import { isItemAvailableAtLocation } from "@/lib/utils/menuAvailability";
 import { slugify } from "@/lib/utils/slugify";
+import { formatPhone } from "@/lib/utils/formatPhone";
 
 interface MenuPageClientProps {
   categories: MenuCategory[];
   items: MenuItem[];
   locations: Location[];
   imageMap: Record<string, string>;
-}
-
-function formatPhone(phone: string): string {
-  const digits = phone.replace(/\D/g, '');
-  if (digits.length === 11 && digits[0] === '1') {
-    const areaCode = digits.slice(1, 4);
-    const prefix = digits.slice(4, 7);
-    const lineNumber = digits.slice(7, 11);
-    return `(${areaCode}) ${prefix}-${lineNumber}`;
-  } else if (digits.length === 10) {
-    const areaCode = digits.slice(0, 3);
-    const prefix = digits.slice(3, 6);
-    const lineNumber = digits.slice(6, 10);
-    return `(${areaCode}) ${prefix}-${lineNumber}`;
-  }
-  return phone;
 }
 
 export default function MenuPageClient({ categories, items, locations, imageMap }: MenuPageClientProps) {

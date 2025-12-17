@@ -3,6 +3,7 @@
 import { useState, useMemo, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import { fallbackGeoCoordinates } from '@/lib/adapters/sanity-catch';
+import { formatPhone } from '@/lib/utils/formatPhone';
 import styles from './LocationsPageClient.module.css';
 
 const LocationsMap = dynamic(() => import('@/components/catch/LocationsMap'), {
@@ -43,17 +44,6 @@ const REGIONS: Record<string, { label: string; slugs: string[] | null }> = {
 };
 
 type RegionKey = 'ALL' | 'DFW' | 'HOUSTON' | 'OKLAHOMA' | 'EAST_TX' | 'WEST_TX';
-
-function formatPhone(phone: string): string {
-  const digits = phone.replace(/\D/g, '');
-  if (digits.length === 10) {
-    return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
-  }
-  if (digits.length === 11 && digits[0] === '1') {
-    return `(${digits.slice(1, 4)}) ${digits.slice(4, 7)}-${digits.slice(7, 11)}`;
-  }
-  return phone;
-}
 
 function getAppleMapsUrl(location: Location): string {
   const address = [

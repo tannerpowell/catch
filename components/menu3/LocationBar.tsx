@@ -2,23 +2,7 @@
 
 import React from 'react';
 import type { Location } from '@/lib/types';
-
-function formatPhone(phone: string): string {
-  const digits = phone.replace(/\D/g, '');
-  if (digits.length === 11 && digits[0] === '1') {
-    const areaCode = digits.slice(1, 4);
-    const prefix = digits.slice(4, 7);
-    const lineNumber = digits.slice(7, 11);
-    return `(${areaCode}) ${prefix}-${lineNumber}`;
-  }
-  if (digits.length === 10) {
-    const areaCode = digits.slice(0, 3);
-    const prefix = digits.slice(3, 6);
-    const lineNumber = digits.slice(6, 10);
-    return `(${areaCode}) ${prefix}-${lineNumber}`;
-  }
-  return phone;
-}
+import { formatPhone } from '@/lib/utils/formatPhone';
 
 interface LocationBarProps {
   locations: Location[];
