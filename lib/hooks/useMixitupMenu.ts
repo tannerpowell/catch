@@ -135,11 +135,6 @@ export function useMixitupMenu(options: UseMixitupMenuOptions = {}): UseMixitupM
     }
 
     mixerRef.current.filter(filterString);
-
-    // Re-apply search if active
-    if (searchTerm) {
-      // Search is handled via CSS, not MixItUp
-    }
   }, [searchTerm]);
 
   // Apply search (uses CSS visibility, composes with MixItUp)

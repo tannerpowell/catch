@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import styles from './LocationsList.module.css';
+import styles from './LocationsListLegacy.module.css';
 import { formatPhone } from '@/lib/utils/formatPhone';
 
 interface Location {
@@ -53,7 +53,7 @@ function getAppleMapsUrl(location: Location): string {
   return `https://maps.apple.com/?address=${encodeURIComponent(address)}`;
 }
 
-export default function LocationsList({
+export default function LocationsListLegacy({
   locations
 }: LocationsListProps) {
   const [region, setRegion] = useState<'ALL' | 'DALLAS' | 'HOUSTON'>('ALL');

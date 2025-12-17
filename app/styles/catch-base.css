@@ -6,7 +6,7 @@
   --color--crema-fresca: #FDF8ED;
   --color--tierra-reca: #322723;
   --color--azul-noche: #0f1720;
-  --color--chile-rojo: #2B7A9B; /* OCEAN BLUE - replaces Catch red #ad4338 */
+  --color--ocean-blue: #2B7A9B; /* OCEAN BLUE - replaces Catch red #ad4338 */
   --color--agua-clara: #76bda6;
   --color--claro-maíz: oklch(0.85 0.06 240);
   --color--maíz-dorado: oklch(0.75 0.08 240);
@@ -125,7 +125,7 @@ body {
 }
 
 .catch-nav-link:hover {
-  color: var(--color--chile-rojo);
+  color: var(--color--ocean-blue);
 }
 
 .catch-eyebrow {
@@ -134,7 +134,7 @@ body {
   font-weight: 600;
   letter-spacing: var(--catch-letterspacing-eyebrow);
   text-transform: uppercase;
-  color: var(--color--chile-rojo);
+  color: var(--color--ocean-blue);
 }
 
 .catch-heading-1 {
@@ -250,8 +250,8 @@ body {
 
 .nav-cart-button:hover {
   background: rgba(50, 39, 35, 0.04);
-  border-color: var(--color--chile-rojo);
-  color: var(--color--chile-rojo);
+  border-color: var(--color--ocean-blue);
+  color: var(--color--ocean-blue);
   transform: translateY(-1px);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
@@ -270,7 +270,7 @@ body {
   min-width: 16px;
   height: 16px;
   padding: 0 4px;
-  background: var(--color--chile-rojo);
+  background: var(--color--ocean-blue);
   color: white;
   font-size: 10px;
   font-weight: 700;
@@ -350,11 +350,11 @@ body {
 }
 
 .catch-category-pill:hover {
-  border-bottom-color: var(--color--chile-rojo);
+  border-bottom-color: var(--color--ocean-blue);
 }
 
 .catch-category-pill.active {
-  border-bottom-color: var(--color--chile-rojo);
+  border-bottom-color: var(--color--ocean-blue);
 }
 
 /* Menu Page - Catch Styles */
@@ -378,7 +378,7 @@ body {
 .menu-filter-button {
   display: flex;
   align-items: center;
-  color: var(--color--chile-rojo);
+  color: var(--color--ocean-blue);
   font-family: graphie, sans-serif;
   font-size: 14px;
   font-weight: 500;
@@ -423,13 +423,13 @@ body {
 }
 
 .location-filter-button[data-active="true"] {
-  background-color: var(--color--chile-rojo);
+  background-color: var(--color--ocean-blue);
   color: var(--color--crema-fresca);
-  border-color: var(--color--chile-rojo);
+  border-color: var(--color--ocean-blue);
 }
 
 .location-filter-button[data-active="true"]:hover {
-  background-color: var(--color--chile-rojo);
+  background-color: var(--color--ocean-blue);
   opacity: 0.9;
 }
 
@@ -579,7 +579,7 @@ body {
 }
 
 .catch-action-link:hover {
-  color: var(--color--chile-rojo);
+  color: var(--color--ocean-blue);
 }
 
 .catch-ordering-pill {
@@ -615,7 +615,7 @@ body {
 
 /* Footer - Catch Structure */
 .footer {
-  background-color: var(--color--chile-rojo);
+  background-color: var(--color--ocean-blue);
   padding: 60px;
   position: relative;
   overflow: hidden;
@@ -769,7 +769,7 @@ body {
   z-index: 1000;
   grid-column-gap: 0px;
   grid-row-gap: 0px;
-  background-color: var(--color--chile-rojo);
+  background-color: var(--color--ocean-blue);
   grid-template-rows: auto auto;
   grid-template-columns: 1fr 1fr;
   grid-auto-columns: 1fr;
@@ -917,7 +917,7 @@ body {
 }
 
 .h3-4.chile-rojo-2 {
-  color: var(--color--chile-rojo);
+  color: var(--color--ocean-blue);
 }
 
 .texture-overlay {
@@ -946,7 +946,7 @@ body {
 }
 
 .eyebrow.chile-rojo-2 {
-  color: var(--color--chile-rojo);
+  color: var(--color--ocean-blue);
 }
 
 .accent {
@@ -981,9 +981,9 @@ body {
 .button {
   grid-column-gap: 16px;
   grid-row-gap: 16px;
-  border-bottom: 1.5px solid var(--color--chile-rojo);
+  border-bottom: 1.5px solid var(--color--ocean-blue);
   font-family: var(--font-family--display);
-  color: var(--color--chile-rojo);
+  color: var(--color--ocean-blue);
   font-size: var(--font-size--subhead);
   line-height: var(--line-height--100);
   letter-spacing: 2px;
@@ -1040,7 +1040,7 @@ body {
 }
 
 .catch-button-primary:hover {
-  background: var(--color--chile-rojo);
+  background: var(--color--ocean-blue);
   color: var(--color--crema-fresca);
 }
 
@@ -1234,7 +1234,7 @@ body {
 /* CATCH EXACT TYPOGRAPHY CLASSES */
 .h1 {
   font-family: var(--font-family--headings);
-  color: var(--color--chile-rojo);
+  color: var(--color--ocean-blue);
   font-size: var(--font-size--h1);
   line-height: var(--line-height--100);
   text-align: center;
@@ -1264,7 +1264,7 @@ body {
 
 .h4 {
   font-family: var(--font-family--headings);
-  color: var(--color--chile-rojo);
+  color: var(--color--ocean-blue);
   font-size: var(--font-size--h4);
   line-height: var(--line-height--100);
   margin-top: 0;
@@ -1274,7 +1274,7 @@ body {
 
 .h5 {
   font-family: var(--font-family--headings);
-  color: var(--color--chile-rojo);
+  color: var(--color--ocean-blue);
   font-size: var(--font-size--h5);
   line-height: var(--line-height--110);
   margin-top: 0;
@@ -1349,9 +1349,9 @@ body {
 .button {
   grid-column-gap: 16px;
   grid-row-gap: 16px;
-  border-bottom: 1.5px solid var(--color--chile-rojo);
+  border-bottom: 1.5px solid var(--color--ocean-blue);
   font-family: var(--font-family--display);
-  color: var(--color--chile-rojo);
+  color: var(--color--ocean-blue);
   font-size: var(--font-size--subhead);
   line-height: var(--line-height--100);
   letter-spacing: 2px;
@@ -1506,7 +1506,7 @@ body {
 
 /* Location Select Dropdown - Catch style with blue focus */
 .catch-location-select:focus {
-  border-color: var(--color--chile-rojo);
+  border-color: var(--color--ocean-blue);
   outline: 0;
 }
 

@@ -1,5 +1,6 @@
 @import "./styles/components.css";
 @import "./styles/catch-base.css";
+@import "./styles/catch-track.css";
 @import "./styles/dark-theme.css";
 @import "@silk-hq/components/unlayered-styles.css";
 
@@ -24,15 +25,15 @@ html[data-route^="/kitchen"] main {
   padding: 0;
 }
 
-/* Hide header, footer, and theme toggle on menu-display/[location] routes (TV displays) */
-html[data-route^="/menu-display/"] .header,
-html[data-route^="/menu-display/"] .footer,
-html[data-route^="/menu-display/"] .full-page-menu,
-html[data-route^="/menu-display/"] [class*="ThemeToggle"] {
+/* Hide header, footer, and theme toggle on tv-menu-display/[location] routes (TV displays) */
+html[data-route^="/tv-menu-display/"] .header,
+html[data-route^="/tv-menu-display/"] .footer,
+html[data-route^="/tv-menu-display/"] .full-page-menu,
+html[data-route^="/tv-menu-display/"] [class*="ThemeToggle"] {
   display: none !important;
 }
 
-html[data-route^="/menu-display/"] main {
+html[data-route^="/tv-menu-display/"] main {
   margin: 0;
   padding: 0;
 }
@@ -52,11 +53,11 @@ html[data-route^="/menu-display/"] main {
   --slate-900: #0f172a;
   --slate-950: #020617;
 
-  /* Color */
-  --color-brand-primary: #b64f3b;
-  --color-brand-primary-soft: #c86452;
-  --color-brand-accent-warm: #d04301; /* bold accent */
-  --color-brand-accent-soft: #f4c5a4;
+  /* Color - Ocean Blue primary (matches design demo) */
+  --color-brand-primary: #2B7A9B;
+  --color-brand-primary-soft: #38bdf8;
+  --color-brand-accent-warm: #0284c7; /* bold accent */
+  --color-brand-accent-soft: #bae6fd;
 
   --color-text-primary: #241814;
   --color-text-secondary: #5b4a42;
@@ -682,11 +683,35 @@ a:hover {
   align-items: center;
 }
 
+.lux-locations__inner--centered {
+  grid-template-columns: 1fr;
+  text-align: center;
+  justify-items: center;
+}
+
 @media (max-width: 768px) {
   .lux-locations__inner {
     grid-template-columns: 1fr;
     text-align: center;
   }
+}
+
+.lux-locations__count {
+  font-family: var(--font-lux-display);
+  font-size: clamp(3.5rem, 10vw, 6rem);
+  font-weight: 400;
+  font-style: italic;
+  color: white;
+  margin: 0 0 0.5rem;
+  line-height: 1;
+}
+
+.lux-locations__subtitle {
+  font-family: var(--font-lux-body);
+  font-size: clamp(1.2rem, 3vw, 1.5rem);
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0 0 2rem;
+  letter-spacing: 0.05em;
 }
 
 .lux-locations__title {
@@ -703,49 +728,6 @@ a:hover {
   color: rgba(255, 255, 255, 0.7);
   margin: 0 0 2rem;
   line-height: 1.6;
-}
-
-.lux-locations__list {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
-
-@media (max-width: 768px) {
-  .lux-locations__list {
-    flex-direction: row;
-    justify-content: center;
-  }
-}
-
-.lux-locations__city {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  padding-left: 2rem;
-  border-left: 2px solid var(--lux-gold);
-}
-
-@media (max-width: 768px) {
-  .lux-locations__city {
-    padding-left: 0;
-    padding-top: 1rem;
-    border-left: none;
-    border-top: 2px solid var(--lux-gold);
-  }
-}
-
-.lux-locations__city-name {
-  font-family: var(--font-lux-display);
-  font-size: 1.8rem;
-  color: white;
-}
-
-.lux-locations__city-count {
-  font-family: var(--font-lux-body);
-  font-size: 1rem;
-  color: var(--lux-gold);
-  letter-spacing: 0.1em;
 }
 
 /* CTA Section */

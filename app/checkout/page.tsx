@@ -6,13 +6,7 @@ import { useCart } from '@/lib/contexts/CartContext';
 import { useOrders } from '@/lib/contexts/OrdersContext';
 
 /**
- * Render the checkout UI, validate contact input, submit a demo order, and navigate to confirmation.
- *
- * Validates name, email format, and a 10-digit US phone number; on successful submission it creates a demo order
- * via the Orders context, clears the cart, and redirects to the order confirmation page. Displays loading and
- * empty-cart states, an error banner for validation/runtime errors, and a sticky order summary reflecting cart contents.
- *
- * @returns The checkout page React element containing the form, order summary, and submission handlers.
+ * Checkout page with Catch design system styling.
  */
 export default function CheckoutPage() {
   const router = useRouter();
@@ -30,20 +24,17 @@ export default function CheckoutPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Validation patterns
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const phoneRegex = /^[\d\s\-\(\)]+$/; // US format only: digits, spaces, hyphens, parentheses
+  const phoneRegex = /^[\d\s\-\(\)]+$/;
 
   const validateForm = (): boolean => {
     setError(null);
 
-    // Validate name
     if (!customerInfo.name.trim()) {
       setError('Name is required');
       return false;
     }
 
-    // Validate email
     if (!customerInfo.email.trim()) {
       setError('Email is required');
       return false;
@@ -53,7 +44,6 @@ export default function CheckoutPage() {
       return false;
     }
 
-    // Validate phone
     if (!customerInfo.phone.trim()) {
       setError('Phone number is required');
       return false;
@@ -62,7 +52,6 @@ export default function CheckoutPage() {
       setError('Phone number contains invalid characters');
       return false;
     }
-    // Extract only digits and validate count
     const digitsOnly = customerInfo.phone.replace(/\D/g, '');
     if (digitsOnly.length !== 10) {
       setError('Please enter a valid 10-digit US phone number');
@@ -76,7 +65,6 @@ export default function CheckoutPage() {
     e.preventDefault();
     setError(null);
 
-    // Validate form before submission
     if (!validateForm()) {
       return;
     }
@@ -84,13 +72,10 @@ export default function CheckoutPage() {
     setIsSubmitting(true);
 
     try {
-      // Simulate network delay
       await new Promise(resolve => setTimeout(resolve, 1000));
 
-      // Generate order number
       const orderNumber = `ORD-${Date.now()}-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
 
-      // Create order
       try {
         addOrder({
           orderNumber,
@@ -142,10 +127,7 @@ export default function CheckoutPage() {
         throw new Error('Failed to create order. Please try again.');
       }
 
-      // Clear cart only on success
       clearCart();
-
-      // Redirect to confirmation page
       await router.push(`/order-confirmation?orderNumber=${orderNumber}`);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred. Please try again.';
@@ -158,104 +140,74 @@ export default function CheckoutPage() {
 
   if (!isHydrated || !cart) {
     return (
-      <div className="section" style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ textAlign: 'center' }}>
-          <p style={{ fontSize: '16px', color: '#666' }}>Loading cart...</p>
+      <div className="checkout-page">
+        <div className="checkout-loading">
+          <p>Loading cart...</p>
         </div>
+        <style jsx>{styles}</style>
       </div>
     );
   }
 
-  // TypeScript guard: cart is definitely Cart at this point
   const cartData = cart;
 
   if (cartData.items.length === 0) {
     return (
-      <div className="section" style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ textAlign: 'center' }}>
-          <h1 className="h2">Your cart is empty</h1>
-          <p style={{ marginTop: '16px', marginBottom: '24px' }}>Add some items from the menu to get started.</p>
-          <a href="/menu" className="button">View Menu</a>
+      <div className="checkout-page">
+        <div className="checkout-empty">
+          <h1>Your cart is empty</h1>
+          <p>Add some items from the menu to get started.</p>
+          <a href="/menu" className="checkout-btn checkout-btn--primary">View Menu</a>
         </div>
+        <style jsx>{styles}</style>
       </div>
     );
   }
 
   return (
-    <div className="section" style={{ paddingTop: '80px', paddingBottom: '80px' }}>
-      <div style={{ maxWidth: '900px', margin: '0 auto' }}>
-        <h1 className="h2" style={{ marginBottom: '40px' }}>Checkout</h1>
+    <div className="checkout-page">
+      <div className="checkout-container">
+        <h1 className="checkout-title">Checkout</h1>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '40px' }}>
+        <div className="checkout-grid">
           {/* Left: Form */}
-          <div>
+          <div className="checkout-form-section">
             <form onSubmit={handleSubmit}>
               {/* Error Banner */}
               {error && (
-                <div style={{
-                  marginBottom: '24px',
-                  padding: '16px',
-                  backgroundColor: '#fee',
-                  border: '1px solid #dc3545',
-                  borderRadius: '8px',
-                  color: '#721c24',
-                  fontSize: '14px',
-                  fontWeight: 500,
-                }}
-                className="dark:bg-red-950 dark:border-red-800 dark:text-red-200"
-                >
+                <div className="checkout-error">
                   {error}
                 </div>
               )}
 
               {/* Customer Info */}
-              <div style={{ marginBottom: '32px' }}>
-                <h2 style={{ fontSize: '20px', fontWeight: 600, marginBottom: '16px' }}>Contact Information</h2>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  <div>
-                    <label htmlFor="name" style={{ display: 'block', marginBottom: '8px', fontWeight: 500 }}>
-                      Name *
-                    </label>
+              <div className="checkout-section">
+                <h2 className="checkout-section-title">Contact Information</h2>
+                <div className="checkout-fields">
+                  <div className="checkout-field">
+                    <label htmlFor="name">Name *</label>
                     <input
                       type="text"
                       id="name"
                       required
                       value={customerInfo.name}
                       onChange={(e) => setCustomerInfo({ ...customerInfo, name: e.target.value })}
-                      style={{
-                        width: '100%',
-                        padding: '12px 16px',
-                        border: '1px solid #ddd',
-                        borderRadius: '8px',
-                        fontSize: '16px',
-                      }}
-                      className="dark:bg-neutral-800 dark:border-neutral-700"
+                      className="checkout-input"
                     />
                   </div>
-                  <div>
-                    <label htmlFor="email" style={{ display: 'block', marginBottom: '8px', fontWeight: 500 }}>
-                      Email *
-                    </label>
+                  <div className="checkout-field">
+                    <label htmlFor="email">Email *</label>
                     <input
                       type="email"
                       id="email"
                       required
                       value={customerInfo.email}
                       onChange={(e) => setCustomerInfo({ ...customerInfo, email: e.target.value })}
-                      style={{
-                        width: '100%',
-                        padding: '12px 16px',
-                        border: '1px solid #ddd',
-                        borderRadius: '8px',
-                        fontSize: '16px',
-                      }}
-                      className="dark:bg-neutral-800 dark:border-neutral-700"
+                      className="checkout-input"
                     />
                   </div>
-                  <div>
-                    <label htmlFor="phone" style={{ display: 'block', marginBottom: '8px', fontWeight: 500 }}>
-                      Phone *
-                    </label>
+                  <div className="checkout-field">
+                    <label htmlFor="phone">Phone *</label>
                     <input
                       type="tel"
                       id="phone"
@@ -263,78 +215,45 @@ export default function CheckoutPage() {
                       value={customerInfo.phone}
                       onChange={(e) => setCustomerInfo({ ...customerInfo, phone: e.target.value })}
                       placeholder="(214) 555-0123"
-                      style={{
-                        width: '100%',
-                        padding: '12px 16px',
-                        border: '1px solid #ddd',
-                        borderRadius: '8px',
-                        fontSize: '16px',
-                      }}
-                      className="dark:bg-neutral-800 dark:border-neutral-700"
+                      className="checkout-input"
                     />
                   </div>
                 </div>
               </div>
 
-              {/* Order Type */}
-              <div style={{ marginBottom: '32px' }}>
-                <h2 style={{ fontSize: '20px', fontWeight: 600, marginBottom: '16px' }}>Order Type</h2>
-                <div style={{ display: 'flex', gap: '12px' }}>
+              {/* Order Type - Track Pattern */}
+              <div className="checkout-section">
+                <h2 className="checkout-section-title">Order Type</h2>
+                <div className="checkout-order-type">
                   <button
                     type="button"
                     onClick={() => setOrderType('pickup')}
-                    style={{
-                      flex: 1,
-                      padding: '16px',
-                      border: orderType === 'pickup' ? '2px solid #C41E3A' : '1px solid #ddd',
-                      borderRadius: '8px',
-                      backgroundColor: orderType === 'pickup' ? '#fee' : 'transparent',
-                      cursor: 'pointer',
-                      fontWeight: 500,
-                    }}
-                    className="dark:border-neutral-700"
+                    className={`checkout-order-type-btn ${orderType === 'pickup' ? 'active' : ''}`}
                   >
-                    🏪 Pickup
+                    Pickup
                   </button>
                   <button
                     type="button"
                     onClick={() => setOrderType('delivery')}
-                    style={{
-                      flex: 1,
-                      padding: '16px',
-                      border: orderType === 'delivery' ? '2px solid #C41E3A' : '1px solid #ddd',
-                      borderRadius: '8px',
-                      backgroundColor: orderType === 'delivery' ? '#fee' : 'transparent',
-                      cursor: 'pointer',
-                      fontWeight: 500,
-                    }}
-                    className="dark:border-neutral-700"
+                    className={`checkout-order-type-btn ${orderType === 'delivery' ? 'active' : ''}`}
                   >
-                    🚗 Delivery
+                    Delivery
                   </button>
                 </div>
               </div>
 
               {/* Special Instructions */}
-              <div style={{ marginBottom: '32px' }}>
-                <label htmlFor="instructions" style={{ display: 'block', marginBottom: '8px', fontWeight: 500 }}>
+              <div className="checkout-section">
+                <label htmlFor="instructions" className="checkout-label">
                   Special Instructions (optional)
                 </label>
                 <textarea
                   id="instructions"
                   value={specialInstructions}
                   onChange={(e) => setSpecialInstructions(e.target.value)}
-                  rows={4}
+                  rows={3}
                   placeholder="Any special requests for your order?"
-                  style={{
-                    width: '100%',
-                    padding: '12px 16px',
-                    border: '1px solid #ddd',
-                    borderRadius: '8px',
-                    fontSize: '16px',
-                    resize: 'vertical',
-                  }}
-                  className="dark:bg-neutral-800 dark:border-neutral-700"
+                  className="checkout-input checkout-textarea"
                 />
               </div>
 
@@ -342,17 +261,7 @@ export default function CheckoutPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                style={{
-                  width: '100%',
-                  padding: '16px',
-                  backgroundColor: isSubmitting ? '#999' : '#C41E3A',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '8px',
-                  fontSize: '18px',
-                  fontWeight: 600,
-                  cursor: isSubmitting ? 'not-allowed' : 'pointer',
-                }}
+                className={`checkout-btn checkout-btn--primary checkout-btn--full ${isSubmitting ? 'disabled' : ''}`}
               >
                 {isSubmitting ? 'Processing...' : 'Place Order (Demo)'}
               </button>
@@ -360,39 +269,30 @@ export default function CheckoutPage() {
           </div>
 
           {/* Right: Order Summary */}
-          <div>
-            <div style={{
-              border: '1px solid #ddd',
-              borderRadius: '8px',
-              padding: '24px',
-              position: 'sticky',
-              top: '100px',
-            }}
-            className="dark:border-neutral-700"
-            >
-              <h2 style={{ fontSize: '20px', fontWeight: 600, marginBottom: '16px' }}>Order Summary</h2>
+          <div className="checkout-summary-section">
+            <div className="checkout-summary">
+              <h2 className="checkout-section-title">Order Summary</h2>
 
               {/* Location */}
               {cartData.location && (
-                <div style={{ marginBottom: '16px', padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '6px' }}
-                className="dark:bg-neutral-800">
-                  <div style={{ fontSize: '14px', fontWeight: 500, marginBottom: '4px' }}>Ordering from:</div>
-                  <div style={{ fontSize: '16px', fontWeight: 600 }}>{cartData.location.name}</div>
+                <div className="checkout-location">
+                  <span className="checkout-location-label">Ordering from:</span>
+                  <span className="checkout-location-name">{cartData.location.name}</span>
                 </div>
               )}
 
               {/* Items */}
-              <div style={{ marginBottom: '16px' }}>
+              <div className="checkout-items">
                 {cartData.items.map((item, index) => (
-                  <div key={index} style={{ paddingBottom: '12px', marginBottom: '12px', borderBottom: '1px solid #eee' }}
-                  className="dark:border-neutral-700">
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                      <span style={{ fontWeight: 500 }}>{item.quantity}x {item.menuItem.name}</span>
-                      <span>${((item.price + item.modifiers.reduce((s, m) => s + m.priceDelta, 0)) * item.quantity).toFixed(2)}</span>
+                  <div key={index} className="checkout-item">
+                    <div className="checkout-item-row">
+                      <span className="checkout-item-name">{item.quantity}x {item.menuItem.name}</span>
+                      <span className="checkout-item-price">
+                        ${((item.price + item.modifiers.reduce((s, m) => s + m.priceDelta, 0)) * item.quantity).toFixed(2)}
+                      </span>
                     </div>
                     {item.modifiers.length > 0 && (
-                      <div style={{ fontSize: '14px', color: '#666', marginLeft: '20px' }}
-                      className="dark:text-neutral-400">
+                      <div className="checkout-item-mods">
                         {item.modifiers.map((mod, i) => (
                           <div key={i}>{mod.name}: {mod.option}</div>
                         ))}
@@ -403,18 +303,16 @@ export default function CheckoutPage() {
               </div>
 
               {/* Totals */}
-              <div style={{ borderTop: '2px solid #ddd', paddingTop: '16px' }}
-              className="dark:border-neutral-700">
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+              <div className="checkout-totals">
+                <div className="checkout-totals-row">
                   <span>Subtotal</span>
                   <span>${cartData.subtotal.toFixed(2)}</span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                <div className="checkout-totals-row">
                   <span>Tax</span>
                   <span>${cartData.tax.toFixed(2)}</span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 600, fontSize: '18px', marginTop: '12px', paddingTop: '12px', borderTop: '1px solid #ddd' }}
-                className="dark:border-neutral-700">
+                <div className="checkout-totals-row checkout-totals-total">
                   <span>Total</span>
                   <span>${cartData.total.toFixed(2)}</span>
                 </div>
@@ -423,6 +321,371 @@ export default function CheckoutPage() {
           </div>
         </div>
       </div>
+
+      <style jsx>{styles}</style>
     </div>
   );
 }
+
+const styles = `
+  .checkout-page {
+    min-height: 100vh;
+    background: var(--color--crema-fresca, #FDF8ED);
+    padding: 80px 24px;
+  }
+
+  .checkout-loading,
+  .checkout-empty {
+    min-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .checkout-empty h1 {
+    font-family: var(--font-display, 'Playfair Display', serif);
+    font-size: 32px;
+    color: var(--color--tierra-reca, #322723);
+    margin-bottom: 12px;
+  }
+
+  .checkout-empty p {
+    color: var(--color-text-muted, #7c6a63);
+    margin-bottom: 24px;
+  }
+
+  .checkout-container {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .checkout-title {
+    font-family: var(--font-display, 'Playfair Display', serif);
+    font-size: 36px;
+    font-weight: 500;
+    color: var(--color--tierra-reca, #322723);
+    margin-bottom: 40px;
+  }
+
+  .checkout-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+  }
+
+  @media (max-width: 768px) {
+    .checkout-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Error */
+  .checkout-error {
+    margin-bottom: 24px;
+    padding: 14px 18px;
+    background: rgba(180, 60, 60, 0.08);
+    border: 1px solid rgba(180, 60, 60, 0.2);
+    border-radius: 10px;
+    color: #8b3a3a;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  /* Sections */
+  .checkout-section {
+    margin-bottom: 32px;
+  }
+
+  .checkout-section-title {
+    font-family: var(--font-family--headings, 'Poppins', sans-serif);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color--tierra-reca, #322723);
+    margin-bottom: 16px;
+  }
+
+  /* Fields */
+  .checkout-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .checkout-field label,
+  .checkout-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--color--tierra-reca, #322723);
+  }
+
+  .checkout-input {
+    width: 100%;
+    padding: 14px 16px;
+    background: rgba(50, 39, 35, 0.02);
+    border: 1px solid rgba(50, 39, 35, 0.08);
+    border-radius: 10px;
+    font-size: 15px;
+    color: var(--color--tierra-reca, #322723);
+    box-shadow: inset 0 1px 2px rgba(50, 39, 35, 0.03);
+    transition: all 0.25s ease;
+  }
+
+  .checkout-input::placeholder {
+    color: var(--color-text-muted, #7c6a63);
+  }
+
+  .checkout-input:focus {
+    outline: none;
+    border-color: var(--color--ocean-blue, #2B7A9B);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(43, 122, 155, 0.1);
+  }
+
+  .checkout-textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+
+  /* Order Type - Track Pattern */
+  .checkout-order-type {
+    display: flex;
+    gap: 8px;
+    padding: 6px;
+    background: rgba(50, 39, 35, 0.04);
+    border-radius: 12px;
+    border: 1px solid rgba(50, 39, 35, 0.06);
+  }
+
+  .checkout-order-type-btn {
+    flex: 1;
+    padding: 14px 20px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    font-family: var(--font-family--headings, 'Poppins', sans-serif);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--color--tierra-reca, #322723);
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .checkout-order-type-btn:hover:not(.active) {
+    background: rgba(255, 255, 255, 0.6);
+  }
+
+  .checkout-order-type-btn.active {
+    background: var(--color--ocean-blue, #2B7A9B);
+    color: white;
+    box-shadow: 0 3px 10px rgba(43, 122, 155, 0.2);
+  }
+
+  /* Buttons */
+  .checkout-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 28px;
+    border: none;
+    border-radius: 10px;
+    font-family: var(--font-family--headings, 'Poppins', sans-serif);
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+  }
+
+  .checkout-btn--primary {
+    background: var(--color--ocean-blue, #2B7A9B);
+    color: white;
+  }
+
+  .checkout-btn--primary:hover {
+    background: #246a87;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(43, 122, 155, 0.25);
+  }
+
+  .checkout-btn--full {
+    width: 100%;
+    padding: 16px;
+    font-size: 17px;
+  }
+
+  .checkout-btn.disabled {
+    background: var(--color-text-muted, #7c6a63);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  /* Summary */
+  .checkout-summary {
+    background: white;
+    border: 1px solid rgba(50, 39, 35, 0.08);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(50, 39, 35, 0.04);
+    position: sticky;
+    top: 100px;
+  }
+
+  .checkout-location {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 14px;
+    background: rgba(50, 39, 35, 0.03);
+    border-radius: 10px;
+    margin-bottom: 20px;
+  }
+
+  .checkout-location-label {
+    font-size: 13px;
+    color: var(--color-text-muted, #7c6a63);
+  }
+
+  .checkout-location-name {
+    font-weight: 600;
+    color: var(--color--tierra-reca, #322723);
+  }
+
+  /* Items */
+  .checkout-items {
+    margin-bottom: 20px;
+  }
+
+  .checkout-item {
+    padding-bottom: 14px;
+    margin-bottom: 14px;
+    border-bottom: 1px solid rgba(50, 39, 35, 0.06);
+  }
+
+  .checkout-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+
+  .checkout-item-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .checkout-item-name {
+    font-weight: 500;
+    color: var(--color--tierra-reca, #322723);
+  }
+
+  .checkout-item-price {
+    font-weight: 500;
+    color: var(--color--tierra-reca, #322723);
+    white-space: nowrap;
+  }
+
+  .checkout-item-mods {
+    font-size: 13px;
+    color: var(--color-text-muted, #7c6a63);
+    margin-top: 6px;
+    margin-left: 20px;
+  }
+
+  /* Totals */
+  .checkout-totals {
+    border-top: 1px solid rgba(50, 39, 35, 0.1);
+    padding-top: 16px;
+  }
+
+  .checkout-totals-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    color: var(--color-text-secondary, #5b4a42);
+  }
+
+  .checkout-totals-total {
+    font-weight: 600;
+    font-size: 18px;
+    color: var(--color--tierra-reca, #322723);
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(50, 39, 35, 0.1);
+  }
+
+  /* Dark mode */
+  :global(.dark) .checkout-page {
+    background: #0f1720;
+  }
+
+  :global(.dark) .checkout-title,
+  :global(.dark) .checkout-section-title,
+  :global(.dark) .checkout-field label,
+  :global(.dark) .checkout-label,
+  :global(.dark) .checkout-item-name,
+  :global(.dark) .checkout-item-price,
+  :global(.dark) .checkout-location-name,
+  :global(.dark) .checkout-totals-total {
+    color: #f0f0f0;
+  }
+
+  :global(.dark) .checkout-input {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.08);
+    color: #f0f0f0;
+  }
+
+  :global(.dark) .checkout-input:focus {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: #4a9aba;
+    box-shadow: 0 0 0 3px rgba(74, 154, 186, 0.15);
+  }
+
+  :global(.dark) .checkout-order-type {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.06);
+  }
+
+  :global(.dark) .checkout-order-type-btn {
+    color: #f0f0f0;
+  }
+
+  :global(.dark) .checkout-order-type-btn:hover:not(.active) {
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  :global(.dark) .checkout-summary {
+    background: #1a2332;
+    border-color: rgba(255, 255, 255, 0.06);
+  }
+
+  :global(.dark) .checkout-location {
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  :global(.dark) .checkout-item {
+    border-color: rgba(255, 255, 255, 0.06);
+  }
+
+  :global(.dark) .checkout-totals {
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  :global(.dark) .checkout-totals-total {
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  :global(.dark) .checkout-totals-row {
+    color: #b8c4d0;
+  }
+
+  :global(.dark) .checkout-error {
+    background: rgba(180, 60, 60, 0.15);
+    border-color: rgba(180, 60, 60, 0.3);
+    color: #f0a0a0;
+  }
+`;

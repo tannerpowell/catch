@@ -3,6 +3,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import type { Location, MenuCategory, MenuItem } from "@/lib/types";
+import { formatPrice, getEffectivePrice } from "@/lib/utils/price";
 import styles from "./MenuDisplay.module.css";
 
 interface Props {
@@ -24,17 +25,6 @@ interface DisplayItem {
   price: string;
   isCategory?: boolean;
   categorySlug?: string; // Track which category each item belongs to
-}
-
-function formatPrice(price: number | null | undefined): string {
-  if (price == null) return "MKT";
-  return price % 1 === 0 ? `${price}` : price.toFixed(2);
-}
-
-function getEffectivePrice(item: MenuItem, locationSlug: string): number | null {
-  const override = item.locationOverrides?.[locationSlug];
-  if (override?.price != null) return override.price;
-  return item.price ?? null;
 }
 
 export default function MenuDisplayClient({ location, categories, items }: Props) {

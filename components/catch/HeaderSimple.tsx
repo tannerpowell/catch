@@ -2,9 +2,43 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { ShoppingCart } from 'lucide-react';
 import { useCart } from '@/lib/contexts/CartContext';
+
+// Extracted as a separate function outside component to avoid re-creation
+const useBadgeAnimation = (itemCount: number) => {
+  const [animating, setAnimating] = useState(false);
+  const prevCountRef = useRef(itemCount);
+  const animationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    // Only animate when count increases (item added)
+    if (itemCount > prevCountRef.current) {
+      setAnimating(true);
+
+      // Clear any existing timeout
+      if (animationTimeoutRef.current) {
+        clearTimeout(animationTimeoutRef.current);
+      }
+
+      // Clear animation state after animation completes
+      animationTimeoutRef.current = setTimeout(() => {
+        setAnimating(false);
+      }, 600); // Match bounce animation duration
+    }
+    prevCountRef.current = itemCount;
+
+    return () => {
+      if (animationTimeoutRef.current) {
+        clearTimeout(animationTimeoutRef.current);
+      }
+    };
+  }, [itemCount]);
+
+  return animating;
+};
+
 import { CartDrawer } from '@/components/cart/CartDrawer';
 
 type GsapGlobal = {
@@ -15,9 +49,9 @@ type GsapGlobal = {
 const navLinks = [
   { href: "/menu", label: "menu" },
   { href: "/menu2", label: "menu2" },
+  { href: "/tv-menu-display", label: "tv menu" },
+  { href: "/print-menu", label: "print menu" },
   { href: "/locations", label: "locations" },
-  // { href: "/gift-cards", label: "gift cards" },
-  // { href: "/our-story", label: "our story" },
   { href: "/private-events", label: "events" },
   { href: "/sitemap", label: "sitemap" }
 ] as const;
@@ -33,6 +67,7 @@ export default function HeaderSimple() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const { itemCount } = useCart();
+  const badgeAnimating = useBadgeAnimation(itemCount);
   const hasAnimatedRef = useRef(false);
 
   useEffect(() => {
@@ -122,7 +157,7 @@ export default function HeaderSimple() {
           >
             <ShoppingCart size={20} />
             {itemCount > 0 && (
-              <span className="nav-cart-badge">{itemCount}</span>
+              <span className={`nav-cart-badge${badgeAnimating ? ' nav-cart-badge-bounce' : ''}`}>{itemCount}</span>
             )}
           </button>
         </div>
@@ -233,6 +268,26 @@ export default function HeaderSimple() {
               </div>
               <Link href="/menu2" className="link-block full-page-nav" onClick={() => setMobileMenuOpen(false)}>
                 <h3 className="h3">Menu2</h3>
+              </Link>
+            </div>
+            <div className="nav-right-link-wrapper">
+              <div className="nav-right-accent-wrapper">
+                <div className="accent claro-maiz-right-aligned">
+                  tv<br/>display
+                </div>
+              </div>
+              <Link href="/tv-menu-display" className="link-block full-page-nav" onClick={() => setMobileMenuOpen(false)}>
+                <h3 className="h3">TV Menu</h3>
+              </Link>
+            </div>
+            <div className="nav-right-link-wrapper">
+              <div className="nav-right-accent-wrapper">
+                <div className="accent claro-maiz-right-aligned">
+                  print<br/>menus
+                </div>
+              </div>
+              <Link href="/print-menu" className="link-block full-page-nav" onClick={() => setMobileMenuOpen(false)}>
+                <h3 className="h3">Print Menu</h3>
               </Link>
             </div>
             <div className="nav-right-link-wrapper">

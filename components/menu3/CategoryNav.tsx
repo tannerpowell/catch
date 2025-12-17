@@ -2,6 +2,7 @@
 
 import React, { useCallback, useRef } from 'react';
 import type { MenuCategory } from '@/lib/types';
+import { HIDDEN_CATEGORY_SLUGS } from '@/lib/constants/categories';
 
 interface CategoryNavProps {
   categories: MenuCategory[];
@@ -30,10 +31,7 @@ export function CategoryNav({
     searchInputRef.current?.focus();
   }, [onSearchChange]);
 
-  // Filter out deprecated/inactive categories that still exist in the CMS
-  // These categories are kept for historical data but should not appear in navigation
-  // TODO: Consider adding a 'hidden' field to the category schema instead
-  const HIDDEN_CATEGORY_SLUGS = ['blazing-hen', 'cajun-creation'];
+  // Filter out deprecated/inactive categories (defined in lib/constants/categories.ts)
   const visibleCategories = categories.filter(
     cat => !HIDDEN_CATEGORY_SLUGS.includes(cat.slug)
   );
@@ -61,7 +59,7 @@ export function CategoryNav({
           <input
             ref={searchInputRef}
             type="search"
-            placeholder="Search menu..."
+            placeholder="Search"
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
             className="menu3-search-input menu3-type-search"
@@ -91,14 +89,9 @@ export function CategoryNav({
         </div>
       </div>
 
-      {/* Category label */}
-      <div className="menu3-category-label menu3-type-section">
-        Categories
-      </div>
-
       {/* Category list - using radiogroup/radio for mutually exclusive selection */}
       <div className="menu3-category-list" role="radiogroup" aria-label="Filter by category">
-        {/* All Categories option */}
+        {/* All Menu Items option */}
         <button
           type="button"
           className={`menu3-category-item menu3-type-category ${selectedCategory === '' ? 'is-active' : ''}`}
@@ -106,7 +99,7 @@ export function CategoryNav({
           role="radio"
           aria-checked={selectedCategory === ''}
         >
-          <span className="menu3-category-item-text">All Categories</span>
+          <span className="menu3-category-item-text">All Menu Items</span>
         </button>
 
         {visibleCategories.map(category => (
@@ -118,6 +111,9 @@ export function CategoryNav({
             role="radio"
             aria-checked={selectedCategory === category.slug}
           >
+            <svg className="menu3-category-flourish" width="10" height="10" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M12 4V20M4 12H12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
             <span className="menu3-category-item-text">{category.title}</span>
           </button>
         ))}
@@ -166,9 +162,9 @@ export function CategoryNav({
 
         .menu3-search-input:focus {
           outline: none;
-          border-color: var(--menu3-accent, #333);
+          border-color: var(--menu3-accent, #2B7A9B);
           background: white;
-          box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.04);
+          box-shadow: 0 0 0 3px rgba(43, 122, 155, 0.1);
         }
 
         .menu3-search-clear {
@@ -192,12 +188,6 @@ export function CategoryNav({
           background: var(--menu3-text, #333);
         }
 
-        /* Category label */
-        .menu3-category-label {
-          padding: 16px 16px 8px;
-          color: var(--menu3-text-muted, #888);
-        }
-
         /* Category list */
         .menu3-category-list {
           list-style: none;
@@ -212,70 +202,58 @@ export function CategoryNav({
           display: flex;
           align-items: center;
           width: 100%;
-          padding: 10px 16px 10px 20px;
+          padding: 10px 16px;
+          margin: 0 8px;
+          width: calc(100% - 16px);
           background: transparent;
           border: none;
-          border-left: 2px solid transparent;
-          border-bottom: 1px solid var(--menu3-category-border, rgba(0, 0, 0, 0.1));
-          color: var(--menu3-text-secondary, #555);
+          border-radius: 6px;
+          color: var(--menu3-text-muted, #7c6a63);
           cursor: pointer;
           text-align: left;
-          transition: all 0.15s ease;
-        }
-
-        .menu3-category-item:last-child {
-          border-bottom: none;
-        }
-
-        .menu3-category-item::before {
-          content: '';
-          position: absolute;
-          left: 8px;
-          width: 0;
-          height: 0;
-          border-top: 4px solid transparent;
-          border-bottom: 4px solid transparent;
-          border-left: 5px solid var(--menu3-accent, #333);
-          opacity: 0;
-          transition: opacity 0.15s ease, transform 0.15s ease;
-          transform: translateX(-4px);
+          font-size: 14px;
+          transition: all 0.25s ease;
         }
 
         .menu3-category-item:hover {
-          background: #fff;
-          color: var(--menu3-text, #1a1a1a);
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-        }
-
-        .menu3-category-item:hover::before {
-          opacity: 0.6;
-          transform: translateX(0);
+          background: var(--menu3-hover-bg, rgba(255, 255, 255, 0.6));
+          color: var(--menu3-text, #322723);
         }
 
         .menu3-category-item.is-active {
-          background: #fff;
-          border-left-color: var(--menu3-accent, #1a1a1a);
-          border-left-width: 3px;
-          color: var(--menu3-text, #1a1a1a);
-          font-weight: 600;
-          box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-        }
-
-        .menu3-category-item.is-active::before {
-          opacity: 1;
-          transform: translateX(0);
+          background: var(--menu3-active-bg, white);
+          color: var(--menu3-active-text, #322723);
+          font-weight: 500;
+          box-shadow: var(--menu3-active-shadow, 0 1px 4px rgba(50, 39, 35, 0.08));
         }
 
         .menu3-category-item:focus-visible {
           outline: none;
-          background: var(--menu3-hover-bg, rgba(0, 0, 0, 0.02));
-          box-shadow: inset 0 0 0 2px var(--menu3-accent, #333);
+          box-shadow: 0 0 0 2px var(--menu3-accent, #2B7A9B);
         }
 
         .menu3-category-item-text {
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
+        }
+
+        /* Flourish */
+        .menu3-category-flourish {
+          flex-shrink: 0;
+          margin-right: 8px;
+          color: var(--menu3-accent, #2B7A9B);
+          opacity: 0.4;
+          transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        .menu3-category-item:hover .menu3-category-flourish {
+          opacity: 0.7;
+        }
+
+        .menu3-category-item.is-active .menu3-category-flourish {
+          opacity: 1;
+          transform: scale(1.1);
         }
 
         /* Mobile: horizontal scroll chips */
@@ -303,23 +281,38 @@ export function CategoryNav({
 
           .menu3-category-list {
             display: flex;
-            gap: 6px;
-            padding: 12px 16px;
+            gap: 4px;
+            padding: 4px;
+            margin: 8px 12px;
+            background: rgba(50, 39, 35, 0.03);
+            border-radius: 20px;
+            border: 1px solid rgba(50, 39, 35, 0.05);
             overflow: visible;
           }
 
           .menu3-category-item {
             padding: 6px 14px;
-            border: 1px solid var(--menu3-border, rgba(0, 0, 0, 0.1));
-            border-radius: 999px;
-            border-left: 1px solid var(--menu3-border, rgba(0, 0, 0, 0.1));
+            margin: 0;
+            width: auto;
+            border: none;
+            border-radius: 16px;
+            font-size: 13px;
             white-space: nowrap;
+            color: var(--menu3-text-muted, #7c6a63);
+          }
+
+          .menu3-category-item:hover {
+            background: rgba(255, 255, 255, 0.6);
           }
 
           .menu3-category-item.is-active {
-            background: var(--menu3-accent, #333);
-            border-color: var(--menu3-accent, #333);
+            background: var(--menu3-accent, #2B7A9B);
             color: white;
+            box-shadow: 0 2px 6px rgba(43, 122, 155, 0.2);
+          }
+
+          .menu3-category-flourish {
+            display: none;
           }
         }
       `}</style>

@@ -34,7 +34,7 @@
 }
 
 .toggleButton.active {
-  background: var(--color--chile-rojo);
+  background: var(--color--ocean-blue);
   color: white;
   box-shadow: 0 4px 12px rgba(43, 122, 155, 0.25);
 }
@@ -86,7 +86,7 @@
   color: var(--color--tierra-reca);
   margin-bottom: 24px;
   padding-bottom: 12px;
-  border-bottom: 2px solid var(--color--chile-rojo);
+  border-bottom: 2px solid var(--color--ocean-blue);
 }
 
 /* Form Layout */
@@ -111,7 +111,7 @@
 }
 
 .required {
-  color: var(--color--chile-rojo);
+  color: var(--color--ocean-blue);
 }
 
 /* Form Inputs */
@@ -130,7 +130,7 @@
 .formInput:focus,
 .formTextarea:focus {
   outline: none;
-  border-color: var(--color--chile-rojo);
+  border-color: var(--color--ocean-blue);
   box-shadow: 0 0 0 3px rgba(43, 122, 155, 0.1);
 }
 
@@ -162,7 +162,7 @@
   height: 20px;
   margin-top: 2px;
   cursor: pointer;
-  accent-color: var(--color--chile-rojo);
+  accent-color: var(--color--ocean-blue);
 }
 
 .checkboxText {
@@ -182,7 +182,7 @@
 
 .submitButton {
   padding: 18px 48px;
-  background: var(--color--chile-rojo);
+  background: var(--color--ocean-blue);
   color: white;
   border: none;
   border-radius: 8px;

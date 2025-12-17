@@ -3,29 +3,23 @@
 import { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import styles from './LocationsMap.module.css';
+import styles from './LocationsMapLegacy.module.css';
 import { fallbackGeoCoordinates } from '@/lib/adapters/sanity-catch';
 import { formatPhone } from '@/lib/utils/formatPhone';
+import { getDistance } from '@/lib/utils/distance';
+import type { Location as SharedLocation } from '@/lib/types';
 
-interface Location {
-  slug: string;
-  name: string;
-  addressLine1: string;
+// Use subset of shared Location type for this component
+// Fields made optional for defensive rendering (data may not always be complete)
+type Location = Pick<SharedLocation, 'slug' | 'name' | 'addressLine1' | 'phone' | 'revelUrl' | 'doordashUrl' | 'uberEatsUrl'> & {
   city?: string;
   state?: string;
   postalCode?: string;
-  phone?: string;
-  revelUrl?: string;
-  doordashUrl?: string;
-  uberEatsUrl?: string;
-}
+};
 
 interface LocationsMapProps {
   locations: Location[];
   onLocationSelect?: (slug: string) => void;
-  minimal?: boolean; // Hide controls overlay
-  userCoords?: [number, number] | null; // [lng, lat] - user's location
-  nearestCoords?: [number, number] | null; // [lng, lat] - nearest restaurant location
 }
 
 // Build Apple Maps URL
@@ -52,32 +46,6 @@ const sanitizeUrl = (url: string | undefined): string | null => {
     // Invalid URL format
   }
   return null;
-};
-
-// Calculate geographic distance using haversine formula
-const degreesToRadians = (degrees: number): number => {
-  return (degrees * Math.PI) / 180;
-};
-
-const calculateHaversineDistance = (
-  lat1: number,
-  lon1: number,
-  lat2: number,
-  lon2: number
-): number => {
-  const R = 6371; // Earth's radius in kilometers
-  const dLat = degreesToRadians(lat2 - lat1);
-  const dLon = degreesToRadians(lon2 - lon1);
-
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(degreesToRadians(lat1)) *
-      Math.cos(degreesToRadians(lat2)) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
-
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
 };
 
 // Create popup DOM safely using document.createElement
@@ -109,10 +77,21 @@ const createLocationPopup = (location: Location): HTMLElement => {
   addressLink.style.fontSize = '14px';
   addressLink.style.lineHeight = '1.4';
 
-  const addressText = [location.addressLine1, `${location.city}, ${location.state} ${location.postalCode}`]
-    .filter(Boolean)
-    .join('\n');
-  addressLink.textContent = addressText;
+  // Build address text defensively to avoid "undefined" in output
+  const addressParts: string[] = [];
+  if (location.addressLine1) {
+    addressParts.push(location.addressLine1);
+  }
+  // Build city/state/zip line only with defined parts
+  const cityStateParts: string[] = [];
+  if (location.city) cityStateParts.push(location.city);
+  if (location.state) cityStateParts.push(location.state);
+  const cityState = cityStateParts.join(', ');
+  const cityStateZip = [cityState, location.postalCode].filter(Boolean).join(' ');
+  if (cityStateZip) {
+    addressParts.push(cityStateZip);
+  }
+  addressLink.textContent = addressParts.join('\n');
 
   addressDiv.appendChild(addressLink);
   container.appendChild(addressDiv);
@@ -221,7 +200,7 @@ const locationCoords: Record<string, [number, number]> = Object.fromEntries(
   Object.entries(fallbackGeoCoordinates).map(([slug, { lat, lng }]) => [slug, [lng, lat]])
 );
 
-export default function LocationsMap({ locations, onLocationSelect, minimal = false, userCoords = null, nearestCoords = null }: LocationsMapProps) {
+export default function LocationsMapLegacy({ locations, onLocationSelect }: LocationsMapProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const userMarkerRef = useRef<mapboxgl.Marker | null>(null);
@@ -242,34 +221,12 @@ export default function LocationsMap({ locations, onLocationSelect, minimal = fa
 
     mapboxgl.accessToken = mapboxToken;
 
-    // Calculate bounds to fit all locations
-    const bounds = new mapboxgl.LngLatBounds();
-    locations.forEach((location) => {
-      const coords = locationCoords[location.slug];
-      if (coords) {
-        bounds.extend(coords);
-      }
-    });
-
-    // Fallback if no valid coordinates found
-    const hasValidBounds = !bounds.isEmpty();
-
     const mapInstance = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/dark-v11',
-      center: hasValidBounds ? bounds.getCenter() : [-97.5, 33.0], // Default to central TX/OK
-      zoom: 5,
+      style: 'mapbox://styles/mapbox/light-v11',
+      center: [-96.5, 32.5], // Center between Texas and Oklahoma locations
+      zoom: 5.5,
     });
-
-    // Fit to bounds with padding once map loads (only if we have valid bounds)
-    if (hasValidBounds) {
-      mapInstance.on('load', () => {
-        mapInstance.fitBounds(bounds, {
-          padding: { top: 50, bottom: 50, left: 50, right: 50 },
-          maxZoom: 8,
-        });
-      });
-    }
 
     map.current = mapInstance;
 
@@ -288,9 +245,9 @@ export default function LocationsMap({ locations, onLocationSelect, minimal = fa
       el.setAttribute('aria-label', `Location: ${location.name}`);
 
       // Handler function for both click and keyboard events
+      // Only set selectedLocation, not nearestLocation (which is for "Find Nearest" feature)
       const handleActivation = () => {
         setSelectedLocation(location);
-        setNearestLocation(location.slug);
       };
 
       // Click handler for marker
@@ -324,41 +281,6 @@ export default function LocationsMap({ locations, onLocationSelect, minimal = fa
     };
   }, [locations]);
 
-  // Handle external user coordinates (from parent geo button)
-  useEffect(() => {
-    if (!userCoords || !map.current) return;
-
-    // Remove previous user marker to prevent accumulation
-    if (userMarkerRef.current) {
-      userMarkerRef.current.remove();
-      userMarkerRef.current = null;
-    }
-
-    // Add user location marker (ocean blue for consistency)
-    const marker = new mapboxgl.Marker({ color: '#2B7A9B' })
-      .setLngLat(userCoords)
-      .addTo(map.current);
-    userMarkerRef.current = marker;
-
-    // If we have nearest coords, fit bounds to show both user and restaurant
-    if (nearestCoords) {
-      const bounds = new mapboxgl.LngLatBounds();
-      bounds.extend(userCoords);
-      bounds.extend(nearestCoords);
-
-      map.current.fitBounds(bounds, {
-        padding: { top: 60, bottom: 60, left: 60, right: 60 },
-        maxZoom: 12,
-      });
-    } else {
-      // Just zoom to user location
-      map.current.flyTo({
-        center: userCoords,
-        zoom: 10,
-      });
-    }
-  }, [userCoords, nearestCoords]);
-
   const findNearestLocation = () => {
     // Clear previous errors
     setError(null);
@@ -384,11 +306,12 @@ export default function LocationsMap({ locations, onLocationSelect, minimal = fa
           if (!coords) return;
 
           // coords are [lon, lat], userCoords are [lon, lat]
-          const distance = calculateHaversineDistance(
+          // Use shared getDistance utility from lib/utils/distance.ts
+          const distance = getDistance(
             userCoords[1], // lat1
-            userCoords[0], // lon1
+            userCoords[0], // lng1
             coords[1],     // lat2
-            coords[0]      // lon2
+            coords[0]      // lng2
           );
 
           if (distance < minDistance) {
@@ -414,17 +337,15 @@ export default function LocationsMap({ locations, onLocationSelect, minimal = fa
             zoom: 10,
           });
 
-          // Remove previous user marker to prevent accumulation
+          // Remove existing user marker before adding new one
           if (userMarkerRef.current) {
             userMarkerRef.current.remove();
-            userMarkerRef.current = null;
           }
 
-          // Add user location marker
-          const marker = new mapboxgl.Marker({ color: '#2B7A9B' })
+          // Add user location marker and store in ref
+          userMarkerRef.current = new mapboxgl.Marker({ color: '#2B7A9B' })
             .setLngLat(userCoords)
             .addTo(currentMap);
-          userMarkerRef.current = marker;
         }
       },
       (error) => {
@@ -436,74 +357,81 @@ export default function LocationsMap({ locations, onLocationSelect, minimal = fa
 
   return (
     <div className={styles.mapWrapper}>
-      {!minimal && (
-        <div className={styles.mapControls}>
-          <button onClick={findNearestLocation} className={styles.findButton}>
-            Find Nearest Location
-          </button>
-          {error && (
-            <div className={styles.errorMessage} role="alert">
-              {error}
-              <button
-                onClick={() => setError(null)}
-                className={styles.closeError}
-                aria-label="Close error message"
-              >
-                ×
-              </button>
+      <div className={styles.mapControls}>
+        <button onClick={findNearestLocation} className={styles.findButton}>
+          Find Nearest Location
+        </button>
+        {error && (
+          <div className={styles.errorMessage} role="alert">
+            {error}
+            <button
+              onClick={() => setError(null)}
+              className={styles.closeError}
+              aria-label="Close error message"
+            >
+              ×
+            </button>
+          </div>
+        )}
+        {selectedLocation && (
+          <div className={styles.locationInfo}>
+            <div className={styles.locationName}>
+              {nearestLocation === selectedLocation.slug && 'Nearest: '}
+              {selectedLocation.name}
             </div>
-          )}
-          {selectedLocation && (
-            <div className={styles.locationInfo}>
-              <div className={styles.locationName}>
-                {nearestLocation === selectedLocation.slug && 'Nearest: '}
-                {selectedLocation.name}
-              </div>
-              <div className={styles.locationDetails}>
+            <div className={styles.locationDetails}>
+              <a
+                href={getAppleMapsUrl(selectedLocation)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.detailLink}
+              >
+                {selectedLocation.addressLine1}
+                {(selectedLocation.city || selectedLocation.state || selectedLocation.postalCode) && (
+                  <>
+                    <br />
+                    {selectedLocation.city}
+                    {selectedLocation.city && selectedLocation.state && ', '}
+                    {selectedLocation.state}
+                    {(selectedLocation.city || selectedLocation.state) && selectedLocation.postalCode && ' '}
+                    {selectedLocation.postalCode}
+                  </>
+                )}
+              </a>
+            </div>
+            <div className={styles.actionButtons}>
+              <a
+                href={getAppleMapsUrl(selectedLocation)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.primaryButton}
+              >
+                Directions
+              </a>
+              {selectedLocation.phone && sanitizeUrl(`tel:${selectedLocation.phone}`) && (
                 <a
-                  href={getAppleMapsUrl(selectedLocation)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.detailLink}
-                >
-                  {selectedLocation.addressLine1}<br />
-                  {selectedLocation.city}, {selectedLocation.state} {selectedLocation.postalCode}
-                </a>
-              </div>
-              <div className={styles.actionButtons}>
-                <a
-                  href={getAppleMapsUrl(selectedLocation)}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href={sanitizeUrl(`tel:${selectedLocation.phone}`)!}
                   className={styles.primaryButton}
                 >
-                  Directions
+                  {formatPhone(selectedLocation.phone)}
                 </a>
-                {selectedLocation.phone && sanitizeUrl(`tel:${selectedLocation.phone}`) && (
-                  <a
-                    href={sanitizeUrl(`tel:${selectedLocation.phone}`)!}
-                    className={styles.primaryButton}
-                  >
-                    {formatPhone(selectedLocation.phone)}
-                  </a>
-                )}
-              </div>
-              <div className={styles.orderLinks}>
-                {selectedLocation.doordashUrl && (
-                  <a href={selectedLocation.doordashUrl} target="_blank" rel="noopener noreferrer" className={styles.orderLink}>
-                    DoorDash
-                  </a>
-                )}
-                {selectedLocation.uberEatsUrl && (
-                  <a href={selectedLocation.uberEatsUrl} target="_blank" rel="noopener noreferrer" className={styles.orderLink}>
-                    Uber Eats
-                  </a>
-                )}
-              </div>
+              )}
             </div>
-          )}
-        </div>
-      )}
+            <div className={styles.orderLinks}>
+              {selectedLocation.doordashUrl && (
+                <a href={selectedLocation.doordashUrl} target="_blank" rel="noopener noreferrer" className={styles.orderLink}>
+                  DoorDash
+                </a>
+              )}
+              {selectedLocation.uberEatsUrl && (
+                <a href={selectedLocation.uberEatsUrl} target="_blank" rel="noopener noreferrer" className={styles.orderLink}>
+                  Uber Eats
+                </a>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
       <div ref={mapContainer} className={styles.mapContainer} />
     </div>
   );

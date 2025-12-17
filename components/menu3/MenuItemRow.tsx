@@ -134,25 +134,40 @@ export const MenuItemRow = forwardRef<HTMLButtonElement, MenuItemRowProps>(
             grid-template-rows: auto auto;
             gap: 0 12px;
             align-items: baseline;
-            width: 100%;
-            padding: 12px 0;
+            width: calc(100% + 32px);
+            margin-left: -16px;
+            margin-right: -16px;
+            padding: 12px 16px;
             background: transparent;
             border: none;
             border-bottom: 1px solid var(--menu3-border, rgba(0, 0, 0, 0.04));
+            border-radius: 6px;
             cursor: pointer;
             text-align: left;
-            transition: background 0.15s ease;
+            transition: background 0.5s ease-out, color 0.5s ease-out;
           }
 
           .menu3-item-row:hover,
           .menu3-item-row.is-hovered {
-            background: var(--menu3-hover-bg, rgba(0, 0, 0, 0.015));
+            background: rgba(43, 122, 155, 0.85);
+            transition: background 0.35s ease-in, color 0.35s ease-in;
+          }
+
+          .menu3-item-row:hover .menu3-item-name,
+          .menu3-item-row.is-hovered .menu3-item-name,
+          .menu3-item-row:hover .menu3-item-price,
+          .menu3-item-row.is-hovered .menu3-item-price,
+          .menu3-item-row:hover .menu3-item-description,
+          .menu3-item-row.is-hovered .menu3-item-description,
+          .menu3-item-row:hover .menu3-price-dollar,
+          .menu3-item-row.is-hovered .menu3-price-dollar {
+            color: #fafafa;
           }
 
           .menu3-item-row:focus-visible {
             outline: none;
-            background: var(--menu3-hover-bg, rgba(0, 0, 0, 0.02));
-            box-shadow: inset 0 0 0 2px var(--menu3-accent, #333);
+            background: var(--menu3-hover-bg, rgba(255, 255, 255, 0.6));
+            box-shadow: 0 0 0 2px var(--menu3-accent, #2B7A9B);
           }
 
           /* Image indicator dot */
@@ -165,11 +180,14 @@ export const MenuItemRow = forwardRef<HTMLButtonElement, MenuItemRowProps>(
             border-radius: 50%;
             margin-top: 7px;
             opacity: 0.4;
+            transition: opacity 0.5s ease-out, background 0.5s ease-out;
           }
 
           .menu3-item-row:hover .menu3-item-image-dot,
           .menu3-item-row.is-hovered .menu3-item-image-dot {
             opacity: 1;
+            background: #fafafa;
+            transition: opacity 0.35s ease-in, background 0.35s ease-in;
           }
 
           /* Name container */
@@ -187,11 +205,12 @@ export const MenuItemRow = forwardRef<HTMLButtonElement, MenuItemRowProps>(
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            transition: color 0.5s ease-out;
           }
 
           .menu3-item-row:hover .menu3-item-name,
           .menu3-item-row.is-hovered .menu3-item-name {
-            color: var(--menu3-accent, #000);
+            transition: color 0.35s ease-in;
           }
 
           /* Badges */
@@ -236,6 +255,12 @@ export const MenuItemRow = forwardRef<HTMLButtonElement, MenuItemRowProps>(
             text-overflow: ellipsis;
             white-space: nowrap;
             max-width: 100%;
+            transition: color 0.5s ease-out;
+          }
+
+          .menu3-item-row:hover .menu3-item-description,
+          .menu3-item-row.is-hovered .menu3-item-description {
+            transition: color 0.35s ease-in;
           }
 
           /* Spacer (dotted line) */
@@ -262,11 +287,24 @@ export const MenuItemRow = forwardRef<HTMLButtonElement, MenuItemRowProps>(
             grid-row: 1;
             color: var(--menu3-text, #1a1a1a);
             white-space: nowrap;
+            transition: color 0.5s ease-out;
+          }
+
+          .menu3-item-row:hover .menu3-item-price,
+          .menu3-item-row.is-hovered .menu3-item-price {
+            transition: color 0.35s ease-in;
           }
 
           .menu3-price-dollar {
             font-size: 0.85em;
             opacity: 0.6;
+            transition: color 0.5s ease-out, opacity 0.5s ease-out;
+          }
+
+          .menu3-item-row:hover .menu3-price-dollar,
+          .menu3-item-row.is-hovered .menu3-price-dollar {
+            opacity: 1;
+            transition: color 0.35s ease-in, opacity 0.35s ease-in;
           }
 
           .menu3-price-mp {
