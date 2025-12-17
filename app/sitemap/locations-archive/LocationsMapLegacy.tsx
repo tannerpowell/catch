@@ -7,19 +7,15 @@ import styles from './LocationsMapLegacy.module.css';
 import { fallbackGeoCoordinates } from '@/lib/adapters/sanity-catch';
 import { formatPhone } from '@/lib/utils/formatPhone';
 import { getDistance } from '@/lib/utils/distance';
+import type { Location as SharedLocation } from '@/lib/types';
 
-interface Location {
-  slug: string;
-  name: string;
-  addressLine1: string;
+// Use subset of shared Location type for this component
+// Fields made optional for defensive rendering (data may not always be complete)
+type Location = Pick<SharedLocation, 'slug' | 'name' | 'addressLine1' | 'phone' | 'revelUrl' | 'doordashUrl' | 'uberEatsUrl'> & {
   city?: string;
   state?: string;
   postalCode?: string;
-  phone?: string;
-  revelUrl?: string;
-  doordashUrl?: string;
-  uberEatsUrl?: string;
-}
+};
 
 interface LocationsMapProps {
   locations: Location[];
@@ -81,10 +77,21 @@ const createLocationPopup = (location: Location): HTMLElement => {
   addressLink.style.fontSize = '14px';
   addressLink.style.lineHeight = '1.4';
 
-  const addressText = [location.addressLine1, `${location.city}, ${location.state} ${location.postalCode}`]
-    .filter(Boolean)
-    .join('\n');
-  addressLink.textContent = addressText;
+  // Build address text defensively to avoid "undefined" in output
+  const addressParts: string[] = [];
+  if (location.addressLine1) {
+    addressParts.push(location.addressLine1);
+  }
+  // Build city/state/zip line only with defined parts
+  const cityStateZip = [
+    location.city,
+    location.state ? (location.city ? `, ${location.state}` : location.state) : null,
+    location.postalCode
+  ].filter(Boolean).join(' ').replace(' , ', ', ');
+  if (cityStateZip) {
+    addressParts.push(cityStateZip);
+  }
+  addressLink.textContent = addressParts.join('\n');
 
   addressDiv.appendChild(addressLink);
   container.appendChild(addressDiv);
@@ -379,8 +386,17 @@ export default function LocationsMapLegacy({ locations, onLocationSelect }: Loca
                 rel="noopener noreferrer"
                 className={styles.detailLink}
               >
-                {selectedLocation.addressLine1}<br />
-                {selectedLocation.city}, {selectedLocation.state} {selectedLocation.postalCode}
+                {selectedLocation.addressLine1}
+                {(selectedLocation.city || selectedLocation.state || selectedLocation.postalCode) && (
+                  <>
+                    <br />
+                    {selectedLocation.city}
+                    {selectedLocation.city && selectedLocation.state && ', '}
+                    {selectedLocation.state}
+                    {(selectedLocation.city || selectedLocation.state) && selectedLocation.postalCode && ' '}
+                    {selectedLocation.postalCode}
+                  </>
+                )}
               </a>
             </div>
             <div className={styles.actionButtons}>
