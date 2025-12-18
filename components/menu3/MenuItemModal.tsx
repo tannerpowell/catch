@@ -125,13 +125,12 @@ export function MenuItemModal({
       aria-modal="true"
       aria-labelledby="modal-title"
     >
-      {/* Layered Card Structure */}
-      <div className={`modal-outer-frame ${!item.image ? 'modal-outer-frame--compact' : ''}`}>
-        <div
-          ref={modalRef}
-          className={`modal-inner-card ${!item.image ? 'modal-inner-card--no-image' : ''}`}
-        >
-          {/* Close button */}
+      {/* Modal Card */}
+      <div
+        ref={modalRef}
+        className={`modal-card ${!item.image ? 'modal-card--compact' : ''}`}
+      >
+        {/* Close button */}
           <button
             ref={closeButtonRef}
             type="button"
@@ -247,12 +246,11 @@ export function MenuItemModal({
             </div>
           </div>
         </div>
-      </div>
 
       <style jsx>{`
         /* ============================================
            GULF COAST EDITORIAL MODAL
-           Layered card design with warm ocean palette
+           Clean card design with warm ocean palette
            ============================================ */
 
         .modal-backdrop {
@@ -293,19 +291,20 @@ export function MenuItemModal({
           }
         }
 
-        /* Outer frame - creates layered depth like voucherfied */
-        .modal-outer-frame {
+        /* Modal card - clean single-layer design */
+        .modal-card {
           position: relative;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
           max-width: 920px;
           width: 100%;
-          background: var(--modal-cream-dark);
-          border: 1px solid rgba(50, 39, 35, 0.12);
+          background: var(--modal-cream);
+          border: 1px solid rgba(50, 39, 35, 0.1);
           border-radius: 16px;
-          padding: 6px;
+          overflow: hidden;
           box-shadow:
-            0 0 0 1px rgba(255, 255, 255, 0.5) inset,
-            0 25px 60px rgba(50, 39, 35, 0.35),
-            0 10px 30px rgba(50, 39, 35, 0.2);
+            0 25px 60px rgba(50, 39, 35, 0.3),
+            0 10px 30px rgba(50, 39, 35, 0.15);
           animation: modalEnter 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
@@ -320,26 +319,9 @@ export function MenuItemModal({
           }
         }
 
-        /* Inner card - the main content area */
-        .modal-inner-card {
-          position: relative;
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          background: var(--modal-cream);
-          border: 1px solid rgba(50, 39, 35, 0.08);
-          border-radius: 10px;
-          overflow: hidden;
-          box-shadow:
-            0 4px 20px rgba(50, 39, 35, 0.1),
-            inset 0 1px 0 rgba(255, 255, 255, 0.8);
-        }
-
         /* Compact variant for items without images */
-        .modal-outer-frame--compact {
+        .modal-card--compact {
           max-width: 520px;
-        }
-
-        .modal-inner-card--no-image {
           grid-template-columns: 1fr;
         }
 
@@ -383,15 +365,14 @@ export function MenuItemModal({
             0 4px 16px rgba(50, 39, 35, 0.15);
         }
 
-        /* Image section with frame effect */
+        /* Image section - fills left column */
         .modal-image-wrapper {
           position: relative;
           min-height: 380px;
-          padding: 16px;
           background: linear-gradient(
             135deg,
-            rgba(50, 39, 35, 0.03) 0%,
-            rgba(50, 39, 35, 0.06) 100%
+            rgba(50, 39, 35, 0.02) 0%,
+            rgba(50, 39, 35, 0.05) 100%
           );
         }
 
@@ -399,14 +380,8 @@ export function MenuItemModal({
           position: relative;
           width: 100%;
           height: 100%;
-          min-height: 348px;
-          background: white;
-          border: 4px solid white;
-          border-radius: 2px; /* Formula: innerCard(10px) - padding(16px) ≈ 0, use 2px for softness */
+          min-height: 380px;
           overflow: hidden;
-          box-shadow:
-            0 4px 20px rgba(50, 39, 35, 0.15),
-            0 1px 3px rgba(50, 39, 35, 0.1);
         }
 
         /* Content section */
@@ -595,10 +570,11 @@ export function MenuItemModal({
             align-items: flex-end;
           }
 
-          .modal-outer-frame {
+          .modal-card {
+            grid-template-columns: 1fr;
             max-height: 92vh;
-            padding: 6px 6px 0 6px;
             border-radius: 16px 16px 0 0;
+            overflow-y: auto;
             animation: modalEnterMobile 0.4s cubic-bezier(0.4, 0, 0.2, 1);
           }
 
@@ -613,17 +589,9 @@ export function MenuItemModal({
             }
           }
 
-          .modal-inner-card {
-            grid-template-columns: 1fr;
-            border-radius: 10px 10px 0 0;
-            max-height: calc(92vh - 12px);
-            overflow-y: auto;
-          }
-
           .modal-image-wrapper {
-            min-height: 220px;
+            min-height: 200px;
             max-height: 35vh;
-            padding: 12px;
           }
 
           .modal-image-frame {
@@ -664,7 +632,7 @@ export function MenuItemModal({
         /* Reduced motion */
         @media (prefers-reduced-motion: reduce) {
           .modal-backdrop,
-          .modal-outer-frame {
+          .modal-card {
             animation: none;
           }
 
