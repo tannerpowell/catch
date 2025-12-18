@@ -383,12 +383,12 @@ export function MenuItemModal({
           height: 100%;
           min-height: 348px;
           background: white;
-          border: 4px solid white;
+          border: 7px solid white;
           border-radius: 4px;
           overflow: hidden;
           box-shadow:
-            0 4px 20px rgba(50, 39, 35, 0.15),
-            0 1px 3px rgba(50, 39, 35, 0.1);
+            0 4px 6px #32272326,
+            0 1px 3px #3227231a;
         }
 
         /* Content section - override global cart.css .modal-content */
