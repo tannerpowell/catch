@@ -554,14 +554,14 @@ export function MenuItemModal({
           );
           color: white;
           box-shadow:
-            0 4px 14px rgba(43, 122, 155, 0.35),
+            0 2px 4px rgba(43, 122, 155, 0.25),
             inset 0 1px 0 rgba(255, 255, 255, 0.15);
         }
 
         .modal-btn-primary:hover {
-          transform: translateY(-2px);
+          transform: translateY(-1px);
           box-shadow:
-            0 6px 20px rgba(43, 122, 155, 0.45),
+            0 3px 6px rgba(43, 122, 155, 0.3),
             inset 0 1px 0 rgba(255, 255, 255, 0.2);
         }
 
