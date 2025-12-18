@@ -7,9 +7,36 @@ import {
   Text,
   View,
   StyleSheet,
+  Font,
   pdf,
 } from "@react-pdf/renderer";
 import type { DisplayItem } from "./PrintMenuPageClient";
+
+// Register Google Fonts to match website styling
+// DM Serif Display - for item names (serif, elegant)
+Font.register({
+  family: "DM Serif Display",
+  src: "https://fonts.gstatic.com/s/dmserifdisplay/v17/-nFnOHM81r4j6k0gjAW3mujVU2B2K_c.ttf",
+});
+
+// Libre Franklin - for prices and UI (sans-serif, clean)
+Font.register({
+  family: "Libre Franklin",
+  fonts: [
+    {
+      src: "https://fonts.gstatic.com/s/librefranklin/v20/jizOREVItHgc8qDIbSTKq4XkRg8T88bjFuXOnduhLsWUBw.ttf",
+      fontWeight: 400,
+    },
+    {
+      src: "https://fonts.gstatic.com/s/librefranklin/v20/jizOREVItHgc8qDIbSTKq4XkRg8T88bjFuXOnduh8MKUBw.ttf",
+      fontWeight: 600,
+    },
+    {
+      src: "https://fonts.gstatic.com/s/librefranklin/v20/jizOREVItHgc8qDIbSTKq4XkRg8T88bjFuXOnduhycKUBw.ttf",
+      fontWeight: 700,
+    },
+  ],
+});
 
 // 8.5" x 14" = 612pt x 1008pt
 // 0.5" margins all around = 36pt
@@ -25,24 +52,24 @@ const COLUMN_WIDTH = (PAGE_WIDTH - 2 * MARGIN_LR - GUTTER) / 2; // 252pt
 // Height calculations based on actual CSS:
 // Page: 14in = 1008pt, top 0.5" (36pt), bottom 0.675" (49pt), usable = 923pt per column
 // Header: ~50pt (title + location + margin-bottom)
-// Safety buffer: 20pt to ensure we never overflow
+// Safety buffer: increased to 40pt to ensure we never overflow
 const HEADER_HEIGHT = 50;
-const SAFETY_BUFFER = 20;
-const CONTENT_HEIGHT = PAGE_HEIGHT - MARGIN_TOP - MARGIN_BOTTOM - SAFETY_BUFFER; // 903pt per column
-const CONTENT_HEIGHT_FIRST_PAGE = CONTENT_HEIGHT - HEADER_HEIGHT; // 853pt (with header)
+const SAFETY_BUFFER = 40;
+const CONTENT_HEIGHT = PAGE_HEIGHT - MARGIN_TOP - MARGIN_BOTTOM - SAFETY_BUFFER; // 883pt per column
+const CONTENT_HEIGHT_FIRST_PAGE = CONTENT_HEIGHT - HEADER_HEIGHT; // 833pt (with header)
 
-// Item heights based on actual CSS measurements:
-// .print-menu-item: font-size 11pt, line-height 1.35, padding 3pt top/bottom
-// = 11 * 1.35 + 6 = ~21pt per item
-// .print-menu-category: font-size 9pt, padding-top 15px (~11pt), padding-bottom 5pt
-// = 9 + 11 + 5 = ~25pt, but with line decorations ~28pt
-// First category has no padding-top = ~17pt
-const ITEM_HEIGHT = 21;
-const CATEGORY_HEIGHT = 28;
-const CATEGORY_FIRST_HEIGHT = 17;
-const CONTD_HEIGHT = 17; // Same as first category (no top padding)
+// Item heights based on actual rendered PDF measurements:
+// menuItem: fontSize 11pt, lineHeight 1.4 (explicit), paddingVertical 2pt
+// = 11 * 1.4 + 4 = ~19.4pt, rounded up to 20pt for safety
+// categoryHeader: fontSize 9pt, paddingTop 15pt, marginBottom 4pt
+// = 9 + 15 + 4 = ~28pt, plus line decoration height ~30pt
+// First category has no paddingTop = ~19pt
+const ITEM_HEIGHT = 22;
+const CATEGORY_HEIGHT = 30;
+const CATEGORY_FIRST_HEIGHT = 19;
+const CONTD_HEIGHT = 19; // Same as first category (no top padding)
 
-// PDF Styles - using built-in fonts (Helvetica, Times-Roman)
+// PDF Styles - using registered Google Fonts to match website
 const styles = StyleSheet.create({
   page: {
     width: PAGE_WIDTH,
@@ -52,7 +79,7 @@ const styles = StyleSheet.create({
     paddingLeft: MARGIN_LR,
     paddingRight: MARGIN_LR,
     backgroundColor: "#f9f8f5",
-    fontFamily: "Helvetica",
+    fontFamily: "Libre Franklin",
   },
   header: {
     flexDirection: "row",
@@ -61,12 +88,12 @@ const styles = StyleSheet.create({
     marginBottom: 18,
   },
   headerTitle: {
-    fontFamily: "Times-Roman",
+    fontFamily: "DM Serif Display",
     fontSize: 24,
     color: "#1a1a1a",
   },
   headerLocation: {
-    fontFamily: "Helvetica",
+    fontFamily: "Libre Franklin",
     fontSize: 11,
     color: "#666",
     textTransform: "uppercase",
@@ -99,7 +126,8 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   categoryText: {
-    fontFamily: "Helvetica-Bold",
+    fontFamily: "Libre Franklin",
+    fontWeight: 600,
     fontSize: 9,
     color: "#1A71B3",
     textTransform: "uppercase",
@@ -112,8 +140,9 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
   },
   itemName: {
-    fontFamily: "Times-Roman",
+    fontFamily: "DM Serif Display",
     fontSize: 11,
+    lineHeight: 1.4,
     color: "#1a1a1a",
     flexShrink: 1,
   },
@@ -127,7 +156,7 @@ const styles = StyleSheet.create({
     minWidth: 10,
   },
   itemPrice: {
-    fontFamily: "Helvetica",
+    fontFamily: "Libre Franklin",
     fontSize: 10,
     color: "#1a1a1a",
     textAlign: "right",
@@ -138,7 +167,7 @@ const styles = StyleSheet.create({
     right: 27, // 0.375"
     fontSize: 11,
     color: "#666",
-    fontFamily: "Helvetica",
+    fontFamily: "Libre Franklin",
   },
 });
 
@@ -460,9 +489,11 @@ function MenuDocument({ displayItems, locationName, locationCity }: MenuPdfProps
 // Export the download button component
 export default function MenuPdfDocument({ displayItems, locationName, locationCity }: MenuPdfProps) {
   const [isGenerating, setIsGenerating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleDownload = async () => {
     setIsGenerating(true);
+    setError(null);
     try {
       const doc = <MenuDocument displayItems={displayItems} locationName={locationName} locationCity={locationCity} />;
       const blob = await pdf(doc).toBlob();
@@ -476,8 +507,9 @@ export default function MenuPdfDocument({ displayItems, locationName, locationCi
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error("Failed to generate PDF:", error);
+    } catch (err) {
+      console.error("Failed to generate PDF:", err);
+      setError("Failed to generate PDF. Please try again.");
     } finally {
       setIsGenerating(false);
     }
@@ -489,6 +521,7 @@ export default function MenuPdfDocument({ displayItems, locationName, locationCi
       onClick={handleDownload}
       disabled={isGenerating}
       style={{
+        position: "relative",
         display: "inline-flex",
         alignItems: "center",
         gap: "6px",
@@ -540,6 +573,20 @@ export default function MenuPdfDocument({ displayItems, locationName, locationCi
           </svg>
           <span>Download PDF</span>
         </>
+      )}
+      {error && (
+        <span
+          style={{
+            position: "absolute",
+            top: "100%",
+            left: 0,
+            marginTop: "4px",
+            fontSize: "11px",
+            color: "#dc2626",
+          }}
+        >
+          {error}
+        </span>
       )}
     </button>
   );
