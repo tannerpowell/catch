@@ -365,14 +365,15 @@ export function MenuItemModal({
             0 4px 16px rgba(50, 39, 35, 0.15);
         }
 
-        /* Image section - fills left column */
+        /* Image section with frame effect */
         .modal-image-wrapper {
           position: relative;
           min-height: 380px;
+          padding: 16px;
           background: linear-gradient(
             135deg,
-            rgba(50, 39, 35, 0.02) 0%,
-            rgba(50, 39, 35, 0.05) 100%
+            rgba(50, 39, 35, 0.03) 0%,
+            rgba(50, 39, 35, 0.06) 100%
           );
         }
 
@@ -380,17 +381,29 @@ export function MenuItemModal({
           position: relative;
           width: 100%;
           height: 100%;
-          min-height: 380px;
+          min-height: 348px;
+          background: white;
+          border: 4px solid white;
+          border-radius: 4px;
           overflow: hidden;
+          box-shadow:
+            0 4px 20px rgba(50, 39, 35, 0.15),
+            0 1px 3px rgba(50, 39, 35, 0.1);
         }
 
-        /* Content section */
+        /* Content section - override global cart.css .modal-content */
         .modal-content {
           display: flex;
           flex-direction: column;
           padding: 40px 36px 32px;
           overflow-y: auto;
           max-height: 85vh;
+          /* Reset global cart.css styles */
+          background: transparent;
+          border-radius: 0;
+          box-shadow: none;
+          max-width: none;
+          animation: none;
         }
 
         /* Eyebrow category label */
@@ -592,6 +605,7 @@ export function MenuItemModal({
           .modal-image-wrapper {
             min-height: 200px;
             max-height: 35vh;
+            padding: 12px;
           }
 
           .modal-image-frame {
