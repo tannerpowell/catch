@@ -16,7 +16,7 @@ import type { DisplayItem } from "./PrintMenuPageClient";
 // DM Serif Display - for item names (serif, elegant)
 Font.register({
   family: "DM Serif Display",
-  src: "https://fonts.gstatic.com/s/dmseriftext/v12/rnCu-xZa_krGokauCeNq1wWyafOPXHIJErY.ttf",
+  src: "https://fonts.gstatic.com/s/dmserifdisplay/v17/-nFnOHM81r4j6k0gjAW3mujVU2B2K_c.ttf",
 });
 
 // Libre Franklin - for prices and UI (sans-serif, clean)
@@ -489,9 +489,11 @@ function MenuDocument({ displayItems, locationName, locationCity }: MenuPdfProps
 // Export the download button component
 export default function MenuPdfDocument({ displayItems, locationName, locationCity }: MenuPdfProps) {
   const [isGenerating, setIsGenerating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleDownload = async () => {
     setIsGenerating(true);
+    setError(null);
     try {
       const doc = <MenuDocument displayItems={displayItems} locationName={locationName} locationCity={locationCity} />;
       const blob = await pdf(doc).toBlob();
@@ -505,8 +507,9 @@ export default function MenuPdfDocument({ displayItems, locationName, locationCi
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error("Failed to generate PDF:", error);
+    } catch (err) {
+      console.error("Failed to generate PDF:", err);
+      setError("Failed to generate PDF. Please try again.");
     } finally {
       setIsGenerating(false);
     }
@@ -518,6 +521,7 @@ export default function MenuPdfDocument({ displayItems, locationName, locationCi
       onClick={handleDownload}
       disabled={isGenerating}
       style={{
+        position: "relative",
         display: "inline-flex",
         alignItems: "center",
         gap: "6px",
@@ -569,6 +573,20 @@ export default function MenuPdfDocument({ displayItems, locationName, locationCi
           </svg>
           <span>Download PDF</span>
         </>
+      )}
+      {error && (
+        <span
+          style={{
+            position: "absolute",
+            top: "100%",
+            left: 0,
+            marginTop: "4px",
+            fontSize: "11px",
+            color: "#dc2626",
+          }}
+        >
+          {error}
+        </span>
       )}
     </button>
   );
