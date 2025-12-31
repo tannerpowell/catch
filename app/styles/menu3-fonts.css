@@ -66,8 +66,8 @@
   /* Editorial body font - elegant serif for descriptions */
   --font-menu-body: var(--font-cormorant-garamond, 'Cormorant Garamond'), 'Georgia', serif;
 
-  /* UI chrome font - geometric sans for nav/buttons */
-  --font-menu-ui: var(--font-poppins, 'Poppins'), system-ui, -apple-system, sans-serif;
+  /* UI chrome font - clean sans for nav/buttons */
+  --font-menu-ui: var(--font-source-sans, 'Source Sans 3'), system-ui, -apple-system, sans-serif;
 
   /* Monospace for prices (tabular numerals) */
   --font-menu-mono: 'SF Mono', 'Menlo', 'Monaco', 'Consolas', monospace;

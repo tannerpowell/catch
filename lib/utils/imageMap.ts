@@ -24,7 +24,6 @@ export function buildDfwImageMap(): ImageMap {
     }
     return map;
   } catch (err) {
-    // eslint-disable-next-line no-console
     console.error('Failed to build DFW image map:', err);
     return {};
   }

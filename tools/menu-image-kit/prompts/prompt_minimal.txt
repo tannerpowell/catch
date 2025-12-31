@@ -1,0 +1,21 @@
+Edit the provided food photo for a clean, professional menu presentation.
+
+SCENE:
+- Surface: weathered reclaimed wood tabletop (gray-brown driftwood tones), natural grain.
+- Lighting: warm golden light from upper-left, soft natural fill.
+- Depth of field: shallow DOF; dish is sharp; background softly blurred.
+
+NO PROPS - just the dish on the tabletop.
+
+RETOUCHING:
+- Remove kitchen/prep-table context and distractions.
+- Clean plate rim smears and messy drips; keep food texture realistic.
+- Reduce harsh glare while keeping sauces glossy.
+- Correct color casts; maintain warm, appetizing tones.
+- Add subtle contact shadow under the plate.
+
+HARD CONSTRAINTS:
+- Do not change the dish identity, ingredients, or portion.
+- Do not add text, logos, watermarks, steam effects, or painterly looks.
+- Do not switch to black/slate or sterile white backgrounds.
+- Fried items should look golden and crispy.

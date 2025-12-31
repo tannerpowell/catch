@@ -1,0 +1,28 @@
+Edit the provided food photo into a warm, inviting Gulf Coast seafood restaurant menu image.
+
+Primary goal: consistency across the full set. Keep the dish faithful to the original—do not invent ingredients.
+
+SCENE / SET:
+- Surface: light whitewashed wood planks (beach house aesthetic), subtle weathering and grain.
+- Lighting: bright natural daylight from upper-left, cheerful and airy; slight warm cast.
+- Depth of field: shallow DOF; dish is sharp; background is softly blurred.
+- Color grade: bright, fresh, coastal—blues and teals in background hints are acceptable.
+
+PROPS (minimal, consistent style):
+- One blue-striped linen napkin, casually folded.
+- Small white ceramic sauce bowl.
+- Lemon wedge near seafood dishes only.
+- Props must not cover the food.
+
+RETOUCHING:
+- Remove kitchen/prep-table context.
+- Clean plate rim smears; keep food texture realistic.
+- Reduce glare while keeping sauces appetizing.
+- Correct color casts; maintain bright coastal warmth.
+- Add subtle contact shadow under the plate.
+
+HARD CONSTRAINTS:
+- Do not change the dish identity, ingredients, or portion.
+- Do not add text, logos, watermarks, steam effects, or painterly looks.
+- Do not use dark/moody backgrounds.
+- Fried items should look golden and crispy.

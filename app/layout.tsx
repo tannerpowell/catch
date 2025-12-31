@@ -5,6 +5,7 @@ import "./styles/cart.css";
 import HeaderSimple from "@/components/catch/HeaderSimple";
 import FooterSimple from "@/components/catch/FooterSimple";
 import ThemeToggle from "@/components/ThemeToggle";
+import ImageModeFloatingToggle from "@/components/ImageModeFloatingToggle";
 import { RouteMarker } from "@/components/RouteMarker";
 import { Providers } from "./providers";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -13,10 +14,8 @@ import type { Metadata } from "next";
 import {
   Bodoni_Moda,
   Cormorant_Garamond,
-  Italiana,
   Patrick_Hand,
   Playfair_Display,
-  Poppins,
   Source_Sans_3
 } from "next/font/google";
 
@@ -33,13 +32,6 @@ const sourceSans = Source_Sans_3({
   weight: ["400", "600", "700"]
 });
 
-const poppins = Poppins({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-poppins",
-  weight: ["400", "500", "600", "700"]
-});
-
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
   display: "swap",
@@ -52,13 +44,6 @@ const bodoni = Bodoni_Moda({
   display: "swap",
   variable: "--font-bodoni-moda",
   weight: ["400", "500"]
-});
-
-const italiana = Italiana({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-italiana",
-  weight: ["400"]
 });
 
 const patrickHand = Patrick_Hand({
@@ -125,21 +110,27 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const fontClassName = [
     playfair.variable,
     sourceSans.variable,
-    poppins.variable,
     cormorant.variable,
     bodoni.variable,
-    italiana.variable,
     patrickHand.variable
   ].join(" ");
 
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* Preconnect to external resources for faster loading */}
+        <link rel="preconnect" href="https://cdn.sanity.io" />
+        <link rel="preconnect" href="https://api.mapbox.com" />
+        <link rel="dns-prefetch" href="https://cdn.sanity.io" />
+        <link rel="dns-prefetch" href="https://api.mapbox.com" />
+      </head>
       <body className={fontClassName}>
         <RouteMarker />
         <Providers>
           <HeaderSimple />
           <main>{children}</main>
           <FooterSimple />
+          <ImageModeFloatingToggle />
           <ThemeToggle />
         </Providers>
         <SpeedInsights />

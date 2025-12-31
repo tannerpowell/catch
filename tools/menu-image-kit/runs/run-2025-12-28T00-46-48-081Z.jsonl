@@ -1,0 +1,8 @@
+{"input":"catfish-basket.jpeg","crop":"hero_4x3","startedAt":"2025-12-28T00:46:48.139Z","finishedAt":"2025-12-28T00:47:10.409Z","status":"ok","outPath":"data/output/catfish-basket__hero_4x3.png","inputHash":"e6509a9775"}
+{"input":"catfish-basket.jpeg","crop":"square_1x1","startedAt":"2025-12-28T00:46:48.139Z","finishedAt":"2025-12-28T00:47:31.151Z","status":"ok","outPath":"data/output/catfish-basket__square_1x1.png","inputHash":"e6509a9775"}
+{"input":"gumbo.jpeg","crop":"hero_4x3","startedAt":"2025-12-28T00:47:31.156Z","finishedAt":"2025-12-28T00:47:54.185Z","status":"ok","outPath":"data/output/gumbo__hero_4x3.png","inputHash":"1688c9ce64"}
+{"input":"gumbo.jpeg","crop":"square_1x1","startedAt":"2025-12-28T00:47:31.156Z","finishedAt":"2025-12-28T00:48:25.593Z","status":"ok","outPath":"data/output/gumbo__square_1x1.png","inputHash":"1688c9ce64"}
+{"input":"key-lime-pie.jpeg","crop":"hero_4x3","startedAt":"2025-12-28T00:48:25.595Z","finishedAt":"2025-12-28T00:48:52.002Z","status":"ok","outPath":"data/output/key-lime-pie__hero_4x3.png","inputHash":"2142b9a26f"}
+{"input":"key-lime-pie.jpeg","crop":"square_1x1","startedAt":"2025-12-28T00:48:25.595Z","finishedAt":"2025-12-28T00:49:22.063Z","status":"ok","outPath":"data/output/key-lime-pie__square_1x1.png","inputHash":"2142b9a26f"}
+{"input":"the-catch-boil.jpeg","crop":"hero_4x3","startedAt":"2025-12-28T00:49:22.065Z","finishedAt":"2025-12-28T00:49:47.522Z","status":"ok","outPath":"data/output/the-catch-boil__hero_4x3.png","inputHash":"2149b7674d"}
+{"input":"the-catch-boil.jpeg","crop":"square_1x1","startedAt":"2025-12-28T00:49:22.065Z","finishedAt":"2025-12-28T00:50:14.830Z","status":"ok","outPath":"data/output/the-catch-boil__square_1x1.png","inputHash":"2149b7674d"}

@@ -701,8 +701,6 @@ export default async function CategoryAnalysisPage() {
   };
 
   const extractSizeFromName = (name: string): { baseName: string; size: string | null; sizeLabel: string | null } => {
-    const lowerName = name.toLowerCase();
-
     // Check for size prefix
     for (const [key, info] of Object.entries(sizeInfo)) {
       const prefixPattern = new RegExp(`^${key}\\s+`, 'i');
@@ -901,7 +899,7 @@ export default async function CategoryAnalysisPage() {
 
       // Build modifiers for other sizes
       const modifiers: ProposedModifier[] = [];
-      sortedBySizeOrder.forEach(({ item, sizeLabel, size }) => {
+      sortedBySizeOrder.forEach(({ item, sizeLabel }) => {
         if (item.id === defaultItem.item.id) return; // Skip default
 
         const itemPrice = item.priceRange?.min ?? item.basePrice ?? null;

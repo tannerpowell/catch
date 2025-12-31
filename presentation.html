@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Catch – Platform Overview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --navy: #0a1628;
+      --ocean: #1a3a5c;
+      --teal: #2dd4bf;
+      --gold: #d4a855;
+      --sand: #f5f0e8;
+      --white: #ffffff;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--navy);
+      color: var(--white);
+      overflow: hidden;
+    }
+
+    .slide {
+      display: none;
+      width: 100vw;
+      height: 100vh;
+      padding: 60px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slide.active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Slide backgrounds */
+    .slide-title {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--ocean) 100%);
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .slide-content {
+      background: linear-gradient(180deg, var(--navy) 0%, #0d1f35 100%);
+    }
+
+    .slide-highlight {
+      background: linear-gradient(135deg, var(--ocean) 0%, #0d3d5c 100%);
+    }
+
+    .slide-closing {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--ocean) 100%);
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    /* Typography */
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 4.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 24px;
+    }
+
+    h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      font-weight: 600;
+      margin-bottom: 48px;
+      color: var(--white);
+    }
+
+    h3 {
+      font-size: 1.5rem;
+      font-weight: 500;
+      color: var(--teal);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-bottom: 16px;
+    }
+
+    .subtitle {
+      font-size: 1.75rem;
+      font-weight: 300;
+      color: var(--sand);
+      opacity: 0.9;
+    }
+
+    .tagline {
+      font-size: 1.25rem;
+      color: var(--gold);
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 32px;
+    }
+
+    /* Content layouts */
+    .content-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 48px;
+      flex: 1;
+      align-items: start;
+      padding-top: 20px;
+    }
+
+    .content-two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      flex: 1;
+      align-items: center;
+    }
+
+    .content-center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      text-align: center;
+    }
+
+    /* Cards */
+    .card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 36px;
+      transition: all 0.3s ease;
+    }
+
+    .card-icon {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, var(--teal), var(--gold));
+      border-radius: 12px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.75rem;
+    }
+
+    .card h4 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      margin-bottom: 16px;
+      color: var(--white);
+    }
+
+    .card p {
+      font-size: 1.1rem;
+      line-height: 1.7;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    /* Lists */
+    .feature-list {
+      list-style: none;
+    }
+
+    .feature-list li {
+      font-size: 1.35rem;
+      line-height: 1.6;
+      margin-bottom: 20px;
+      padding-left: 36px;
+      position: relative;
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .feature-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 10px;
+      width: 12px;
+      height: 12px;
+      background: var(--teal);
+      border-radius: 50%;
+    }
+
+    /* Stats */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 40px;
+      width: 100%;
+      max-width: 1200px;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 4rem;
+      font-weight: 700;
+      color: var(--teal);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 1.1rem;
+      color: rgba(255, 255, 255, 0.6);
+      margin-top: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    /* Big quote / statement */
+    .big-statement {
+      font-family: 'Playfair Display', serif;
+      font-size: 3.5rem;
+      line-height: 1.3;
+      max-width: 900px;
+      text-align: center;
+    }
+
+    .big-statement span {
+      color: var(--teal);
+    }
+
+    /* Table */
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 1.15rem;
+    }
+
+    .comparison-table th {
+      text-align: left;
+      padding: 20px 24px;
+      background: rgba(255, 255, 255, 0.05);
+      font-weight: 500;
+      color: var(--teal);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .comparison-table td {
+      padding: 20px 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .comparison-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Navigation */
+    .nav {
+      position: fixed;
+      bottom: 40px;
+      right: 40px;
+      display: flex;
+      gap: 12px;
+      z-index: 100;
+    }
+
+    .nav button {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--white);
+      font-size: 1.25rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .nav button:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: var(--teal);
+    }
+
+    .slide-counter {
+      position: fixed;
+      bottom: 48px;
+      left: 40px;
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.4);
+      letter-spacing: 0.1em;
+    }
+
+    /* Decorative elements */
+    .wave-decoration {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 200px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%232dd4bf' fill-opacity='0.05' d='M0,192L48,197.3C96,203,192,213,288,229.3C384,245,480,267,576,250.7C672,235,768,181,864,181.3C960,181,1056,235,1152,234.7C1248,235,1344,181,1392,154.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E") no-repeat bottom;
+      background-size: cover;
+      pointer-events: none;
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+      position: absolute;
+      top: 40px;
+      left: 40px;
+      color: var(--gold);
+      letter-spacing: 0.05em;
+    }
+
+    /* Roadmap */
+    .roadmap {
+      display: flex;
+      gap: 24px;
+      width: 100%;
+    }
+
+    .roadmap-item {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 32px;
+      position: relative;
+    }
+
+    .roadmap-item.current {
+      border-color: var(--teal);
+      background: rgba(45, 212, 191, 0.05);
+    }
+
+    .roadmap-badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 6px 12px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+    }
+
+    .badge-live {
+      background: var(--teal);
+      color: var(--navy);
+    }
+
+    .badge-ready {
+      background: var(--gold);
+      color: var(--navy);
+    }
+
+    .badge-planned {
+      background: rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .roadmap-item h4 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      margin-bottom: 12px;
+    }
+
+    .roadmap-item ul {
+      list-style: none;
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .roadmap-item li {
+      margin-bottom: 8px;
+      padding-left: 16px;
+      position: relative;
+    }
+
+    .roadmap-item li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--teal);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Slide 1: Title -->
+  <section class="slide slide-title active" data-slide="1">
+    <div class="tagline">Restaurant Ordering Platform</div>
+    <h1>The Catch</h1>
+    <p class="subtitle">From Menu to Kitchen — One Unified System</p>
+    <div class="wave-decoration"></div>
+  </section>
+
+  <!-- Slide 2: The Challenge -->
+  <section class="slide slide-highlight" data-slide="2">
+    <span class="logo">THE CATCH</span>
+    <h3>The Opportunity</h3>
+    <div class="content-center">
+      <p class="big-statement">
+        17+ locations. <span>One platform.</span><br>
+        Direct orders. No middleman fees.
+      </p>
+    </div>
+    <div class="wave-decoration"></div>
+  </section>
+
+  <!-- Slide 3: Who It Serves -->
+  <section class="slide slide-content" data-slide="3">
+    <span class="logo">THE CATCH</span>
+    <h3>Platform Overview</h3>
+    <h2>Built for Three Audiences</h2>
+    <div class="content-grid">
+      <div class="card">
+        <div class="card-icon">🍽</div>
+        <h4>Customers</h4>
+        <p>Browse menus, customize orders, and check out in minutes — on any device, no account required.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📊</div>
+        <h4>Managers</h4>
+        <p>Update menus, prices, and location settings from one central dashboard. No technical skills needed.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">👨‍🍳</div>
+        <h4>Kitchen Staff</h4>
+        <p>See incoming orders in real-time on a dedicated display designed for fast-paced kitchen environments.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 4: Customer Experience -->
+  <section class="slide slide-content" data-slide="4">
+    <span class="logo">THE CATCH</span>
+    <h3>Customer Experience</h3>
+    <h2>Order Online in Minutes</h2>
+    <div class="content-two-col">
+      <ul class="feature-list">
+        <li>Location-aware menus with local pricing</li>
+        <li>Full customization: sizes, sides, add-ons</li>
+        <li>Pickup, delivery, or dine-in options</li>
+        <li>Guest checkout — no login required</li>
+        <li>Real-time order status tracking</li>
+      </ul>
+      <div class="card" style="padding: 48px;">
+        <div style="font-size: 0.9rem; color: var(--teal); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px;">Performance</div>
+        <div style="font-family: 'Playfair Display', serif; font-size: 3.5rem; margin-bottom: 8px;">&lt; 1 sec</div>
+        <div style="color: rgba(255,255,255,0.6);">Average page load time</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 5: Restaurant Management -->
+  <section class="slide slide-content" data-slide="5">
+    <span class="logo">THE CATCH</span>
+    <h3>Content Management</h3>
+    <h2>Everything in One Place</h2>
+    <div class="content-grid">
+      <div class="card">
+        <h4>Menu Items</h4>
+        <p>Names, descriptions, photos, prices — all editable. Organize into categories like Starters, Baskets, and Combos.</p>
+      </div>
+      <div class="card">
+        <h4>Customizations</h4>
+        <p>Set up size options, dressings, sides, and add-ons. Mark items as Spicy, Vegetarian, or Gluten-Free.</p>
+      </div>
+      <div class="card">
+        <h4>Locations</h4>
+        <p>Manage hours, contact info, and ordering settings. Override prices or disable items per location.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 6: Kitchen Display System -->
+  <section class="slide slide-highlight" data-slide="6">
+    <span class="logo">THE CATCH</span>
+    <h3>Kitchen Operations</h3>
+    <h2>Kitchen Display System</h2>
+    <div class="content-two-col">
+      <div>
+        <ul class="feature-list">
+          <li>Real-time order board with status columns</li>
+          <li>Sound alerts for new orders</li>
+          <li>Timer shows order age at a glance</li>
+          <li>Dark mode — easy on the eyes</li>
+          <li>Runs full-screen on tablets</li>
+        </ul>
+      </div>
+      <div style="background: rgba(0,0,0,0.3); border-radius: 16px; padding: 32px; text-align: center;">
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px;">
+          <div style="background: rgba(255,255,255,0.05); border-radius: 8px; padding: 20px;">
+            <div style="color: var(--gold); font-size: 0.8rem; text-transform: uppercase; margin-bottom: 8px;">New</div>
+            <div style="font-size: 2rem; font-family: 'Playfair Display', serif;">3</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.05); border-radius: 8px; padding: 20px;">
+            <div style="color: var(--teal); font-size: 0.8rem; text-transform: uppercase; margin-bottom: 8px;">Preparing</div>
+            <div style="font-size: 2rem; font-family: 'Playfair Display', serif;">5</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.05); border-radius: 8px; padding: 20px;">
+            <div style="color: #22c55e; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 8px;">Ready</div>
+            <div style="font-size: 2rem; font-family: 'Playfair Display', serif;">2</div>
+          </div>
+        </div>
+        <div style="font-size: 0.9rem; color: rgba(255,255,255,0.5);">Live order board preview</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 7: Business Benefits -->
+  <section class="slide slide-content" data-slide="7">
+    <span class="logo">THE CATCH</span>
+    <h3>Business Impact</h3>
+    <h2>Why This Matters</h2>
+    <div class="content-grid" style="grid-template-columns: 1fr 1fr;">
+      <div>
+        <table class="comparison-table">
+          <tr>
+            <th>Benefit</th>
+            <th>Impact</th>
+          </tr>
+          <tr>
+            <td>No third-party fees</td>
+            <td>Keep 100% of order revenue</td>
+          </tr>
+          <tr>
+            <td>Customer data ownership</td>
+            <td>Build direct relationships</td>
+          </tr>
+          <tr>
+            <td>Centralized management</td>
+            <td>One team, all locations</td>
+          </tr>
+          <tr>
+            <td>Real-time kitchen sync</td>
+            <td>Faster service, fewer errors</td>
+          </tr>
+          <tr>
+            <td>Complete order records</td>
+            <td>Clear accounting & reporting</td>
+          </tr>
+        </table>
+      </div>
+      <div class="card" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; height: 100%;">
+        <div style="font-size: 0.9rem; color: var(--teal); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px;">Third-Party App Fees</div>
+        <div style="font-family: 'Playfair Display', serif; font-size: 4rem; color: var(--gold);">15-30%</div>
+        <div style="color: rgba(255,255,255,0.6); margin-top: 8px;">per order — eliminated</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 8: Roadmap -->
+  <section class="slide slide-content" data-slide="8">
+    <span class="logo">THE CATCH</span>
+    <h3>Platform Roadmap</h3>
+    <h2>Current State & Future Capabilities</h2>
+    <div class="roadmap">
+      <div class="roadmap-item current">
+        <span class="roadmap-badge badge-live">Live Now</span>
+        <h4>Core Platform</h4>
+        <ul>
+          <li>Online ordering</li>
+          <li>Multi-location menus</li>
+          <li>Kitchen display</li>
+          <li>Payment processing</li>
+          <li>Order management</li>
+        </ul>
+      </div>
+      <div class="roadmap-item">
+        <span class="roadmap-badge badge-ready">Ready to Build</span>
+        <h4>Customer Features</h4>
+        <ul>
+          <li>Loyalty rewards program</li>
+          <li>Customer accounts</li>
+          <li>Order scheduling</li>
+          <li>SMS text notifications</li>
+          <li>Email confirmations</li>
+        </ul>
+      </div>
+      <div class="roadmap-item">
+        <span class="roadmap-badge badge-ready">Ready to Build</span>
+        <h4>Business Growth</h4>
+        <ul>
+          <li>Catering orders</li>
+          <li>Group ordering</li>
+          <li>Digital gift cards</li>
+          <li>Allergen & nutrition info</li>
+          <li>In-store digital menus</li>
+        </ul>
+      </div>
+      <div class="roadmap-item">
+        <span class="roadmap-badge badge-planned">Planned</span>
+        <h4>Integrations</h4>
+        <ul>
+          <li>Revel POS sync</li>
+          <li>Kitchen printer support</li>
+          <li>Unified reporting</li>
+          <li>Marketing automation</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 9: By the Numbers -->
+  <section class="slide slide-highlight" data-slide="9">
+    <span class="logo">THE CATCH</span>
+    <h3>Platform Scale</h3>
+    <div class="content-center">
+      <h2 style="margin-bottom: 64px;">Built for Growth</h2>
+      <div class="stat-grid">
+        <div class="stat">
+          <div class="stat-number">17+</div>
+          <div class="stat-label">Locations</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">&lt;1s</div>
+          <div class="stat-label">Page Load</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">100%</div>
+          <div class="stat-label">Revenue Kept</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">1</div>
+          <div class="stat-label">Dashboard</div>
+        </div>
+      </div>
+    </div>
+    <div class="wave-decoration"></div>
+  </section>
+
+  <!-- Slide 10: Closing -->
+  <section class="slide slide-closing" data-slide="10">
+    <div class="tagline">Summary</div>
+    <h1>Ready to Scale</h1>
+    <p class="subtitle" style="max-width: 700px; line-height: 1.7;">
+      A complete ordering platform — live today, built for tomorrow.<br>
+      Direct customer relationships. Zero third-party fees.
+    </p>
+    <div class="wave-decoration"></div>
+  </section>
+
+  <!-- Navigation -->
+  <div class="nav">
+    <button onclick="prevSlide()">←</button>
+    <button onclick="nextSlide()">→</button>
+  </div>
+  <div class="slide-counter"><span id="current">1</span> / <span id="total">10</span></div>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 10;
+
+    function showSlide(n) {
+      const slides = document.querySelectorAll('.slide');
+      if (n > totalSlides) currentSlide = 1;
+      if (n < 1) currentSlide = totalSlides;
+
+      slides.forEach(slide => slide.classList.remove('active'));
+      slides[currentSlide - 1].classList.add('active');
+      document.getElementById('current').textContent = currentSlide;
+    }
+
+    function nextSlide() {
+      currentSlide++;
+      showSlide(currentSlide);
+    }
+
+    function prevSlide() {
+      currentSlide--;
+      showSlide(currentSlide);
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft') {
+        prevSlide();
+      }
+    });
+
+    // Touch/swipe support
+    let touchStartX = 0;
+    document.addEventListener('touchstart', e => {
+      touchStartX = e.changedTouches[0].screenX;
+    });
+    document.addEventListener('touchend', e => {
+      const diff = touchStartX - e.changedTouches[0].screenX;
+      if (Math.abs(diff) > 50) {
+        if (diff > 0) nextSlide();
+        else prevSlide();
+      }
+    });
+  </script>
+</body>
+</html>

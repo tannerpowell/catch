@@ -1,0 +1,33 @@
+You are generating a professional menu photo for an upscale casual seafood restaurant.
+
+Goal: Create a photorealistic, appetizing menu image with a warm, inviting coastal feel.
+
+Setting:
+- Reclaimed wood table surface with natural grain and warm brown tones
+- Soft natural daylight from a window, creating gentle shadows
+- Bright but not harsh - like a sunny afternoon in a waterfront restaurant
+- Clean, uncluttered background
+
+Plateware:
+- Modern white ceramic plates or bowls
+- Simple, clean design - no patterns
+- Appropriate vessel for the dish (bowl for soups, plate for mains)
+
+Food styling:
+- Photorealistic, appetizing presentation
+- Natural colors - no oversaturation
+- Visible texture and detail on the food
+- Appropriate portion size for a restaurant serving
+
+Composition:
+- Centered, slightly angled overhead or 3/4 view
+- Full dish in frame, no awkward crops
+- Soft contact shadow under the plate
+
+Hard constraints:
+- No candles, no marble surfaces
+- No utensils, napkins, hands, or extra props
+- No text, logos, or watermarks
+- No steam effects
+
+Output: High-resolution photorealistic menu photography.

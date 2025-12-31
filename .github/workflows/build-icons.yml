@@ -21,19 +21,97 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
+
+      - name: Run lint
+        run: pnpm run lint
 
       - name: Generate PWA icons
-        run: npm run generate-icons
+        run: pnpm run generate-icons
 
       - name: Verify PWA icons
-        run: npm run verify-icons
+        run: pnpm run verify-icons
 
       - name: Build Next.js
-        run: npm run build
+        run: pnpm run build
+
+      - name: Check bundle sizes
+        run: |
+          echo "📊 Bundle Size Report"
+          echo "===================="
+
+          # Thresholds in KB
+          TOTAL_THRESHOLD=15000      # 15MB total (includes Sanity Studio ~4MB)
+          PAGE_THRESHOLD=300         # 300KB per-page JS limit
+
+          FAILED=0
+
+          # Check total JS chunks size
+          CHUNKS_SIZE=$(du -sk .next/static/chunks 2>/dev/null | awk '{print $1}')
+          echo "Total JS chunks: ${CHUNKS_SIZE}KB (threshold: ${TOTAL_THRESHOLD}KB)"
+
+          if [ "$CHUNKS_SIZE" -gt "$TOTAL_THRESHOLD" ]; then
+            echo "❌ FAIL: Total bundle size exceeds ${TOTAL_THRESHOLD}KB threshold"
+            FAILED=1
+          fi
+
+          # Find largest chunks
+          echo ""
+          echo "Top 5 largest chunks:"
+          ls -laS .next/static/chunks/*.js 2>/dev/null | head -6 | tail -5 | awk '{print $9 ": " int($5/1024) "KB"}'
+
+          # Check First Load JS from build output
+          echo ""
+          echo "Checking page sizes from build output..."
+
+          # Check for oversized client chunks (excluding polyfills and framework)
+          echo ""
+          echo "Checking for oversized page chunks..."
+          OVERSIZED=$(find .next/static/chunks/pages -name "*.js" -exec ls -l {} \; | awk -v threshold=$((PAGE_THRESHOLD * 1024)) '$5 > threshold {print $9 ": " int($5/1024) "KB"}' 2>/dev/null)
+
+          if [ -n "$OVERSIZED" ]; then
+            echo "❌ FAIL: Pages exceeding ${PAGE_THRESHOLD}KB threshold:"
+            echo "$OVERSIZED"
+            FAILED=1
+          else
+            echo "✅ All page chunks within ${PAGE_THRESHOLD}KB limit"
+          fi
+
+          # Check app directory chunks
+          OVERSIZED_APP=$(find .next/static/chunks/app -name "*.js" -exec ls -l {} \; | awk -v threshold=$((PAGE_THRESHOLD * 1024)) '$5 > threshold {print $9 ": " int($5/1024) "KB"}' 2>/dev/null)
+
+          if [ -n "$OVERSIZED_APP" ]; then
+            echo ""
+            echo "⚠️ App routes exceeding ${PAGE_THRESHOLD}KB threshold:"
+            echo "$OVERSIZED_APP"
+            # Note: Not failing on app chunks as they may include shared layouts
+          fi
+
+          echo ""
+          if [ "$FAILED" -eq 1 ]; then
+            echo "❌ Bundle size checks FAILED"
+            echo "💡 Tip: Run 'ANALYZE=true pnpm run build' locally to identify large dependencies"
+            exit 1
+          else
+            echo "✅ All bundle size checks passed"
+          fi
 
       - name: Verify PWA icons exist in public directory
         run: |

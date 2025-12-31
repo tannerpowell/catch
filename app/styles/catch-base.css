@@ -231,6 +231,36 @@ body {
   list-style: none;
 }
 
+/* Nav Account Button - Subtle, floating right (before cart) */
+.nav-account-button {
+  position: absolute;
+  right: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: 1px solid rgba(50, 39, 35, 0.15);
+  border-radius: 8px;
+  color: var(--color--tierra-reca);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+}
+
+.nav-account-button:hover {
+  background: rgba(50, 39, 35, 0.04);
+  border-color: var(--color--ocean-blue);
+  color: var(--color--ocean-blue);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.nav-account-button:active {
+  transform: translateY(0);
+}
+
 /* Nav Cart Button - Subtle, floating right */
 .nav-cart-button {
   position: absolute;

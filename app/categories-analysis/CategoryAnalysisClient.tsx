@@ -192,11 +192,6 @@ export default function CategoryAnalysisClient({ data }: { data: AnalysisData })
     return { label: `${cat.locations.length} locations`, type: "shared" };
   };
 
-  const formatPrice = (price: number | null) => {
-    if (price === null) return "MP";
-    return `$${price.toFixed(2)}`;
-  };
-
   return (
     <div className={styles.page}>
       <div className={styles.container}>

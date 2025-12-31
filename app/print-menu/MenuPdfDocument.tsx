@@ -236,7 +236,7 @@ function paginateItems(displayItems: DisplayItem[]): PageData[] {
     // Build list of items for this page, keeping sections together when possible
     const pageItems: DisplayItem[] = [];
     let totalHeight = 0;
-    let needsContdLeft = currentCategory && !displayItems[itemIndex]?.isCategory;
+    const needsContdLeft = currentCategory && !displayItems[itemIndex]?.isCategory;
 
     if (needsContdLeft) {
       totalHeight += CONTD_HEIGHT;

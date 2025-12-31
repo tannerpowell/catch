@@ -1,0 +1,54 @@
+You are performing photo retouching and upscale food styling edits on the provided restaurant dish photo. Keep the dish recognizable and true to the original ingredients and portion—do not invent new proteins, swap ingredients, or change the dish identity.
+
+Goal: Make this image look like a high-end, consistent menu photo from an upscale seafood restaurant. Create a uniform look across the entire set.
+
+Required edits
+
+Background & surface
+
+Remove the stainless-steel kitchen/prep-table background.
+Replace with an upscale restaurant table setting: dark polished wood or elegant marble surface. Rich, refined materials—not rustic or casual.
+Add a soft, realistic contact shadow under the plate.
+
+Lighting
+
+Warm dinner ambiance: soft golden candlelight-style warmth, intimate restaurant atmosphere.
+Directional light from upper-left with gentle amber tones—like early evening fine dining.
+Reduce specular hotspots and oily glare while keeping appetizing shine.
+White balance should be warm but not orange—sophisticated, inviting.
+
+Plateware
+
+Use upscale restaurant plateware: clean white porcelain or ceramic with modern, elegant profile.
+Simple and refined—no decorative patterns. The kind you'd see at a $100/plate seafood restaurant.
+Consistent plate style across all images.
+
+Color & finish
+
+Increase clarity and micro-contrast on the food (no crunchy HDR).
+Boost saturation slightly but keep it natural; avoid neon colors.
+Keep sauces glossy and rich; fried items should look golden and crispy, not greasy.
+Overall warm, inviting color grade—upscale dinner atmosphere.
+
+Composition & crop
+
+Straighten the plate so it looks intentional.
+Center dish cleanly with consistent framing.
+Keep the entire dish in frame; avoid awkward cut-offs.
+
+Cleanup
+
+Remove distracting crumbs, drips on plate rim, messy smears, and random reflections.
+Keep food textures (don't over-smooth). Preserve realistic detail.
+
+Hard constraints (do NOT do these)
+
+Do not add utensils, napkins, bowls, hands, extra props, logos, text, watermarks, or steam effects.
+Do not alter the dish into something different (no ingredient hallucinations).
+Do not use casual or rustic settings—this is upscale fine dining.
+
+Output
+
+Photorealistic, upscale menu photography.
+Consistent look across all images in the batch.
+High-resolution output.

@@ -47,9 +47,14 @@ function OrderConfirmationContent() {
         )}
 
         {orderNumber && (
-          <p className="confirmation-order-number">
-            Order Number: <strong>{orderNumber}</strong>
-          </p>
+          <>
+            <p className="confirmation-order-number">
+              Order Number: <strong>{orderNumber}</strong>
+            </p>
+            <Link href={`/orders/${orderNumber}`} className="confirmation-track-link">
+              Track Your Order →
+            </Link>
+          </>
         )}
 
         <p className="confirmation-subtitle">
@@ -166,6 +171,27 @@ const styles = `
   .confirmation-order-number strong {
     color: var(--color--tierra-reca, #322723);
     font-weight: 600;
+  }
+
+  .confirmation-track-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-family--headings, 'Poppins', sans-serif);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--color--ocean-blue, #2B7A9B);
+    text-decoration: none;
+    margin-bottom: 16px;
+    padding: 10px 20px;
+    background: rgba(43, 122, 155, 0.08);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+  }
+
+  .confirmation-track-link:hover {
+    background: rgba(43, 122, 155, 0.15);
+    transform: translateX(4px);
   }
 
   .confirmation-subtitle {
@@ -326,6 +352,15 @@ const styles = `
 
   :global(.dark) .confirmation-link {
     color: #4a9aba;
+  }
+
+  :global(.dark) .confirmation-track-link {
+    color: #4a9aba;
+    background: rgba(74, 154, 186, 0.12);
+  }
+
+  :global(.dark) .confirmation-track-link:hover {
+    background: rgba(74, 154, 186, 0.2);
   }
 
   :global(.dark) .confirmation-btn--secondary {
