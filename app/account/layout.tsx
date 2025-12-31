@@ -87,6 +87,9 @@ function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
           variant="ghost"
           size="icon"
           onClick={() => setSidebarOpen(!sidebarOpen)}
+          aria-expanded={sidebarOpen}
+          aria-controls="mobile-sidebar"
+          aria-label={sidebarOpen ? 'Close navigation menu' : 'Open navigation menu'}
         >
           {sidebarOpen ? (
             <X className="h-5 w-5" />
@@ -112,6 +115,10 @@ function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
 
         {/* Mobile sidebar */}
         <aside
+          id="mobile-sidebar"
+          role="navigation"
+          aria-label="Account navigation"
+          aria-hidden={!sidebarOpen}
           className={`
             lg:hidden fixed left-0 top-0 z-50 h-full w-64 bg-background border-r
             transform transition-transform duration-200 ease-in-out

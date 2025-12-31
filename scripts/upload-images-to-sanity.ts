@@ -47,7 +47,7 @@ interface UploadResult {
 
 async function uploadImage(filePath: string): Promise<UploadResult> {
   const filename = path.basename(filePath);
-  const buffer = fs.readFileSync(filePath);
+  const buffer = await fs.promises.readFile(filePath);
 
   console.log(`  Uploading: ${filename}...`);
 
