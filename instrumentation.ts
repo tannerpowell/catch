@@ -24,15 +24,20 @@ export const onRequestError = async (
     renderType: "dynamic" | "dynamic-resume";
   }
 ) => {
-  const Sentry = await import("@sentry/nextjs");
-
-  Sentry.captureException(error, {
-    extra: {
-      request: {
-        path: request.path,
-        method: request.method,
+  try {
+    const Sentry = await import("@sentry/nextjs");
+    Sentry.captureException(error, {
+      extra: {
+        request: {
+          path: request.path,
+          method: request.method,
+        },
+        context,
       },
-      context,
-    },
-  });
+    });
+  } catch (sentryError) {
+    // Fallback to console.error if Sentry is unavailable
+    console.error('Failed to report error to Sentry:', sentryError);
+    console.error('Original error:', error);
+  }
 };

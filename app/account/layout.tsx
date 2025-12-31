@@ -6,8 +6,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-// Check if Clerk is available
-const isClerkConfigured = typeof window !== 'undefined' && Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
+// Check if Clerk is available (NEXT_PUBLIC_ vars are inlined at build time, consistent SSR/client)
+const isClerkConfigured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
 
 // Dynamically import Clerk hooks only when configured
 let useAuth: () => { isLoaded: boolean; isSignedIn: boolean | undefined };

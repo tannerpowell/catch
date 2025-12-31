@@ -4,8 +4,8 @@ import Link from "next/link";
 import type { Route } from "next";
 import { User } from 'lucide-react';
 
-// Check if Clerk is available
-const isClerkConfigured = typeof window !== 'undefined' && Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
+// Check if Clerk is available (NEXT_PUBLIC_ vars are inlined at build time, consistent SSR/client)
+const isClerkConfigured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
 
 // Dynamically import Clerk hooks
 let useAuth: () => { isLoaded: boolean; isSignedIn: boolean | undefined };

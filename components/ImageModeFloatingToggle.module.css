@@ -35,6 +35,11 @@
   box-shadow: 0 4px 20px rgba(196, 163, 90, 0.3);
 }
 
+.toggle:focus-visible {
+  outline: 2px solid #C4A35A;
+  outline-offset: 2px;
+}
+
 :global(.dark) .toggle {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
@@ -47,6 +52,10 @@
 
 :global(.dark) .toggle.original {
   border-color: rgba(255, 255, 255, 0.2);
+}
+
+:global(.dark) .toggle:focus-visible {
+  outline-color: #D4B896;
 }
 
 .icon {
