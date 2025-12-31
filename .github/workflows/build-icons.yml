@@ -81,11 +81,6 @@ jobs:
           echo ""
           echo "Checking page sizes from build output..."
 
-          # Parse build output for page sizes (stored during build step)
-          if [ -f .next/trace ]; then
-            echo "Build trace available for analysis"
-          fi
-
           # Check for oversized client chunks (excluding polyfills and framework)
           echo ""
           echo "Checking for oversized page chunks..."

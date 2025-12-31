@@ -77,7 +77,7 @@ function ClerkAuthButton({
   if (variant === 'text') {
     return isSignedIn ? (
       <Link
-        href="/account"
+        href={"/account" as Route}
         className={className}
         onClick={onNavigate}
       >
@@ -96,7 +96,7 @@ function ClerkAuthButton({
 
   return isSignedIn ? (
     <Link
-      href="/account"
+      href={"/account" as Route}
       className={className}
       aria-label="My account"
       onClick={onNavigate}
