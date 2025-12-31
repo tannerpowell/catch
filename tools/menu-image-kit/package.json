@@ -1,0 +1,13 @@
+{
+  "name": "catch-menu-image-kit",
+  "private": true,
+  "type": "module",
+  "description": "Gemini-powered menu image enhancement for The Catch",
+  "dependencies": {
+    "@google/genai": "^1.0.0"
+  },
+  "scripts": {
+    "batch": "node scripts/batch-menu-photos.mjs",
+    "test": "CONCURRENCY=1 INPUT_DIR=./data/input OUTPUT_DIR=./data/output node scripts/batch-menu-photos.mjs"
+  }
+}

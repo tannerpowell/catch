@@ -1,0 +1,29 @@
+Edit the provided food photo into a cohesive, professional menu image that looks like it came from a Louisiana seafood restaurant photoshoot.
+
+Primary goal: consistency across the full set (same tabletop, prop style, lighting, and color grade). Keep the dish faithful to the original ingredients and portion—do not invent ingredients or add garnishes.
+
+SCENE / SET (consistent across the entire batch):
+- Surface: weathered reclaimed wood tabletop (gray-brown driftwood tones), natural grain and texture, slightly rustic but clean.
+- Lighting: warm golden hour light from upper-left, soft natural fill; evokes Gulf Coast sunset warmth.
+- Depth of field: shallow DOF; dish is sharp; background is softly blurred.
+- Color grade: warm, inviting tones with slight amber/golden cast—think New Orleans evening light.
+
+PROPS (allowed but must be consistent in style across all photos; placement may vary):
+- One natural linen napkin (cream or oatmeal color), casually placed.
+- Small white ceramic ramekin for dipping sauce or butter.
+- Optional: A single lemon wedge placed naturally near seafood dishes.
+- Props must never distract from the dish and must not cover key parts of the food.
+
+RETOUCHING:
+- Remove kitchen/prep-table context and distractions.
+- Clean plate rim smears, crumbs, and messy drips; keep food texture realistic.
+- Reduce harsh glare while keeping sauces glossy and fried items crispy-looking.
+- Correct color casts (remove green/fluorescent); maintain warm Cajun cookbook grade.
+- Add a subtle, realistic contact shadow under the plate or basket.
+
+HARD CONSTRAINTS:
+- Do not change the dish identity, ingredients, or portion.
+- Do not add text, logos, watermarks, steam effects, or painterly looks.
+- Do not switch to black/slate backgrounds or sterile white surfaces.
+- Do not introduce busy props (no fishing nets, no crawfish decorations, no heavy cutlery).
+- Fried seafood should look golden and crispy, not greasy or dark.

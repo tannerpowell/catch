@@ -26,6 +26,9 @@
       ],
       "@/sanity/*": [
         "sanity/*"
+      ],
+      "@/emails/*": [
+        "emails/*"
       ]
     },
     "incremental": true,

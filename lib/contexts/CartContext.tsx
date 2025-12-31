@@ -3,9 +3,34 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import type { Location, CartItem, Cart } from '@/lib/types';
 
+interface ReorderMenuItem {
+  _id: string;
+  name: string;
+  slug: string;
+  price: number;
+  description?: string;
+  image?: string;
+  categorySlug: string;
+}
+
+interface ReorderCartItem {
+  menuItemId: string;
+  name: string;
+  price: number;
+  quantity: number;
+  modifiers?: Array<{
+    name: string;
+    option: string;
+    priceDelta: number;
+  }>;
+  specialInstructions?: string;
+  menuItem?: ReorderMenuItem;
+}
+
 interface CartContextType {
   cart: Cart | null;
   addToCart: (item: CartItem, location: Location) => void;
+  addMultipleToCart: (items: ReorderCartItem[]) => Promise<void>;
   removeFromCart: (index: number) => void;
   updateQuantity: (index: number, quantity: number) => void;
   setTip: (amount: number) => void;
@@ -189,6 +214,47 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setCart(getEmptyCart());
   }, []);
 
+  // Add multiple items to cart (used for reordering)
+  const addMultipleToCart = useCallback(async (items: ReorderCartItem[]): Promise<void> => {
+    if (!cart) {
+      console.warn('Cannot add to cart before hydration complete');
+      return;
+    }
+
+    if (!cart.locationId) {
+      console.warn('Cannot add items without a location set');
+      return;
+    }
+
+    setCart((prev) => {
+      if (!prev) return prev;
+
+      // Convert ReorderCartItem to CartItem format
+      const cartItems: CartItem[] = items
+        .filter((item) => item.menuItem) // Only add items with valid menuItem data
+        .map((item) => ({
+          menuItem: {
+            id: item.menuItem!._id,
+            name: item.menuItem!.name,
+            slug: item.menuItem!.slug,
+            categorySlug: item.menuItem!.categorySlug,
+            description: item.menuItem!.description,
+            price: item.menuItem!.price,
+            image: item.menuItem!.image,
+          },
+          price: item.price,
+          quantity: item.quantity,
+          modifiers: item.modifiers || [],
+          specialInstructions: item.specialInstructions,
+        }));
+
+      return {
+        ...prev,
+        items: [...prev.items, ...cartItems],
+      };
+    });
+  }, [cart]);
+
   const isLocationLocked = cart?.locationId !== null && cart?.locationId !== undefined;
 
   const canAddFromLocation = useCallback(
@@ -205,6 +271,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       value={{
         cart,
         addToCart,
+        addMultipleToCart,
         removeFromCart,
         updateQuantity,
         setTip,

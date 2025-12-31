@@ -1,0 +1,46 @@
+You are performing photo retouching and upscale food styling edits on the provided restaurant dish photo. Keep the dish recognizable and true to the original ingredients and portion—do not invent new proteins, swap ingredients, or change the dish identity.
+
+Goal: Make this image look like a high-end, consistent menu photo (e.g., modern upscale seafood restaurant). Create a uniform look across the entire set.
+
+Required edits
+
+Background & surface
+
+Remove the stainless-steel kitchen/prep-table background.
+Replace with a clean, upscale, neutral surface (dark walnut wood or warm charcoal stone). Subtle texture is fine; no busy patterns.
+Add a soft, realistic contact shadow under the plate.
+
+Lighting
+
+Normalize to a single consistent lighting style: soft directional "window light" from upper-left, gentle falloff, no harsh glare.
+Reduce specular hotspots and oily glare while keeping appetizing shine.
+Correct uneven color casts (remove yellow/green tint). Balanced, premium white balance.
+
+Color & finish
+
+Increase clarity and micro-contrast on the food (no crunchy HDR).
+Boost saturation slightly but keep it natural; avoid neon colors.
+Keep sauces glossy and rich; fried items should look golden and crispy, not greasy.
+
+Composition & crop
+
+Straighten the plate so it looks intentional.
+Center dish cleanly with consistent framing.
+Keep the entire dish in frame; avoid awkward cut-offs.
+
+Cleanup
+
+Remove distracting crumbs, drips on plate rim, messy smears, and random reflections.
+Keep food textures (don't over-smooth). Preserve realistic detail.
+
+Hard constraints (do NOT do these)
+
+Do not add utensils, napkins, bowls, hands, extra props, logos, text, watermarks, or steam effects.
+Do not change the plate into a different color/style (keep simple white ceramic; you may subtly "normalize" to a clean, consistent white plate if needed).
+Do not alter the dish into something different (no ingredient hallucinations).
+
+Output
+
+Photorealistic, upscale menu photography.
+Consistent look across all images in the batch.
+High-resolution output.
