@@ -3,7 +3,32 @@ import groq from "groq";
 import type { Badge, BrandAdapter, Location, MenuCategory, MenuItem, ModifierGroup, ItemModifierOverride } from "@/lib/types";
 import { demoCategories, demoItems, demoLocations } from "@/lib/adapters/demo-data";
 import { z } from "zod";
-import { cache } from "react";
+import { unstable_cache } from "next/cache";
+import { SANITY_API_VERSION, withTimeout } from "@/lib/sanity/constants";
+import { withCircuitBreaker } from "@/lib/utils/circuit-breaker";
+
+// Cache configuration
+const CACHE_REVALIDATE_SECONDS = 60; // 1 minute default TTL
+export const CACHE_TAGS = {
+  categories: 'sanity-categories',
+  locations: 'sanity-locations',
+  items: 'sanity-items',
+  all: 'sanity-content',
+} as const;
+
+// Circuit breaker configuration for Sanity
+const SANITY_CIRCUIT_OPTIONS = {
+  failureThreshold: 5,
+  resetTimeout: 30000, // 30 seconds
+  successThreshold: 2,
+  onStateChange: (from: string, to: string, serviceName: string) => {
+    if (to === 'OPEN') {
+      console.error(`[Sanity] Circuit breaker OPEN for ${serviceName} - falling back to demo data`);
+    } else if (to === 'CLOSED') {
+      console.log(`[Sanity] Circuit breaker CLOSED for ${serviceName} - back to normal operation`);
+    }
+  },
+};
 
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET;
@@ -13,7 +38,7 @@ const client = hasSanityConfig
   ? createClient({
       projectId: projectId!,
       dataset: dataset!,
-      apiVersion: "2025-10-01",
+      apiVersion: SANITY_API_VERSION,
       useCdn: true, // Use CDN for faster responses
       perspective: 'published', // Only fetch published content
       stega: {
@@ -210,57 +235,95 @@ function fallbackHero(slug: string) {
   return defaultFallbackHero;
 }
 
-// Cached data fetching functions - prevents duplicate requests in the same render
-const getCategoriesCached = cache(async (): Promise<MenuCategory[]> => {
-  if (!client) {
-    return demoCategories;
-  }
-  try {
-    const raw = await client.fetch(qCategories);
-    const parsed = z.array(CategorySchema).parse(raw);
-    return parsed.map(cat => ({
-      ...cat,
-      description: cat.description ?? undefined,
-      position: cat.position ?? undefined
-    }));
-  } catch (error) {
-    console.warn("Falling back to demo categories", error instanceof Error ? error.message : error);
-    return demoCategories;
-  }
-});
+// Cached data fetching functions - uses unstable_cache for cross-request caching
+// with circuit breaker for resilience
 
-const getLocationsCached = cache(async (): Promise<Location[]> => {
+// Raw fetch function (throws on error)
+const fetchCategoriesRaw = async (): Promise<MenuCategory[]> => {
+  if (!client) throw new Error('Sanity client not configured');
+  const raw = await withTimeout(client.fetch(qCategories));
+  const parsed = z.array(CategorySchema).parse(raw);
+  return parsed.map(cat => ({
+    ...cat,
+    description: cat.description ?? undefined,
+    position: cat.position ?? undefined
+  }));
+};
+
+// Circuit-breaker protected fetch
+const fetchCategoriesProtected = withCircuitBreaker(
+  'sanity-categories',
+  fetchCategoriesRaw,
+  () => demoCategories,
+  SANITY_CIRCUIT_OPTIONS
+);
+
+const fetchCategories = async (): Promise<MenuCategory[]> => {
+  if (!client) {
+    return demoCategories;
+  }
+  return fetchCategoriesProtected();
+};
+
+const getCategoriesCached = unstable_cache(
+  fetchCategories,
+  ['sanity-categories'],
+  {
+    revalidate: CACHE_REVALIDATE_SECONDS,
+    tags: [CACHE_TAGS.categories, CACHE_TAGS.all],
+  }
+);
+
+// Raw fetch function for locations (throws on error)
+const fetchLocationsRaw = async (): Promise<Location[]> => {
+  if (!client) throw new Error('Sanity client not configured');
+  const raw = await withTimeout(client.fetch(qLocations));
+  const parsed = z.array(LocationSchema).parse(raw);
+  return parsed.map(l => ({
+    _id: l._id,
+    name: l.name,
+    slug: l.slug,
+    addressLine1: l.addressLine1 ?? "",
+    addressLine2: l.addressLine2 ?? undefined,
+    city: l.city ?? "",
+    state: l.state ?? "",
+    postalCode: l.postalCode ?? "",
+    phone: l.phone ?? undefined,
+    hours: l.hours ?? undefined,
+    revelUrl: l.revelUrl ?? l.menuUrl ?? undefined,
+    doordashUrl: l.doordashUrl ?? undefined,
+    uberEatsUrl: l.uberEatsUrl ?? undefined,
+    menuUrl: l.menuUrl ?? undefined,
+    directionsUrl: l.directionsUrl ?? undefined,
+    heroImage: l.heroImage ?? fallbackHero(l.slug),
+    openToday: !!l.hours,
+    geo: l.geo ?? fallbackGeoCoordinates[l.slug] ?? undefined
+  }));
+};
+
+// Circuit-breaker protected fetch
+const fetchLocationsProtected = withCircuitBreaker(
+  'sanity-locations',
+  fetchLocationsRaw,
+  () => demoLocations,
+  SANITY_CIRCUIT_OPTIONS
+);
+
+const fetchLocations = async (): Promise<Location[]> => {
   if (!client) {
     return demoLocations;
   }
-  try {
-    const raw = await client.fetch(qLocations);
-    const parsed = z.array(LocationSchema).parse(raw);
-    return parsed.map(l => ({
-      _id: l._id,
-      name: l.name,
-      slug: l.slug,
-      addressLine1: l.addressLine1 ?? "",
-      addressLine2: l.addressLine2 ?? undefined,
-      city: l.city ?? "",
-      state: l.state ?? "",
-      postalCode: l.postalCode ?? "",
-      phone: l.phone ?? undefined,
-      hours: l.hours ?? undefined,
-      revelUrl: l.revelUrl ?? l.menuUrl ?? undefined,
-      doordashUrl: l.doordashUrl ?? undefined,
-      uberEatsUrl: l.uberEatsUrl ?? undefined,
-      menuUrl: l.menuUrl ?? undefined,
-      directionsUrl: l.directionsUrl ?? undefined,
-      heroImage: l.heroImage ?? fallbackHero(l.slug),
-      openToday: !!l.hours,
-      geo: l.geo ?? fallbackGeoCoordinates[l.slug] ?? undefined
-    }));
-  } catch (error) {
-    console.warn("Falling back to demo locations", error instanceof Error ? error.message : error);
-    return demoLocations;
+  return fetchLocationsProtected();
+};
+
+const getLocationsCached = unstable_cache(
+  fetchLocations,
+  ['sanity-locations'],
+  {
+    revalidate: CACHE_REVALIDATE_SECONDS,
+    tags: [CACHE_TAGS.locations, CACHE_TAGS.all],
   }
-});
+);
 
 function normalizeModifierGroups(groups: unknown): ModifierGroup[] | undefined {
   if (!Array.isArray(groups) || groups.length === 0) return undefined;
@@ -314,37 +377,55 @@ function normalizeItemModifierOverrides(overrides: unknown): ItemModifierOverrid
   return normalized.length > 0 ? normalized : undefined;
 }
 
-const getItemsCached = cache(async (): Promise<MenuItem[]> => {
+// Raw fetch function for items (throws on error)
+const fetchItemsRaw = async (): Promise<MenuItem[]> => {
+  if (!client) throw new Error('Sanity client not configured');
+  const raw = await withTimeout(client.fetch(qItems));
+  const mapped = raw.map((i: Record<string, unknown>) => ({
+    id: i._id,
+    name: i.name,
+    slug: i.slug,
+    categorySlug: i.categorySlug,
+    description: i.description ?? undefined,
+    price: i.basePrice ?? null,
+    badges: Array.isArray(i.badges) ? i.badges.filter(isBadge) : undefined,
+    image: i.image ?? undefined,
+    availableEverywhere: i.availableEverywhere ?? false,
+    allowSpecialInstructions: i.allowSpecialInstructions ?? true,
+    locationOverrides: normalizeOverrides(
+      Array.isArray(i.overrides)
+        ? i.overrides as { loc: string; price?: number; available?: boolean }[]
+        : undefined
+    ),
+    modifierGroups: normalizeModifierGroups(i.modifierGroups),
+    itemModifierOverrides: normalizeItemModifierOverrides(i.itemModifierOverrides),
+  }));
+  return z.array(ItemSchema).parse(mapped) as MenuItem[];
+};
+
+// Circuit-breaker protected fetch
+const fetchItemsProtected = withCircuitBreaker(
+  'sanity-items',
+  fetchItemsRaw,
+  () => demoItems,
+  SANITY_CIRCUIT_OPTIONS
+);
+
+const fetchItems = async (): Promise<MenuItem[]> => {
   if (!client) {
     return demoItems;
   }
-  try {
-    const raw = await client.fetch(qItems);
-    const mapped = raw.map((i: Record<string, unknown>) => ({
-      id: i._id,
-      name: i.name,
-      slug: i.slug,
-      categorySlug: i.categorySlug,
-      description: i.description ?? undefined,
-      price: i.basePrice ?? null,
-      badges: Array.isArray(i.badges) ? i.badges.filter(isBadge) : undefined,
-      image: i.image ?? undefined,
-      availableEverywhere: i.availableEverywhere ?? false,
-      allowSpecialInstructions: i.allowSpecialInstructions ?? true,
-      locationOverrides: normalizeOverrides(
-        Array.isArray(i.overrides)
-          ? i.overrides as { loc: string; price?: number; available?: boolean }[]
-          : undefined
-      ),
-      modifierGroups: normalizeModifierGroups(i.modifierGroups),
-      itemModifierOverrides: normalizeItemModifierOverrides(i.itemModifierOverrides),
-    }));
-    return z.array(ItemSchema).parse(mapped) as MenuItem[];
-  } catch (error) {
-    console.warn("Falling back to demo items", error instanceof Error ? error.message : error);
-    return demoItems;
+  return fetchItemsProtected();
+};
+
+const getItemsCached = unstable_cache(
+  fetchItems,
+  ['sanity-items'],
+  {
+    revalidate: CACHE_REVALIDATE_SECONDS,
+    tags: [CACHE_TAGS.items, CACHE_TAGS.all],
   }
-});
+);
 
 export const adapter: BrandAdapter = {
   brandName: "The Catch Houston (CMS)",
@@ -362,10 +443,10 @@ export const adapter: BrandAdapter = {
       return demoLocations.find(loc => loc.slug === slug);
     }
     try {
-      const one = await client.fetch(
+      const one = await withTimeout(client.fetch(
         groq`*[_type=="location" && slug.current==$s][0]{ _id, name, "slug": slug.current, addressLine1, addressLine2, city, state, postalCode, phone, hours, menuUrl, directionsUrl, revelUrl, doordashUrl, uberEatsUrl, "heroImage": heroImage.asset->url, "geo": geo }`,
         { s: slug }
-      );
+      ));
       if (!one) return undefined;
       const parsed = LocationSchema.parse(one);
       return {

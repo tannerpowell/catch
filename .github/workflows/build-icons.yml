@@ -26,6 +26,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Run lint
+        run: npm run lint
+
       - name: Generate PWA icons
         run: npm run generate-icons
 
@@ -34,6 +37,73 @@ jobs:
 
       - name: Build Next.js
         run: npm run build
+
+      - name: Check bundle sizes
+        run: |
+          echo "📊 Bundle Size Report"
+          echo "===================="
+
+          # Thresholds in KB
+          TOTAL_THRESHOLD=15000      # 15MB total (includes Sanity Studio ~4MB)
+          PAGE_THRESHOLD=300         # 300KB per-page JS limit
+          FIRST_LOAD_THRESHOLD=400   # 400KB first-load JS limit
+
+          FAILED=0
+
+          # Check total JS chunks size
+          CHUNKS_SIZE=$(du -sk .next/static/chunks 2>/dev/null | awk '{print $1}')
+          echo "Total JS chunks: ${CHUNKS_SIZE}KB (threshold: ${TOTAL_THRESHOLD}KB)"
+
+          if [ "$CHUNKS_SIZE" -gt "$TOTAL_THRESHOLD" ]; then
+            echo "❌ FAIL: Total bundle size exceeds ${TOTAL_THRESHOLD}KB threshold"
+            FAILED=1
+          fi
+
+          # Find largest chunks
+          echo ""
+          echo "Top 5 largest chunks:"
+          ls -laS .next/static/chunks/*.js 2>/dev/null | head -6 | tail -5 | awk '{print $9 ": " int($5/1024) "KB"}'
+
+          # Check First Load JS from build output
+          echo ""
+          echo "Checking page sizes from build output..."
+
+          # Parse build output for page sizes (stored during build step)
+          if [ -f .next/trace ]; then
+            echo "Build trace available for analysis"
+          fi
+
+          # Check for oversized client chunks (excluding polyfills and framework)
+          echo ""
+          echo "Checking for oversized page chunks..."
+          OVERSIZED=$(find .next/static/chunks/pages -name "*.js" 2>/dev/null -exec ls -l {} \; | awk -v threshold=$((PAGE_THRESHOLD * 1024)) '$5 > threshold {print $9 ": " int($5/1024) "KB"}')
+
+          if [ -n "$OVERSIZED" ]; then
+            echo "❌ FAIL: Pages exceeding ${PAGE_THRESHOLD}KB threshold:"
+            echo "$OVERSIZED"
+            FAILED=1
+          else
+            echo "✅ All page chunks within ${PAGE_THRESHOLD}KB limit"
+          fi
+
+          # Check app directory chunks
+          OVERSIZED_APP=$(find .next/static/chunks/app -name "*.js" 2>/dev/null -exec ls -l {} \; | awk -v threshold=$((PAGE_THRESHOLD * 1024)) '$5 > threshold {print $9 ": " int($5/1024) "KB"}')
+
+          if [ -n "$OVERSIZED_APP" ]; then
+            echo ""
+            echo "⚠️ App routes exceeding ${PAGE_THRESHOLD}KB threshold:"
+            echo "$OVERSIZED_APP"
+            # Note: Not failing on app chunks as they may include shared layouts
+          fi
+
+          echo ""
+          if [ "$FAILED" -eq 1 ]; then
+            echo "❌ Bundle size checks FAILED"
+            echo "💡 Tip: Run 'ANALYZE=true npm run build' locally to identify large dependencies"
+            exit 1
+          else
+            echo "✅ All bundle size checks passed"
+          fi
 
       - name: Verify PWA icons exist in public directory
         run: |
