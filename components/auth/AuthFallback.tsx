@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 
-interface AuthFallbackProps {
+export interface AuthFallbackProps {
   title: string;
   message: string;
 }

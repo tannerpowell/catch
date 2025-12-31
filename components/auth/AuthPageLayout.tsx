@@ -1,6 +1,6 @@
 'use client';
 
-interface AuthPageLayoutProps {
+export interface AuthPageLayoutProps {
   title: string;
   description: string;
   children: React.ReactNode;

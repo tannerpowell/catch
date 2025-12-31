@@ -1,2 +1,2 @@
-export { AuthFallback } from './AuthFallback';
-export { AuthPageLayout } from './AuthPageLayout';
+export { AuthFallback, type AuthFallbackProps } from './AuthFallback';
+export { AuthPageLayout, type AuthPageLayoutProps } from './AuthPageLayout';
