@@ -98,20 +98,17 @@ async function main() {
   console.log('// Image URL mapping (copy to update page.tsx):');
   console.log('const SANITY_IMAGES: Record<string, string> = {');
   for (const r of results) {
-    // Convert filename to a key that matches the original naming
-    const key = r.filename.replace('.jpg', '.png');
-    console.log(`  '${key}': '${r.sanityUrl}',`);
+    console.log(`  '${r.filename}': '${r.sanityUrl}',`);
   }
   console.log('};');
 
   // Save mapping to file for reference
   const mapping = results.reduce((acc, r) => {
-    const key = r.filename.replace('.jpg', '.png');
-    acc[key] = r.sanityUrl;
+    acc[r.filename] = r.sanityUrl;
     return acc;
   }, {} as Record<string, string>);
 
-  fs.writeFileSync(
+  await fs.promises.writeFile(
     'scripts/sanity-image-mapping.json',
     JSON.stringify(mapping, null, 2)
   );
