@@ -80,6 +80,7 @@ export function withCircuitBreaker<T>(
     // Check if circuit should transition from OPEN to HALF_OPEN
     if (circuit.state === 'OPEN' && circuit.nextAttemptTime && now >= circuit.nextAttemptTime) {
       transitionState(circuit, serviceName, 'HALF_OPEN', opts.onStateChange);
+      circuit.successes = 0; // Reset for recovery test
     }
 
     // If circuit is OPEN, fail fast with fallback

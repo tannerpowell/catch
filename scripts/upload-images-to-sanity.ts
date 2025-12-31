@@ -8,11 +8,30 @@ import { createClient } from '@sanity/client';
 import fs from 'fs';
 import path from 'path';
 
+// Require environment variables - no hardcoded fallbacks to prevent accidental uploads
+const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
+const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET;
+const token = process.env.SANITY_WRITE_TOKEN;
+
+if (!projectId || !dataset) {
+  console.error('Missing required environment variables:');
+  console.error('  NEXT_PUBLIC_SANITY_PROJECT_ID');
+  console.error('  NEXT_PUBLIC_SANITY_DATASET');
+  console.error('\nSet these in .env.local or export them before running.');
+  process.exit(1);
+}
+
+if (!token) {
+  console.error('Missing SANITY_WRITE_TOKEN environment variable.');
+  console.error('Create a token with "create" permissions at https://manage.sanity.io');
+  process.exit(1);
+}
+
 const client = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'cwo08xml',
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
+  projectId,
+  dataset,
   apiVersion: '2025-01-01',
-  token: process.env.SANITY_WRITE_TOKEN,
+  token,
   useCdn: false,
 });
 

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import ImageCompare from '@/components/catch/ImageCompare';
 
 // Image pairs for comparison - using compressed JPEGs for better performance
@@ -253,6 +254,7 @@ export default function ImageComparePage() {
                 itemName={IMAGE_PAIRS[selectedIndex].name}
                 beforeLabel="Original"
                 afterLabel="AI Enhanced"
+                priority
               />
 
               <div className="compare-thumbnails">
@@ -262,7 +264,13 @@ export default function ImageComparePage() {
                     className={`compare-thumb ${index === selectedIndex ? 'active' : ''}`}
                     onClick={() => setSelectedIndex(index)}
                   >
-                    <img src={pair.before} alt={pair.name} />
+                    <Image
+                      src={pair.before}
+                      alt={pair.name}
+                      width={80}
+                      height={60}
+                      style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+                    />
                   </button>
                 ))}
               </div>

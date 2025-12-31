@@ -23,7 +23,7 @@ fi
 
 echo "🗜️ Creating compressed JPEG versions..."
 
-# Check if ImageMagick/sharp is available
+# Check if ImageMagick is available
 if command -v magick &> /dev/null; then
   # Use ImageMagick
   for png in "$IMAGES_DIR/compare/after/"*.png; do

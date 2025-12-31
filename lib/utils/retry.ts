@@ -101,8 +101,9 @@ export function isNonRetryableHttpError(error: Error): boolean {
   // Rate limiting should be retried
   if (error.message.includes('429')) return false;
 
-  // Other 4xx errors should not be retried
-  const match = error.message.match(/\b4\d{2}\b/);
+  // Check for 4xx HTTP status codes in common error message patterns
+  // Matches: "status 4xx", "HTTP 4xx", "code 4xx", or standalone status codes
+  const match = error.message.match(/\b(?:status|http|code)?\s*4\d{2}\b/i);
   return match !== null;
 }
 

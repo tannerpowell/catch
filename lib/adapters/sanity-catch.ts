@@ -5,7 +5,7 @@ import { demoCategories, demoItems, demoLocations } from "@/lib/adapters/demo-da
 import { z } from "zod";
 import { unstable_cache } from "next/cache";
 import { SANITY_API_VERSION, withTimeout } from "@/lib/sanity/constants";
-import { withCircuitBreaker } from "@/lib/utils/circuit-breaker";
+import { withCircuitBreaker, type CircuitState } from "@/lib/utils/circuit-breaker";
 
 // Cache configuration
 const CACHE_REVALIDATE_SECONDS = 60; // 1 minute default TTL
@@ -21,7 +21,7 @@ const SANITY_CIRCUIT_OPTIONS = {
   failureThreshold: 5,
   resetTimeout: 30000, // 30 seconds
   successThreshold: 2,
-  onStateChange: (from: string, to: string, serviceName: string) => {
+  onStateChange: (from: CircuitState, to: CircuitState, serviceName: string) => {
     if (to === 'OPEN') {
       console.error(`[Sanity] Circuit breaker OPEN for ${serviceName} - falling back to demo data`);
     } else if (to === 'CLOSED') {

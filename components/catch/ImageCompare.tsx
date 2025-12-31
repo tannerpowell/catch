@@ -10,6 +10,7 @@ interface ImageCompareProps {
   afterLabel?: string;
   itemName?: string;
   aspectRatio?: '4/3' | '1/1';
+  priority?: boolean;
 }
 
 export default function ImageCompare({
@@ -18,7 +19,8 @@ export default function ImageCompare({
   beforeLabel = 'Before',
   afterLabel = 'After',
   itemName,
-  aspectRatio = '4/3'
+  aspectRatio = '4/3',
+  priority = false
 }: ImageCompareProps) {
   const [sliderPosition, setSliderPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
@@ -49,12 +51,14 @@ export default function ImageCompare({
   }, []);
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    e.preventDefault();
     setIsDragging(true);
     handleMove(e.touches[0].clientX);
   }, [handleMove]);
 
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
     if (!isDragging) return;
+    e.preventDefault();
     handleMove(e.touches[0].clientX);
   }, [isDragging, handleMove]);
 
@@ -75,6 +79,7 @@ export default function ImageCompare({
           overflow: hidden;
           cursor: ew-resize;
           user-select: none;
+          touch-action: none;
           box-shadow:
             0 4px 16px rgba(44, 36, 32, 0.08),
             0 12px 32px rgba(44, 36, 32, 0.04);
@@ -230,7 +235,7 @@ export default function ImageCompare({
             alt={`${itemName || 'Item'} - before`}
             fill
             style={{ objectFit: 'cover' }}
-            priority
+            priority={priority}
           />
         </div>
 
@@ -241,7 +246,7 @@ export default function ImageCompare({
             alt={`${itemName || 'Item'} - after`}
             fill
             style={{ objectFit: 'cover' }}
-            priority
+            priority={priority}
           />
         </div>
 

@@ -54,7 +54,7 @@ The upload script outputs a mapping file at `scripts/sanity-image-mapping.json`.
 
 Large image directories are gitignored to keep the repo small:
 
-```
+```text
 public/images/compare/after/   # Large PNGs (~110MB)
 public/images/dfw/             # Duplicate originals
 ```
