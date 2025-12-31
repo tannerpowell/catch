@@ -2,6 +2,7 @@
 @import "./styles/catch-base.css";
 @import "./styles/catch-track.css";
 @import "./styles/dark-theme.css";
+@import "./styles/features.css";
 @import "@silk-hq/components/unlayered-styles.css";
 
 @tailwind base;
