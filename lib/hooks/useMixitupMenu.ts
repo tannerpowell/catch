@@ -102,7 +102,6 @@ export function useMixitupMenu(options: UseMixitupMenuOptions = {}): UseMixitupM
 
       setIsReady(true);
     }).catch((err) => {
-      // eslint-disable-next-line no-console
       console.error('Failed to load MixItUp', err);
     });
 
@@ -135,7 +134,7 @@ export function useMixitupMenu(options: UseMixitupMenuOptions = {}): UseMixitupM
     }
 
     mixerRef.current.filter(filterString);
-  }, [searchTerm]);
+  }, []);
 
   // Apply search (uses CSS visibility, composes with MixItUp)
   const applySearch = useCallback((term: string) => {

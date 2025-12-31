@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ShoppingCart } from 'lucide-react';
 import { useCart } from '@/lib/contexts/CartContext';
 
