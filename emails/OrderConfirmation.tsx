@@ -38,6 +38,7 @@ export function OrderConfirmationEmail({
   locationName,
   locationAddress,
   locationPhone,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   orderType,
   estimatedReadyTime,
   total,

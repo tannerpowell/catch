@@ -153,7 +153,7 @@ export function ReorderModal({
     try {
       await addMultipleToCart(itemsToAdd);
       onClose();
-    } catch (err) {
+    } catch {
       setError('Failed to add items to cart');
     } finally {
       setAdding(false);

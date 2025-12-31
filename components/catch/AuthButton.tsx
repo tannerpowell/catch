@@ -29,7 +29,8 @@ interface AuthButtonProps {
  * Dynamically loads Clerk only when configured.
  */
 export function AuthButton({ className = 'nav-account-button', variant = 'icon', onNavigate }: AuthButtonProps) {
-  const { isLoaded, isSignedIn } = isClerkConfigured ? useAuth() : { isLoaded: true, isSignedIn: false };
+  // Always call hooks (they return safe defaults when Clerk is not configured)
+  const { isLoaded, isSignedIn } = useAuth();
 
   if (!isLoaded) {
     return null;

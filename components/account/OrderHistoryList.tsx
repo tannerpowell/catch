@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -216,7 +217,7 @@ function EmptyState({ filter }: { filter: StatusFilter }) {
       <h3 className="font-medium text-lg">{title}</h3>
       <p className="text-muted-foreground mt-1">{description}</p>
       <Button className="mt-4" asChild>
-        <a href="/">Order Now</a>
+        <Link href="/">Order Now</Link>
       </Button>
     </div>
   );

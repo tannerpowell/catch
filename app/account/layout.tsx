@@ -30,12 +30,9 @@ export default function AccountLayout({
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Only use Clerk hooks if configured
-  const { isLoaded, isSignedIn } = isClerkConfigured
-    ? useAuth()
-    : { isLoaded: true, isSignedIn: false };
-
-  const { user } = isClerkConfigured ? useUser() : { user: null };
+  // Always call hooks (they return safe defaults when Clerk is not configured)
+  const { isLoaded, isSignedIn } = useAuth();
+  const { user } = useUser();
 
   useEffect(() => {
     if (isLoaded && !isSignedIn) {

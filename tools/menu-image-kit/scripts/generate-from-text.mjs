@@ -14,7 +14,8 @@ const MODEL = "gemini-3-pro-image-preview"; // Same model as batch-menu-photos.m
 const OUTPUT_DIR = "./data/generated";
 const BATCH_GROUPS_FILE = "./data/batch-groups.json";
 const REFERENCE_DIR = "./data/option5-jpeg";
-const CONCURRENCY = 1;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const CONCURRENCY = 1; // Reserved for future parallel processing
 const RATE_LIMIT_DELAY = parseInt(process.env.RATE_LIMIT_DELAY || "8000");
 const IMAGE_SIZE = "2K";
 
