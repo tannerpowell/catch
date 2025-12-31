@@ -7,6 +7,7 @@
 import { createClient } from '@sanity/client';
 import fs from 'fs';
 import path from 'path';
+import { SANITY_API_VERSION, withTimeout } from '../lib/sanity/constants';
 
 // Require environment variables - no hardcoded fallbacks to prevent accidental uploads
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
@@ -30,10 +31,13 @@ if (!token) {
 const client = createClient({
   projectId,
   dataset,
-  apiVersion: '2025-01-01',
+  apiVersion: SANITY_API_VERSION,
   token,
   useCdn: false,
 });
+
+// Longer timeout for uploads (30s) since images can be large
+const UPLOAD_TIMEOUT = 30000;
 
 interface UploadResult {
   filename: string;
@@ -47,10 +51,13 @@ async function uploadImage(filePath: string): Promise<UploadResult> {
 
   console.log(`  Uploading: ${filename}...`);
 
-  const asset = await client.assets.upload('image', buffer, {
-    filename,
-    contentType: 'image/jpeg',
-  });
+  const asset = await withTimeout(
+    client.assets.upload('image', buffer, {
+      filename,
+      contentType: 'image/jpeg',
+    }),
+    UPLOAD_TIMEOUT
+  );
 
   return {
     filename,
