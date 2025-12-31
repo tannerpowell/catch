@@ -112,7 +112,7 @@ jobs:
           echo ""
           if [ "$FAILED" -eq 1 ]; then
             echo "❌ Bundle size checks FAILED"
-            echo "💡 Tip: Run 'ANALYZE=true npm run build' locally to identify large dependencies"
+            echo "💡 Tip: Run 'ANALYZE=true pnpm run build' locally to identify large dependencies"
             exit 1
           else
             echo "✅ All bundle size checks passed"
