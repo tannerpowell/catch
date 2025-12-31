@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { Route } from "next";
 import Link from "next/link";
 import {
   Clock,
@@ -22,10 +23,7 @@ const features = [
     subhead: "Real-Time Order Tracking",
     description:
       "Watch your order move from kitchen to counter. A live progress bar, timestamps, and estimated ready time—no app required.",
-    cta: {
-      label: "See how it works",
-      href: "/orders/demo",
-    },
+    cta: null,
   },
   {
     icon: History,
@@ -35,7 +33,7 @@ const features = [
       "Every order you've placed, organized and searchable. See what you loved. See what you ordered for the office that one time.",
     cta: {
       label: "View your orders",
-      href: "/account/orders",
+      href: "/account/orders" as Route,
     },
   },
   {
@@ -75,7 +73,7 @@ export default function FeaturesPage() {
             their time.
           </p>
           <div className="features-hero__cta">
-            <Link href="/sign-up" className="features-btn features-btn--primary">
+            <Link href={"/sign-up" as Route} className="features-btn features-btn--primary">
               Create Your Free Account
             </Link>
             <Link href="/menu" className="features-btn features-btn--ghost">
@@ -188,7 +186,7 @@ export default function FeaturesPage() {
           <p className="features-cta__subtitle">
             Create a free account and never lose track of your food again.
           </p>
-          <Link href="/sign-up" className="features-btn features-btn--large">
+          <Link href={"/sign-up" as Route} className="features-btn features-btn--large">
             Create Your Free Account
           </Link>
         </div>
