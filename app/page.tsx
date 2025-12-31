@@ -19,7 +19,7 @@ export default function HomePage() {
       <section className="lux-hero">
         <div className="lux-hero__bg">
           <Image
-            src="/dfw-images/the-catch-boil.jpeg"
+            src="/dfw-images/the-catch-boil.jpg"
             alt="The Catch Seafood Boil"
             fill
             priority

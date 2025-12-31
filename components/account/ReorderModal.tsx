@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -84,17 +84,65 @@ export function ReorderModal({
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
   const [adding, setAdding] = useState(false);
 
+  const modalRef = useRef<HTMLDivElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
+
   const { addMultipleToCart } = useCart();
 
-  // Escape key handler for accessibility
+  // Focus trap and escape key handler for accessibility
   useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+    if (!isOpen) return;
+
+    // Save current focus
+    previousFocusRef.current = document.activeElement as HTMLElement;
+
+    // Move focus into modal
+    const focusFirstElement = () => {
+      const firstFocusable = modalRef.current?.querySelector<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      firstFocusable?.focus();
     };
-    if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
-      return () => document.removeEventListener('keydown', handleEscape);
-    }
+    // Small delay to ensure modal is rendered
+    const timer = setTimeout(focusFirstElement, 0);
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Escape key closes modal
+      if (e.key === 'Escape') {
+        onClose();
+        return;
+      }
+
+      // Tab key traps focus within modal
+      if (e.key === 'Tab' && modalRef.current) {
+        const focusables = Array.from(
+          modalRef.current.querySelectorAll<HTMLElement>(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+          )
+        );
+        if (focusables.length === 0) return;
+
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last?.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first?.focus();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener('keydown', handleKeyDown);
+      // Restore focus when modal closes
+      previousFocusRef.current?.focus();
+    };
   }, [isOpen, onClose]);
 
   useEffect(() => {
@@ -201,6 +249,7 @@ export function ReorderModal({
 
       {/* Modal */}
       <div
+        ref={modalRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="reorder-modal-title"
@@ -273,9 +322,12 @@ export function ReorderModal({
                     {data.availableItems.map((item) => (
                       <div
                         key={item._key}
+                        tabIndex={0}
+                        role="checkbox"
+                        aria-checked={selectedItems.has(item._key)}
                         className={`
                           flex items-start gap-3 p-3 rounded-lg border cursor-pointer
-                          transition-colors
+                          transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
                           ${
                             selectedItems.has(item._key)
                               ? 'border-primary bg-primary/5'
@@ -283,6 +335,12 @@ export function ReorderModal({
                           }
                         `}
                         onClick={() => toggleItem(item._key)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            toggleItem(item._key);
+                          }
+                        }}
                       >
                         <div
                           className={`

@@ -89,7 +89,7 @@ jobs:
           # Check for oversized client chunks (excluding polyfills and framework)
           echo ""
           echo "Checking for oversized page chunks..."
-          OVERSIZED=$(find .next/static/chunks/pages -name "*.js" -exec ls -l {} \; 2>/dev/null | awk -v threshold=$((PAGE_THRESHOLD * 1024)) '$5 > threshold {print $9 ": " int($5/1024) "KB"}')
+          OVERSIZED=$(find .next/static/chunks/pages -name "*.js" -exec ls -l {} \; | awk -v threshold=$((PAGE_THRESHOLD * 1024)) '$5 > threshold {print $9 ": " int($5/1024) "KB"}' 2>/dev/null)
 
           if [ -n "$OVERSIZED" ]; then
             echo "❌ FAIL: Pages exceeding ${PAGE_THRESHOLD}KB threshold:"
@@ -100,7 +100,7 @@ jobs:
           fi
 
           # Check app directory chunks
-          OVERSIZED_APP=$(find .next/static/chunks/app -name "*.js" -exec ls -l {} \; 2>/dev/null | awk -v threshold=$((PAGE_THRESHOLD * 1024)) '$5 > threshold {print $9 ": " int($5/1024) "KB"}')
+          OVERSIZED_APP=$(find .next/static/chunks/app -name "*.js" -exec ls -l {} \; | awk -v threshold=$((PAGE_THRESHOLD * 1024)) '$5 > threshold {print $9 ": " int($5/1024) "KB"}' 2>/dev/null)
 
           if [ -n "$OVERSIZED_APP" ]; then
             echo ""

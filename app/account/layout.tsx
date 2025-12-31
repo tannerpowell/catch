@@ -1,44 +1,65 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth, useUser } from '@clerk/nextjs';
 import { AccountSidebar } from '@/components/account';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-// Check if Clerk is available (NEXT_PUBLIC_ vars are inlined at build time, consistent SSR/client)
+// Check if Clerk is available (NEXT_PUBLIC_ vars are inlined at build time)
 const isClerkConfigured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
 
-// Dynamically import Clerk hooks only when configured
-let useAuth: () => { isLoaded: boolean; isSignedIn: boolean | undefined };
-let useUser: () => { user: { firstName?: string | null } | null | undefined };
-
-if (isClerkConfigured) {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const clerk = require('@clerk/nextjs');
-  useAuth = clerk.useAuth;
-  useUser = clerk.useUser;
-} else {
-  useAuth = () => ({ isLoaded: true, isSignedIn: false });
-  useUser = () => ({ user: null });
-}
-
+/**
+ * Account layout with authentication.
+ * When Clerk is not configured, redirects to sign-in page.
+ * Uses Clerk hooks for auth state when ClerkProvider is available.
+ */
 export default function AccountLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  // If Clerk is not configured, we're not inside ClerkProvider,
+  // so we can't use Clerk hooks. Redirect to sign-in.
+  if (!isClerkConfigured) {
+    return <UnauthenticatedLayout />;
+  }
 
-  // Always call hooks (they return safe defaults when Clerk is not configured)
+  return <AuthenticatedLayout>{children}</AuthenticatedLayout>;
+}
+
+/**
+ * Fallback layout when Clerk is not configured.
+ * Redirects to sign-in page since auth is required.
+ */
+function UnauthenticatedLayout() {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.push('/sign-in?redirect_url=/account');
+  }, [router]);
+
+  return <AccountLayoutSkeleton />;
+}
+
+/**
+ * Main authenticated layout with Clerk hooks.
+ * Only rendered when Clerk is configured and ClerkProvider wraps the app.
+ */
+function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const router = useRouter();
+
   const { isLoaded, isSignedIn } = useAuth();
   const { user } = useUser();
 
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
-      window.location.href = '/sign-in?redirect_url=/account';
+      router.push('/sign-in?redirect_url=/account');
     }
-  }, [isLoaded, isSignedIn]);
+  }, [isLoaded, isSignedIn, router]);
 
   // Show loading while auth is loading
   if (!isLoaded) {
