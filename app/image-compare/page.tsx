@@ -7,7 +7,7 @@ import ImageCompare from '@/components/catch/ImageCompare';
 const IMAGE_PAIRS = [
   { name: 'Banana Pudding', before: '/images/compare/before/banana-pudding.jpeg', after: '/images/jpeg/banana-pudding__hero_4x3.jpg' },
   { name: 'Big Bang Shrimp', before: '/images/compare/before/big-bang-shrimp.jpeg', after: '/images/jpeg/big-bang-shrimp__hero_4x3.jpg' },
-  { name: 'Blackened Catfish', before: '/images/compare/before/Blackened Catfish with sides.jpg', after: '/images/jpeg/Blackened Catfish with sides__hero_4x3.jpg' },
+  { name: 'Blackened Catfish', before: '/images/compare/before/blackened-catfish-with-sides.jpg', after: '/images/jpeg/blackened-catfish-with-sides__hero_4x3.jpg' },
   { name: 'Bourbon Chicken Pasta', before: '/images/compare/before/bourbon-chicken-pasta.jpeg', after: '/images/jpeg/bourbon-chicken-pasta__hero_4x3.jpg' },
   { name: 'Cajun Special', before: '/images/compare/before/cajun-special.jpeg', after: '/images/jpeg/cajun-special__hero_4x3.jpg' },
   { name: 'Catfish Basket', before: '/images/compare/before/catfish-basket.jpeg', after: '/images/jpeg/catfish-basket__hero_4x3.jpg' },

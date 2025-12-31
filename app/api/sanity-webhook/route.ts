@@ -15,6 +15,7 @@ export async function POST(request: NextRequest) {
   revalidateTag(CACHE_TAGS.all, { expire: 0 });
 
   // Revalidate all ISR pages that depend on Sanity content
+  revalidatePath("/");
   revalidatePath("/menu");
   revalidatePath("/menu2");
   revalidatePath("/menu3");
@@ -25,7 +26,7 @@ export async function POST(request: NextRequest) {
   return NextResponse.json({
     revalidated: true,
     tags: [CACHE_TAGS.all],
-    paths: ["/menu", "/menu2", "/menu3", "/locations", "/tv-menu-display", "/print-menu"],
+    paths: ["/", "/menu", "/menu2", "/menu3", "/locations", "/tv-menu-display", "/print-menu"],
     timestamp: Date.now(),
   });
 }

@@ -90,7 +90,7 @@ The webhook endpoint at `/api/sanity-webhook` handles cache invalidation:
 
 ### Revalidated Paths
 - `/` (homepage)
-- `/menu`, `/menu3`
+- `/menu`, `/menu2`, `/menu3`
 - `/tv-menu-display`
 - `/print-menu`
 - `/locations`
