@@ -38,7 +38,7 @@ function UnauthenticatedLayout() {
   const router = useRouter();
 
   useEffect(() => {
-    router.push('/sign-in?redirect_url=/account');
+    router.push('/sign-in?redirect_url=/account' as Parameters<typeof router.push>[0]);
   }, [router]);
 
   return <AccountLayoutSkeleton />;
@@ -57,7 +57,7 @@ function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
-      router.push('/sign-in?redirect_url=/account');
+      router.push('/sign-in?redirect_url=/account' as Parameters<typeof router.push>[0]);
     }
   }, [isLoaded, isSignedIn, router]);
 
