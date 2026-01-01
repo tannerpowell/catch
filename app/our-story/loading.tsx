@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function OurStoryLoading() {
   return (
     <section className="section padding-large animate-in fade-in duration-300">
-      <div style={{ maxWidth: "800px", margin: "0 auto", textAlign: "center" }}>
+      <div className="max-w-3xl mx-auto text-center">
         {/* Title */}
         <Skeleton className="h-10 w-48 mx-auto mb-6" />
 
