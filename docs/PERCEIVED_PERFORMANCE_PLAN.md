@@ -330,7 +330,7 @@ Deprioritized due to experimental status (`unstable_` prefix). Uptime > millisec
 
 ## Implementation Order
 
-```
+```text
 Week 1:
 ├── Phase 1: Navigation Progress Bar (2 hours)
 │   ├── Create NavigationProgress component

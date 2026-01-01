@@ -13,6 +13,7 @@
 const BASE_URL = process.env.BASE_URL || "http://localhost:3000";
 
 // All public routes to warm up
+// NOTE: Update this list when adding or removing routes
 const routes = [
   // High traffic
   "/",
@@ -49,10 +50,15 @@ async function warmup() {
       const routeStart = Date.now();
 
       try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
+
         const res = await fetch(url, {
           headers: { "X-Warmup": "true" },
           redirect: "follow",
+          signal: controller.signal,
         });
+        clearTimeout(timeoutId);
         const elapsed = Date.now() - routeStart;
 
         // Accept 200, 307 (redirect), 401 (auth required) as "warmed"

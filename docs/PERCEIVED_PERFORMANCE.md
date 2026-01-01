@@ -400,7 +400,9 @@ pnpm dev:warm
 
 ## 5. Next.js Caching Configuration
 
-### Turbopack Persistent Caching (Next.js 16+)
+### Turbopack Persistent Caching (Next.js 14+, Experimental)
+
+> **Note**: This feature uses the `unstable_` prefix, indicating it's experimental. For production stability, this was intentionally skipped in The Catch's implementation (see `PERCEIVED_PERFORMANCE_PLAN.md`). Consider enabling only after the API stabilizes.
 
 ```ts
 // next.config.ts
