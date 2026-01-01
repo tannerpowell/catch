@@ -35,3 +35,11 @@ This is The Catch restaurant ordering system with:
 - `sanity/` - Sanity schema definitions
 - `studio/` - Embedded Sanity Studio
 - `scripts/` - Data migration and utility scripts
+
+## UX Preferences
+
+### Navigation & Loading
+
+- **Navigation progress bar**: Only show on slow navigations (>150ms threshold). Fast navigations should feel instant without a flashing progress bar. See `components/NavigationProgress.tsx`.
+- **Loading skeletons**: Use `loading.tsx` files with the `Skeleton` component from `components/ui/skeleton.tsx` to show page structure while loading.
+- See `docs/PERCEIVED_PERFORMANCE.md` for full implementation guide.

@@ -2,10 +2,12 @@ import "./globals.css";
 import "./styles/dark-theme.css";
 import "./styles/kitchen.css";
 import "./styles/cart.css";
+import { Suspense } from "react";
 import HeaderSimple from "@/components/catch/HeaderSimple";
 import FooterSimple from "@/components/catch/FooterSimple";
 import ThemeToggle from "@/components/ThemeToggle";
 import ImageModeFloatingToggle from "@/components/ImageModeFloatingToggle";
+import { NavigationProgress } from "@/components/NavigationProgress";
 import { RouteMarker } from "@/components/RouteMarker";
 import { Providers } from "./providers";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -125,6 +127,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="dns-prefetch" href="https://api.mapbox.com" />
       </head>
       <body className={fontClassName}>
+        <Suspense fallback={null}>
+          <NavigationProgress />
+        </Suspense>
         <RouteMarker />
         <Providers>
           <HeaderSimple />

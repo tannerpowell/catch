@@ -7,6 +7,8 @@
     "generate-icons": "node scripts/generate-pwa-icons.js",
     "verify-icons": "node scripts/verify-pwa-icons.js",
     "dev": "next dev --turbopack",
+    "dev:warm": "next dev --turbopack & sleep 4 && pnpm warmup && wait",
+    "warmup": "tsx scripts/warmup-routes.ts",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
