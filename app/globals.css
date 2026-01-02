@@ -733,7 +733,7 @@ a:hover {
 
 /* Admin Tools Section */
 .lux-admin {
-  background: var(--lux-charcoal);
+  background: var(--lux-navy);
   padding: clamp(2rem, 5vw, 3rem) clamp(1.5rem, 5vw, 4rem);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
