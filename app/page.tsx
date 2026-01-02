@@ -213,6 +213,29 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Admin Tools */}
+      <section className="lux-admin">
+        <div className="lux-admin__inner">
+          <span className="lux-eyebrow">Team Tools</span>
+          <div className="lux-admin__links">
+            <Link href="/studio" className="lux-admin__link">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <path d="M9 3v18M3 9h18" />
+              </svg>
+              Sanity Studio
+            </Link>
+            <Link href="/kitchen" className="lux-admin__link">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <rect x="4" y="2" width="16" height="20" rx="2" />
+                <circle cx="12" cy="18" r="1" />
+              </svg>
+              iPad
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* Final CTA */}
       <section className="lux-cta">
         <div className="lux-cta__bg">

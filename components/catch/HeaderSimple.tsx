@@ -48,7 +48,6 @@ type GsapGlobal = {
 
 const navLinks = [
   { href: "/menu", label: "menu" },
-  { href: "/menu2", label: "menu2" },
   { href: "/tv-menu-display", label: "tv menu" },
   { href: "/print-menu", label: "print menu" },
   { href: "/locations", label: "locations" },
@@ -258,16 +257,6 @@ export default function HeaderSimple() {
               </div>
               <Link href="/menu" className="link-block full-page-nav" onClick={() => setMobileMenuOpen(false)}>
                 <h3 className="h3">Menu</h3>
-              </Link>
-            </div>
-            <div className="nav-right-link-wrapper">
-              <div className="nav-right-accent-wrapper">
-                <div className="accent claro-maiz-right-aligned">
-                  alternate<br/>menu
-                </div>
-              </div>
-              <Link href="/menu2" className="link-block full-page-nav" onClick={() => setMobileMenuOpen(false)}>
-                <h3 className="h3">Menu2</h3>
               </Link>
             </div>
             <div className="nav-right-link-wrapper">
