@@ -1,7 +1,19 @@
 'use client';
 
 import React, { useState, useMemo, useEffect, useRef, useCallback } from "react";
-import type { Location, MenuCategory, MenuItem } from "@/lib/types";
+import type { Location, LocationRegion, MenuCategory, MenuItem } from "@/lib/types";
+
+// Region display labels - matches LocationBar.tsx
+const REGION_LABELS: Record<LocationRegion, string> = {
+  'dfw': 'DFW',
+  'houston': 'Houston',
+  'oklahoma': 'Oklahoma',
+  'east-tx': 'East Texas',
+  'west-tx': 'West Texas',
+};
+
+// Region display order
+const REGION_ORDER: LocationRegion[] = ['dfw', 'houston', 'oklahoma', 'east-tx', 'west-tx'];
 import MenuItemCard from "./MenuItemCard";
 import { findNearestLocation } from "@/lib/utils/findNearestLocation";
 import { isItemAvailableAtLocation } from "@/lib/utils/menuAvailability";
@@ -197,6 +209,25 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
     return selectedSlug ? locations.find(l => l.slug === selectedSlug) : undefined;
   }, [selectedSlug, locations]);
 
+  // Group locations by region dynamically (supports all regions)
+  const groupedLocations = useMemo(() => {
+    const groups: { label: string; region: LocationRegion | 'other'; locations: Location[] }[] = [];
+
+    // Group by region in defined order
+    REGION_ORDER.forEach(region => {
+      const regionLocations = locations.filter(l => l.region === region);
+      if (regionLocations.length) {
+        groups.push({ label: REGION_LABELS[region], region, locations: regionLocations });
+      }
+    });
+
+    // Add any locations without a region to "Other"
+    const other = locations.filter(l => !l.region);
+    if (other.length) groups.push({ label: 'Other', region: 'other', locations: other });
+
+    return groups;
+  }, [locations]);
+
   // Get location-specific price
   const getItemPrice = (item: MenuItem, locationSlug: string) => {
     if (locationSlug !== "all" && item.locationOverrides?.[locationSlug]?.price !== undefined) {
@@ -376,52 +407,31 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
             {isLocating ? 'Finding...' : 'Find Nearest'}
           </button>
 
-          <span style={{ color: 'rgba(255,255,255,0.3)', margin: '0 4px' }}>|</span>
-
-          {/* DFW Label + Locations */}
-          <span style={{
-            fontSize: '11px',
-            fontWeight: 600,
-            letterSpacing: '1.5px',
-            textTransform: 'uppercase',
-            marginRight: '2px'
-          }} className="text-white dark:text-slate-300 opacity-70">DFW:</span>
-          {locations.filter(loc => loc.region === 'dfw').map(location => (
-            <button
-              key={location.slug}
-              onClick={() => setSelectedSlug(location.slug)}
-              className="location-filter-button filter-button"
-              data-active={selectedSlug === location.slug}
-              type="button"
-              aria-pressed={selectedSlug === location.slug}
-              style={{ padding: '6px 12px', fontSize: '13px' }}
-            >
-              {location.name.replace('The Catch — ', '')}
-            </button>
-          ))}
-
-          <span style={{ color: 'rgba(255,255,255,0.3)', margin: '0 4px' }}>|</span>
-
-          {/* Houston Label + Locations */}
-          <span style={{
-            fontSize: '11px',
-            fontWeight: 600,
-            letterSpacing: '1.5px',
-            textTransform: 'uppercase',
-            marginRight: '2px'
-          }} className="text-white dark:text-slate-300 opacity-70">HOUSTON:</span>
-          {locations.filter(loc => loc.region === 'houston').map(location => (
-            <button
-              key={location.slug}
-              onClick={() => setSelectedSlug(location.slug)}
-              className="location-filter-button filter-button"
-              data-active={selectedSlug === location.slug}
-              type="button"
-              aria-pressed={selectedSlug === location.slug}
-              style={{ padding: '6px 12px', fontSize: '13px' }}
-            >
-              {location.name.replace('The Catch — ', '')}
-            </button>
+          {/* All Regions - dynamically rendered */}
+          {groupedLocations.map((group) => (
+            <React.Fragment key={group.region}>
+              <span style={{ color: 'rgba(255,255,255,0.3)', margin: '0 4px' }}>|</span>
+              <span style={{
+                fontSize: '11px',
+                fontWeight: 600,
+                letterSpacing: '1.5px',
+                textTransform: 'uppercase',
+                marginRight: '2px'
+              }} className="text-white dark:text-slate-300 opacity-70">{group.label}:</span>
+              {group.locations.map(location => (
+                <button
+                  key={location.slug}
+                  onClick={() => setSelectedSlug(location.slug)}
+                  className="location-filter-button filter-button"
+                  data-active={selectedSlug === location.slug}
+                  type="button"
+                  aria-pressed={selectedSlug === location.slug}
+                  style={{ padding: '6px 12px', fontSize: '13px' }}
+                >
+                  {location.name.replace('The Catch — ', '')}
+                </button>
+              ))}
+            </React.Fragment>
           ))}
         </div>
 

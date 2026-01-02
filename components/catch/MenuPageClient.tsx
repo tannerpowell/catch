@@ -1,7 +1,19 @@
 'use client';
 
-import { useState, useMemo, useCallback } from "react";
-import type { Location, MenuCategory, MenuItem } from "@/lib/types";
+import React, { useState, useMemo, useCallback } from "react";
+import type { Location, LocationRegion, MenuCategory, MenuItem } from "@/lib/types";
+
+// Region display labels - matches LocationBar.tsx
+const REGION_LABELS: Record<LocationRegion, string> = {
+  'dfw': 'DFW',
+  'houston': 'Houston',
+  'oklahoma': 'Oklahoma',
+  'east-tx': 'East Texas',
+  'west-tx': 'West Texas',
+};
+
+// Region display order
+const REGION_ORDER: LocationRegion[] = ['dfw', 'houston', 'oklahoma', 'east-tx', 'west-tx'];
 import CategoryPills from "./CategoryPills";
 import MenuItemCard from "./MenuItemCard";
 import { findNearestLocation } from "@/lib/utils/findNearestLocation";
@@ -21,9 +33,24 @@ export default function MenuPageClient({ categories, items, locations, imageMap 
   const [selectedSlug, setSelectedSlug] = useState<string>(dentonLocation?.slug ?? locations[0]?.slug ?? "all");
   const [isLocating, setIsLocating] = useState(false);
 
-  // Group locations by region using the region field from Sanity
-  const dfwLocations = locations.filter(loc => loc.region === 'dfw');
-  const houstonLocations = locations.filter(loc => loc.region === 'houston');
+  // Group locations by region dynamically (supports all regions)
+  const groupedLocations = useMemo(() => {
+    const groups: { label: string; region: LocationRegion | 'other'; locations: Location[] }[] = [];
+
+    // Group by region in defined order
+    REGION_ORDER.forEach(region => {
+      const regionLocations = locations.filter(l => l.region === region);
+      if (regionLocations.length) {
+        groups.push({ label: REGION_LABELS[region], region, locations: regionLocations });
+      }
+    });
+
+    // Add any locations without a region to "Other"
+    const other = locations.filter(l => !l.region);
+    if (other.length) groups.push({ label: 'Other', region: 'other', locations: other });
+
+    return groups;
+  }, [locations]);
 
   // Find nearest location handler
   const handleFindNearest = useCallback(() => {
@@ -488,34 +515,22 @@ export default function MenuPageClient({ categories, items, locations, imageMap 
             {isLocating ? 'Finding...' : 'Near Me'}
           </button>
 
-          <span className="pm-location-divider" />
-
-          {/* DFW Locations */}
-          <span className="pm-region-label">DFW</span>
-          {dfwLocations.map(location => (
-            <button
-              key={location.slug}
-              onClick={() => setSelectedSlug(location.slug)}
-              className="pm-btn pm-btn-location"
-              data-active={selectedSlug === location.slug}
-            >
-              {location.name.replace('The Catch — ', '')}
-            </button>
-          ))}
-
-          <span className="pm-location-divider" />
-
-          {/* Houston Locations */}
-          <span className="pm-region-label">Houston</span>
-          {houstonLocations.map(location => (
-            <button
-              key={location.slug}
-              onClick={() => setSelectedSlug(location.slug)}
-              className="pm-btn pm-btn-location"
-              data-active={selectedSlug === location.slug}
-            >
-              {location.name.replace('The Catch — ', '')}
-            </button>
+          {/* All Regions - dynamically rendered */}
+          {groupedLocations.map((group) => (
+            <React.Fragment key={group.region}>
+              <span className="pm-location-divider" />
+              <span className="pm-region-label">{group.label}</span>
+              {group.locations.map(location => (
+                <button
+                  key={location.slug}
+                  onClick={() => setSelectedSlug(location.slug)}
+                  className="pm-btn pm-btn-location"
+                  data-active={selectedSlug === location.slug}
+                >
+                  {location.name.replace('The Catch — ', '')}
+                </button>
+              ))}
+            </React.Fragment>
           ))}
         </div>
 
