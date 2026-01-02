@@ -386,7 +386,7 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
             textTransform: 'uppercase',
             marginRight: '2px'
           }} className="text-white dark:text-slate-300 opacity-70">DFW:</span>
-          {locations.filter(loc => ['denton', 'coit-campbell', 'garland'].includes(loc.slug)).map(location => (
+          {locations.filter(loc => loc.region === 'dfw').map(location => (
             <button
               key={location.slug}
               onClick={() => setSelectedSlug(location.slug)}
@@ -410,7 +410,7 @@ export default function Menu2PageClient({ categories, items, locations, imageMap
             textTransform: 'uppercase',
             marginRight: '2px'
           }} className="text-white dark:text-slate-300 opacity-70">HOUSTON:</span>
-          {locations.filter(loc => !['denton', 'coit-campbell', 'garland'].includes(loc.slug)).map(location => (
+          {locations.filter(loc => loc.region === 'houston').map(location => (
             <button
               key={location.slug}
               onClick={() => setSelectedSlug(location.slug)}

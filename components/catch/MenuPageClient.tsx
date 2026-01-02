@@ -21,9 +21,9 @@ export default function MenuPageClient({ categories, items, locations, imageMap 
   const [selectedSlug, setSelectedSlug] = useState<string>(dentonLocation?.slug ?? locations[0]?.slug ?? "all");
   const [isLocating, setIsLocating] = useState(false);
 
-  // DFW and Houston location splits
-  const dfwLocations = locations.filter(loc => ['denton', 'coit-campbell', 'garland'].includes(loc.slug));
-  const houstonLocations = locations.filter(loc => !['denton', 'coit-campbell', 'garland'].includes(loc.slug));
+  // Group locations by region using the region field from Sanity
+  const dfwLocations = locations.filter(loc => loc.region === 'dfw');
+  const houstonLocations = locations.filter(loc => loc.region === 'houston');
 
   // Find nearest location handler
   const handleFindNearest = useCallback(() => {

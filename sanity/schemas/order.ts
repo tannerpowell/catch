@@ -1,4 +1,5 @@
 import { defineType, defineField } from "sanity";
+import { ShoppingBag } from "lucide-react";
 
 // Type for Sanity validation context
 interface ValidationContext {
@@ -42,6 +43,7 @@ export default defineType({
   name: "order",
   title: "Order",
   type: "document",
+  icon: ShoppingBag,
   fields: [
     // === ORDER IDENTIFICATION ===
     defineField({

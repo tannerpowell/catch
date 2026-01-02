@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import type { Location } from '@/lib/types';
+import type { Location, LocationRegion } from '@/lib/types';
 import { formatPhone } from '@/lib/utils/formatPhone';
 
 interface LocationBarProps {
@@ -14,12 +14,17 @@ interface LocationBarProps {
   isGeoDenied: boolean;
 }
 
-// Region groupings
-const DFW_SLUGS = ['denton', 'coit-campbell', 'garland', 'arlington', 'burleson'];
-const HOUSTON_SLUGS = ['conroe', 'humble', 's-post-oak', 'willowbrook', 'atascocita'];
-const OKLAHOMA_SLUGS = ['okc-memorial', 'midwest-city', 'moore'];
-const EAST_TEXAS_SLUGS = ['tyler', 'longview'];
-const WEST_TEXAS_SLUGS = ['lubbock', 'wichita-falls'];
+// Region display labels
+const REGION_LABELS: Record<LocationRegion, string> = {
+  'dfw': 'DFW',
+  'houston': 'Houston',
+  'oklahoma': 'Oklahoma',
+  'east-tx': 'East Texas',
+  'west-tx': 'West Texas',
+};
+
+// Region display order
+const REGION_ORDER: LocationRegion[] = ['dfw', 'houston', 'oklahoma', 'east-tx', 'west-tx'];
 
 /**
  * Top strip location bar with Find Nearest CTA and location dropdown.
@@ -34,24 +39,20 @@ export function LocationBar({
   geoError,
   isGeoDenied,
 }: LocationBarProps) {
-  // Group locations by region
+  // Group locations by region (using region field from Sanity)
   const groupedLocations = React.useMemo(() => {
     const groups: { label: string; locations: Location[] }[] = [];
 
-    const dfw = locations.filter(l => DFW_SLUGS.includes(l.slug));
-    const houston = locations.filter(l => HOUSTON_SLUGS.includes(l.slug));
-    const oklahoma = locations.filter(l => OKLAHOMA_SLUGS.includes(l.slug));
-    const eastTexas = locations.filter(l => EAST_TEXAS_SLUGS.includes(l.slug));
-    const westTexas = locations.filter(l => WEST_TEXAS_SLUGS.includes(l.slug));
-    const other = locations.filter(l =>
-      ![...DFW_SLUGS, ...HOUSTON_SLUGS, ...OKLAHOMA_SLUGS, ...EAST_TEXAS_SLUGS, ...WEST_TEXAS_SLUGS].includes(l.slug)
-    );
+    // Group by region in defined order
+    REGION_ORDER.forEach(region => {
+      const regionLocations = locations.filter(l => l.region === region);
+      if (regionLocations.length) {
+        groups.push({ label: REGION_LABELS[region], locations: regionLocations });
+      }
+    });
 
-    if (dfw.length) groups.push({ label: 'DFW', locations: dfw });
-    if (houston.length) groups.push({ label: 'Houston', locations: houston });
-    if (oklahoma.length) groups.push({ label: 'Oklahoma', locations: oklahoma });
-    if (eastTexas.length) groups.push({ label: 'East Texas', locations: eastTexas });
-    if (westTexas.length) groups.push({ label: 'West Texas', locations: westTexas });
+    // Add any locations without a region to "Other"
+    const other = locations.filter(l => !l.region);
     if (other.length) groups.push({ label: 'Other', locations: other });
 
     return groups;

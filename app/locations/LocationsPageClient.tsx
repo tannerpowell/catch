@@ -6,6 +6,7 @@ import { fallbackGeoCoordinates } from '@/lib/adapters/sanity-catch';
 import { formatPhone } from '@/lib/utils/formatPhone';
 import { getDistance } from '@/lib/utils/distance';
 import styles from './LocationsPageClient.module.css';
+import type { LocationRegion } from '@/lib/types';
 
 const LocationsMap = dynamic(() => import('@/components/catch/LocationsMap'), {
   ssr: false,
@@ -15,6 +16,7 @@ const LocationsMap = dynamic(() => import('@/components/catch/LocationsMap'), {
 interface Location {
   slug: string;
   name: string;
+  region?: LocationRegion;
   addressLine1: string;
   addressLine2?: string;
   city: string;
@@ -34,14 +36,14 @@ interface LocationsPageClientProps {
   locations: Location[];
 }
 
-// Region definitions matching LocationBar.tsx
-const REGIONS: Record<string, { label: string; slugs: string[] | null }> = {
-  ALL: { label: 'All', slugs: null },
-  DFW: { label: 'DFW', slugs: ['denton', 'coit-campbell', 'garland', 'arlington', 'burleson'] },
-  HOUSTON: { label: 'Houston', slugs: ['conroe', 'humble', 's-post-oak', 'willowbrook', 'atascocita'] },
-  OKLAHOMA: { label: 'Oklahoma', slugs: ['okc-memorial', 'midwest-city', 'moore'] },
-  EAST_TX: { label: 'East TX', slugs: ['tyler', 'longview'] },
-  WEST_TX: { label: 'West TX', slugs: ['lubbock', 'wichita-falls'] },
+// Region display configuration
+const REGIONS: Record<string, { label: string; regionValue: LocationRegion | null }> = {
+  ALL: { label: 'All', regionValue: null },
+  DFW: { label: 'DFW', regionValue: 'dfw' },
+  HOUSTON: { label: 'Houston', regionValue: 'houston' },
+  OKLAHOMA: { label: 'Oklahoma', regionValue: 'oklahoma' },
+  EAST_TX: { label: 'East TX', regionValue: 'east-tx' },
+  WEST_TX: { label: 'West TX', regionValue: 'west-tx' },
 };
 
 type RegionKey = 'ALL' | 'DFW' | 'HOUSTON' | 'OKLAHOMA' | 'EAST_TX' | 'WEST_TX';
@@ -212,8 +214,8 @@ export default function LocationsPageClient({ locations }: LocationsPageClientPr
 
   const filteredLocations = useMemo(() => {
     const regionConfig = REGIONS[region];
-    if (!regionConfig.slugs) return locations;
-    return locations.filter(location => regionConfig.slugs!.includes(location.slug));
+    if (!regionConfig.regionValue) return locations;
+    return locations.filter(location => location.region === regionConfig.regionValue);
   }, [locations, region]);
 
   // Group locations by region for display
@@ -228,7 +230,7 @@ export default function LocationsPageClient({ locations }: LocationsPageClientPr
 
     regionOrder.forEach(r => {
       const regionConfig = REGIONS[r];
-      const regionLocations = locations.filter(l => regionConfig.slugs?.includes(l.slug));
+      const regionLocations = locations.filter(l => l.region === regionConfig.regionValue);
       if (regionLocations.length > 0) {
         groups.push({ region: r, locations: regionLocations });
       }

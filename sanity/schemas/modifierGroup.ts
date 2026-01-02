@@ -1,4 +1,5 @@
 import { defineField, defineType } from "sanity";
+import { SlidersHorizontal } from "lucide-react";
 
 /**
  * Modifier Option - Individual choice within a modifier group
@@ -68,6 +69,7 @@ export default defineType({
   name: "modifierGroup",
   title: "Modifier Group",
   type: "document",
+  icon: SlidersHorizontal,
   fields: [
     defineField({
       name: "name",

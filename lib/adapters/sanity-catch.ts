@@ -110,10 +110,13 @@ const GeoPointSchema = z.object({
   lng: z.number().finite().min(-180).max(180)
 }).nullable().optional();
 
+const RegionSchema = z.enum(["dfw", "houston", "oklahoma", "east-tx", "west-tx"]).nullable().optional();
+
 const LocationSchema = z.object({
   _id: z.string(),
   name: z.string(),
   slug: z.string(),
+  region: RegionSchema,
   addressLine1: z.string().nullable().optional(),
   addressLine2: z.string().nullable().optional(),
   city: z.string().nullable().optional(),
@@ -186,7 +189,7 @@ const ItemSchema = z.object({
 });
 
 const qCategories = groq`*[_type=="menuCategory"]|order(position asc){ "slug": slug.current, title, position, description }`;
-const qLocations = groq`*[_type=="location"]{ _id, name, "slug": slug.current, addressLine1, addressLine2, city, state, postalCode, phone, hours, revelUrl, doordashUrl, uberEatsUrl, menuUrl, directionsUrl, "heroImage": heroImage.asset->url, "geo": geo }`;
+const qLocations = groq`*[_type=="location"]{ _id, name, "slug": slug.current, region, addressLine1, addressLine2, city, state, postalCode, phone, hours, revelUrl, doordashUrl, uberEatsUrl, menuUrl, directionsUrl, "heroImage": heroImage.asset->url, "geo": geo }`;
 const qItems = groq`*[_type=="menuItem"]{
   _id,
   name,
@@ -283,6 +286,7 @@ const fetchLocationsRaw = async (): Promise<Location[]> => {
     _id: l._id,
     name: l.name,
     slug: l.slug,
+    region: l.region ?? undefined,
     addressLine1: l.addressLine1 ?? "",
     addressLine2: l.addressLine2 ?? undefined,
     city: l.city ?? "",
@@ -444,7 +448,7 @@ export const adapter: BrandAdapter = {
     }
     try {
       const one = await withTimeout(client.fetch(
-        groq`*[_type=="location" && slug.current==$s][0]{ _id, name, "slug": slug.current, addressLine1, addressLine2, city, state, postalCode, phone, hours, menuUrl, directionsUrl, revelUrl, doordashUrl, uberEatsUrl, "heroImage": heroImage.asset->url, "geo": geo }`,
+        groq`*[_type=="location" && slug.current==$s][0]{ _id, name, "slug": slug.current, region, addressLine1, addressLine2, city, state, postalCode, phone, hours, menuUrl, directionsUrl, revelUrl, doordashUrl, uberEatsUrl, "heroImage": heroImage.asset->url, "geo": geo }`,
         { s: slug }
       ));
       if (!one) return undefined;
@@ -453,6 +457,7 @@ export const adapter: BrandAdapter = {
         _id: parsed._id,
         name: parsed.name,
         slug: parsed.slug,
+        region: parsed.region ?? undefined,
         addressLine1: parsed.addressLine1 ?? '',
         city: parsed.city ?? '',
         state: parsed.state ?? '',
