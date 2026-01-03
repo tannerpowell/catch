@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import type { Route } from "next";
 import { useState, useEffect, useRef } from "react";
 import { ShoppingCart } from 'lucide-react';
 import { useCart } from '@/lib/contexts/CartContext';
@@ -46,16 +47,16 @@ type GsapGlobal = {
   to: (targets: Element | NodeListOf<Element>, vars: Record<string, unknown>) => void;
 };
 
-const navLinks = [
-  { href: "/menu", label: "menu" },
-  { href: "/studio", label: "sanity studio" },
-  { href: "/features", label: "features" },
-  { href: "/tv-menu-display", label: "tv menu" },
-  { href: "/print-menu", label: "print menu" },
-  { href: "/locations", label: "locations" },
-  { href: "/private-events", label: "events" },
-  { href: "/sitemap", label: "sitemap" }
-] as const;
+const navLinks: { href: Route; label: string }[] = [
+  { href: "/menu" as Route, label: "menu" },
+  { href: "/studio" as Route, label: "sanity studio" },
+  { href: "/features" as Route, label: "features" },
+  { href: "/tv-menu-display" as Route, label: "tv menu" },
+  { href: "/print-menu" as Route, label: "print menu" },
+  { href: "/locations" as Route, label: "locations" },
+  { href: "/private-events" as Route, label: "events" },
+  { href: "/sitemap" as Route, label: "sitemap" }
+];
 
 /**
  * Renders the site header with logo, primary navigation, a cart button (with item count badge), a hamburger that opens a full-page mobile menu, and a cart drawer.
