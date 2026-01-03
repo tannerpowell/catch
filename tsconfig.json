@@ -24,8 +24,8 @@
       "@/lib/*": [
         "lib/*"
       ],
-      "@/sanity/*": [
-        "sanity/*"
+      "@/sanity-config/*": [
+        "sanity-config/*"
       ],
       "@/emails/*": [
         "emails/*"
