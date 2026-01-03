@@ -17,9 +17,17 @@ import { formatMenuItemName, formatMenuItemDescription } from '../lib/menu-forma
 
 dotenv.config({ path: '.env.local' });
 
+const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
+const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET;
+
+if (!projectId || !dataset) {
+  console.error('Missing required environment variables: NEXT_PUBLIC_SANITY_PROJECT_ID and/or NEXT_PUBLIC_SANITY_DATASET');
+  process.exit(1);
+}
+
 const client = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
+  projectId,
+  dataset,
   token: process.env.SANITY_WRITE_TOKEN,
   apiVersion: '2024-01-01',
   useCdn: false,
@@ -112,10 +120,12 @@ async function main() {
   if (fixes.length > 0 && !dryRun) {
     console.log('\nApplying fixes...\n');
 
+    const transaction = client.transaction();
     for (const fix of fixes) {
-      await client.patch(fix.id).set({ [fix.field]: fix.newValue }).commit();
-      console.log(`✓ Fixed: ${fix.itemName} [${fix.field}]`);
+      transaction.patch(fix.id, (p) => p.set({ [fix.field]: fix.newValue }));
     }
+    await transaction.commit();
+    fixes.forEach((fix) => console.log(`✓ Fixed: ${fix.itemName} [${fix.field}]`));
 
     console.log(`\n✅ Fixed ${fixes.length} fields!`);
   } else if (dryRun && fixes.length > 0) {

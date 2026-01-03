@@ -1,5 +1,5 @@
 'use client'
-/* eslint-disable @next/next/no-img-element */
+/* eslint-disable @next/next/no-img-element -- Sanity CDN images have dynamic URLs that don't benefit from next/image optimization */
 
 import React, { useEffect, useMemo, useState, useCallback } from 'react'
 import { useClient } from 'sanity'
@@ -370,6 +370,60 @@ function LocationRow({
   )
 }
 
+// Location group card for the availability table
+function LocationGroup({
+  group,
+  detail,
+  overrides,
+  onAvailabilityToggle,
+  onPriceChange,
+}: {
+  group: { title: string; items: LocationDoc[] }
+  detail: MenuItemDetail
+  overrides: LocationOverride[]
+  onAvailabilityToggle: (locationId: string, available: boolean) => void
+  onPriceChange: (locationId: string, value: string) => void
+}) {
+  return (
+    <Card radius={2} style={{ border: '1px solid var(--card-border-color)', overflow: 'hidden' }}>
+      <Box
+        padding={2}
+        style={{
+          background: 'var(--card-skeleton-color-from)',
+          borderBottom: '1px solid var(--card-border-color)',
+        }}
+      >
+        <Flex align="center" justify="space-between">
+          <Text size={1} weight="semibold">{group.title}</Text>
+          <Text size={0} muted>{group.items.length}</Text>
+        </Flex>
+      </Box>
+      {group.items.map((loc) => {
+        const current = overrides.find((ov) => ov.location?._ref === loc._id)
+        // Matches lib/utils/menuAvailability.ts OPT-IN MODEL:
+        // - If availableEverywhere: always available (no per-location opt-out)
+        // - Otherwise: must have explicit available: true
+        const isAvailable = detail.availableEverywhere === true
+          ? true
+          : current?.available === true
+        return (
+          <LocationRow
+            key={loc._id}
+            location={loc}
+            available={isAvailable}
+            availabilityDisabled={detail.availableEverywhere === true}
+            hasOverride={typeof current?.price === 'number'}
+            currentPrice={current?.price}
+            basePrice={detail.basePrice}
+            onAvailabilityToggle={(available) => onAvailabilityToggle(loc._id, available)}
+            onPriceChange={(value) => onPriceChange(loc._id, value)}
+          />
+        )
+      })}
+    </Card>
+  )
+}
+
 // Save status indicator
 function SaveStatus({ saving, saved, error }: { saving: boolean; saved: boolean; error?: string }) {
   if (error) {
@@ -661,7 +715,8 @@ export function MenuManagerPane() {
   }
 
   const handlePriceChange = (locationId: string, value: string) => {
-    const nextPrice = value === '' ? undefined : parseFloat(value)
+    const parsed = parseFloat(value)
+    const nextPrice = value === '' ? undefined : Math.round(parsed * 100) / 100
     if (nextPrice !== undefined && Number.isNaN(nextPrice)) return
     upsertOverride(locationId, (current) => ({
       _key: current?._key || createKey(),
@@ -680,6 +735,12 @@ export function MenuManagerPane() {
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file || !detail?._id) return
+
+    const maxSizeMB = 10
+    if (file.size > maxSizeMB * 1024 * 1024) {
+      setSaveError(`Image too large. Maximum size is ${maxSizeMB}MB.`)
+      return
+    }
 
     setUploading(true)
     try {
@@ -1460,84 +1521,28 @@ export function MenuManagerPane() {
                         {/* Left column: DFW + Houston */}
                         <Stack space={3} style={{ flex: 1 }}>
                           {groupedLocations.filter(g => g.column === 'left').map((group) => (
-                            <Card key={group.title} radius={2} style={{ border: '1px solid var(--card-border-color)', overflow: 'hidden' }}>
-                              <Box
-                                padding={2}
-                                style={{
-                                  background: 'var(--card-skeleton-color-from)',
-                                  borderBottom: '1px solid var(--card-border-color)',
-                                }}
-                              >
-                                <Flex align="center" justify="space-between">
-                                  <Text size={1} weight="semibold">{group.title}</Text>
-                                  <Text size={0} muted>{group.items.length}</Text>
-                                </Flex>
-                              </Box>
-                              {group.items.map((loc) => {
-                                const current = overrides.find((ov) => ov.location?._ref === loc._id)
-                                // Matches lib/utils/menuAvailability.ts OPT-IN MODEL:
-                                // - If availableEverywhere: always available (no per-location opt-out)
-                                // - Otherwise: must have explicit available: true
-                                const isAvailable = detail.availableEverywhere === true
-                                  ? true
-                                  : current?.available === true
-                                return (
-                                  <LocationRow
-                                    key={loc._id}
-                                    location={loc}
-                                    available={isAvailable}
-                                    availabilityDisabled={detail.availableEverywhere === true}
-                                    hasOverride={typeof current?.price === 'number'}
-                                    currentPrice={current?.price}
-                                    basePrice={detail.basePrice}
-                                    onAvailabilityToggle={(available) => handleAvailabilityToggle(loc._id, available)}
-                                    onPriceChange={(value) => handlePriceChange(loc._id, value)}
-                                  />
-                                )
-                              })}
-                            </Card>
+                            <LocationGroup
+                              key={group.title}
+                              group={group}
+                              detail={detail}
+                              overrides={overrides}
+                              onAvailabilityToggle={handleAvailabilityToggle}
+                              onPriceChange={handlePriceChange}
+                            />
                           ))}
                         </Stack>
 
                         {/* Right column: Oklahoma + Other */}
                         <Stack space={3} style={{ flex: 1 }}>
                           {groupedLocations.filter(g => g.column === 'right').map((group) => (
-                            <Card key={group.title} radius={2} style={{ border: '1px solid var(--card-border-color)', overflow: 'hidden' }}>
-                              <Box
-                                padding={2}
-                                style={{
-                                  background: 'var(--card-skeleton-color-from)',
-                                  borderBottom: '1px solid var(--card-border-color)',
-                                }}
-                              >
-                                <Flex align="center" justify="space-between">
-                                  <Text size={1} weight="semibold">{group.title}</Text>
-                                  <Text size={0} muted>{group.items.length}</Text>
-                                </Flex>
-                              </Box>
-                              {group.items.map((loc) => {
-                                const current = overrides.find((ov) => ov.location?._ref === loc._id)
-                                // Matches lib/utils/menuAvailability.ts OPT-IN MODEL:
-                                // - If availableEverywhere: always available (no per-location opt-out)
-                                // - Otherwise: must have explicit available: true
-                                const isAvailable = detail.availableEverywhere === true
-                                  ? true
-                                  : current?.available === true
-                                return (
-                                  <LocationRow
-                                    key={loc._id}
-                                    location={loc}
-                                    available={isAvailable}
-                                    availabilityDisabled={detail.availableEverywhere === true}
-                                    hasOverride={typeof current?.price === 'number'}
-                                    currentPrice={current?.price}
-                                    basePrice={detail.basePrice}
-                                    onAvailabilityToggle={(available) => handleAvailabilityToggle(loc._id, available)}
-                                    onPriceChange={(value) => handlePriceChange(loc._id, value)}
-                                  />
-                                )
-                              })}
-                            </Card>
+                            <LocationGroup
+                              key={group.title}
+                              group={group}
+                              detail={detail}
+                              overrides={overrides}
+                              onAvailabilityToggle={handleAvailabilityToggle}
+                              onPriceChange={handlePriceChange}
+                            />
                           ))}
                         </Stack>
 
