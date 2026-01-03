@@ -327,7 +327,7 @@ export function ReorderModal({
                         aria-checked={selectedItems.has(item._key)}
                         className={`
                           flex items-start gap-3 p-3 rounded-lg border cursor-pointer
-                          transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
+                          transition-colors focus:outline-hidden focus:ring-2 focus:ring-primary focus:ring-offset-2
                           ${
                             selectedItems.has(item._key)
                               ? 'border-primary bg-primary/5'

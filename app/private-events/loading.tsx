@@ -16,7 +16,7 @@ export default function PrivateEventsLoading() {
       </section>
 
       {/* Form Section */}
-      <section className="py-16 px-4 bg-[var(--color--crema-fresca)]">
+      <section className="py-16 px-4 bg-(--color--crema-fresca)">
         <div className="max-w-2xl mx-auto space-y-6">
           <Skeleton className="h-8 w-48 mx-auto" />
           <div className="space-y-4">

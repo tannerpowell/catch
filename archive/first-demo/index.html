@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The Catch Seafood - Fresh Cajun Seafood | Houston</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <link rel="stylesheet" href="styles.css">
 
   <!-- lightGallery CSS -->
@@ -220,7 +220,7 @@
                             {item.image && (
                               <a
                                 href={item.image}
-                                className="menu-item-lightbox flex-shrink-0"
+                                className="menu-item-lightbox shrink-0"
                                 data-lg-size="1200-1200"
                               >
                                 <div className="w-32 h-32 rounded-sm overflow-hidden">
@@ -289,18 +289,18 @@
                         <h3 className="text-3xl mb-6" style={{color: '#8b4513'}}>{loc.name}</h3>
                         <div className="space-y-3 mb-6" style={{color: '#7a5f4f'}}>
                           <div className="flex items-start gap-3">
-                            <MapPin className="w-5 h-5 mt-1 flex-shrink-0" style={{color: '#c17a5c'}} />
+                            <MapPin className="w-5 h-5 mt-1 shrink-0" style={{color: '#c17a5c'}} />
                             <div>
                               <p>{loc.address}</p>
                               <p>{loc.city}</p>
                             </div>
                           </div>
                           <div className="flex items-center gap-3">
-                            <Phone className="w-5 h-5 flex-shrink-0" style={{color: '#c17a5c'}} />
+                            <Phone className="w-5 h-5 shrink-0" style={{color: '#c17a5c'}} />
                             <a href={`tel:${loc.phone}`} className="hover:underline">{loc.phone}</a>
                           </div>
                           <div className="flex items-center gap-3">
-                            <Clock className="w-5 h-5 flex-shrink-0" style={{color: '#c17a5c'}} />
+                            <Clock className="w-5 h-5 shrink-0" style={{color: '#c17a5c'}} />
                             <p>{loc.hours}</p>
                           </div>
                         </div>
@@ -336,7 +336,7 @@
             ></div>
             <div className="relative z-10 text-center px-6 max-w-4xl">
               <h1 className="text-6xl md:text-8xl mb-6 text-white drop-shadow-lg">The Catch</h1>
-              <p className="text-2xl md:text-4xl text-white/95 mb-12 font-light leading-relaxed drop-shadow">
+              <p className="text-2xl md:text-4xl text-white/95 mb-12 font-light leading-relaxed drop-shadow-sm">
                 Where the Gulf meets Louisiana tradition
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">

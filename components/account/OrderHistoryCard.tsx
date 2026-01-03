@@ -62,7 +62,7 @@ export function OrderHistoryCard({ order, onReorder }: OrderHistoryCardProps) {
   const hasMoreItems = order.itemCount > 3;
 
   return (
-    <Card className="border-[var(--color-border-subtle)] hover:shadow-md transition-shadow">
+    <Card className="border-(--color-border-subtle) hover:shadow-md transition-shadow">
       <CardContent className="p-4">
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
           {/* Order info */}

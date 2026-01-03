@@ -7,7 +7,7 @@ export default function HomeLoading() {
   return (
     <div className="animate-in fade-in duration-300">
       {/* Hero skeleton - full viewport */}
-      <section className="relative h-[100vh] bg-slate-900">
+      <section className="relative h-screen bg-slate-900">
         <Skeleton className="absolute inset-0 bg-slate-800" />
 
         {/* Hero content skeleton */}
@@ -34,7 +34,7 @@ export default function HomeLoading() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3, 4, 5].map((i) => (
               <div key={i} className={`${i === 1 ? 'md:col-span-2 lg:col-span-1' : ''}`}>
-                <Skeleton className="aspect-[4/3] w-full rounded-lg mb-4" />
+                <Skeleton className="aspect-4/3 w-full rounded-lg mb-4" />
                 <Skeleton className="h-6 w-40 mb-2" />
                 <Skeleton className="h-4 w-full mb-1" />
                 <Skeleton className="h-4 w-3/4" />

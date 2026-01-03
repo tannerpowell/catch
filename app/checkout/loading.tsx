@@ -5,7 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
  */
 export default function CheckoutLoading() {
   return (
-    <div className="min-h-screen bg-[var(--color--crema-fresca,#FDF8ED)] dark:bg-[#0f1720] py-20 px-6 animate-in fade-in duration-300">
+    <div className="min-h-screen bg-(--color--crema-fresca,#FDF8ED) dark:bg-[#0f1720] py-20 px-6 animate-in fade-in duration-300">
       <div className="max-w-[900px] mx-auto">
         {/* Title */}
         <Skeleton className="h-10 w-36 mb-10" />

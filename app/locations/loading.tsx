@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function LocationsLoading() {
   return (
-    <div className="min-h-screen bg-[var(--color--dark-slate-deepest)] animate-in fade-in duration-300">
+    <div className="min-h-screen bg-(--color--dark-slate-deepest) animate-in fade-in duration-300">
       {/* Map skeleton */}
       <div className="h-[300px] md:h-[400px]">
         <Skeleton className="h-full w-full bg-white/5" />

@@ -100,7 +100,7 @@ export function OrderTimeline({ order }: OrderTimelineProps) {
   }
 
   return (
-    <Card className="border-[var(--color-border-subtle)]">
+    <Card className="border-(--color-border-subtle)">
       <CardHeader className="pb-3">
         <CardTitle className="text-lg font-display">Order Timeline</CardTitle>
       </CardHeader>

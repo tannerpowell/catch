@@ -25,7 +25,7 @@ export default function SignUpPage() {
         appearance={{
           elements: {
             rootBox: 'mx-auto',
-            card: 'shadow-soft-card border border-[var(--color-border-subtle)]',
+            card: 'shadow-soft-card border border-(--color-border-subtle)',
           },
         }}
         fallbackRedirectUrl="/account"
