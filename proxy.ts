@@ -1,6 +1,7 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import type { NextFetchEvent } from 'next/server';
 
 // Check if Clerk is configured
 const isClerkConfigured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
@@ -13,8 +14,8 @@ const isProtectedRoute = createRouteMatcher([
   '/api/reorder(.*)',
 ]);
 
-// Fallback middleware when Clerk is not configured
-function fallbackMiddleware(request: NextRequest) {
+// Fallback proxy when Clerk is not configured
+function fallbackProxy(request: NextRequest) {
   // Redirect protected routes to home when auth is not configured
   const url = request.nextUrl.clone();
   if (isProtectedRoute(request)) {
@@ -33,8 +34,13 @@ const clerkHandler = clerkMiddleware(async (auth, req) => {
   }
 });
 
-// Export the appropriate middleware based on configuration
-export default isClerkConfigured ? clerkHandler : fallbackMiddleware;
+// Export the proxy function (Next.js 16+ convention)
+export function proxy(request: NextRequest, event: NextFetchEvent) {
+  if (isClerkConfigured) {
+    return clerkHandler(request, event);
+  }
+  return fallbackProxy(request);
+}
 
 export const config = {
   matcher: [
