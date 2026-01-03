@@ -60,6 +60,7 @@ const sections: SitemapSection[] = [
     title: 'DEVELOPMENT',
     description: 'Tools for building and testing',
     links: [
+      { href: '/dev/roadmap' as Route, label: 'Roadmap', description: 'Development progress and upcoming features', badge: 'Dev' },
       { href: '/modal' as Route, label: 'Modifier Modal', description: 'Test the item customization sheet', badge: 'Dev' },
       { href: '/test' as Route, label: 'Component Test', description: 'Test page for components', badge: 'Dev' },
       { href: '/design-demo' as Route, label: 'Design Demo', description: 'Interactive design system comparison', badge: 'Dev' },
