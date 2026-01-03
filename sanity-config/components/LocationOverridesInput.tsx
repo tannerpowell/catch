@@ -10,6 +10,7 @@ import {
 } from "@sanity/ui";
 import type { ArrayOfObjectsInputProps, FieldProps } from "sanity";
 import { PatchEvent, set, unset, useClient, useFormValue } from "sanity";
+import { apiVersion } from "../env";
 
 // Custom field wrapper - removes Sanity's default padding/label
 export function LocationOverridesField(props: FieldProps) {
@@ -172,7 +173,7 @@ function LocationRow({
 
 export function LocationOverridesInput(props: ArrayOfObjectsInputProps) {
   const { value, onChange } = props;
-  const client = useClient({ apiVersion: "2023-08-01" });
+  const client = useClient({ apiVersion });
   const [locations, setLocations] = useState<LocationDoc[]>([]);
   const [loading, setLoading] = useState(true);
   const basePrice = useFormValue(["basePrice"]) as number | undefined;
