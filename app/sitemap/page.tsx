@@ -39,6 +39,14 @@ const sections: SitemapSection[] = [
     ],
   },
   {
+    title: 'MARKETING',
+    description: 'Showcase and promotional tools',
+    links: [
+      { href: '/ai-images' as Route, label: 'AI Image Gallery', description: 'Browse AI-enhanced menu photography' },
+      { href: '/image-compare' as Route, label: 'Image Compare', description: 'Before/after image slider comparisons' },
+    ],
+  },
+  {
     title: 'OPERATIONS',
     description: 'Back-of-house tools',
     links: [
@@ -54,6 +62,7 @@ const sections: SitemapSection[] = [
     links: [
       { href: '/modal' as Route, label: 'Modifier Modal', description: 'Test the item customization sheet', badge: 'Dev' },
       { href: '/test' as Route, label: 'Component Test', description: 'Test page for components', badge: 'Dev' },
+      { href: '/design-demo' as Route, label: 'Design Demo', description: 'Interactive design system comparison', badge: 'Dev' },
       { href: '/studio' as Route, label: 'Sanity Studio', description: 'Content management system', badge: 'CMS' },
     ],
   },
