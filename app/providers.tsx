@@ -7,8 +7,9 @@ import { CartProvider } from '@/lib/contexts/CartContext';
 import { OrdersProvider } from '@/lib/contexts/OrdersContext';
 import { ImageModeProvider } from '@/lib/contexts/ImageModeContext';
 
-// Check if Clerk is configured
-const isClerkConfigured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
+// Check at module level - this is evaluated once and is consistent
+// because NEXT_PUBLIC_ vars are inlined at build time
+const CLERK_KEY = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
 // Clerk theme customization
 const clerkAppearance = {
@@ -26,13 +27,10 @@ const clerkAppearance = {
 };
 
 /**
- * Wraps the given children with Clerk auth (if configured), theme, orders, and cart context providers.
- *
- * @param children - React nodes to render inside the provider hierarchy
- * @returns A React element that provides auth, theme, orders, and cart context to `children`
+ * Inner providers that don't depend on Clerk configuration
  */
-export function Providers({ children }: { children: ReactNode }) {
-  const content = (
+function CoreProviders({ children }: { children: ReactNode }) {
+  return (
     <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
       <ImageModeProvider>
         <OrdersProvider>
@@ -43,15 +41,25 @@ export function Providers({ children }: { children: ReactNode }) {
       </ImageModeProvider>
     </ThemeProvider>
   );
+}
 
-  // Only wrap with ClerkProvider if keys are configured
-  if (isClerkConfigured) {
+/**
+ * Wraps the given children with Clerk auth (if configured), theme, orders, and cart context providers.
+ * Uses build-time constant for Clerk check to ensure SSR/CSR consistency.
+ *
+ * @param children - React nodes to render inside the provider hierarchy
+ * @returns A React element that provides auth, theme, orders, and cart context to `children`
+ */
+export function Providers({ children }: { children: ReactNode }) {
+  // CLERK_KEY is a build-time constant, so this branch is consistent
+  // between server and client rendering
+  if (CLERK_KEY) {
     return (
       <ClerkProvider appearance={clerkAppearance}>
-        {content}
+        <CoreProviders>{children}</CoreProviders>
       </ClerkProvider>
     );
   }
 
-  return content;
+  return <CoreProviders>{children}</CoreProviders>;
 }
