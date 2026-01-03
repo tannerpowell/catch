@@ -205,7 +205,7 @@ export default function HomePage() {
       <section className="lux-locations">
         <div className="lux-locations__inner lux-locations__inner--centered">
           <div className="lux-locations__content">
-            <h2 className="lux-locations__count">17 Locations</h2>
+            <h2 className="lux-locations__count">16 Locations</h2>
             <p className="lux-locations__subtitle">across Texas &amp; Oklahoma</p>
             <Link href="/locations" className="lux-btn lux-btn--light">
               Find Your Table
