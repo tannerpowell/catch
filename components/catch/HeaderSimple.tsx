@@ -48,6 +48,8 @@ type GsapGlobal = {
 
 const navLinks = [
   { href: "/menu", label: "menu" },
+  { href: "/studio", label: "sanity studio" },
+  { href: "/features", label: "features" },
   { href: "/tv-menu-display", label: "tv menu" },
   { href: "/print-menu", label: "print menu" },
   { href: "/locations", label: "locations" },
