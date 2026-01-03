@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
+import type { Route } from "next";
 
 export const metadata: Metadata = {
   title: "Gulf Coast Seafood Made Fresh",
@@ -208,6 +209,29 @@ export default function HomePage() {
             <p className="lux-locations__subtitle">across Texas &amp; Oklahoma</p>
             <Link href="/locations" className="lux-btn lux-btn--light">
               Find Your Table
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Admin Tools */}
+      <section className="lux-admin">
+        <div className="lux-admin__inner">
+          <span className="lux-eyebrow">Team Tools</span>
+          <div className="lux-admin__links">
+            <Link href={"/studio" as Route} className="lux-admin__link">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <path d="M9 3v18M3 9h18" />
+              </svg>
+              Sanity Studio
+            </Link>
+            <Link href={"/kitchen" as Route} className="lux-admin__link">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <rect x="4" y="2" width="16" height="20" rx="2" />
+                <circle cx="12" cy="18" r="1" />
+              </svg>
+              iPad
             </Link>
           </div>
         </div>

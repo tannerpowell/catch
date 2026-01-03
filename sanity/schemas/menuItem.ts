@@ -1,14 +1,24 @@
 import { defineField, defineType } from "sanity";
-import { LocationOverridesInput } from "../components/LocationOverridesInput";
+import { LocationOverridesInput, LocationOverridesField } from "../components/LocationOverridesInput";
+import { Utensils, DollarSign, Settings2, Image, Layers } from "lucide-react";
 
 export const priceVariant = defineType({
   name: "priceVariant",
   title: "Price Variant",
   type: "object",
   fields: [
-    defineField({ name: "label", type: "string" }),
-    defineField({ name: "price", type: "number" })
-  ]
+    defineField({ name: "label", type: "string", title: "Size/Option" }),
+    defineField({ name: "price", type: "number", title: "Price" })
+  ],
+  preview: {
+    select: { label: "label", price: "price" },
+    prepare({ label, price }) {
+      return {
+        title: label || "Untitled",
+        subtitle: price != null ? `$${price.toFixed(2)}` : "—"
+      };
+    }
+  }
 });
 
 export const locationOverride = defineType({
@@ -22,11 +32,6 @@ export const locationOverride = defineType({
   ]
 });
 
-/**
- * Item-specific modifier override
- * Allows overriding price or availability of a modifier option for THIS item only
- * e.g., "MED" size costs $11.49 for Whitefish Basket but $9.99 for Catfish Basket
- */
 export const itemModifierOverride = defineType({
   name: "itemModifierOverride",
   title: "Item Modifier Override",
@@ -43,20 +48,18 @@ export const itemModifierOverride = defineType({
       name: "optionName",
       title: "Option Name",
       type: "string",
-      description: "The exact name of the option to override (e.g., 'MED', 'Ranch')",
+      description: "Exact name to override (e.g., 'MED', 'Ranch')",
       validation: (rule) => rule.required(),
     }),
     defineField({
       name: "price",
       title: "Price Override",
       type: "number",
-      description: "Override price for this option on this item",
     }),
     defineField({
       name: "available",
       title: "Available",
       type: "boolean",
-      description: "Override availability for this option on this item",
       initialValue: true,
     }),
   ],
@@ -80,121 +83,182 @@ export default defineType({
   name: "menuItem",
   title: "Menu Item",
   type: "document",
+  icon: Utensils,
+  groups: [
+    { name: "pricing", title: "Price & Availability", icon: DollarSign, default: true },
+    { name: "modifiers", title: "Modifiers", icon: Layers },
+    { name: "media", title: "Media", icon: Image },
+    { name: "content", title: "Content", icon: Utensils },
+    { name: "advanced", title: "Advanced", icon: Settings2 },
+  ],
   fieldsets: [
-    { name: "basics", title: "Basics", options: { collapsed: false, columns: 2 } },
-    { name: "pricing", title: "Pricing", options: { collapsed: false, columns: 2 } },
-    { name: "modifiers", title: "Modifiers & Options", options: { collapsed: false } },
-    { name: "media", title: "Media", options: { collapsed: true } },
-    { name: "advanced", title: "Advanced", options: { collapsed: true } },
+    { name: "title", options: { columns: 2 } },
+    { name: "priceRow", title: "Pricing", options: { columns: 2 } },
   ],
   fields: [
+    // ============ CONTENT GROUP ============
     defineField({
       name: "name",
       type: "string",
-      fieldset: "basics",
+      group: "content",
+      fieldset: "title",
       validation: (rule) => rule.required(),
     }),
     defineField({
       name: "slug",
       type: "slug",
       options: { source: "name", maxLength: 96 },
-      fieldset: "basics",
+      group: "content",
+      fieldset: "title",
     }),
     defineField({
       name: "category",
       type: "reference",
       to: [{ type: "menuCategory" }],
-      fieldset: "basics",
+      group: "content",
     }),
     defineField({
       name: "description",
       type: "text",
-      rows: 3,
-      fieldset: "basics",
+      rows: 2,
+      group: "content",
+    }),
+    defineField({
+      name: "badges",
+      type: "array",
+      of: [{ type: "string" }],
+      group: "content",
+      options: {
+        layout: "tags"
+      }
+    }),
+
+    // ============ PRICING GROUP ============
+    defineField({
+      name: "locationOverrides",
+      title: " ", // Minimal title - we render our own header
+      type: "array",
+      of: [{ type: "locationOverride" }],
+      components: {
+        input: LocationOverridesInput,
+        field: LocationOverridesField,
+      },
+      group: "pricing",
     }),
     defineField({
       name: "basePrice",
-      title: "Base price",
+      title: "Base Price",
       type: "number",
-      fieldset: "pricing",
+      group: "pricing",
+      fieldset: "priceRow",
       validation: (rule) => rule.min(0),
     }),
     defineField({
+      name: "availableEverywhere",
+      title: "Available Everywhere",
+      type: "boolean",
+      description: "Override: show at all locations regardless of above",
+      group: "pricing",
+      fieldset: "priceRow",
+      initialValue: false,
+    }),
+    defineField({
       name: "priceVariants",
-      title: "Price Variants (e.g., cup/bowl)",
+      title: "Price Variants",
       type: "array",
       of: [{ type: "priceVariant" }],
-      description: "Simple size/portion options with fixed prices. For complex options, use Modifier Groups below.",
-      fieldset: "pricing",
+      description: "Size options (cup/bowl)",
+      group: "pricing",
     }),
-    // Modifier Groups - for online ordering customization
+
+    // ============ MODIFIERS GROUP ============
     defineField({
       name: "modifierGroups",
       title: "Modifier Groups",
       type: "array",
-      of: [
-        {
-          type: "reference",
-          to: [{ type: "modifierGroup" }],
-        },
-      ],
-      description: "Customization options like Size, Dressing, Sides, Add-Ons. Shared groups can be reused across items.",
-      fieldset: "modifiers",
+      of: [{ type: "reference", to: [{ type: "modifierGroup" }] }],
+      description: "Customization options (Size, Dressing, Sides, Add-Ons)",
+      group: "modifiers",
     }),
     defineField({
       name: "itemModifierOverrides",
-      title: "Item-Specific Modifier Overrides",
+      title: "Item-Specific Overrides",
       type: "array",
       of: [{ type: "itemModifierOverride" }],
-      description: "Override prices or availability for specific modifiers on THIS item only (e.g., different size prices)",
-      fieldset: "modifiers",
+      description: "Override modifier prices for this item only",
+      group: "modifiers",
     }),
     defineField({
       name: "allowSpecialInstructions",
       title: "Allow Special Instructions",
       type: "boolean",
-      description: "Show 'Special Instructions' text field for this item",
+      description: "Show special instructions field for this item",
+      group: "modifiers",
       initialValue: true,
-      fieldset: "modifiers",
     }),
-    defineField({ name: "badges", type: "array", of: [{ type: "string" }], fieldset: "basics" }),
+
+    // ============ MEDIA GROUP ============
     defineField({
       name: "image",
       type: "image",
-      fieldset: "media",
+      group: "media",
       options: { hotspot: true },
       fields: [
         defineField({ name: "alt", type: "string", title: "Alt text" })
       ]
     }),
-    defineField({ name: "imageUrl", type: "url", description: "Source image URL (for re-use/migration)", fieldset: "advanced" }),
-    defineField({ name: "externalId", type: "string", description: "Source product ID (e.g., Revel)", fieldset: "advanced" }),
-    defineField({ name: "storeId", type: "number", description: "Source store ID (if store-specific)", fieldset: "advanced" }),
+    defineField({
+      name: "imageUrl",
+      type: "url",
+      title: "Source Image URL",
+      description: "Original URL for re-importing",
+      group: "media",
+    }),
+
+    // ============ ADVANCED GROUP ============
+    defineField({
+      name: "externalId",
+      type: "string",
+      title: "External ID",
+      description: "Source product ID (e.g., Revel)",
+      group: "advanced",
+    }),
+    defineField({
+      name: "storeId",
+      type: "number",
+      title: "Store ID",
+      description: "Source store ID (if store-specific)",
+      group: "advanced",
+    }),
     defineField({
       name: "source",
       type: "string",
-      options: { list: ["revel", "dfw", "manual"] },
-      fieldset: "advanced",
-    }),
-    defineField({ name: "lastSyncedAt", type: "datetime", fieldset: "advanced" }),
-    defineField({
-      name: "availableEverywhere",
-      title: "Available Everywhere",
-      type: "boolean",
-      description: "Show at ALL locations (for drinks, sides, etc.). When off, item only shows where explicitly enabled below.",
-      initialValue: false,
-      fieldset: "pricing",
+      options: { list: ["revel", "dfw", "manual"], layout: "radio", direction: "horizontal" },
+      group: "advanced",
     }),
     defineField({
-      name: "locationOverrides",
-      title: "Per‑location Overrides",
-      type: "array",
-      of: [{ type: "locationOverride" }],
-      components: { input: LocationOverridesInput },
-      fieldset: "pricing",
-    })
+      name: "lastSyncedAt",
+      type: "datetime",
+      title: "Last Synced",
+      group: "advanced",
+      readOnly: true,
+    }),
   ],
   preview: {
-    select: { title: "name", subtitle: "source" }
+    select: {
+      title: "name",
+      category: "category.title",
+      price: "basePrice",
+      media: "image"
+    },
+    prepare({ title, category, price, media }) {
+      const priceStr = price != null ? `$${price.toFixed(2)}` : "";
+      const subtitle = [category, priceStr].filter(Boolean).join(" · ");
+      return {
+        title,
+        subtitle,
+        media
+      };
+    }
   }
 });

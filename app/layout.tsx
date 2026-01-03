@@ -6,7 +6,6 @@ import { Suspense } from "react";
 import HeaderSimple from "@/components/catch/HeaderSimple";
 import FooterSimple from "@/components/catch/FooterSimple";
 import ThemeToggle from "@/components/ThemeToggle";
-import ImageModeFloatingToggle from "@/components/ImageModeFloatingToggle";
 import { NavigationProgress } from "@/components/NavigationProgress";
 import { RouteMarker } from "@/components/RouteMarker";
 import { Providers } from "./providers";
@@ -135,7 +134,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <HeaderSimple />
           <main>{children}</main>
           <FooterSimple />
-          <ImageModeFloatingToggle />
           <ThemeToggle />
         </Providers>
         <SpeedInsights />

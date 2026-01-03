@@ -1,66 +1,32 @@
+import { Skeleton } from "@/components/ui/skeleton";
+
 export default function MenuLoading() {
   return (
-    <div style={{
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: 'var(--color--crema-fresca)'
-    }}>
-      <div style={{
-        textAlign: 'center',
-        fontFamily: 'var(--font-family--headings)',
-        color: 'var(--color--tierra-reca)'
-      }}>
-        <div className="bounce-loader">
-          <div className="bounce1"></div>
-          <div className="bounce2"></div>
-          <div className="bounce3"></div>
-        </div>
-        <div style={{ fontSize: '18px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', marginTop: '30px' }}>
-          Loading Menu...
-        </div>
+    <div className="min-h-screen bg-[var(--color--crema-fresca)] animate-in fade-in duration-300">
+      {/* Location selector skeleton */}
+      <div className="border-b border-black/10 p-4">
+        <Skeleton className="h-10 w-64 mx-auto bg-black/5" />
       </div>
-      <style>{`
-        .bounce-loader {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          gap: 8px;
-        }
 
-        .bounce-loader > div {
-          width: 18px;
-          height: 18px;
-          border-radius: 50%;
-          animation: bouncedelay 1.4s infinite ease-in-out both;
-        }
+      {/* Category tabs skeleton */}
+      <div className="flex gap-2 p-4 overflow-x-auto border-b border-black/10">
+        {[1, 2, 3, 4, 5, 6].map((i) => (
+          <Skeleton key={i} className="h-9 w-28 bg-black/5 rounded shrink-0" />
+        ))}
+      </div>
 
-        .bounce-loader .bounce1 {
-          background-color: #2B7A9B;
-          animation-delay: -0.32s;
-        }
-
-        .bounce-loader .bounce2 {
-          background-color: #3d8fb3;
-          animation-delay: -0.16s;
-        }
-
-        .bounce-loader .bounce3 {
-          background-color: #5aa4c4;
-        }
-
-        @keyframes bouncedelay {
-          0%, 80%, 100% {
-            transform: scale(0);
-            opacity: 0.5;
-          }
-          40% {
-            transform: scale(1.0);
-            opacity: 1;
-          }
-        }
-      `}</style>
+      {/* Menu items list skeleton */}
+      <div className="p-4 space-y-3">
+        {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+          <div key={i} className="flex justify-between items-center py-3 border-b border-black/10">
+            <div className="space-y-2 flex-1">
+              <Skeleton className="h-5 w-48 bg-black/5" />
+              <Skeleton className="h-4 w-72 bg-black/5" />
+            </div>
+            <Skeleton className="h-5 w-16 bg-black/5" />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

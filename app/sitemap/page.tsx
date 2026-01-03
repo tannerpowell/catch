@@ -21,7 +21,7 @@ const sections: SitemapSection[] = [
     description: 'Browse our menu and place your order',
     links: [
       { href: '/menu' as Route, label: 'Menu', description: 'Premium 3-pane menu with instant filtering' },
-      { href: '/menu2' as Route, label: 'Menu (Cards)', description: 'Card-based menu layout' },
+      { href: '/menu2' as Route, label: 'Menu Mixitup', description: 'Card-based menu layout with smooth animations' },
       { href: '/menu-legacy' as Route, label: 'Menu (Legacy)', description: 'Original menu with categories' },
       { href: '/locations' as Route, label: 'Locations', description: 'Find a restaurant near you' },
       { href: '/checkout' as Route, label: 'Checkout', description: 'Complete your order' },
@@ -32,6 +32,7 @@ const sections: SitemapSection[] = [
     title: 'ABOUT',
     description: 'Learn more about The Catch',
     links: [
+      { href: '/features' as Route, label: 'Features', description: 'What makes our ordering system special' },
       { href: '/our-story' as Route, label: 'Our Story', description: 'The history and mission behind The Catch' },
       { href: '/private-events' as Route, label: 'Private Events', description: 'Host your next gathering with us' },
       { href: '/gift-cards' as Route, label: 'Gift Cards', description: 'Give the gift of great seafood' },
@@ -41,7 +42,7 @@ const sections: SitemapSection[] = [
     title: 'OPERATIONS',
     description: 'Back-of-house tools',
     links: [
-      { href: '/kitchen' as Route, label: 'Kitchen Display', description: 'iPad order management system', badge: 'Staff' },
+      { href: '/kitchen' as Route, label: 'iPad', description: 'Kitchen order management system', badge: 'Staff' },
       { href: '/tv-menu-display' as Route, label: 'TV Menu Display', description: 'Digital menu boards for locations', badge: 'Staff' },
       { href: '/print-menu' as Route, label: 'Print Menu', description: 'Generate printable PDF menus', badge: 'Staff' },
       { href: '/categories-analysis' as Route, label: 'Menu Analysis', description: 'Property reports and universal menu planning', badge: 'Staff' },

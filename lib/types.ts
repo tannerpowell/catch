@@ -4,10 +4,13 @@ export interface Hours {
   thursday?: string; friday?: string; saturday?: string;
 }
 
+export type LocationRegion = "dfw" | "houston" | "oklahoma" | "east-tx" | "west-tx";
+
 export interface Location {
   _id: string;
   name: string;
   slug: string;
+  region?: LocationRegion;
   addressLine1: string;
   addressLine2?: string;
   city: string;

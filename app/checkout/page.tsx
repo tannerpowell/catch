@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/lib/contexts/CartContext';
 import { useOrders } from '@/lib/contexts/OrdersContext';
+import { formatPrice } from '@/lib/utils';
 
 /**
  * Checkout page with Catch design system styling.
@@ -288,7 +289,7 @@ export default function CheckoutPage() {
                     <div className="checkout-item-row">
                       <span className="checkout-item-name">{item.quantity}x {item.menuItem.name}</span>
                       <span className="checkout-item-price">
-                        ${((item.price + item.modifiers.reduce((s, m) => s + m.priceDelta, 0)) * item.quantity).toFixed(2)}
+                        {formatPrice((item.price + item.modifiers.reduce((s, m) => s + m.priceDelta, 0)) * item.quantity)}
                       </span>
                     </div>
                     {item.modifiers.length > 0 && (
@@ -306,15 +307,15 @@ export default function CheckoutPage() {
               <div className="checkout-totals">
                 <div className="checkout-totals-row">
                   <span>Subtotal</span>
-                  <span>${cartData.subtotal.toFixed(2)}</span>
+                  <span>{formatPrice(cartData.subtotal)}</span>
                 </div>
                 <div className="checkout-totals-row">
                   <span>Tax</span>
-                  <span>${cartData.tax.toFixed(2)}</span>
+                  <span>{formatPrice(cartData.tax)}</span>
                 </div>
                 <div className="checkout-totals-row checkout-totals-total">
                   <span>Total</span>
-                  <span>${cartData.total.toFixed(2)}</span>
+                  <span>{formatPrice(cartData.total)}</span>
                 </div>
               </div>
             </div>

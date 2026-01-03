@@ -34,6 +34,15 @@ html[data-route^="/studio"].dark body {
   --slate-100: #f1f5f9;
   --slate-50: #f8fafc;
 
+  /* Override semantic color variables for dark mode */
+  --color-text-primary: var(--slate-50);
+  --color-text-secondary: var(--slate-300);
+  --color-text-muted: var(--slate-400);
+  --color-surface-page: var(--slate-900);
+  --color-surface-card: var(--slate-800);
+  --color-border-subtle: var(--slate-700);
+  --color-brand-primary: #D4B896; /* Warm gold - NO BLUE TEXT */
+
   /* Ocean Blue palette - primary accent for dark mode */
   --ocean-50: #f0f9ff;
   --ocean-100: #e0f2fe;
@@ -59,10 +68,10 @@ html[data-route^="/studio"].dark body {
   --color--claro-maiz-dark: var(--ocean-300);
   --color--tierra-reca-dark: var(--slate-300);
 
-  /* Semantic accent colors */
-  --color-accent-primary: var(--ocean-400);
-  --color-accent-primary-soft: var(--ocean-300);
-  --color-accent-hover: var(--ocean-300);
+  /* Semantic accent colors - warm gold, NOT blue */
+  --color-accent-primary: #D4B896;
+  --color-accent-primary-soft: #E8D4B8;
+  --color-accent-hover: #F0E0C8;
 
   /* Text colors using Slate */
   --text-primary: var(--slate-50);
@@ -90,7 +99,7 @@ html[data-route^="/studio"].dark body {
 }
 
 .dark .catch-eyebrow {
-  color: var(--ocean-400);
+  color: #D4B896; /* Warm gold, not blue */
 }
 
 .dark .catch-heading-1,
@@ -145,10 +154,7 @@ html[data-route^="/studio"].dark body {
   background-color: var(--slate-700);
 }
 
-/* Section backgrounds */
-.dark .section {
-  background-color: var(--slate-900);
-}
+/* Section backgrounds - removed, sections inherit from --color-surface-page */
 
 /* Home page elements */
 .dark .subhead {
@@ -179,7 +185,7 @@ html[data-route^="/studio"].dark body {
 
 .dark .catch-nav-link:hover,
 .dark .nav-link:hover {
-  color: var(--ocean-400);
+  color: #D4B896; /* Warm gold on hover */
 }
 
 /* Menu icon */
@@ -324,19 +330,17 @@ html[data-route^="/studio"].dark body {
   color: var(--slate-400);
 }
 
-/* Links */
+/* Links - NO BLUE TEXT */
 .dark a {
-  color: var(--ocean-400);
+  color: var(--slate-200);
 }
 
 .dark a:hover {
-  color: var(--ocean-300);
+  color: var(--slate-50);
 }
 
-/* Sections */
-.dark section {
-  background-color: var(--color--dark-slate-deepest);
-}
+/* Sections - only apply to sections that don't have their own background */
+/* Removed overly broad .dark section rule - sections now inherit from page */
 
 /* Location cards */
 .dark .locationCard {
@@ -458,9 +462,9 @@ html[data-route^="/studio"].dark body {
 
 .dark .nav-cart-button:hover {
   background: var(--slate-800);
-  border-color: var(--ocean-400);
-  color: var(--ocean-400);
-  box-shadow: 0 2px 8px rgba(56, 189, 248, 0.15);
+  border-color: var(--slate-500);
+  color: var(--slate-50);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .dark .nav-cart-badge {
@@ -485,7 +489,7 @@ html[data-route^="/studio"].dark body {
 }
 
 .dark .cart-drawer-header-content svg {
-  color: var(--ocean-400);
+  color: var(--slate-300);
 }
 
 .dark .cart-drawer-title {
@@ -586,7 +590,7 @@ html[data-route^="/studio"].dark body {
 }
 
 .dark .cart-item-modifier-price {
-  color: var(--ocean-400);
+  color: var(--slate-300);
 }
 
 .dark .cart-item-instructions {
@@ -641,7 +645,7 @@ html[data-route^="/studio"].dark body {
 }
 
 .dark .cart-total-final span:last-child {
-  color: var(--ocean-400);
+  color: var(--slate-50);
 }
 
 /* Footer */
@@ -834,7 +838,7 @@ html[data-route^="/studio"].dark body {
   --menu3-border: rgba(255, 255, 255, 0.08);
   --menu3-search-bg: rgba(255, 255, 255, 0.05);
   --menu3-hover-bg: rgba(255, 255, 255, 0.06);
-  --menu3-accent: var(--ocean-400);
+  --menu3-accent: #D4B896; /* Warm gold accent */
 
   /* Active category - slate instead of white for better dark mode contrast */
   --menu3-active-bg: var(--slate-700);
@@ -924,5 +928,5 @@ html[data-route^="/studio"].dark body {
 }
 
 .dark .menu3-item-price {
-  color: var(--ocean-400);
+  color: var(--slate-200);
 }

@@ -4,73 +4,32 @@ CodeRabbit suggestions that were intentionally deferred for future consideration
 
 ---
 
-## Integer Cents for Money Math
+## ~~Integer Cents for Money Math~~ **RESOLVED**
 
-**File:** `lib/contexts/CartContext.tsx`
+**Status:** Implemented in CartContext.tsx
 
-**Current:** Prices stored as floats (e.g., `14.99`), rounded at calculation time with `Math.round(x * 100) / 100`.
-
-**Suggestion:** Store and calculate all amounts in integer cents to avoid floating-point drift (e.g., `0.1 + 0.2 !== 0.3` in JS).
-
-**Stripe context:** Stripe *requires* amounts in cents. Currently we convert at the boundary: `amount: Math.round(total * 100)`. Storing in cents throughout would align with Stripe's model.
-
-**Trade-offs:**
-- Pro: Eliminates float precision issues
-- Pro: Matches Stripe's API format
-- Con: Every display requires `(cents / 100).toFixed(2)`
-- Con: Refactor touches cart, checkout, order history, admin displays
-
-**Verdict:** Current approach is fine for restaurant menu pricing. Worth revisiting if we add complex discounting, split payments, or financial reporting.
+**Implementation:**
+- CartContext now performs all arithmetic in integer cents internally
+- Added `toCents()`, `toDollars()`, and `formatPrice()` utilities in `lib/utils.ts`
+- Values are converted back to dollars for storage (backward compat with localStorage)
+- Checkout page updated to use `formatPrice()` utility
 
 ---
 
-## Location Region Field (Replace Hardcoded Slugs)
+## ~~Location Region Field (Replace Hardcoded Slugs)~~ **RESOLVED**
 
-**File:** `components/catch/Menu2PageClient.tsx`
+**Status:** Implemented
 
-**Current:** DFW/Houston locations are identified by hardcoded slug arrays:
-```typescript
-locations.filter(loc => ['denton', 'coit-campbell', 'garland'].includes(loc.slug))
-```
-
-**Suggestion:** Add a `region` field to the location schema and filter dynamically.
-
-**Implementation steps:**
-1. Add `region` field to `sanity/schemas/location.ts`:
-   ```typescript
-   defineField({
-     name: "region",
-     title: "Region",
-     type: "string",
-     options: {
-       list: [
-         { title: "DFW", value: "dfw" },
-         { title: "Houston", value: "houston" },
-         { title: "Oklahoma", value: "oklahoma" },
-         { title: "Other Texas", value: "other-tx" },
-       ],
-     },
-   }),
-   ```
-
-2. Update all 16 locations in Sanity Studio with their region
-
-3. Add `region` to `lib/types.ts` Location interface:
-   ```typescript
-   region?: "dfw" | "houston" | "oklahoma" | "other-tx";
-   ```
-
-4. Update GROQ queries in `lib/adapters/sanity-catch.ts` to fetch region
-
-5. Replace hardcoded arrays in Menu2PageClient.tsx:
-   ```typescript
-   locations.filter(l => l.region === 'dfw')
-   locations.filter(l => l.region === 'houston')
-   ```
-
-**Estimated effort:** ~30 minutes
-
-**Verdict:** Good idea, low effort. Do it when touching location filtering or adding new locations.
+**Implementation:**
+1. Added `region` field to `sanity/schemas/location.ts` with options: dfw, houston, oklahoma, east-tx, west-tx
+2. Updated `lib/types.ts` with `LocationRegion` type
+3. Updated GROQ query in `lib/adapters/sanity-catch.ts` to fetch region
+4. Updated all 16 locations in Sanity with their region values
+5. Updated the following files to use `region` field instead of hardcoded slugs:
+   - `components/menu3/LocationBar.tsx`
+   - `components/catch/MenuPageClient.tsx`
+   - `components/catch/Menu2PageClient.tsx`
+   - `app/locations/LocationsPageClient.tsx`
 
 ---
 

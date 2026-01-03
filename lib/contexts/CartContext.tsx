@@ -99,32 +99,45 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   // Calculate totals whenever cart items, tip, or location changes
+  // NOTE: All arithmetic is done in integer cents to avoid floating-point precision issues,
+  // then converted back to dollars for storage (maintaining backward compatibility).
   useEffect(() => {
     if (!isHydrated || !cart) return;
 
     const safeItems = Array.isArray(cart.items) ? cart.items : [];
-    const subtotalRaw = safeItems.reduce((sum, item) => {
+
+    // Calculate subtotal in cents (integer math)
+    const subtotalCents = safeItems.reduce((sum, item) => {
       if (!item || typeof item.price !== 'number' || typeof item.quantity !== 'number') {
         console.warn('[CartContext] Skipping malformed cart item:', item);
         return sum;
       }
 
-      const itemTotal = item.price * item.quantity;
+      // Convert item price to cents
+      const itemCents = Math.round(item.price * 100) * item.quantity;
       const safeModifiers = Array.isArray(item.modifiers) ? item.modifiers : [];
-      const modifierTotal = safeModifiers.reduce((modSum, mod) => {
+      const modifierCents = safeModifiers.reduce((modSum, mod) => {
         if (mod && typeof mod.priceDelta === 'number') {
-          return modSum + mod.priceDelta * item.quantity;
+          return modSum + Math.round(mod.priceDelta * 100) * item.quantity;
         }
         return modSum;
       }, 0);
 
-      return sum + itemTotal + modifierTotal;
+      return sum + itemCents + modifierCents;
     }, 0);
 
     const taxRate = cart.location?.taxRate || 0;
-    const subtotal = Math.round(subtotalRaw * 100) / 100;
-    const tax = Math.round(subtotal * taxRate * 100) / 100;
-    const total = Math.round((subtotal + tax + cart.tip + cart.deliveryFee) * 100) / 100;
+    // Calculate tax in cents, rounding to nearest cent
+    const taxCents = Math.round(subtotalCents * taxRate);
+    // Convert tip and delivery fee to cents for addition
+    const tipCents = Math.round(cart.tip * 100);
+    const deliveryFeeCents = Math.round(cart.deliveryFee * 100);
+    const totalCents = subtotalCents + taxCents + tipCents + deliveryFeeCents;
+
+    // Convert back to dollars for storage (backward compat with localStorage)
+    const subtotal = subtotalCents / 100;
+    const tax = taxCents / 100;
+    const total = totalCents / 100;
 
     setCart((prev) => {
       if (!prev) return prev;
