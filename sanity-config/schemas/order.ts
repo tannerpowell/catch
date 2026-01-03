@@ -294,7 +294,10 @@ export default defineType({
       title: "Location Payout",
       type: "number",
       description: "Amount transferred to location (total - platformFee)",
-      validation: (rule) => rule.required().error("Location payout is required").min(0).error("Location payout cannot be negative")
+      validation: (rule) => [
+        rule.required().error("Location payout is required"),
+        rule.min(0).error("Location payout cannot be negative")
+      ]
     }),
 
     // === STRIPE PAYMENT INFO ===

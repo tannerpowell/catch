@@ -462,7 +462,7 @@ function LocationRow({
       </Box>
 
       {/* Price input - compact */}
-      <Box style={{ width: 72, flexShrink: 0 }}>
+      <Box style={{ width: 80, flexShrink: 0 }}>
         <TextInput
           type="number"
           step="0.01"

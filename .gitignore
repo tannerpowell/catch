@@ -77,3 +77,4 @@ data/templates/opus-*
 # Large uncompressed images (use /images/jpeg/ instead)
 public/images/compare/after/
 public/images/dfw/
+next-env.d.ts
