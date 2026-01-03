@@ -5,7 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
  */
 export default function MenuLoading() {
   return (
-    <div className="min-h-screen bg-[var(--color--dark-slate-deepest,#0f1720)] animate-in fade-in duration-300">
+    <div className="min-h-screen bg-(--color--dark-slate-deepest,#0f1720) animate-in fade-in duration-300">
       {/* Location selector bar */}
       <div className="border-b border-white/10 p-4">
         <div className="max-w-7xl mx-auto flex items-center justify-center gap-4">

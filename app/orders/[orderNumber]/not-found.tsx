@@ -15,7 +15,7 @@ export default function OrderNotFound() {
           Back to menu
         </Link>
 
-        <Card className="border-[var(--color-border-subtle)]">
+        <Card className="border-(--color-border-subtle)">
           <CardHeader className="text-center pb-2">
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
               <SearchX className="h-8 w-8 text-muted-foreground" />

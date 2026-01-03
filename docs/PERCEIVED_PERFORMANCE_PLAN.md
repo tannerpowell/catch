@@ -101,7 +101,7 @@ export default function HomeLoading() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[1, 2, 3].map((i) => (
             <div key={i} className="space-y-3">
-              <Skeleton className="aspect-[4/3] w-full" />
+              <Skeleton className="aspect-4/3 w-full" />
               <Skeleton className="h-6 w-3/4" />
               <Skeleton className="h-4 w-full" />
             </div>
@@ -119,7 +119,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function MenuLoading() {
   return (
-    <div className="min-h-screen bg-[var(--color--dark-slate-deepest)] animate-in fade-in duration-300">
+    <div className="min-h-screen bg-(--color--dark-slate-deepest) animate-in fade-in duration-300">
       {/* Location selector bar */}
       <div className="border-b border-white/10 p-4">
         <Skeleton className="h-10 w-64 mx-auto bg-white/5" />

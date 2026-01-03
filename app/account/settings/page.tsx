@@ -27,7 +27,7 @@ export default function SettingsPage() {
       </div>
 
       {/* Profile Section */}
-      <Card className="border-[var(--color-border-subtle)]">
+      <Card className="border-(--color-border-subtle)">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 font-display">
             <User className="h-5 w-5" />
@@ -61,7 +61,7 @@ export default function SettingsPage() {
       <NotificationSettings />
 
       {/* Security Section */}
-      <Card className="border-[var(--color-border-subtle)]">
+      <Card className="border-(--color-border-subtle)">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 font-display">
             <Shield className="h-5 w-5" />
