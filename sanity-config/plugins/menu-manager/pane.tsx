@@ -4,6 +4,8 @@
 import React, { useEffect, useMemo, useState, useCallback } from 'react'
 import { useClient } from 'sanity'
 import imageUrlBuilder, { type SanityImageSource } from '@sanity/image-url'
+import { apiVersion } from '../../env'
+import { formatMenuItemName, formatMenuItemDescription } from '../../../lib/menu-formatting'
 import {
   Box,
   Button,
@@ -45,6 +47,7 @@ interface LocationDoc {
   _id: string
   name: string
   slug?: { current?: string }
+  region?: 'dfw' | 'houston' | 'oklahoma' | 'east-tx' | 'west-tx'
 }
 
 interface LocationOverride {
@@ -90,123 +93,7 @@ interface MenuItemDetail {
 
 const createKey = () => Math.random().toString(36).slice(2, 10)
 
-/**
- * Apply standardized formatting rules to menu item names
- * Conservative - preserves capitalization for menu item titles
- */
-function formatMenuItemName(name: string): string {
-  if (!name) return name
-
-  let fixed = name.trim()
-  fixed = fixed.replace(/^,\s*/, '')
-
-  // Remove markdown formatting
-  fixed = fixed.replace(/\*\*(fried|Fried|grilled|Grilled|blackened|Blackened)\*\*/gi, (_, word) =>
-    word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-  )
-
-  // Fix measurements
-  fixed = fixed.replace(/(\d+(?:\/\d+)?)\s*(?:LB|Pound|Pounds?)\b/gi, (_, num) => `${num}lb`)
-  fixed = fixed.replace(/(\d+\/\d+)\s+(lb|oz)\b/gi, '$1$2')
-
-  // "Jumbo Shrimp" always capitalized
-  fixed = fixed.replace(/\bjumbo shrimp\b/gi, 'Jumbo Shrimp')
-
-  // Fix incomplete protein lists: "Catfish (8) & 12 jumbo shrimp"
-  fixed = fixed.replace(
-    /([A-Z][a-z]+)\s*\((\d+)\)\s*(&|,)\s*(\d+)\s+(jumbo shrimp)/gi,
-    (_, protein1, num1, separator, num2) => `${protein1} (${num1}) ${separator} Jumbo Shrimp (${num2})`
-  )
-
-  // Fix "Jumbo shrimp (4)" → "Jumbo Shrimp (4)"
-  fixed = fixed.replace(/\bJumbo shrimp\b/g, 'Jumbo Shrimp')
-
-  // Fix lowercase "tenders" → "Tenders"
-  fixed = fixed.replace(/\btenders\b/g, 'Tenders')
-
-  // Fix "fried oysters" → "Fried Oysters" in names
-  fixed = fixed.replace(/\bfried oysters\b/gi, 'Fried Oysters')
-
-  // Monterey Jack spelling
-  fixed = fixed.replace(/\bMonterrey Jack\b/gi, 'Monterey Jack')
-
-  // Étouffée handling
-  fixed = fixed.replace(/\bShrimp étouffée\b/g, 'Shrimp Étouffée')
-  fixed = fixed.replace(/\bShrimp Etouffee\b/gi, 'Shrimp Étouffée')
-
-  return fixed
-}
-
-/**
- * Apply standardized formatting rules to menu item descriptions
- * More aggressive formatting for descriptions
- */
-function formatMenuItemDescription(desc: string): string {
-  if (!desc) return desc
-
-  let fixed = desc.trim()
-  fixed = fixed.replace(/^,\s*/, '')
-
-  // Remove markdown formatting
-  fixed = fixed.replace(/\*\*(fried|Fried|grilled|Grilled|blackened|Blackened)\*\*/gi, (_, word) =>
-    word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-  )
-
-  // Remove trailing period from single sentences
-  const periodCount = (fixed.match(/\./g) || []).length
-  if (periodCount === 1 && fixed.endsWith('.')) {
-    fixed = fixed.slice(0, -1)
-  }
-
-  // Fix measurements
-  fixed = fixed.replace(/(\d+(?:\/\d+)?)\s*(?:LB|Pound|Pounds?)\b/gi, (_, num) => `${num}lb`)
-  fixed = fixed.replace(/(\d+\/\d+)\s+(lb|oz)\b/gi, '$1$2')
-
-  // "Jumbo Shrimp" always capitalized
-  fixed = fixed.replace(/\bjumbo shrimp\b/gi, 'Jumbo Shrimp')
-
-  // Ensure main proteins are capitalized
-  fixed = fixed.replace(/\b(catfish|whitefish|shrimp|oysters?|crawfish|gator|chicken)\b/gi, (match) =>
-    match.charAt(0).toUpperCase() + match.slice(1).toLowerCase()
-  )
-
-  // Cooking methods in parentheses should be lowercase
-  fixed = fixed.replace(
-    /\((Fried|Grilled|Blackened|Boiled)(,?\s+(Fried|Grilled|Blackened|Boiled|or))*\)/gi,
-    (match) => match.toLowerCase()
-  )
-
-  // Monterey Jack spelling and cheese lowercase
-  fixed = fixed.replace(/\bMonterrey Jack\b/gi, 'Monterey Jack')
-  fixed = fixed.replace(/\bMonterey Jack Cheese\b/gi, 'Monterey Jack cheese')
-
-  // Étouffée handling
-  fixed = fixed.replace(/\bShrimp étouffée\b/g, 'Shrimp Étouffée')
-  fixed = fixed.replace(/\bShrimp Etouffee\b/gi, 'Shrimp Étouffée')
-
-  // Generic terms to lowercase in descriptions
-  const lowercaseTerms = [
-    ['Side Item', 'side item'],
-    ['Diced Tomato', 'diced tomato'],
-    ['Green Onion', 'green onion'],
-    ['Bacon Bits', 'bacon bits'],
-    ['Sour Cream', 'sour cream'],
-    ['Garlic Bread', 'garlic bread'],
-    ['Green Bell Peppers', 'green bell peppers'],
-    ['Bed of', 'bed of'],
-    ['Queso', 'queso'],
-  ] as const
-
-  lowercaseTerms.forEach(([term, replacement]) => {
-    const regex = new RegExp(`\\b${term}\\b`, 'g')
-    fixed = fixed.replace(regex, replacement)
-  })
-
-  // Lowercase "filet"
-  fixed = fixed.replace(/\bFilets?\b/g, (match) => match.toLowerCase())
-
-  return fixed
-}
+// formatMenuItemName and formatMenuItemDescription are imported from lib/menu-formatting.ts
 
 // iOS-style toggle switch (larger, pill-shaped like iOS 26)
 function IOSToggle({
@@ -517,7 +404,7 @@ function SaveStatus({ saving, saved, error }: { saving: boolean; saved: boolean;
 
 // Main component
 export function MenuManagerPane() {
-  const client = useClient({ apiVersion: '2023-08-01' })
+  const client = useClient({ apiVersion })
   const imageBuilder = useMemo(() => imageUrlBuilder(client), [client])
 
   const [items, setItems] = useState<MenuItemLite[]>([])
@@ -637,7 +524,7 @@ export function MenuManagerPane() {
       setLocationsLoading(true)
       setLocationsError(null)
       try {
-        const locs = await client.fetch<LocationDoc[]>(`*[_type == "location"]|order(name asc){_id,name,slug}`)
+        const locs = await client.fetch<LocationDoc[]>(`*[_type == "location"]|order(name asc){_id,name,slug,region}`)
         if (!cancelled) {
           setLocations(locs || [])
           setLocationsLoading(false)
@@ -660,40 +547,42 @@ export function MenuManagerPane() {
   }, [detail?.locationOverrides])
 
   const groupedLocations = useMemo(() => {
-    // DFW includes Burleson (Wichita Falls moved to Other)
-    const dfwKeywords = ['dallas', 'fort worth', 'dfw', 'denton', 'garland', 'frisco', 'plano', 'arlington', 'irving', 'mckinney', 'coit', 'campbell', 'burleson']
-    // Houston includes South Post Oak, Willowbrook
-    const houstonKeywords = ['houston', 'katy', 'sugar land', 'woodlands', 'pearland', 'spring', 'clear lake', 'atascocita', 'humble', 'conroe', 'south post oak', 'willowbrook']
-    // Oklahoma: OKC Memorial, Moore, Midwest City
-    const oklahomaKeywords = ['okc', 'oklahoma', 'moore', 'midwest city', 'memorial']
-
-    const dfw: LocationDoc[] = []
-    const houston: LocationDoc[] = []
-    const oklahoma: LocationDoc[] = []
-    const other: LocationDoc[] = []
+    // Group locations by their schema-defined region field
+    const regionGroups: Record<string, LocationDoc[]> = {
+      dfw: [],
+      houston: [],
+      oklahoma: [],
+      'east-tx': [],
+      'west-tx': [],
+      other: [],
+    }
 
     for (const loc of locations) {
-      const nameLower = loc.name.toLowerCase()
-      const slugLower = loc.slug?.current?.toLowerCase() || ''
-
-      if (dfwKeywords.some(k => nameLower.includes(k) || slugLower.includes(k))) {
-        dfw.push(loc)
-      } else if (houstonKeywords.some(k => nameLower.includes(k) || slugLower.includes(k))) {
-        houston.push(loc)
-      } else if (oklahomaKeywords.some(k => nameLower.includes(k) || slugLower.includes(k))) {
-        oklahoma.push(loc)
+      const region = loc.region || 'other'
+      if (region in regionGroups) {
+        regionGroups[region].push(loc)
       } else {
-        other.push(loc)
+        regionGroups.other.push(loc)
       }
     }
 
-    // Return in specific order: DFW, Houston (left column), Oklahoma, Other (right column)
-    return [
-      { title: 'Dallas-Fort Worth', items: dfw, column: 'left' },
-      { title: 'Houston', items: houston, column: 'left' },
-      { title: 'Oklahoma', items: oklahoma, column: 'right' },
-      { title: 'Other', items: other, column: 'right' },
-    ].filter((g) => g.items.length > 0)
+    // Region display configuration
+    const regionConfig = [
+      { key: 'dfw', title: 'Dallas-Fort Worth', column: 'left' },
+      { key: 'houston', title: 'Houston', column: 'left' },
+      { key: 'oklahoma', title: 'Oklahoma', column: 'right' },
+      { key: 'east-tx', title: 'East Texas', column: 'right' },
+      { key: 'west-tx', title: 'West Texas', column: 'right' },
+      { key: 'other', title: 'Other', column: 'right' },
+    ]
+
+    return regionConfig
+      .map(({ key, title, column }) => ({
+        title,
+        items: regionGroups[key],
+        column,
+      }))
+      .filter((g) => g.items.length > 0)
   }, [locations])
 
   const filtered = useMemo(() => {
