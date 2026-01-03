@@ -55,7 +55,7 @@ export function OrderStatusCard({ order }: OrderStatusCardProps) {
   const scheduledTime = formatTime(order.scheduledFor);
 
   return (
-    <Card className="border-[var(--color-border-subtle)]">
+    <Card className="border-(--color-border-subtle)">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div>

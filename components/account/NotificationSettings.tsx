@@ -60,7 +60,7 @@ function ToggleRow({ icon, title, description, checked, onChange, disabled }: To
         onClick={() => onChange(!checked)}
         className={`
           relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent
-          transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
+          transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring
           disabled:cursor-not-allowed disabled:opacity-50
           ${checked ? 'bg-primary' : 'bg-muted'}
         `}
@@ -163,7 +163,7 @@ export function NotificationSettings() {
   }
 
   return (
-    <Card className="border-[var(--color-border-subtle)]">
+    <Card className="border-(--color-border-subtle)">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 font-display">
           <Bell className="h-5 w-5" />
