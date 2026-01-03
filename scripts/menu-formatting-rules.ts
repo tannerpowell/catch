@@ -19,9 +19,16 @@ dotenv.config({ path: '.env.local' });
 
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET;
+const token = process.env.SANITY_WRITE_TOKEN;
 
 if (!projectId || !dataset) {
   console.error('Missing required environment variables: NEXT_PUBLIC_SANITY_PROJECT_ID and/or NEXT_PUBLIC_SANITY_DATASET');
+  process.exit(1);
+}
+
+const isDryRun = process.argv.includes('--dry-run');
+if (!isDryRun && !token) {
+  console.error('Missing required environment variable: SANITY_WRITE_TOKEN (required when not in dry-run mode)');
   process.exit(1);
 }
 
