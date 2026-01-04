@@ -43,6 +43,7 @@ export async function ensureTestId(
       throw new Error(message);
     }
     test.skip(true, message);
+    return locator; // Return empty locator after skipping test
   }
 
   return locator.first();
