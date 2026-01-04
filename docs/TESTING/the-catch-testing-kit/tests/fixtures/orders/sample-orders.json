@@ -1,0 +1,243 @@
+{
+  "generated": "2026-01-03",
+  "note": "Sample orders for testing KDS, order tracking, and order history. Includes all status types.",
+  "orders": [
+    {
+      "id": "ord_001",
+      "orderNumber": "ORD-1704312000-ABC12",
+      "location": "Arlington",
+      "locationId": "loc_arlington",
+      "status": "confirmed",
+      "orderType": "pickup",
+      "createdAt": "2026-01-03T18:00:00-06:00",
+      "confirmedAt": "2026-01-03T18:00:05-06:00",
+      "customer": {
+        "name": "John Doe",
+        "email": "john.doe@example.com",
+        "phone": "2145551234"
+      },
+      "items": [
+        {
+          "name": "Fried Catfish Basket",
+          "slug": "fried-catfish",
+          "qty": 1,
+          "modifiers": ["Large", "Extra Tartar"],
+          "priceCents": 1599,
+          "specialInstructions": "Extra crispy please"
+        },
+        {
+          "name": "Sweet Tea",
+          "slug": "sweet-tea",
+          "qty": 2,
+          "modifiers": ["Large"],
+          "priceCents": 399
+        }
+      ],
+      "totals": {
+        "subtotalCents": 2397,
+        "taxCents": 198,
+        "tipCents": 400,
+        "deliveryFeeCents": 0,
+        "totalCents": 2995
+      }
+    },
+    {
+      "id": "ord_002",
+      "orderNumber": "ORD-1704312120-DEF34",
+      "location": "Garland",
+      "locationId": "loc_garland",
+      "status": "preparing",
+      "orderType": "pickup",
+      "createdAt": "2026-01-03T18:02:00-06:00",
+      "confirmedAt": "2026-01-03T18:02:05-06:00",
+      "preparingAt": "2026-01-03T18:05:00-06:00",
+      "customer": {
+        "name": "Jane Smith",
+        "email": "jane.smith@example.com",
+        "phone": "4695555678"
+      },
+      "items": [
+        {
+          "name": "Fried Shrimp Basket",
+          "slug": "fried-shrimp",
+          "qty": 2,
+          "modifiers": ["Cocktail Sauce"],
+          "priceCents": 1399
+        },
+        {
+          "name": "Hush Puppies",
+          "slug": "hush-puppies",
+          "qty": 1,
+          "modifiers": [],
+          "priceCents": 399
+        }
+      ],
+      "totals": {
+        "subtotalCents": 3197,
+        "taxCents": 264,
+        "tipCents": 500,
+        "deliveryFeeCents": 0,
+        "totalCents": 3961
+      }
+    },
+    {
+      "id": "ord_003",
+      "orderNumber": "ORD-1704312300-GHI56",
+      "location": "Arlington",
+      "locationId": "loc_arlington",
+      "status": "ready",
+      "orderType": "pickup",
+      "createdAt": "2026-01-03T18:05:00-06:00",
+      "confirmedAt": "2026-01-03T18:05:05-06:00",
+      "preparingAt": "2026-01-03T18:06:00-06:00",
+      "readyAt": "2026-01-03T18:15:00-06:00",
+      "customer": {
+        "name": "Bob Wilson",
+        "email": "bob.wilson@example.com",
+        "phone": "8175559012"
+      },
+      "items": [
+        {
+          "name": "Shrimp Po' Boy",
+          "slug": "po-boy",
+          "qty": 1,
+          "modifiers": ["Extra Sauce", "Add Cheese"],
+          "priceCents": 1349
+        }
+      ],
+      "totals": {
+        "subtotalCents": 1349,
+        "taxCents": 111,
+        "tipCents": 200,
+        "deliveryFeeCents": 0,
+        "totalCents": 1660
+      }
+    },
+    {
+      "id": "ord_004",
+      "orderNumber": "ORD-1704311000-JKL78",
+      "location": "Arlington",
+      "locationId": "loc_arlington",
+      "status": "completed",
+      "orderType": "pickup",
+      "createdAt": "2026-01-03T17:30:00-06:00",
+      "confirmedAt": "2026-01-03T17:30:05-06:00",
+      "preparingAt": "2026-01-03T17:32:00-06:00",
+      "readyAt": "2026-01-03T17:45:00-06:00",
+      "completedAt": "2026-01-03T17:50:00-06:00",
+      "customer": {
+        "name": "Alice Brown",
+        "email": "alice.brown@example.com",
+        "phone": "2145553456"
+      },
+      "items": [
+        {
+          "name": "Seafood Gumbo",
+          "slug": "gumbo",
+          "qty": 1,
+          "modifiers": ["Bowl", "Hot"],
+          "priceCents": 1399
+        },
+        {
+          "name": "Fresh Lemonade",
+          "slug": "lemonade",
+          "qty": 1,
+          "modifiers": [],
+          "priceCents": 349
+        }
+      ],
+      "totals": {
+        "subtotalCents": 1748,
+        "taxCents": 144,
+        "tipCents": 300,
+        "deliveryFeeCents": 0,
+        "totalCents": 2192
+      }
+    },
+    {
+      "id": "ord_005",
+      "orderNumber": "ORD-1704310500-MNO90",
+      "location": "Garland",
+      "locationId": "loc_garland",
+      "status": "cancelled",
+      "orderType": "pickup",
+      "createdAt": "2026-01-03T17:15:00-06:00",
+      "confirmedAt": "2026-01-03T17:15:05-06:00",
+      "cancelledAt": "2026-01-03T17:20:00-06:00",
+      "customer": {
+        "name": "Charlie Davis",
+        "email": "charlie.davis@example.com",
+        "phone": "4695557890"
+      },
+      "items": [
+        {
+          "name": "Fried Catfish Basket",
+          "slug": "fried-catfish",
+          "qty": 1,
+          "modifiers": ["Regular"],
+          "priceCents": 1299
+        }
+      ],
+      "totals": {
+        "subtotalCents": 1299,
+        "taxCents": 107,
+        "tipCents": 0,
+        "deliveryFeeCents": 0,
+        "totalCents": 1406
+      },
+      "cancelReason": "Customer requested cancellation"
+    },
+    {
+      "id": "ord_006",
+      "orderNumber": "ORD-1704312500-PQR12",
+      "location": "Arlington",
+      "locationId": "loc_arlington",
+      "status": "pending",
+      "orderType": "delivery",
+      "createdAt": "2026-01-03T18:10:00-06:00",
+      "customer": {
+        "name": "Diana Evans",
+        "email": "diana.evans@example.com",
+        "phone": "8175551111"
+      },
+      "deliveryAddress": {
+        "street": "789 Elm Street",
+        "unit": "Apt 4B",
+        "city": "Arlington",
+        "state": "TX",
+        "zip": "76011",
+        "instructions": "Gate code: 1234"
+      },
+      "items": [
+        {
+          "name": "Fried Shrimp Basket",
+          "slug": "fried-shrimp",
+          "qty": 1,
+          "modifiers": ["Remoulade"],
+          "priceCents": 1399
+        },
+        {
+          "name": "Seasoned Fries",
+          "slug": "fries",
+          "qty": 1,
+          "modifiers": [],
+          "priceCents": 349
+        },
+        {
+          "name": "Sweet Tea",
+          "slug": "sweet-tea",
+          "qty": 1,
+          "modifiers": ["Regular"],
+          "priceCents": 299
+        }
+      ],
+      "totals": {
+        "subtotalCents": 2047,
+        "taxCents": 169,
+        "tipCents": 300,
+        "deliveryFeeCents": 499,
+        "totalCents": 3015
+      }
+    }
+  ]
+}
