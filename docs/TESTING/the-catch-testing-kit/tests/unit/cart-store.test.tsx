@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { importOrSkip } from "./_helpers";
+import { tryImport } from "./_helpers";
 
 interface CartStoreModule {
   createCartStore?: () => {
@@ -13,10 +13,8 @@ interface CartStoreModule {
 
 describe("Cart store/context core ops", () => {
   test("add/remove/update/clear", async () => {
-    const mod = await importOrSkip(
-      // Update these imports to match your implementation:
-      () => import("@/lib/cart/store"),
-      "Update import path: expected cart store at @/lib/cart/store (adjust to your repo)."
+    const mod = await tryImport(
+      () => import("@/lib/cart/store")
     );
     if (!mod) return;
 

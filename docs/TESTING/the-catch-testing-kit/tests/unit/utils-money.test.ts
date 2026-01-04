@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { importOrSkip } from "./_helpers";
+import { tryImport } from "./_helpers";
 
 interface MoneyModule {
   toCents?: (dollars: number) => number;
@@ -8,9 +8,8 @@ interface MoneyModule {
 
 describe("Money utilities (formatPrice/toCents/toDollars)", () => {
   test("toCents and toDollars are inverses for common values", async () => {
-    const mod = await importOrSkip(
-      () => import("@/lib/utils"),
-      "Update import path: expected money utils at @/lib/utils (adjust to your repo)."
+    const mod = await tryImport(
+      () => import("@/lib/utils")
     );
     if (!mod) return;
 

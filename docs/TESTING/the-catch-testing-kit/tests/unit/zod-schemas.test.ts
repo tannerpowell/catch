@@ -1,11 +1,10 @@
 import { describe, expect, test } from "vitest";
-import { importOrSkip } from "./_helpers";
+import { tryImport } from "./_helpers";
 
 describe("Zod schemas", () => {
   test("checkout schema validates expected payloads", async () => {
-    const mod = await importOrSkip(
-      () => import("@/lib/validation/checkout"),
-      "Update import path: expected checkout schema at @/lib/validation/checkout (adjust to your repo)."
+    const mod = await tryImport(
+      () => import("@/lib/validation/checkout")
     );
     if (!mod) return;
 
