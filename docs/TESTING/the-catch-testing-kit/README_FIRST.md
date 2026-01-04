@@ -13,7 +13,7 @@ A production-ready testing suite for The Catch restaurant ordering system, featu
 
 ```bash
 # 1. Install dependencies
-npm i -D \
+pnpm add -D \
   @playwright/test \
   vitest \
   jsdom \
@@ -26,7 +26,7 @@ npm i -D \
   @axe-core/playwright
 
 # 2. Install Playwright browsers
-npx playwright install --with-deps
+pnpm exec playwright install --with-deps
 
 # 3. Copy files to your repo root
 cp -r tests/ playwright.config.ts vitest.config.ts vitest.setup.ts .github/ /your/repo/
@@ -34,8 +34,8 @@ cp -r tests/ playwright.config.ts vitest.config.ts vitest.setup.ts .github/ /you
 # 4. Add scripts to package.json (see below)
 
 # 5. Run tests
-npm run test:unit
-npm run test:e2e
+pnpm run test:unit
+pnpm run test:e2e
 ```
 
 ---
@@ -84,7 +84,7 @@ tests/
 ```json
 {
   "scripts": {
-    "test": "npm run test:unit && npm run test:integration && npm run test:e2e",
+    "test": "pnpm run test:unit && pnpm run test:integration && pnpm run test:e2e",
     "test:unit": "vitest run tests/unit",
     "test:unit:watch": "vitest tests/unit",
     "test:integration": "vitest run tests/integration",
@@ -201,7 +201,7 @@ export async function getMenu() {
 }
 ```
 
-Run with: `USE_FIXTURES=1 npm run test:e2e`
+Run with: `USE_FIXTURES=1 pnpm run test:e2e`
 
 ---
 
@@ -217,7 +217,7 @@ Playwright is configured for 5 browser contexts:
 | mobile-chrome | Pixel 5 |
 | mobile-safari | iPhone 12 |
 
-Run specific browser: `npx playwright test --project=webkit`
+Run specific browser: `pnpm exec playwright test --project=webkit`
 
 ---
 
@@ -226,10 +226,10 @@ Run specific browser: `npx playwright test --project=webkit`
 Tests use axe-core for WCAG compliance. Install the dependency:
 
 ```bash
-npm i -D @axe-core/playwright
+pnpm add -D @axe-core/playwright
 ```
 
-Run a11y tests only: `npm run test:a11y`
+Run a11y tests only: `pnpm run test:a11y`
 
 Tests check for:
 - Critical/serious violations
@@ -246,7 +246,7 @@ GitHub Actions workflow included at `.github/workflows/tests.yml`:
 
 1. **Checkout** — Clone repo
 2. **Node Setup** — Install Node 20
-3. **Dependencies** — `npm ci`
+3. **Dependencies** — `pnpm install --frozen-lockfile`
 4. **Unit Tests** — Vitest
 5. **Build** — Next.js production build
 6. **E2E Tests** — Playwright (with artifacts on failure)
@@ -336,10 +336,10 @@ Override the route with `E2E_MENU_URL=/your-menu-path`.
 Set `TEST_KITCHEN_TOKEN` and `TEST_INTERNAL_API_KEY` environment variables.
 
 ### Accessibility tests skip
-Install axe-core: `npm i -D @axe-core/playwright`
+Install axe-core: `pnpm add -D @axe-core/playwright`
 
 ### Playwright can't find browser
-Run: `npx playwright install --with-deps`
+Run: `pnpm exec playwright install --with-deps`
 
 ---
 
@@ -359,7 +359,7 @@ Run: `npx playwright install --with-deps`
 1. ✅ Copy files to repo
 2. ✅ Install dependencies
 3. Add 15-20 `data-testid` attributes
-4. Run `npm run test:unit` — fix any import paths
-5. Run `npm run test:e2e` — follow skip messages
+4. Run `pnpm run test:unit` — fix any import paths
+5. Run `pnpm run test:e2e` — follow skip messages
 6. Enable GitHub Actions
 7. Add `USE_FIXTURES=1` to your Sanity client for deterministic tests

@@ -145,7 +145,17 @@ export async function expectStatus<T = unknown>(
       `Expected status ${expectedStatus}, got ${response.status}. Body: ${body}`
     );
   }
-  return response.json() as Promise<T>;
+  
+  try {
+    return await response.json() as T;
+  } catch (parseError) {
+    const rawBody = await response.text();
+    throw new Error(
+      `Failed to parse JSON response. ` +
+      `Parse error: ${parseError instanceof Error ? parseError.message : String(parseError)}. ` +
+      `Raw response body: ${rawBody}`
+    );
+  }
 }
 
 /**

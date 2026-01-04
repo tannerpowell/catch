@@ -17,7 +17,8 @@ test.describe("Cart operations", () => {
     const firstRow = cartRow.first();
     const rowTestId = await firstRow.getAttribute("data-testid");
     if (!rowTestId) {
-      test.skip(true, "Cart row missing data-testid attribute.");      return;    }
+      test.skip(true, "Cart row missing data-testid attribute.");
+    }
 
     // Derive the id suffix: cart-row-<id>
     const suffix = rowTestId.replace(/^cart-row-/, "");

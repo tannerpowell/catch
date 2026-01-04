@@ -18,6 +18,17 @@ describe("Sanity circuit breaker", () => {
   let DEMO_CATEGORIES: unknown[];
   let originalFetch: typeof fetch;
 
+  /**
+   * Helper to verify circuit state exists and matches expected value.
+   * Prevents silent test passes when getCircuitState is missing.
+   */
+  function assertCircuitState(adapter: any, key: string, expectedState: string) {
+    expect(typeof adapter.getCircuitState).toBe("function");
+    const state = adapter.getCircuitState(key);
+    expect(state).toBeDefined();
+    expect(state).toBe(expectedState);
+  }
+
   beforeEach(async () => {
     originalFetch = global.fetch;
 
@@ -48,13 +59,7 @@ describe("Sanity circuit breaker", () => {
     }
 
     const adapter = createSanityAdapter();
-
-    // @ts-expect-error - accessing internal state
-    const state = adapter.getCircuitState?.("categories");
-
-    if (state) {
-      expect(state).toBe("closed");
-    }
+    assertCircuitState(adapter, "categories", "closed");
   });
 
   test("opens circuit after consecutive failures", async (ctx) => {
@@ -78,12 +83,7 @@ describe("Sanity circuit breaker", () => {
       }
     }
 
-    // @ts-expect-error - accessing internal state
-    const state = adapter.getCircuitState?.("categories");
-
-    if (state) {
-      expect(state).toBe("open");
-    }
+    assertCircuitState(adapter, "categories", "open");
   });
 
   test("returns fallback data when circuit is open", async (ctx) => {
@@ -142,12 +142,7 @@ describe("Sanity circuit breaker", () => {
     // Advance time past reset timeout (30 seconds)
     vi.advanceTimersByTime(31000);
 
-    // @ts-expect-error - accessing internal state
-    const state = adapter.getCircuitState?.("categories");
-
-    if (state) {
-      expect(state).toBe("half-open");
-    }
+    assertCircuitState(adapter, "categories", "half-open");
 
     vi.useRealTimers();
   });
@@ -193,12 +188,7 @@ describe("Sanity circuit breaker", () => {
     // @ts-expect-error - dynamic method
     await adapter.getCategories?.();
 
-    // @ts-expect-error - accessing internal state
-    const state = adapter.getCircuitState?.("categories");
-
-    if (state) {
-      expect(state).toBe("closed");
-    }
+    assertCircuitState(adapter, "categories", "closed");
 
     vi.useRealTimers();
   });
@@ -211,20 +201,10 @@ describe("Sanity circuit breaker", () => {
 
     const adapter = createSanityAdapter();
 
-    // Each service should have its own circuit
-    // @ts-expect-error - accessing internal method
-    const categoriesState = adapter.getCircuitState?.("categories");
-    // @ts-expect-error - accessing internal method
-    const locationsState = adapter.getCircuitState?.("locations");
-    // @ts-expect-error - accessing internal method
-    const itemsState = adapter.getCircuitState?.("items");
-
-    if (categoriesState && locationsState && itemsState) {
-      // All should start closed
-      expect(categoriesState).toBe("closed");
-      expect(locationsState).toBe("closed");
-      expect(itemsState).toBe("closed");
-    }
+    // Each service should have its own circuit - all should start closed
+    assertCircuitState(adapter, "categories", "closed");
+    assertCircuitState(adapter, "locations", "closed");
+    assertCircuitState(adapter, "items", "closed");
   });
 });
 

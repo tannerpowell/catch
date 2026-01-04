@@ -182,11 +182,9 @@ test.describe("Accessibility", () => {
 
       await menuItem.click();
 
-      // Wait for modal
-      await page.waitForTimeout(300);
-
-      // Check if modal is visible
+      // Wait for modal to appear
       const modal = page.getByTestId("item-modal");
+      await modal.waitFor({ state: "visible", timeout: 2000 }).catch(() => {});
 
       if ((await modal.count()) > 0 && (await modal.isVisible())) {
         // Press Escape
@@ -216,9 +214,17 @@ test.describe("Accessibility", () => {
         // - id with matching label
         // - aria-label
         // - aria-labelledby
-        // - placeholder (fallback)
-        const hasAccessibleName =
-          id || ariaLabel || ariaLabelledBy || placeholder;
+        // NOTE: placeholder is NOT a valid accessible name (disappears on input)
+        const hasAccessibleName = id || ariaLabel || ariaLabelledBy;
+
+        // Fail test if input only has placeholder
+        if (!hasAccessibleName && placeholder) {
+          expect.soft(hasAccessibleName).toBeTruthy();
+          console.warn(
+            `⚠️  Input relies solely on placeholder="${placeholder}". ` +
+            `Add a proper label, aria-label, or aria-labelledby instead.`
+          );
+        }
 
         expect(hasAccessibleName).toBeTruthy();
       }
@@ -325,10 +331,9 @@ test.describe("Accessibility", () => {
 
       await menuItem.click();
 
-      // Wait for modal
-      await page.waitForTimeout(300);
-
+      // Wait for modal to appear
       const modal = page.getByTestId("item-modal");
+      await modal.waitFor({ state: "visible", timeout: 2000 }).catch(() => {});
 
       if ((await modal.count()) > 0 && (await modal.isVisible())) {
         // Tab multiple times

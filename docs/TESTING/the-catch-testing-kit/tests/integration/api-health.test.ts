@@ -108,7 +108,15 @@ describe("GET /api/health", () => {
       method: "OPTIONS",
     });
 
-    // Should not return error for OPTIONS
-    expect(response.status).toBeLessThan(400);
+    // Should return typical preflight success status (200 or 204)
+    expect(response.status).toBeGreaterThanOrEqual(200);
+    expect(response.status).toBeLessThan(300);
+
+    // Verify CORS headers are present
+    const allowOrigin = response.headers.get("access-control-allow-origin");
+    const allowMethods = response.headers.get("access-control-allow-methods");
+    
+    // At least one CORS header should be present for a valid preflight response
+    expect(allowOrigin || allowMethods).toBeTruthy();
   });
 });

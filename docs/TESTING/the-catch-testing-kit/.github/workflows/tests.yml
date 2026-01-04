@@ -17,26 +17,31 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
-          cache: "npm"
+          node-version: "24"
+          cache: "pnpm"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 10.26.1
 
       - name: Install deps
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Unit tests (Vitest)
-        run: npm run test:unit
+        run: pnpm run test:unit
 
       - name: Integration tests (Vitest)
-        run: npm run test:integration
+        run: pnpm run test:integration
 
       - name: Build (Next)
-        run: npm run build
+        run: pnpm run build
 
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps
+        run: pnpm exec playwright install --with-deps
 
       - name: E2E tests (Playwright)
-        run: npm run test:e2e
+        run: pnpm run test:e2e
         env:
           CI: "1"
 

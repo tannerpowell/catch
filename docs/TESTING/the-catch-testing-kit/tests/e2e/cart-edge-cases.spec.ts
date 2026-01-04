@@ -45,7 +45,7 @@ test.describe("Cart edge cases", () => {
     }) => {
       // This test requires multi-location support
       // Add item from Arlington
-      await page.goto(`${routes.menu}?location=arlington`);
+      await navigateTo(page, `${routes.menu}?location=arlington`);
 
       const menuItem = page.locator('[data-testid^="menu-item-"]').first();
       if ((await menuItem.count()) === 0) {
@@ -64,7 +64,7 @@ test.describe("Cart edge cases", () => {
       await addButton.click();
 
       // Try to add from Garland
-      await page.goto(`${routes.menu}?location=garland`);
+      await navigateTo(page, `${routes.menu}?location=garland`);
 
       const garlandItem = page.locator('[data-testid^="menu-item-"]').first();
       if ((await garlandItem.count()) > 0) {
@@ -86,7 +86,7 @@ test.describe("Cart edge cases", () => {
 
     test("clears cart when switching locations", async ({ page }) => {
       // Add item from first location
-      await page.goto(`${routes.menu}?location=arlington`);
+      await navigateTo(page, `${routes.menu}?location=arlington`);
 
       const menuItem = page.locator('[data-testid^="menu-item-"]').first();
       if ((await menuItem.count()) === 0) {
@@ -282,15 +282,13 @@ test.describe("Cart edge cases", () => {
         await tipInput.fill("5");
         await tipInput.blur();
 
-        // Wait for update
-        await page.waitForTimeout(500);
-
-        const totalAfter = priceToDollars(
-          (await totalElement.textContent()) ?? "0"
-        );
-
-        // Total should increase by approximately $5
-        expect(totalAfter - totalBefore).toBeCloseTo(5, 1);
+        // Wait for total to update with retry
+        await expect(async () => {
+          const totalAfter = priceToDollars(
+            (await totalElement.textContent()) ?? "0"
+          );
+          expect(totalAfter - totalBefore).toBeCloseTo(5, 1);
+        }).toPass({ timeout: 5000 });
       }
     });
 
@@ -319,14 +317,13 @@ test.describe("Cart edge cases", () => {
 
         await tipPreset.first().click();
 
-        await page.waitForTimeout(500);
-
-        const totalAfter = priceToDollars(
-          (await page.getByTestId("cart-total").textContent()) ?? "0"
-        );
-
-        // Total should have increased
-        expect(totalAfter).toBeGreaterThan(totalBefore);
+        // Wait for total to update with retry
+        await expect(async () => {
+          const totalAfter = priceToDollars(
+            (await page.getByTestId("cart-total").textContent()) ?? "0"
+          );
+          expect(totalAfter).toBeGreaterThan(totalBefore);
+        }).toPass({ timeout: 5000 });
       }
     });
   });
@@ -357,14 +354,13 @@ test.describe("Cart edge cases", () => {
 
         await increaseButton.first().click();
 
-        await page.waitForTimeout(500);
-
-        const totalAfter = priceToDollars(
-          (await page.getByTestId("cart-total").textContent()) ?? "0"
-        );
-
-        // Total should approximately double
-        expect(totalAfter).toBeGreaterThan(totalBefore);
+        // Wait for total to update with retry
+        await expect(async () => {
+          const totalAfter = priceToDollars(
+            (await page.getByTestId("cart-total").textContent()) ?? "0"
+          );
+          expect(totalAfter).toBeGreaterThan(totalBefore);
+        }).toPass({ timeout: 5000 });
       }
     });
 
@@ -388,7 +384,14 @@ test.describe("Cart edge cases", () => {
 
       if ((await increaseButton.count()) > 0) {
         await increaseButton.first().click();
-        await page.waitForTimeout(300);
+        
+        // Wait for quantity increase to complete
+        await expect(async () => {
+          const totalAfter = priceToDollars(
+            (await page.getByTestId("cart-total").textContent()) ?? "0"
+          );
+          expect(totalAfter).toBeGreaterThan(0);
+        }).toPass({ timeout: 3000 });
 
         const totalBefore = priceToDollars(
           (await page.getByTestId("cart-total").textContent()) ?? "0"
@@ -401,14 +404,14 @@ test.describe("Cart edge cases", () => {
 
         if ((await decreaseButton.count()) > 0) {
           await decreaseButton.first().click();
-          await page.waitForTimeout(500);
 
-          const totalAfter = priceToDollars(
-            (await page.getByTestId("cart-total").textContent()) ?? "0"
-          );
-
-          // Total should decrease
-          expect(totalAfter).toBeLessThan(totalBefore);
+          // Wait for total to update with retry
+          await expect(async () => {
+            const totalAfter = priceToDollars(
+              (await page.getByTestId("cart-total").textContent()) ?? "0"
+            );
+            expect(totalAfter).toBeLessThan(totalBefore);
+          }).toPass({ timeout: 5000 });
         }
       }
     });
@@ -441,10 +444,12 @@ test.describe("Cart edge cases", () => {
 
       if ((await removeButton.count()) > 0) {
         await removeButton.first().click();
-        await page.waitForTimeout(500);
 
-        const finalCount = await cartRows.count();
-        expect(finalCount).toBeLessThan(initialCount);
+        // Wait for cart to update with retry
+        await expect(async () => {
+          const finalCount = await cartRows.count();
+          expect(finalCount).toBeLessThan(initialCount);
+        }).toPass({ timeout: 5000 });
       }
     });
   });

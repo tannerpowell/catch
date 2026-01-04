@@ -197,14 +197,14 @@ test.describe("Order tracking", () => {
       }
 
       // Look for timestamp or "last updated" text
-      const hasTimestamp = await page.locator("body").textContent();
+      const bodyText = await page.locator("body").textContent();
 
       // Should have some time-related content
       const hasTimeInfo =
-        hasTimestamp?.match(/\d{1,2}:\d{2}/) || // Time format
-        hasTimestamp?.toLowerCase().includes("update") ||
-        hasTimestamp?.toLowerCase().includes("ago") ||
-        hasTimestamp?.toLowerCase().includes("minute");
+        bodyText?.match(/\d{1,2}:\d{2}/) || // Time format
+        bodyText?.toLowerCase().includes("update") ||
+        bodyText?.toLowerCase().includes("ago") ||
+        bodyText?.toLowerCase().includes("minute");
 
       // Soft check - time info is nice to have
       if (hasTimeInfo) {
@@ -224,7 +224,7 @@ test.describe("Order tracking", () => {
         await route.fulfill({ json });
       });
 
-      // Wait for poll interval (15s for preparing)
+      // Wait for poll interval (16s for preparing - includes 1s buffer)
       await page.waitForTimeout(16000);
 
       await expect(page.locator("body")).toContainText(/ready/i);

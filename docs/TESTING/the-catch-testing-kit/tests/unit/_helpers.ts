@@ -12,7 +12,7 @@
  * @example
  * ```ts
  * test('cart operations', async (ctx) => {
- *   const mod = await tryImport(() => import('@/lib/cart/store'));
+ *   const mod = await importOrSkip(() => import('@/lib/cart/store'));
  *   if (!mod) {
  *     ctx.skip();
  *     return;
@@ -21,7 +21,7 @@
  * });
  * ```
  */
-export async function tryImport<T>(importer: () => Promise<T>): Promise<T | null> {
+export async function importOrSkip<T>(importer: () => Promise<T>): Promise<T | null> {
   try {
     return await importer();
   } catch {

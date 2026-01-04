@@ -11,17 +11,47 @@
 
 import { describe, test, expect, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
-import { tryImport, createMockLocalStorage, resetLocalStorage } from "./_helpers";
+import { importOrSkip, createMockLocalStorage, resetLocalStorage } from "./_helpers";
 import { ReactNode } from "react";
 
 // Mock localStorage
 const mockStorage = createMockLocalStorage();
 Object.defineProperty(window, "localStorage", { value: mockStorage });
 
+// Cart type definitions
+interface CartModifier {
+  name: string;
+  option: string;
+  priceDelta: number;
+}
+
+interface CartItem {
+  menuItem: {
+    _id: string;
+    name: string;
+    slug: string;
+  };
+  quantity: number;
+  price: number;
+  modifiers: CartModifier[];
+  specialInstructions: string;
+}
+
+interface Cart {
+  items: CartItem[];
+  location?: {
+    _id: string;
+    slug: string;
+    name: string;
+    taxRate: number;
+  };
+  tip?: number;
+}
+
 describe("CartContext", () => {
   let CartProvider: React.ComponentType<{ children: ReactNode }>;
   let useCart: () => {
-    cart: unknown;
+    cart?: Cart;
     addToCart: (item: unknown, location: unknown) => void;
     removeFromCart: (index: number) => void;
     updateQuantity: (index: number, qty: number) => void;
@@ -242,7 +272,6 @@ describe("CartContext", () => {
       result.current.setTip(5);
     });
 
-    // @ts-expect-error - accessing cart properties
     expect(result.current.cart?.tip).toBe(5);
   });
 
@@ -330,7 +359,6 @@ describe("CartContext", () => {
         result.current.addToCart(mockItemWithModifiers, mockLocation);
       });
 
-      // @ts-expect-error - accessing cart items
       const items = result.current.cart?.items ?? [];
       expect(items.length).toBe(1);
       expect(items[0].modifiers.length).toBe(2);
@@ -353,7 +381,6 @@ describe("CartContext", () => {
         result.current.addToCart(mockItemWithModifiers, mockLocation);
       });
 
-      // @ts-expect-error - accessing cart items
       const items = result.current.cart?.items ?? [];
       expect(items[0].specialInstructions).toBe("Extra crispy");
     });

@@ -165,6 +165,7 @@ export function priceToDollars(priceStr: string): number {
 /**
  * Get the order number from the current URL.
  * Expects URL pattern like /order-confirmation?orderNumber=ORD-12345-ABC
+ * @throws Error if order number cannot be found in URL
  */
 export async function getOrderNumberFromUrl(page: Page): Promise<string> {
   const url = new URL(page.url());
@@ -172,6 +173,14 @@ export async function getOrderNumberFromUrl(page: Page): Promise<string> {
     url.searchParams.get("orderNumber") ??
     url.pathname.split("/").pop() ??
     "";
+  
+  if (!orderNumber) {
+    throw new Error(
+      `Order number not found in URL: ${page.url()}. ` +
+      `Expected query param "orderNumber" or pathname segment.`
+    );
+  }
+  
   return orderNumber;
 }
 

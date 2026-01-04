@@ -207,7 +207,12 @@ test.describe("Error handling", () => {
       const clearButton = page.getByTestId("clear-cart");
       if ((await clearButton.count()) > 0 && (await clearButton.isVisible())) {
         await clearButton.click();
-        await page.waitForTimeout(500);
+        
+        // Wait for cart rows to be removed
+        const cartRows = page.locator('[data-testid^="cart-row-"]');
+        await cartRows.first().waitFor({ state: "hidden", timeout: 5000 }).catch(() => {
+          // Cart may already be empty or cleared
+        });
       }
 
       // Go to cart
@@ -235,7 +240,12 @@ test.describe("Error handling", () => {
       const clearButton = page.getByTestId("clear-cart");
       if ((await clearButton.count()) > 0 && (await clearButton.isVisible())) {
         await clearButton.click();
-        await page.waitForTimeout(500);
+        
+        // Wait for cart rows to be removed
+        const cartRows = page.locator('[data-testid^="cart-row-"]');
+        await cartRows.first().waitFor({ state: "hidden", timeout: 5000 }).catch(() => {
+          // Cart may already be empty or cleared
+        });
       }
 
       // If cart is empty, there should be a link to menu
@@ -290,13 +300,15 @@ test.describe("Error handling", () => {
       }
       await submitButton.click();
 
-      // Wait for errors
-      await page.waitForTimeout(500);
-
-      // Check for ARIA attributes on errors
+      // Wait for error elements to appear
       const errors = page.locator(
         '[data-testid^="field-error-"], [role="alert"], [aria-live="polite"], [aria-live="assertive"]'
       );
+      
+      // Wait for at least one error to be visible
+      await errors.first().waitFor({ state: "visible", timeout: 5000 }).catch(() => {
+        // If no errors appear, the test will skip below
+      });
 
       if ((await errors.count()) > 0) {
         // Errors should have proper ARIA

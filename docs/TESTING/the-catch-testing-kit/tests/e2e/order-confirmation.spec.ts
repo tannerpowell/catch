@@ -6,7 +6,7 @@
  */
 
 import { test, expect } from "@playwright/test";
-import { completeCheckout } from "./_helpers";
+import { completeCheckout, navigateTo, routes, maybeFill } from "./_helpers";
 
 test.describe("Order confirmation", () => {
   test("shows order number after checkout", async ({ page }) => {
@@ -95,5 +95,40 @@ test.describe("Order confirmation", () => {
     });
 
     await expect(page).toHaveURL(/order-confirmation|orders\//);
+  });
+
+  test("prevents double submission", async ({ page }) => {
+    // Track POST requests to orders endpoint
+    const orderRequests: string[] = [];
+    await page.route("**/api/orders", (route) => {
+      if (route.request().method() === "POST") {
+        orderRequests.push(route.request().url());
+      }
+      route.continue();
+    });
+
+    // Navigate to checkout and fill form
+    await navigateTo(page, routes.checkout);
+
+    await maybeFill(page, 'input[name="name"]', "Test User");
+    await maybeFill(page, 'input[name="email"]', "test@example.com");
+    await maybeFill(page, 'input[name="phone"]', "2145551234");
+
+    // Get submit button
+    const submitButton = page.getByRole("button", { name: /place order|checkout|submit/i });
+    await expect(submitButton).toBeVisible();
+
+    // Simulate double-click submission attempt
+    await submitButton.click();
+    await submitButton.click({ force: true }); // Force second click even if disabled
+
+    // Wait for navigation to confirmation page
+    await expect(page).toHaveURL(/order-confirmation|orders\//, { timeout: 10000 });
+
+    // Verify button was disabled after first click
+    // (we can't directly test this due to navigation, but single request proves it worked)
+
+    // Assert only ONE POST request was made
+    expect(orderRequests).toHaveLength(1);
   });
 });

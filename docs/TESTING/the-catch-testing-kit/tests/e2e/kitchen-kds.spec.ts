@@ -40,7 +40,22 @@ test.describe("Kitchen display (KDS)", () => {
 
     await advance.click();
 
-    // Best-effort: status label changes or card moves.
-    await expect(page.locator("body")).toContainText(/prep|ready|completed|done|status/i);
+    // Verify status change with specific assertion
+    // Option 1: Check for status badge/label within the order card
+    const orderCard = page.getByTestId(`kds-order-${suffix}`);
+    const statusIndicator = orderCard.locator('[data-testid^="kds-status-"]');
+    if ((await statusIndicator.count()) > 0) {
+      await expect(statusIndicator).toBeVisible();
+    } else {
+      // Option 2: Verify card moved to a different column (if using column-based layout)
+      const anyColumn = page.locator('[data-testid^="kds-column-"]');
+      const cardInAnyColumn = anyColumn.getByTestId(`kds-order-${suffix}`);
+      if ((await cardInAnyColumn.count()) > 0) {
+        await expect(cardInAnyColumn).toBeVisible();
+      } else {
+        // Fallback: Check for success toast/notification or status text change
+        await expect(page.locator("body")).toContainText(/prep|ready|completed|done|status/i);
+      }
+    }
   });
 });
