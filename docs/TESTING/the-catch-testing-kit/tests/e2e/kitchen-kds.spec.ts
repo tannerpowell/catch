@@ -42,14 +42,12 @@ test.describe("Kitchen display (KDS)", () => {
 
     // Verify status change with specific assertion
     // Option 1: Check for status badge/label within the order card
-    const statusOrderCard = page.getByTestId(`kds-order-${suffix}`);
-    const statusIndicator = statusOrderCard.locator('[data-testid^="kds-status-"]');
+    const statusIndicator = orderCard.locator('[data-testid^="kds-status-"]');
     if ((await statusIndicator.count()) > 0) {
       await expect(statusIndicator).toBeVisible();
     } else {
       // Option 2: Verify card moved to a different column (if using column-based layout)
-      const anyColumn = page.locator('[data-testid^="kds-column-"]');
-      const cardInAnyColumn = anyColumn.getByTestId(`kds-order-${suffix}`);
+      const cardInAnyColumn = page.locator('[data-testid^="kds-column-"]').getByTestId(`kds-order-${suffix}`);
       if ((await cardInAnyColumn.count()) > 0) {
         await expect(cardInAnyColumn).toBeVisible();
       } else {

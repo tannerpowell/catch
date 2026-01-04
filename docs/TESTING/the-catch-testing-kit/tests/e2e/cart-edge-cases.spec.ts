@@ -385,8 +385,14 @@ test.describe("Cart edge cases", () => {
       if ((await increaseButton.count()) > 0) {
         await increaseButton.first().click();
 
-        // Wait briefly for quantity update to complete
-        await page.waitForTimeout(500);
+        // Wait for total to reflect the increase
+        await expect(async () => {
+          const currentTotal = priceToDollars(
+            (await page.getByTestId("cart-total").textContent()) ?? "0"
+          );
+          // Ensure total has increased before capturing "before" state
+          expect(currentTotal).toBeGreaterThan(0);
+        }).toPass({ timeout: 2000 });
 
         const totalBefore = priceToDollars(
           (await page.getByTestId("cart-total").textContent()) ?? "0"
