@@ -3,6 +3,7 @@
 import { useState } from "react";
 import {
   ROADMAP_EPICS,
+  ROADMAP_LAST_UPDATED,
   CATEGORY_META,
   PRIORITY_META,
   STATUS_META,
@@ -99,8 +100,8 @@ export default function RoadmapPage() {
           {/* Filters */}
           <div className="flex flex-wrap items-center gap-4">
             <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">Category:</span>
-              <div className="flex gap-1">
+              <span id="category-filter-label" className="text-sm text-muted-foreground">Category:</span>
+              <div className="flex gap-1" role="group" aria-labelledby="category-filter-label">
                 <button
                   onClick={() => setFilterCategory("all")}
                   className={cn(
@@ -129,8 +130,8 @@ export default function RoadmapPage() {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">Status:</span>
-              <div className="flex gap-1">
+              <span id="status-filter-label" className="text-sm text-muted-foreground">Status:</span>
+              <div className="flex gap-1" role="group" aria-labelledby="status-filter-label">
                 <button
                   onClick={() => setFilterStatus("all")}
                   className={cn(
@@ -339,7 +340,7 @@ export default function RoadmapPage() {
                                     <div className="w-24 h-1.5 rounded-full bg-muted overflow-hidden">
                                       <div
                                         className="h-full rounded-full bg-green-500"
-                                        style={{ width: `${(itemDone / itemTotal) * 100}%` }}
+                                        style={{ width: `${itemTotal > 0 ? Math.min(Math.max((itemDone / itemTotal) * 100, 0), 100) : 0}%` }}
                                       />
                                     </div>
                                     <span className="text-xs text-muted-foreground w-10">
@@ -413,13 +414,7 @@ export default function RoadmapPage() {
 
         {/* Footer */}
         <div className="text-center text-sm text-muted-foreground pt-8 border-t border-border">
-          <p>
-            Last updated: {new Date().toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "long",
-              day: "numeric"
-            })}
-          </p>
+          <p>Last updated: {ROADMAP_LAST_UPDATED}</p>
         </div>
       </div>
     </div>

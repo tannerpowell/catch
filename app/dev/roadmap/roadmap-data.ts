@@ -71,12 +71,12 @@ export const PRIORITY_META: Record<Priority, { label: string; color: string }> =
 
 export const STATUS_META: Record<
   DevStatus,
-  { label: string; color: string; icon: string }
+  { label: string; color: string }
 > = {
-  todo: { label: "To Do", color: "text-muted-foreground", icon: "○" },
-  in_progress: { label: "In Progress", color: "text-blue-600 dark:text-blue-400", icon: "◐" },
-  blocked: { label: "Blocked", color: "text-red-600 dark:text-red-400", icon: "⊘" },
-  done: { label: "Done", color: "text-green-600 dark:text-green-400", icon: "✓" },
+  todo: { label: "To Do", color: "text-muted-foreground" },
+  in_progress: { label: "In Progress", color: "text-blue-600 dark:text-blue-400" },
+  blocked: { label: "Blocked", color: "text-red-600 dark:text-red-400" },
+  done: { label: "Done", color: "text-green-600 dark:text-green-400" },
 };
 
 export const EFFORT_META: Record<Effort, { label: string; hint: string }> = {
@@ -86,6 +86,12 @@ export const EFFORT_META: Record<Effort, { label: string; hint: string }> = {
   l: { label: "L", hint: "1-2 weeks" },
   xl: { label: "XL", hint: "2+ weeks" },
 };
+
+// =============================================================================
+// Roadmap Metadata
+// =============================================================================
+
+export const ROADMAP_LAST_UPDATED = "January 3, 2026";
 
 // =============================================================================
 // Roadmap Data
