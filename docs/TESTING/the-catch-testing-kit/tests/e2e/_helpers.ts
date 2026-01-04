@@ -64,6 +64,7 @@ export async function navigateTo(page: Page, path: string): Promise<void> {
       throw new Error(message);
     }
     test.skip(true, message);
+    return; // Stop execution after skipping test
   }
 }
 
