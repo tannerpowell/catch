@@ -173,7 +173,7 @@ describe("Notifications API", () => {
       expect(response.status).toBe(401);
     });
 
-    test("returns preference structure", async (ctx) => {
+    test.skip("returns preference structure", async (ctx) => {
       if (!apiAvailable) {
         ctx.skip();
         return;
@@ -181,7 +181,6 @@ describe("Notifications API", () => {
 
       // Note: This test requires Clerk auth which may not be available
       // In a real test, you'd mock Clerk or use test credentials
-      ctx.skip();
     });
   });
 

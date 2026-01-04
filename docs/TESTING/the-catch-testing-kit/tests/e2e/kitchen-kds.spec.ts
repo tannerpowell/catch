@@ -24,7 +24,10 @@ test.describe("Kitchen display (KDS)", () => {
 
     const first = orderCard.first();
     const orderTestId = await first.getAttribute("data-testid");
-    if (!orderTestId) test.skip(true, "KDS order card missing data-testid.");
+    if (!orderTestId) {
+      test.skip(true, \"KDS order card missing data-testid.\");
+      return;
+    }
 
     const suffix = orderTestId.replace(/^kds-order-/, "");
     const advance = page.getByTestId(`kds-advance-status-${suffix}`);

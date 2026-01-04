@@ -26,6 +26,9 @@ jobs:
       - name: Unit tests (Vitest)
         run: npm run test:unit
 
+      - name: Integration tests (Vitest)
+        run: npm run test:integration
+
       - name: Build (Next)
         run: npm run build
 
@@ -36,9 +39,6 @@ jobs:
         run: npm run test:e2e
         env:
           CI: "1"
-          # If your routes differ, override here:
-          # E2E_MENU_URL: "/menu"
-          # E2E_KITCHEN_URL: "/kitchen"
 
       - name: Upload Playwright report (on failure)
         if: failure()

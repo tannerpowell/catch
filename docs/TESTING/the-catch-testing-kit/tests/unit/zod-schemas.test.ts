@@ -9,7 +9,7 @@ describe("Zod schemas", () => {
     );
     if (!mod) return;
 
-    const { checkoutSchema } = mod as any;
+    const { checkoutSchema } = mod;
     if (!checkoutSchema) return;
 
     const ok = checkoutSchema.safeParse({

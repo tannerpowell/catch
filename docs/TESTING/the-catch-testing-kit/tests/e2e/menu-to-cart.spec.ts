@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test } from "@playwright/test";
 import { e2eUrls, ensureTestId, gotoOrSkip, expectAnyCartCount } from "./_helpers";
 
 test.describe("Menu → item selection → add to cart", () => {

@@ -141,7 +141,11 @@ export async function maybeFill(
  */
 export function priceToCents(priceStr: string): number {
   const cleaned = priceStr.replace(/[^0-9.]/g, "");
-  return Math.round(parseFloat(cleaned) * 100);
+  const parsed = parseFloat(cleaned);
+  if (!Number.isFinite(parsed)) {
+    throw new Error(`Invalid price string: "${priceStr}"`);
+  }
+  return Math.round(parsed * 100);
 }
 
 /**
@@ -149,7 +153,11 @@ export function priceToCents(priceStr: string): number {
  */
 export function priceToDollars(priceStr: string): number {
   const cleaned = priceStr.replace(/[^0-9.]/g, "");
-  return parseFloat(cleaned);
+  const parsed = parseFloat(cleaned);
+  if (!Number.isFinite(parsed)) {
+    throw new Error(`Invalid price string: "${priceStr}"`);
+  }
+  return parsed;
 }
 
 /**

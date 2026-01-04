@@ -9,7 +9,7 @@
  * - Clear cart functionality
  */
 
-import { describe, test, expect, beforeEach, vi } from "vitest";
+import { describe, test, expect, beforeEach } from \"vitest\";
 import { renderHook, act } from "@testing-library/react";
 import { tryImport, createMockLocalStorage, resetLocalStorage } from "./_helpers";
 import { ReactNode } from "react";

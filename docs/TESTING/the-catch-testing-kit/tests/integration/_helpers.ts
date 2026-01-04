@@ -122,7 +122,7 @@ export function createMockRequest(
   body?: unknown,
   headers?: Record<string, string>
 ): Request {
-  return new Request("http://localhost:3000/api/test", {
+  return new Request(`${API_BASE_URL}/api/test`, {
     method,
     headers: {
       "Content-Type": "application/json",

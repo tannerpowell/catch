@@ -10,75 +10,67 @@ import { apiRequest, expectStatus, requireApiAvailable, API_BASE_URL } from "./_
 
 describe("GET /api/health", () => {
   let apiAvailable = false;
+  let healthResponse: Response | null = null;
+  let healthData: any = null;
 
   beforeAll(async () => {
     apiAvailable = await requireApiAvailable();
+    if (apiAvailable) {
+      healthResponse = await apiRequest("/api/health");
+      healthData = await healthResponse.json();
+    }
   });
 
   test("returns 200 when healthy", async (ctx) => {
-    if (!apiAvailable) {
+    if (!apiAvailable || !healthResponse) {
       ctx.skip();
       return;
     }
 
-    const response = await apiRequest("/api/health");
-    expect(response.status).toBe(200);
-
-    const data = await response.json();
-    expect(data.status).toBe("healthy");
+    expect(healthResponse.status).toBe(200);
+    expect(healthData.status).toBe("healthy");
   });
 
   test("includes timestamp", async (ctx) => {
-    if (!apiAvailable) {
+    if (!apiAvailable || !healthData) {
       ctx.skip();
       return;
     }
 
-    const response = await apiRequest("/api/health");
-    const data = await response.json();
-
-    expect(data.timestamp).toBeDefined();
-    // Should be a valid ISO date string
-    expect(() => new Date(data.timestamp)).not.toThrow();
+    expect(healthData.timestamp).toBeDefined();
+    const date = new Date(healthData.timestamp);
+    expect(date.getTime()).not.toBeNaN();
+    expect(date.toISOString()).toBe(healthData.timestamp);
   });
 
   test("includes version info", async (ctx) => {
-    if (!apiAvailable) {
+    if (!apiAvailable || !healthData) {
       ctx.skip();
       return;
     }
 
-    const response = await apiRequest("/api/health");
-    const data = await response.json();
-
-    expect(data.version).toBeDefined();
+    expect(healthData.version).toBeDefined();
   });
 
   test("includes service checks", async (ctx) => {
-    if (!apiAvailable) {
+    if (!apiAvailable || !healthData) {
       ctx.skip();
       return;
     }
 
-    const response = await apiRequest("/api/health");
-    const data = await response.json();
-
-    expect(data.checks).toBeDefined();
-    expect(typeof data.checks).toBe("object");
+    expect(healthData.checks).toBeDefined();
+    expect(typeof healthData.checks).toBe("object");
   });
 
   test("includes circuit breaker states", async (ctx) => {
-    if (!apiAvailable) {
+    if (!apiAvailable || !healthData) {
       ctx.skip();
       return;
     }
 
-    const response = await apiRequest("/api/health");
-    const data = await response.json();
-
     // Circuit breakers should be present for Sanity services
-    if (data.circuitBreakers) {
-      expect(typeof data.circuitBreakers).toBe("object");
+    if (healthData.circuitBreakers) {
+      expect(typeof healthData.circuitBreakers).toBe("object");
     }
   });
 
@@ -92,19 +84,17 @@ describe("GET /api/health", () => {
     await apiRequest("/api/health");
     const duration = Date.now() - start;
 
-    // Health check should respond within 5 seconds
-    expect(duration).toBeLessThan(5000);
+    // Health check should respond within 1 second
+    expect(duration).toBeLessThan(1000);
   });
 
   test("sets correct content-type header", async (ctx) => {
-    if (!apiAvailable) {
+    if (!apiAvailable || !healthResponse) {
       ctx.skip();
       return;
     }
 
-    const response = await apiRequest("/api/health");
-    const contentType = response.headers.get("content-type");
-
+    const contentType = healthResponse.headers.get("content-type");
     expect(contentType).toContain("application/json");
   });
 

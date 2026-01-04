@@ -10,7 +10,7 @@
  */
 
 import { test, expect } from "@playwright/test";
-import { routes, navigateTo, ensureTestId, priceToDollars } from "./_helpers";
+import { routes, navigateTo, priceToDollars } from "./_helpers";
 
 test.describe("Cart edge cases", () => {
   test.describe("location locking", () => {

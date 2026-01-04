@@ -6,7 +6,7 @@
  */
 
 import { test, expect } from "@playwright/test";
-import { routes, navigateTo, ensureTestId } from "./_helpers";
+import { routes, navigateTo } from "./_helpers";
 
 // Test order numbers from fixtures
 const testOrders = {

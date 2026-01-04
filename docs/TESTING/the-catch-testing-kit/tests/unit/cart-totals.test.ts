@@ -274,4 +274,22 @@ describe("cents to dollars conversion", () => {
     const formatted = `$${(cents / 100).toFixed(2)}`;
     expect(formatted).toBe("$0.00");
   });
+
+  test("handles single cent amounts", () => {
+    const cents = 1;
+    const formatted = `$${(cents / 100).toFixed(2)}`;
+    expect(formatted).toBe("$0.01");
+  });
+
+  test("handles large amounts", () => {
+    const cents = 999999; // $9,999.99
+    const formatted = `$${(cents / 100).toFixed(2)}`;
+    expect(formatted).toBe("$9999.99");
+  });
+
+  test("handles amounts ending in zero cents", () => {
+    const cents = 1000; // $10.00
+    const formatted = `$${(cents / 100).toFixed(2)}`;
+    expect(formatted).toBe("$10.00");
+  });
 });

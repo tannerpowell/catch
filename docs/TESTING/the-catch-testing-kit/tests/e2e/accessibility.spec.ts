@@ -13,26 +13,27 @@ import { routes, navigateTo } from "./_helpers";
 // Try to import AxeBuilder, skip tests if not installed
 let AxeBuilder: typeof import("@axe-core/playwright").default | null = null;
 
-try {
-  // Dynamic import to handle case where package isn't installed
-  AxeBuilder = require("@axe-core/playwright").default;
-} catch {
-  // Package not installed - tests will be skipped
+async function loadAxeBuilder() {
+  try {
+    const module = await import("@axe-core/playwright");
+    AxeBuilder = module.default;
+  } catch {
+    // Package not installed - tests will be skipped
+  }
 }
 
 test.describe("Accessibility", () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeAll(async () => {
+    await loadAxeBuilder();
+  });
+
+  test.beforeEach(async () => {
     if (!AxeBuilder) {
       test.skip(true, "Install @axe-core/playwright to run accessibility tests");
     }
   });
 
   test("menu page: no critical violations", async ({ page }) => {
-    if (!AxeBuilder) {
-      test.skip(true, "AxeBuilder not available");
-      return;
-    }
-
     await navigateTo(page, routes.menu);
 
     const results = await new AxeBuilder({ page }).analyze();
@@ -53,11 +54,6 @@ test.describe("Accessibility", () => {
   });
 
   test("cart page: no critical violations", async ({ page }) => {
-    if (!AxeBuilder) {
-      test.skip(true, "AxeBuilder not available");
-      return;
-    }
-
     await navigateTo(page, routes.cart);
 
     const results = await new AxeBuilder({ page }).analyze();
@@ -70,11 +66,6 @@ test.describe("Accessibility", () => {
   });
 
   test("checkout form: no critical violations", async ({ page }) => {
-    if (!AxeBuilder) {
-      test.skip(true, "AxeBuilder not available");
-      return;
-    }
-
     await navigateTo(page, routes.checkout);
 
     const results = await new AxeBuilder({ page }).analyze();
@@ -94,11 +85,6 @@ test.describe("Accessibility", () => {
   });
 
   test("kitchen KDS: no critical violations", async ({ page }) => {
-    if (!AxeBuilder) {
-      test.skip(true, "AxeBuilder not available");
-      return;
-    }
-
     await navigateTo(page, routes.kitchen);
 
     const results = await new AxeBuilder({ page }).analyze();
@@ -265,11 +251,6 @@ test.describe("Accessibility", () => {
 
   test.describe("color contrast", () => {
     test("text has sufficient contrast", async ({ page }) => {
-      if (!AxeBuilder) {
-        test.skip(true, "AxeBuilder not available");
-        return;
-      }
-
       await navigateTo(page, routes.menu);
 
       // Run only color contrast rule

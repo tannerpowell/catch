@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { e2eUrls, gotoOrSkip, ensureTestId } from "./_helpers";
+import { e2eUrls, gotoOrSkip, ensureTestId, maybeFill } from "./_helpers";
 
 test.describe("Checkout validation + submission (payment mocked/skipped)", () => {
   test("shows validation errors on empty submit", async ({ page }) => {
@@ -24,19 +24,13 @@ test.describe("Checkout validation + submission (payment mocked/skipped)", () =>
 
     // If your checkout uses named inputs, these locators are reasonable defaults:
     // Update names to match your form.
-    const form = await ensureTestId(page, "checkout-form", `Missing data-testid="checkout-form" on the checkout form root.`);
+    await ensureTestId(page, "checkout-form", `Missing data-testid="checkout-form" on the checkout form root.`);
     await ensureTestId(page, "checkout-submit", `Missing data-testid="checkout-submit" on the checkout submit button.`);
 
-    // Best-effort: fill common fields if they exist; skip if not found.
-    const maybeFill = async (selector: string, value: string) => {
-      const el = page.locator(selector);
-      if ((await el.count()) > 0) await el.first().fill(value);
-    };
-
-    await maybeFill('input[name="firstName"]', "Test");
-    await maybeFill('input[name="lastName"]', "User");
-    await maybeFill('input[name="email"]', "test@example.com");
-    await maybeFill('input[name="phone"]', "2145551212");
+    await maybeFill(page, 'input[name="firstName"]', "Test");
+    await maybeFill(page, 'input[name="lastName"]', "User");
+    await maybeFill(page, 'input[name="email"]', "test@example.com");
+    await maybeFill(page, 'input[name="phone"]', "2145551212");
 
     await page.getByTestId("checkout-submit").click();
 
