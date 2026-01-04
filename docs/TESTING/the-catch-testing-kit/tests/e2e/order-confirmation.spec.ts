@@ -84,12 +84,7 @@ test.describe("Order confirmation", () => {
 
     // Verify demo mode notice is displayed
     const body = page.locator("body");
-    const bodyText = await body.textContent();
-
-    // Demo notice should be present in development
-    if (bodyText) {
-      await expect(body).toContainText(/demo/i);
-    }
+    await expect(body).toContainText(/demo/i);
   });
 
   test("completes checkout successfully", async ({ page }) => {
