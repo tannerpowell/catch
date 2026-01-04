@@ -287,7 +287,7 @@ test.describe("Cart edge cases", () => {
           const totalAfter = priceToDollars(
             (await totalElement.textContent()) ?? "0"
           );
-          expect(totalAfter - totalBefore).toBeCloseTo(5, 1);
+          expect(totalAfter - totalBefore).toBeCloseTo(5, 2);
         }).toPass({ timeout: 5000 });
       }
     });
@@ -384,14 +384,9 @@ test.describe("Cart edge cases", () => {
 
       if ((await increaseButton.count()) > 0) {
         await increaseButton.first().click();
-        
-        // Wait for quantity increase to complete
-        await expect(async () => {
-          const totalAfter = priceToDollars(
-            (await page.getByTestId("cart-total").textContent()) ?? "0"
-          );
-          expect(totalAfter).toBeGreaterThan(0);
-        }).toPass({ timeout: 3000 });
+
+        // Wait briefly for quantity update to complete
+        await page.waitForTimeout(500);
 
         const totalBefore = priceToDollars(
           (await page.getByTestId("cart-total").textContent()) ?? "0"

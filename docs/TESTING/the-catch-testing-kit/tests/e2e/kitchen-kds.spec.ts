@@ -42,8 +42,8 @@ test.describe("Kitchen display (KDS)", () => {
 
     // Verify status change with specific assertion
     // Option 1: Check for status badge/label within the order card
-    const orderCard = page.getByTestId(`kds-order-${suffix}`);
-    const statusIndicator = orderCard.locator('[data-testid^="kds-status-"]');
+    const statusOrderCard = page.getByTestId(`kds-order-${suffix}`);
+    const statusIndicator = statusOrderCard.locator('[data-testid^="kds-status-"]');
     if ((await statusIndicator.count()) > 0) {
       await expect(statusIndicator).toBeVisible();
     } else {

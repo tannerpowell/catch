@@ -12,7 +12,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "test": "npm run test:unit && npm run test:integration && npm run test:e2e",
+    "test": "pnpm run test:unit && pnpm run test:integration && pnpm run test:e2e",
     "test:unit": "vitest run docs/TESTING/the-catch-testing-kit/tests/unit",
     "test:unit:watch": "vitest docs/TESTING/the-catch-testing-kit/tests/unit",
     "test:integration": "vitest run docs/TESTING/the-catch-testing-kit/tests/integration",

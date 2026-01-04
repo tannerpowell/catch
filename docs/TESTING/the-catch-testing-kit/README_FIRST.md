@@ -42,7 +42,7 @@ pnpm run test:e2e
 
 ## Test Structure
 
-```
+```text
 tests/
 ├── unit/                           # Fast, isolated unit tests
 │   ├── _helpers.ts                 # Mock utilities
@@ -103,7 +103,7 @@ tests/
 Add these to your UI components for stable E2E selectors:
 
 ### Menu Page
-```
+```tsx
 data-testid="category-nav"              # Category navigation
 data-testid="menu-item-{slug}"          # Each menu item card
 data-testid="item-modal"                # Item detail modal
@@ -113,7 +113,7 @@ data-testid="special-instructions"      # Special instructions textarea
 ```
 
 ### Cart Page
-```
+```tsx
 data-testid="cart-badge-count"          # Header cart count
 data-testid="cart-row-{id}"             # Each cart line item
 data-testid="qty-increase-{id}"         # Increase quantity button
@@ -125,14 +125,14 @@ data-testid="clear-cart"                # Clear cart button
 ```
 
 ### Checkout Page
-```
+```tsx
 data-testid="checkout-form"             # Checkout form element
 data-testid="checkout-submit"           # Submit order button
 data-testid="field-error-{field}"       # Validation error messages
 ```
 
 ### Order Confirmation
-```
+```tsx
 data-testid="order-number"              # Order number display
 data-testid="order-status"              # Order status badge
 data-testid="order-location"            # Pickup location
@@ -141,7 +141,7 @@ data-testid="order-total"               # Order total
 ```
 
 ### Kitchen Display (KDS)
-```
+```tsx
 data-testid="kds-board"                 # KDS container
 data-testid="kds-column-{status}"       # Status columns (new, prep, ready)
 data-testid="kds-order-{id}"            # Order cards

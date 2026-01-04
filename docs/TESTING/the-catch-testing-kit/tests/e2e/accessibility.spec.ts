@@ -66,6 +66,14 @@ test.describe("Accessibility", () => {
       (v) => v.impact === "critical" || v.impact === "serious"
     );
 
+    if (critical.length > 0) {
+      console.log("Critical a11y violations on cart page:");
+      critical.forEach((v) => {
+        console.log(`  - ${v.id}: ${v.description}`);
+        v.nodes.forEach((n) => console.log(`    ${n.html.slice(0, 80)}`));
+      });
+    }
+
     expect(critical).toHaveLength(0);
   });
 
@@ -106,6 +114,14 @@ test.describe("Accessibility", () => {
     const critical = results.violations.filter(
       (v) => v.impact === "critical" || v.impact === "serious"
     );
+
+    if (critical.length > 0) {
+      console.log("Critical a11y violations on kitchen KDS page:");
+      critical.forEach((v) => {
+        console.log(`  - ${v.id}: ${v.description}`);
+        v.nodes.forEach((n) => console.log(`    ${n.html.slice(0, 80)}`));
+      });
+    }
 
     expect(critical).toHaveLength(0);
   });
@@ -173,13 +189,14 @@ test.describe("Accessibility", () => {
       await navigateTo(page, routes.menu);
 
       // Click first menu item to open modal
-      const menuItem = page.locator('[data-testid^="menu-item-"]').first();
+      const menuItems = page.locator('[data-testid^="menu-item-"]');
 
-      if ((await menuItem.count()) === 0) {
+      if ((await menuItems.count()) === 0) {
         test.skip(true, "No menu items found");
         return;
       }
 
+      const menuItem = menuItems.first();
       await menuItem.click();
 
       // Wait for modal to appear
