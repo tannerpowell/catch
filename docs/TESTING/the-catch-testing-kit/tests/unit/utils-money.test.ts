@@ -9,9 +9,8 @@ interface MoneyModule {
 describe("Money utilities (formatPrice/toCents/toDollars)", () => {
   test("toCents and toDollars are inverses for common values", async () => {
     const mod = await importOrSkip(
-      // Update this import path to your project (example uses tsconfig alias "@/")
-      () => import("@/lib/money"),
-      "Update import path: expected money utils at @/lib/money (adjust to your repo)."
+      () => import("@/lib/utils"),
+      "Update import path: expected money utils at @/lib/utils (adjust to your repo)."
     );
     if (!mod) return;
 
