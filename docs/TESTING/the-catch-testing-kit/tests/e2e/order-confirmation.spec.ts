@@ -82,17 +82,17 @@ test.describe("Order confirmation", () => {
 
     await expect(page).toHaveURL(/order-confirmation|orders\//);
 
-    // In demo mode, there should be some indication
+    // Verify demo mode notice is displayed
     const body = page.locator("body");
-    const hasDemoNotice = await body.textContent();
+    const bodyText = await body.textContent();
 
-    // This is a soft check - demo notice may or may not be present
-    if (hasDemoNotice?.toLowerCase().includes("demo")) {
-      expect(hasDemoNotice.toLowerCase()).toContain("demo");
+    // Demo notice should be present in development
+    if (bodyText) {
+      await expect(body).toContainText(/demo/i);
     }
   });
 
-  test("prevents double submission", async ({ page }) => {
+  test("completes checkout successfully", async ({ page }) => {
     await completeCheckout(page, {
       name: "Test User",
       email: "test@example.com",

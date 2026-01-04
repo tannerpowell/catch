@@ -25,7 +25,7 @@ test.describe("Kitchen display (KDS)", () => {
     const first = orderCard.first();
     const orderTestId = await first.getAttribute("data-testid");
     if (!orderTestId) {
-      test.skip(true, \"KDS order card missing data-testid.\");
+      test.skip(true, "KDS order card missing data-testid.");
       return;
     }
 
