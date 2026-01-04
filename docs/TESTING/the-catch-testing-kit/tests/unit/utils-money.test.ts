@@ -6,7 +6,7 @@ interface MoneyModule {
   toDollars?: (cents: number) => number;
 }
 
-describe("Money utilities (formatPrice/toCents/toDollars)", () => {
+describe("Money utilities (toCents/toDollars)", () => {
   test("toCents and toDollars are inverses for common values", async () => {
     const mod = await tryImport(
       () => import("@/lib/utils")

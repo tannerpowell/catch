@@ -32,8 +32,8 @@ export default defineConfig({
   webServer: {
     command:
       process.env.USE_DEV_SERVER === "1"
-        ? "npm run dev -- -p 3000"
-        : "npm run build && npx next start -p 3000",
+        ? "pnpm run dev -- -p 3000"
+        : "pnpm run build && pnpm run start -p 3000",
     url: "http://127.0.0.1:3000",
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
