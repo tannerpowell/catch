@@ -27,13 +27,12 @@ test.describe("Accessibility", () => {
     await loadAxeBuilder();
   });
 
-  test.beforeEach(async () => {
+  test("menu page: no critical violations", async ({ page }) => {
     if (!AxeBuilder) {
       test.skip(true, "Install @axe-core/playwright to run accessibility tests");
+      return;
     }
-  });
 
-  test("menu page: no critical violations", async ({ page }) => {
     await navigateTo(page, routes.menu);
 
     const results = await new AxeBuilder({ page }).analyze();
@@ -54,6 +53,11 @@ test.describe("Accessibility", () => {
   });
 
   test("cart page: no critical violations", async ({ page }) => {
+    if (!AxeBuilder) {
+      test.skip(true, "Install @axe-core/playwright to run accessibility tests");
+      return;
+    }
+
     await navigateTo(page, routes.cart);
 
     const results = await new AxeBuilder({ page }).analyze();
@@ -66,6 +70,11 @@ test.describe("Accessibility", () => {
   });
 
   test("checkout form: no critical violations", async ({ page }) => {
+    if (!AxeBuilder) {
+      test.skip(true, "Install @axe-core/playwright to run accessibility tests");
+      return;
+    }
+
     await navigateTo(page, routes.checkout);
 
     const results = await new AxeBuilder({ page }).analyze();
@@ -85,6 +94,11 @@ test.describe("Accessibility", () => {
   });
 
   test("kitchen KDS: no critical violations", async ({ page }) => {
+    if (!AxeBuilder) {
+      test.skip(true, "Install @axe-core/playwright to run accessibility tests");
+      return;
+    }
+
     await navigateTo(page, routes.kitchen);
 
     const results = await new AxeBuilder({ page }).analyze();
@@ -251,6 +265,11 @@ test.describe("Accessibility", () => {
 
   test.describe("color contrast", () => {
     test("text has sufficient contrast", async ({ page }) => {
+      if (!AxeBuilder) {
+        test.skip(true, "Install @axe-core/playwright to run accessibility tests");
+        return;
+      }
+
       await navigateTo(page, routes.menu);
 
       // Run only color contrast rule
