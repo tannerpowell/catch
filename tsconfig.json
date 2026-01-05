@@ -47,6 +47,8 @@
   ],
   "exclude": [
     "node_modules",
-    "scripts/**/*.ts"
+    "scripts/**/*.ts",
+    "docs/TESTING/the-catch-testing-kit/**/*.ts",
+    "docs/TESTING/the-catch-testing-kit/**/*.tsx"
   ]
 }

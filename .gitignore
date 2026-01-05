@@ -78,3 +78,5 @@ data/templates/opus-*
 public/images/compare/after/
 public/images/dfw/
 next-env.d.ts
+.vercel
+.env*.local
