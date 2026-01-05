@@ -11,7 +11,7 @@
 
 import { describe, test, expect, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
-import { importOrSkip, createMockLocalStorage, resetLocalStorage } from "./_helpers";
+import { createMockLocalStorage, resetLocalStorage } from "./_helpers";
 import { ReactNode } from "react";
 
 // Mock localStorage
@@ -71,12 +71,13 @@ describe("CartContext", () => {
     taxRate: 0.0825,
   };
 
-  const mockLocation2 = {
-    _id: "loc_garland",
-    slug: "garland",
-    name: "Garland",
-    taxRate: 0.0825,
-  };
+  // Reserved for future multi-location tests
+  // const mockLocation2 = {
+  //   _id: "loc_garland",
+  //   slug: "garland",
+  //   name: "Garland",
+  //   taxRate: 0.0825,
+  // };
 
   const mockItem = {
     menuItem: {

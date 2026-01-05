@@ -6,12 +6,12 @@
  */
 
 import { describe, test, expect, beforeAll } from "vitest";
-import { apiRequest, expectStatus, requireApiAvailable, API_BASE_URL } from "./_helpers";
+import { apiRequest, requireApiAvailable, API_BASE_URL } from "./_helpers";
 
 describe("GET /api/health", () => {
   let apiAvailable = false;
   let healthResponse: Response | null = null;
-  let healthData: any = null;
+  let healthData: { status?: string; timestamp?: string; version?: string; services?: unknown } | null = null;
 
   beforeAll(async () => {
     apiAvailable = await requireApiAvailable();

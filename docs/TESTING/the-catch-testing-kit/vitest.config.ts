@@ -6,9 +6,9 @@ import tsconfigPaths from "vite-tsconfig-paths";
  * Vitest Configuration
  *
  * Supports three test layers:
- * - Unit tests: tests/unit/**/*.test.ts(x)
- * - Integration tests: tests/integration/**/*.test.ts
- * - Source-level tests: src/**/*.test.ts(x)
+ * - Unit tests: tests/unit slash star star slash star.test.ts and tsx
+ * - Integration tests: tests/integration slash star star slash star.test.ts
+ * - Source-level tests: src slash star star slash star.test.ts and tsx
  *
  * Run specific layers:
  * - npm run test:unit       → Unit tests only

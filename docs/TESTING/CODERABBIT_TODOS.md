@@ -127,7 +127,7 @@ expect(date.toISOString()).toBe(data.timestamp);
 
 ---
 
-## 🟡 Minor Issues (16)
+## 🟡 Minor Issues (18)
 
 ### 6. Risk of test interference in rate limiting tests
 **File:** `docs/TESTING/the-catch-testing-kit/tests/integration/api-order-status.test.ts` (lines 193-252)
@@ -271,9 +271,88 @@ await submitButton.click();
 
 ---
 
-## 🧹 Nitpick Comments (28)
+### 22. Add violation logging for consistency in accessibility tests
+**File:** `docs/TESTING/the-catch-testing-kit/tests/e2e/accessibility.spec.ts` (lines 55-70, 96-111)
 
-### 22. Stronger typing for Zod schemas test
+**Issue:** Cart and kitchen tests don't log critical violations when found, unlike menu/checkout/color contrast tests.
+
+**Action:**
+- [ ] Add logging for cart test (after line 67):
+```typescript
+if (critical.length > 0) {
+  console.log("Critical a11y violations on cart page:");
+  critical.forEach((v) => {
+    console.log(`  - ${v.id}: ${v.description}`);
+    v.nodes.forEach((n) => console.log(`    ${n.html.slice(0, 80)}`));
+  });
+}
+```
+- [ ] Add same logging for kitchen test (after line 108)
+
+---
+
+### 23. Check count before calling .first() in accessibility tests
+**File:** `docs/TESTING/the-catch-testing-kit/tests/e2e/accessibility.spec.ts` (lines in image test)
+
+**Issue:** Calling `.count()` on a locator after `.first()` doesn't properly verify menu items exist.
+
+**Action:**
+- [ ] Fix the logic:
+```typescript
+const menuItems = page.locator('[data-testid^="menu-item-"]');
+if ((await menuItems.count()) === 0) {
+  test.skip(true, "No menu items found");
+  return;
+}
+const menuItem = menuItems.first();
+await menuItem.click();
+```
+
+---
+
+## 🧹 Nitpick Comments (31)
+
+### 24. Extract skip guard to reduce duplication
+**File:** `docs/TESTING/the-catch-testing-kit/tests/e2e/accessibility.spec.ts` (lines 31-34, 56-59, 73-76, 97-100, 268-271)
+
+**Issue:** Skip guard pattern is repeated across five tests.
+
+**Action:**
+- [ ] Extract to helper function in `_helpers.ts`:
+```typescript
+function requireAxeBuilder() {
+  if (!AxeBuilder) {
+    test.skip(true, "Install @axe-core/playwright to run accessibility tests");
+  }
+}
+```
+- [ ] Use in each test:
+```typescript
+test("menu page: no critical violations", async ({ page }) => {
+  requireAxeBuilder();
+  await navigateTo(page, routes.menu);
+  // ...
+});
+```
+
+---
+
+### 25. Make image test limit configurable
+**File:** `docs/TESTING/the-catch-testing-kit/tests/e2e/accessibility.spec.ts` (line 253)
+
+**Issue:** Arbitrary limit of 10 images might miss violations.
+
+**Action:**
+- [ ] Make configurable via environment variable:
+```typescript
+const maxImagesToTest = parseInt(process.env.E2E_MAX_IMAGES_TEST ?? "20", 10);
+const imageCount = await images.count();
+for (let i = 0; i < Math.min(imageCount, maxImagesToTest); i++) {
+```
+
+---
+
+### 26. Stronger typing for Zod schemas test
 **File:** `docs/TESTING/the-catch-testing-kit/tests/unit/zod-schemas.test.ts` (lines 5-25)
 
 **Action:**
@@ -281,7 +360,7 @@ await submitButton.click();
 
 ---
 
-### 23. Remove unused `expect` import
+### 27. Remove unused `expect` import
 **File:** `docs/TESTING/the-catch-testing-kit/tests/e2e/menu-to-cart.spec.ts` (line 1)
 
 **Action:**
@@ -289,7 +368,7 @@ await submitButton.click();
 
 ---
 
-### 24. Avoid `as any` in cart-store.test.tsx
+### 28. Avoid `as any` in cart-store.test.tsx
 **File:** `docs/TESTING/the-catch-testing-kit/tests/unit/cart-store.test.tsx` (line 14)
 
 **Action:**
@@ -297,7 +376,7 @@ await submitButton.click();
 
 ---
 
-### 25. Strengthen cart store assertions
+### 29. Strengthen cart store assertions
 **File:** `docs/TESTING/the-catch-testing-kit/tests/unit/cart-store.test.tsx` (lines 22-33)
 
 **Action:**
@@ -306,7 +385,7 @@ await submitButton.click();
 
 ---
 
-### 26. Avoid `as any` in utils-money.test.ts
+### 30. Avoid `as any` in utils-money.test.ts
 **File:** `docs/TESTING/the-catch-testing-kit/tests/unit/utils-money.test.ts` (line 13)
 
 **Action:**
@@ -314,7 +393,7 @@ await submitButton.click();
 
 ---
 
-### 27. Test inverse property explicitly
+### 31. Test inverse property explicitly
 **File:** `docs/TESTING/the-catch-testing-kit/tests/unit/utils-money.test.ts` (lines 15-21)
 
 **Action:**
@@ -322,7 +401,7 @@ await submitButton.click();
 
 ---
 
-### 28. More reasonable timeout for health checks
+### 32. More reasonable timeout for health checks
 **File:** `docs/TESTING/the-catch-testing-kit/tests/integration/api-health.test.ts` (lines 85-96)
 
 **Action:**
@@ -330,7 +409,7 @@ await submitButton.click();
 
 ---
 
-### 29. Optimize redundant API calls in health tests
+### 33. Optimize redundant API calls in health tests
 **File:** `docs/TESTING/the-catch-testing-kit/tests/integration/api-health.test.ts` (lines 18-123)
 
 **Action:**
@@ -338,7 +417,7 @@ await submitButton.click();
 
 ---
 
-### 30. Avoid conditional assertions in api-order-status
+### 34. Avoid conditional assertions in api-order-status
 **File:** `docs/TESTING/the-catch-testing-kit/tests/integration/api-order-status.test.ts` (lines 256-281)
 
 **Action:**
@@ -346,7 +425,7 @@ await submitButton.click();
 
 ---
 
-### 31. Improve loop-based test clarity
+### 35. Improve loop-based test clarity
 **File:** `docs/TESTING/the-catch-testing-kit/tests/integration/api-order-status.test.ts` (lines 164-189)
 
 **Action:**
@@ -354,7 +433,7 @@ await submitButton.click();
 
 ---
 
-### 32. Add integration tests to CI pipeline
+### 36. Add integration tests to CI pipeline
 **File:** `docs/TESTING/the-catch-testing-kit/.github/workflows/tests.yml` (lines 26-36)
 
 **Action:**
@@ -362,7 +441,7 @@ await submitButton.click();
 
 ---
 
-### 33. Clarify commented environment variables
+### 37. Clarify commented environment variables
 **File:** `docs/TESTING/the-catch-testing-kit/.github/workflows/tests.yml` (lines 39-41)
 
 **Action:**
@@ -370,7 +449,7 @@ await submitButton.click();
 
 ---
 
-### 34. Import `maybeFill` from helpers
+### 38. Import `maybeFill` from helpers
 **File:** `docs/TESTING/the-catch-testing-kit/tests/e2e/checkout.spec.ts` (lines 31-34)
 
 **Action:**
@@ -378,7 +457,7 @@ await submitButton.click();
 
 ---
 
-### 35. Add language specifiers to code blocks
+### 39. Add language specifiers to code blocks
 **File:** `docs/TESTING/the-catch-testing-kit/README_FIRST.md` (lines 45, 106, 116, 128, 135, 144)
 
 **Action:**
@@ -386,7 +465,7 @@ await submitButton.click();
 
 ---
 
-### 36. Replace waitForTimeout with deterministic waits
+### 40. Replace waitForTimeout with deterministic waits
 **File:** `docs/TESTING/the-catch-testing-kit/tests/e2e/error-handling.spec.ts` (line 210)
 
 **Action:**
@@ -394,7 +473,7 @@ await submitButton.click();
 
 ---
 
-### 37. Remove redundant AxeBuilder checks
+### 41. Remove redundant AxeBuilder checks
 **File:** `docs/TESTING/the-catch-testing-kit/tests/e2e/accessibility.spec.ts` (lines 30-53)
 
 **Action:**
@@ -402,7 +481,7 @@ await submitButton.click();
 
 ---
 
-### 38. Use test.skip() decorator for always-skipped tests
+### 42. Use test.skip() decorator for always-skipped tests
 **File:** `docs/TESTING/the-catch-testing-kit/tests/integration/api-notifications.test.ts` (lines 176-186)
 
 **Action:**
@@ -410,7 +489,7 @@ await submitButton.click();
 
 ---
 
-### 39. Strengthen notification type assertions
+### 43. Strengthen notification type assertions
 **File:** `docs/TESTING/the-catch-testing-kit/tests/integration/api-notifications.test.ts` (lines 66-91)
 
 **Action:**
@@ -418,7 +497,7 @@ await submitButton.click();
 
 ---
 
-### 40. Use Playwright's clock API for polling tests
+### 44. Use Playwright's clock API for polling tests
 **File:** `docs/TESTING/the-catch-testing-kit/tests/e2e/order-tracking.spec.ts` (lines 215-231)
 
 **Action:**
@@ -426,7 +505,7 @@ await submitButton.click();
 
 ---
 
-### 41. Import types from CartContext module
+### 45. Import types from CartContext module
 **File:** `docs/TESTING/the-catch-testing-kit/tests/unit/cart-context.test.tsx` (lines 22-34)
 
 **Action:**
@@ -434,7 +513,7 @@ await submitButton.click();
 
 ---
 
-### 42. Test edge cases for currency formatting
+### 46. Test edge cases for currency formatting
 **File:** `docs/TESTING/the-catch-testing-kit/tests/unit/cart-totals.test.ts` (lines 261-277)
 
 **Action:**
@@ -442,7 +521,7 @@ await submitButton.click();
 
 ---
 
-### 43-49. Additional minor code quality improvements
+### 47-54. Additional minor code quality improvements
 - [ ] Add JSDoc comments to complex helper functions
 - [ ] Consider extracting magic numbers to constants
 - [ ] Add error message context to test failures
@@ -450,6 +529,7 @@ await submitButton.click();
 - [ ] Add performance benchmarks for critical paths
 - [ ] Document test data fixtures
 - [ ] Add comments explaining skip conditions
+- [ ] Consider snapshot testing for complex UI components
 
 ---
 
@@ -457,10 +537,10 @@ await submitButton.click();
 
 - **Critical:** 3 issues (MUST FIX)
 - **Major:** 2 issues (SHOULD FIX)
-- **Minor:** 16 issues (RECOMMENDED)
-- **Nitpicks:** 28+ improvements (OPTIONAL BUT PREFERRED)
+- **Minor:** 18 issues (RECOMMENDED)
+- **Nitpicks:** 31+ improvements (OPTIONAL BUT PREFERRED)
 
-**Total:** 49+ actionable items
+**Total:** 54+ actionable items
 
 ---
 

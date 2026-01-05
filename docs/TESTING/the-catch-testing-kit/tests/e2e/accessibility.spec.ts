@@ -15,8 +15,8 @@ let AxeBuilder: typeof import("@axe-core/playwright").default | null = null;
 
 async function loadAxeBuilder() {
   try {
-    const module = await import("@axe-core/playwright");
-    AxeBuilder = module.default;
+    const axeModule = await import("@axe-core/playwright");
+    AxeBuilder = axeModule.default;
   } catch {
     // Package not installed - tests will be skipped
   }

@@ -22,7 +22,7 @@ describe("Sanity circuit breaker", () => {
    * Helper to verify circuit state exists and matches expected value.
    * Prevents silent test passes when getCircuitState is missing.
    */
-  function assertCircuitState(adapter: any, key: string, expectedState: string) {
+  function assertCircuitState(adapter: { getCircuitState?: (key: string) => string }, key: string, expectedState: string) {
     expect(typeof adapter.getCircuitState).toBe("function");
     const state = adapter.getCircuitState(key);
     expect(state).toBeDefined();

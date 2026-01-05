@@ -120,7 +120,7 @@ export function createMockSanityFetch() {
           ...(menuFixture.locations || []),
           ...ordersFixture.orders,
         ];
-        result = allDocs.find((doc: any) => doc._id === docId) || null;
+        result = allDocs.find((doc: { _id?: string }) => doc._id === docId) || null;
       } else {
         // Default to categories for generic Sanity requests
         result = menuFixture.categories;
