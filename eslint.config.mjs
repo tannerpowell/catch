@@ -16,6 +16,7 @@ export default [
       "scripts/**",
       "Mixitup/**",
       "archive/**",
+      "docs/TESTING/the-catch-testing-kit/**",
       "*.config.js",
       "*.config.mjs",
       "*.config.ts"
