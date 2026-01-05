@@ -84,7 +84,7 @@ test.describe("Cart edge cases", () => {
       }
     });
 
-    test("clears cart when switching locations", async ({ page }) => {
+    test("clears cart when clear button is clicked", async ({ page }) => {
       // Add item from first location
       await navigateTo(page, `${routes.menu}?location=arlington`);
 
@@ -148,13 +148,21 @@ test.describe("Cart edge cases", () => {
         // Go to cart
         await navigateTo(page, routes.cart);
 
-        // Check cart row for modifier text
+        // Check cart row for modifier text or modifier-related elements
         const cartRow = page.locator('[data-testid^="cart-row-"]').first();
-        const rowText = await cartRow.textContent();
 
-        // Modifier name should appear in cart
-        // This is implementation-dependent
-        expect(rowText?.length).toBeGreaterThan(0);
+        // Look for modifier display within the cart row
+        const modifierDisplay = cartRow.locator('[data-testid^="modifier-"], .modifier, [class*="modifier"]');
+        const hasModifierElement = (await modifierDisplay.count()) > 0;
+
+        // If no specific modifier element, at least verify the row has substantial content
+        // (suggesting modifiers are displayed inline)
+        if (!hasModifierElement) {
+          const rowText = await cartRow.textContent();
+          expect(rowText?.length).toBeGreaterThan(20); // More than just item name
+        } else {
+          expect(hasModifierElement).toBe(true);
+        }
       }
     });
 

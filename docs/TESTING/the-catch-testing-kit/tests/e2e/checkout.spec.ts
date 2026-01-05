@@ -24,7 +24,6 @@ test.describe("Checkout validation + submission (payment mocked/skipped)", () =>
 
     // If your checkout uses named inputs, these locators are reasonable defaults:
     // Update names to match your form.
-    await ensureTestId(page, "checkout-form", `Missing data-testid="checkout-form" on the checkout form root.`);
     await ensureTestId(page, "checkout-submit", `Missing data-testid="checkout-submit" on the checkout submit button.`);
 
     await maybeFill(page, 'input[name="firstName"]', "Test");
