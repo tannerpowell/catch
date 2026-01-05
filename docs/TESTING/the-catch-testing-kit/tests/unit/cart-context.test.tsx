@@ -62,6 +62,7 @@ describe("CartContext", () => {
     itemCount: number;
     isHydrated: boolean;
   };
+  let wrapper: ({ children }: { children: ReactNode }) => JSX.Element;
 
   // Sample test data
   const mockLocation = {
@@ -70,14 +71,6 @@ describe("CartContext", () => {
     name: "Arlington",
     taxRate: 0.0825,
   };
-
-  // Reserved for future multi-location tests
-  // const mockLocation2 = {
-  //   _id: "loc_garland",
-  //   slug: "garland",
-  //   name: "Garland",
-  //   taxRate: 0.0825,
-  // };
 
   const mockItem = {
     menuItem: {
@@ -119,17 +112,18 @@ describe("CartContext", () => {
 
     CartProvider = cartModule.CartProvider;
     useCart = cartModule.useCart;
+
+    // Define wrapper once for all tests
+    wrapper = ({ children }: { children: ReactNode }) => (
+      <CartProvider>{children}</CartProvider>
+    );
   });
 
   test("starts with empty cart", async (ctx) => {
-    if (!useCart || !CartProvider) {
+    if (!wrapper) {
       ctx.skip();
       return;
     }
-
-    const wrapper = ({ children }: { children: ReactNode }) => (
-      <CartProvider>{children}</CartProvider>
-    );
 
     const { result } = renderHook(() => useCart(), { wrapper });
 
@@ -139,14 +133,10 @@ describe("CartContext", () => {
   });
 
   test("adds item to cart", async (ctx) => {
-    if (!useCart || !CartProvider) {
+    if (!wrapper) {
       ctx.skip();
       return;
     }
-
-    const wrapper = ({ children }: { children: ReactNode }) => (
-      <CartProvider>{children}</CartProvider>
-    );
 
     const { result } = renderHook(() => useCart(), { wrapper });
 
@@ -159,14 +149,10 @@ describe("CartContext", () => {
   });
 
   test("persists cart to localStorage", async (ctx) => {
-    if (!useCart || !CartProvider) {
+    if (!wrapper) {
       ctx.skip();
       return;
     }
-
-    const wrapper = ({ children }: { children: ReactNode }) => (
-      <CartProvider>{children}</CartProvider>
-    );
 
     const { result } = renderHook(() => useCart(), { wrapper });
 
@@ -180,14 +166,10 @@ describe("CartContext", () => {
   });
 
   test("removes item from cart", async (ctx) => {
-    if (!useCart || !CartProvider) {
+    if (!wrapper) {
       ctx.skip();
       return;
     }
-
-    const wrapper = ({ children }: { children: ReactNode }) => (
-      <CartProvider>{children}</CartProvider>
-    );
 
     const { result } = renderHook(() => useCart(), { wrapper });
 
@@ -205,14 +187,10 @@ describe("CartContext", () => {
   });
 
   test("updates item quantity", async (ctx) => {
-    if (!useCart || !CartProvider) {
+    if (!wrapper) {
       ctx.skip();
       return;
     }
-
-    const wrapper = ({ children }: { children: ReactNode }) => (
-      <CartProvider>{children}</CartProvider>
-    );
 
     const { result } = renderHook(() => useCart(), { wrapper });
 
@@ -228,14 +206,10 @@ describe("CartContext", () => {
   });
 
   test("clears cart", async (ctx) => {
-    if (!useCart || !CartProvider) {
+    if (!wrapper) {
       ctx.skip();
       return;
     }
-
-    const wrapper = ({ children }: { children: ReactNode }) => (
-      <CartProvider>{children}</CartProvider>
-    );
 
     const { result } = renderHook(() => useCart(), { wrapper });
 
@@ -254,14 +228,10 @@ describe("CartContext", () => {
   });
 
   test("sets tip amount", async (ctx) => {
-    if (!useCart || !CartProvider) {
+    if (!wrapper) {
       ctx.skip();
       return;
     }
-
-    const wrapper = ({ children }: { children: ReactNode }) => (
-      <CartProvider>{children}</CartProvider>
-    );
 
     const { result } = renderHook(() => useCart(), { wrapper });
 
@@ -278,14 +248,10 @@ describe("CartContext", () => {
 
   describe("location locking", () => {
     test("allows items from same location", async (ctx) => {
-      if (!useCart || !CartProvider) {
+      if (!wrapper) {
         ctx.skip();
         return;
       }
-
-      const wrapper = ({ children }: { children: ReactNode }) => (
-        <CartProvider>{children}</CartProvider>
-      );
 
       const { result } = renderHook(() => useCart(), { wrapper });
 
@@ -297,14 +263,10 @@ describe("CartContext", () => {
     });
 
     test("rejects items from different location", async (ctx) => {
-      if (!useCart || !CartProvider) {
+      if (!wrapper) {
         ctx.skip();
         return;
       }
-
-      const wrapper = ({ children }: { children: ReactNode }) => (
-        <CartProvider>{children}</CartProvider>
-      );
 
       const { result } = renderHook(() => useCart(), { wrapper });
 
@@ -316,14 +278,10 @@ describe("CartContext", () => {
     });
 
     test("unlocks location after clearing cart", async (ctx) => {
-      if (!useCart || !CartProvider) {
+      if (!wrapper) {
         ctx.skip();
         return;
       }
-
-      const wrapper = ({ children }: { children: ReactNode }) => (
-        <CartProvider>{children}</CartProvider>
-      );
 
       const { result } = renderHook(() => useCart(), { wrapper });
 
@@ -345,14 +303,10 @@ describe("CartContext", () => {
 
   describe("modifiers and special instructions", () => {
     test("preserves modifiers when adding item", async (ctx) => {
-      if (!useCart || !CartProvider) {
+      if (!wrapper) {
         ctx.skip();
         return;
       }
-
-      const wrapper = ({ children }: { children: ReactNode }) => (
-        <CartProvider>{children}</CartProvider>
-      );
 
       const { result } = renderHook(() => useCart(), { wrapper });
 
@@ -367,14 +321,10 @@ describe("CartContext", () => {
     });
 
     test("preserves special instructions", async (ctx) => {
-      if (!useCart || !CartProvider) {
+      if (!wrapper) {
         ctx.skip();
         return;
       }
-
-      const wrapper = ({ children }: { children: ReactNode }) => (
-        <CartProvider>{children}</CartProvider>
-      );
 
       const { result } = renderHook(() => useCart(), { wrapper });
 
