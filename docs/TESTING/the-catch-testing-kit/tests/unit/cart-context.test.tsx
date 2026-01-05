@@ -11,7 +11,7 @@
 
 import { describe, test, expect, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
-import { createMockLocalStorage, resetLocalStorage } from "./_helpers";
+import { createMockLocalStorage, resetLocalStorage, tryImport } from "./_helpers";
 import { ReactNode } from "react";
 
 // Mock localStorage
@@ -34,7 +34,7 @@ interface CartItem {
   quantity: number;
   price: number;
   modifiers: CartModifier[];
-  specialInstructions: string;
+  specialInstructions?: string;
 }
 
 interface Cart {
