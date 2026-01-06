@@ -3,11 +3,11 @@
  * Development route warmup script.
  *
  * Turbopack compiles routes on-demand, which can cause slow first-visits.
- * Run this after `pnpm dev` starts to pre-compile all routes.
+ * Run this after `bun run dev` starts to pre-compile all routes.
  *
  * Usage:
- *   pnpm warmup          # After dev server is running
- *   pnpm dev:warm        # Starts dev + auto-warms after 4s
+ *   bun run warmup       # After dev server is running
+ *   bun run dev:warm     # Starts dev + auto-warms after 4s
  */
 
 const BASE_URL = process.env.BASE_URL || "http://localhost:3000";
