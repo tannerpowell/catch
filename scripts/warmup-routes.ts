@@ -11,6 +11,7 @@
  */
 
 const BASE_URL = process.env.BASE_URL || "http://localhost:3000";
+const TIMEOUT_MS = 10000;
 
 // All public routes to warm up
 // NOTE: Update this list when adding or removing routes
@@ -42,6 +43,22 @@ const routes = [
 
 async function warmup() {
   console.log(`\n🔥 Warming up ${routes.length} routes on ${BASE_URL}...\n`);
+
+  // Verify server is reachable
+  try {
+    const healthCheck = await fetch(BASE_URL, {
+      method: 'HEAD',
+      signal: AbortSignal.timeout(TIMEOUT_MS)
+    });
+    if (!healthCheck.ok && healthCheck.status !== 404) {
+      throw new Error(`Server returned ${healthCheck.status}`);
+    }
+  } catch (error) {
+    console.error(`\n❌ Dev server at ${BASE_URL} is not reachable.`);
+    console.error(`   Make sure the dev server is running before warming routes.\n`);
+    process.exit(1);
+  }
+
   const start = Date.now();
 
   const results = await Promise.allSettled(
@@ -51,7 +68,7 @@ async function warmup() {
 
       try {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000);
+        const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
 
         const res = await fetch(url, {
           headers: { "X-Warmup": "true" },
@@ -61,7 +78,9 @@ async function warmup() {
         clearTimeout(timeoutId);
         const elapsed = Date.now() - routeStart;
 
-        // Accept 200, 307 (redirect), 401 (auth required) as "warmed"
+        // Accept 200, 307 (redirect), 401 (auth required), 302 (redirect) as "warmed".
+        // For cache warming, we only care that the route handler executed and
+        // warmed the Next.js cache, not whether the user is authenticated.
         const ok = [200, 307, 401, 302].includes(res.status);
         const icon = ok ? "✓" : "✗";
         const status = ok ? "" : ` [${res.status}]`;
