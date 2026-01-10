@@ -6,9 +6,13 @@
   "scripts": {
     "generate-icons": "node scripts/generate-pwa-icons.js",
     "verify-icons": "node scripts/verify-pwa-icons.js",
+    "generate:theme": "tsx scripts/generate-theme-css.ts",
+    "predev": "pnpm run generate:theme",
     "dev": "next dev --turbopack",
+    "predev:warm": "pnpm run generate:theme",
     "dev:warm": "next dev --turbopack & sleep 4 && pnpm warmup && wait",
     "warmup": "tsx scripts/warmup-routes.ts",
+    "prebuild": "pnpm run generate:theme",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
@@ -23,13 +27,17 @@
     "vercel:check": "tsx scripts/check-vercel-config.ts",
     "stripe:setup": "tsx scripts/ecommerce/setup-stripe-locations.ts",
     "stripe:check": "tsx scripts/ecommerce/check-stripe-status.ts",
-    "locations:migrate": "tsx scripts/ecommerce/migrate-locations.ts"
+    "locations:migrate": "tsx scripts/ecommerce/migrate-locations.ts",
+    "verify:contrast": "tsx scripts/verify-color-contrast.ts",
+    "find:colors": "tsx scripts/find-hardcoded-colors.ts"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.36.5",
+    "@radix-ui/react-dropdown-menu": "^2.1.16",
     "@radix-ui/react-progress": "^1.1.8",
     "@radix-ui/react-separator": "^1.1.8",
     "@radix-ui/react-slot": "^1.2.4",
+    "@radix-ui/react-switch": "^1.2.6",
     "@radix-ui/react-tabs": "^1.1.13",
     "@react-email/components": "^1.0.3",
     "@react-pdf/renderer": "^4.3.2",

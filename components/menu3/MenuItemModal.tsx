@@ -205,7 +205,7 @@ export function MenuItemModal({
                   <span
                     key={badge}
                     className={styles.badge}
-                    style={{ '--badge-color': info?.color || '#7c6a63' } as React.CSSProperties}
+                    style={{ '--badge-color': `var(${info?.cssVar || '--color-tierra-muted'})` } as React.CSSProperties}
                   >
                     {info?.label || badge}
                   </span>
