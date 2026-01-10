@@ -1,0 +1,69 @@
+{
+  "brand": {
+    "oceanBlue": {
+      "light": "#2B7A9B",
+      "dark": "#38bdf8",
+      "name": "Ocean Blue",
+      "description": "Primary brand color - links, buttons, accents"
+    },
+    "tierraReca": {
+      "light": "#322723",
+      "dark": "#f8fafc",
+      "name": "Tierra Reca",
+      "description": "Dark brown - primary text and borders"
+    },
+    "cremaFresca": {
+      "light": "#FDF8ED",
+      "dark": "#0f172a",
+      "name": "Crema Fresca",
+      "description": "Cream - page background"
+    },
+    "tierraSecondary": {
+      "light": "#5b4a42",
+      "dark": "#cbd5e1",
+      "name": "Tierra Secondary",
+      "description": "Medium brown - secondary text"
+    },
+    "tierraMuted": {
+      "light": "#7c6a63",
+      "dark": "#94a3b8",
+      "name": "Tierra Muted",
+      "description": "Light brown - muted text and borders"
+    },
+    "warmBrown": {
+      "light": "#8B7355",
+      "dark": "#d4b896",
+      "name": "Warm Brown",
+      "description": "Accent brown - switch unchecked state"
+    },
+    "aguaClara": {
+      "light": "#76bda6",
+      "dark": "#5eead4",
+      "name": "Agua Clara",
+      "description": "Teal accent - supporting color"
+    }
+  },
+  "badges": {
+    "spicy": { "value": "#e74c3c", "label": "Spicy" },
+    "vegetarian": { "value": "#27ae60", "label": "Vegetarian" },
+    "glutenFree": { "value": "#8e44ad", "label": "GF" },
+    "favorite": { "value": "#f39c12", "label": "Favorite" },
+    "cajun": { "value": "#d35400", "label": "Cajun" },
+    "fried": { "value": "#c9a96a", "label": "Fried" },
+    "grilled": { "value": "#6d4c41", "label": "Grilled" },
+    "boiled": { "value": "#3498db", "label": "Boiled" },
+    "marketPrice": { "value": "#7f8c8d", "label": "Market Price" },
+    "salvadoran": { "value": "#2980b9", "label": "Salvadoran" },
+    "texMex": { "value": "#e67e22", "label": "Tex-Mex" }
+  },
+  "semantic": {
+    "brandPrimary": "brand.oceanBlue",
+    "textPrimary": "brand.tierraReca",
+    "textSecondary": "brand.tierraSecondary",
+    "textMuted": "brand.tierraMuted",
+    "surfacePage": "brand.cremaFresca",
+    "surfaceCard": "#ffffff",
+    "borderDefault": "brand.tierraReca",
+    "textOnPrimary": "#ffffff"
+  }
+}

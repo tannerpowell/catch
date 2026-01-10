@@ -153,7 +153,7 @@ export function PeekPreview({
                 <span
                   key={badge}
                   className="menu3-peek-badge menu3-type-badge"
-                  style={{ '--badge-color': info?.color || '#888' } as React.CSSProperties}
+                  style={{ '--badge-color': `var(${info?.cssVar || '--color-tierra-muted'})` } as React.CSSProperties}
                 >
                   {info?.label || badge}
                 </span>

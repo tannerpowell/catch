@@ -78,6 +78,15 @@ html[data-route^="/studio"].dark body {
   --text-secondary: var(--slate-300);
   --text-tertiary: var(--slate-400);
 
+  /* Brand colors - dark mode variants from colors.json */
+  --color-ocean-blue: #38bdf8;
+  --color-tierra-reca: #f8fafc;
+  --color-crema-fresca: #0f172a;
+  --color-tierra-secondary: #cbd5e1;
+  --color-tierra-muted: #94a3b8;
+  --color-warm-brown: #d4b896;
+  --color-agua-clara: #5eead4;
+
   /* Overrides */
   color-scheme: dark;
 }

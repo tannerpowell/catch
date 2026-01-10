@@ -1,0 +1,38 @@
+/**
+ * AUTO-GENERATED from lib/design/colors.json
+ * DO NOT EDIT MANUALLY - run 'bun run generate:theme' instead
+ */
+
+@theme {
+  /* === Brand Colors === */
+  --color-ocean-blue: #2B7A9B;
+  --color-tierra-reca: #322723;
+  --color-crema-fresca: #FDF8ED;
+  --color-tierra-secondary: #5b4a42;
+  --color-tierra-muted: #7c6a63;
+  --color-warm-brown: #8B7355;
+  --color-agua-clara: #76bda6;
+
+  /* === Badge Colors === */
+  --color-badge-spicy: #e74c3c;
+  --color-badge-vegetarian: #27ae60;
+  --color-badge-gluten-free: #8e44ad;
+  --color-badge-favorite: #f39c12;
+  --color-badge-cajun: #d35400;
+  --color-badge-fried: #c9a96a;
+  --color-badge-grilled: #6d4c41;
+  --color-badge-boiled: #3498db;
+  --color-badge-market-price: #7f8c8d;
+  --color-badge-salvadoran: #2980b9;
+  --color-badge-tex-mex: #e67e22;
+
+  /* === Semantic Mappings === */
+  --color-brand-primary: var(--color-ocean-blue);
+  --color-text-primary: var(--color-tierra-reca);
+  --color-text-secondary: var(--color-tierra-secondary);
+  --color-text-muted: var(--color-tierra-muted);
+  --color-surface-page: var(--color-crema-fresca);
+  --color-surface-card: #ffffff;
+  --color-border-default: var(--color-tierra-reca);
+  --color-text-on-primary: #ffffff;
+}
