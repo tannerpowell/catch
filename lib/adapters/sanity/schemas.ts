@@ -45,30 +45,30 @@ export const CategorySchema = z.object({
 export const ModifierOptionSchema = z.object({
   _key: z.string(),
   name: z.string(),
-  price: z.number().nullable().optional(),
+  price: z.number().optional(),
   isDefault: z.boolean().optional(),
   available: z.boolean().optional(),
-  calories: z.number().nullable().optional()
+  calories: z.number().optional()
 });
 
 export const ModifierGroupSchema = z.object({
   _id: z.string(),
   name: z.string(),
   slug: z.string(),
-  description: z.string().nullable().optional(),
+  description: z.string().optional(),
   required: z.boolean().default(false),
   multiSelect: z.boolean().default(false),
-  minSelections: z.number().nullable().optional(),
-  maxSelections: z.number().nullable().optional(),
-  options: z.array(ModifierOptionSchema).optional(),
-  displayOrder: z.number().nullable().optional()
+  minSelections: z.number().optional(),
+  maxSelections: z.number().optional(),
+  options: z.array(ModifierOptionSchema).default([]),
+  displayOrder: z.number().optional()
 });
 
 export const ItemModifierOverrideSchema = z.object({
   _key: z.string(),
   modifierGroupId: z.string(),
   optionName: z.string(),
-  price: z.number().nullable().optional(),
+  price: z.number().optional(),
   available: z.boolean().optional()
 });
 
@@ -83,7 +83,7 @@ export const ItemSchema = z.object({
   image: z.string().optional(),
   availableEverywhere: z.boolean().optional(),
   locationOverrides: z
-    .record(z.string(), z.object({ price: z.number().nullable().optional(), available: z.boolean().optional() }))
+    .record(z.string(), z.object({ price: z.number().optional(), available: z.boolean().optional() }))
     .optional(),
   modifierGroups: z.array(ModifierGroupSchema).optional(),
   itemModifierOverrides: z.array(ItemModifierOverrideSchema).optional(),

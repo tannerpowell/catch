@@ -119,7 +119,7 @@ async function fetchItemsRaw(): Promise<MenuItem[]> {
     allowSpecialInstructions: i.allowSpecialInstructions ?? true,
     locationOverrides: normalizeOverrides(
       Array.isArray(i.overrides)
-        ? i.overrides as { loc: string; price?: number; available?: boolean }[]
+        ? i.overrides as { loc: string; price?: number | null; available?: boolean }[]
         : undefined
     ),
     modifierGroups: normalizeModifierGroups(i.modifierGroups),

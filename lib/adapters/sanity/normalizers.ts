@@ -1,11 +1,14 @@
-import type { ModifierGroup, ItemModifierOverride } from "@/lib/types";
+import type { ModifierGroup, ItemModifierOverride, LocationOverride } from "@/lib/types";
 
 export function normalizeOverrides(
-  arr: { loc: string; price?: number; available?: boolean }[] | undefined
-): Record<string, { price?: number; available?: boolean }> {
+  arr: { loc: string; price?: number | null; available?: boolean }[] | undefined
+): Record<string, LocationOverride> {
   if (!arr) return {};
-  return arr.reduce<Record<string, { price?: number; available?: boolean }>>((acc, o) => {
-    acc[o.loc] = { price: o.price, available: o.available };
+  return arr.reduce<Record<string, LocationOverride>>((acc, o) => {
+    acc[o.loc] = {
+      price: typeof o.price === 'number' ? o.price : undefined,
+      available: o.available,
+    };
     return acc;
   }, {});
 }
@@ -20,25 +23,23 @@ export function normalizeModifierGroups(groups: unknown): ModifierGroup[] | unde
       _id: String(g._id),
       name: String(g.name),
       slug: String(g.slug),
-      description: g.description ? String(g.description) : undefined,
+      description: g.description && typeof g.description === 'string' ? g.description : undefined,
       required: Boolean(g.required),
       multiSelect: Boolean(g.multiSelect),
       minSelections: typeof g.minSelections === 'number' ? g.minSelections : undefined,
       maxSelections: typeof g.maxSelections === 'number' ? g.maxSelections : undefined,
       displayOrder: typeof g.displayOrder === 'number' ? g.displayOrder : undefined,
-      options: Array.isArray(g.options)
-        ? g.options
-            .filter((opt): opt is Record<string, unknown> =>
-              opt !== null && typeof opt === 'object' && opt._key && opt.name)
-            .map((opt) => ({
-              _key: String(opt._key),
-              name: String(opt.name),
-              price: typeof opt.price === 'number' ? opt.price : undefined,
-              isDefault: Boolean(opt.isDefault),
-              available: opt.available !== false,
-              calories: typeof opt.calories === 'number' ? opt.calories : undefined,
-            }))
-        : [],
+      options: (Array.isArray(g.options) ? g.options : [])
+        .filter((opt): opt is Record<string, unknown> =>
+          opt !== null && typeof opt === 'object' && opt._key && opt.name)
+        .map((opt) => ({
+          _key: String(opt._key),
+          name: String(opt.name),
+          price: typeof opt.price === 'number' ? opt.price : undefined,
+          isDefault: Boolean(opt.isDefault),
+          available: opt.available !== false,
+          calories: typeof opt.calories === 'number' ? opt.calories : undefined,
+        })),
     }));
 
   return normalized.length > 0 ? normalized : undefined;
