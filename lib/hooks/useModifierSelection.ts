@@ -2,7 +2,7 @@ import { useState, useCallback, useMemo, useEffect } from 'react';
 import type { MenuItem, ModifierGroup, ModifierOption, CartModifier } from '@/lib/types';
 
 interface SelectedModifiers {
-  [groupId: string]: string[];
+  [groupId: string]: string[]; // stores ModifierOption._key values
 }
 
 interface UseModifierSelectionOptions {
@@ -18,6 +18,14 @@ export function useModifierSelection({ menuItem, isOpen }: UseModifierSelectionO
   const modifierGroups = useMemo(() => menuItem.modifierGroups || [], [menuItem.modifierGroups]);
   const hasModifiers = modifierGroups.length > 0;
 
+  // Clamp quantity setter
+  const setQuantityClamped = useCallback((q: number | ((prev: number) => number)) => {
+    setQuantity((prev) => {
+      const next = typeof q === 'function' ? q(prev) : q;
+      return Math.max(1, Math.trunc(next));
+    });
+  }, []);
+
   // Initialize defaults when modal opens
   useEffect(() => {
     if (isOpen) {
@@ -25,9 +33,9 @@ export function useModifierSelection({ menuItem, isOpen }: UseModifierSelectionO
       modifierGroups.forEach((group) => {
         const defaultOption = group.options.find((opt) => opt.isDefault);
         if (defaultOption) {
-          defaults[group._id] = [defaultOption.name];
+          defaults[group._id] = [defaultOption._key];
         } else if (group.required && !group.multiSelect && group.options.length > 0) {
-          defaults[group._id] = [group.options[0].name];
+          defaults[group._id] = [group.options[0]._key];
         } else {
           defaults[group._id] = [];
         }
@@ -43,20 +51,20 @@ export function useModifierSelection({ menuItem, isOpen }: UseModifierSelectionO
       const current = prev[group._id] || [];
 
       if (group.multiSelect) {
-        if (current.includes(option.name)) {
-          return { ...prev, [group._id]: current.filter((n) => n !== option.name) };
+        if (current.includes(option._key)) {
+          return { ...prev, [group._id]: current.filter((k) => k !== option._key) };
         } else {
           if (group.maxSelections && current.length >= group.maxSelections) {
             return prev;
           }
-          return { ...prev, [group._id]: [...current, option.name] };
+          return { ...prev, [group._id]: [...current, option._key] };
         }
       } else {
         // Single-select: toggle off if already selected (only for non-required groups)
-        if (current.includes(option.name) && !group.required) {
+        if (current.includes(option._key) && !group.required) {
           return { ...prev, [group._id]: [] };
         }
-        return { ...prev, [group._id]: [option.name] };
+        return { ...prev, [group._id]: [option._key] };
       }
     });
   }, []);
@@ -66,8 +74,8 @@ export function useModifierSelection({ menuItem, isOpen }: UseModifierSelectionO
 
     modifierGroups.forEach((group) => {
       const selected = selectedModifiers[group._id] || [];
-      selected.forEach((optName) => {
-        const opt = group.options.find((o) => o.name === optName);
+      selected.forEach((optKey) => {
+        const opt = group.options.find((o) => o._key === optKey);
         if (typeof opt?.price === 'number') {
           base += opt.price;
         }
@@ -105,13 +113,15 @@ export function useModifierSelection({ menuItem, isOpen }: UseModifierSelectionO
     const cartModifiers: CartModifier[] = [];
     modifierGroups.forEach((group) => {
       const selected = selectedModifiers[group._id] || [];
-      selected.forEach((optName) => {
-        const opt = group.options.find((o) => o.name === optName);
-        cartModifiers.push({
-          name: group.name,
-          option: optName,
-          priceDelta: typeof opt?.price === 'number' ? opt.price : 0,
-        });
+      selected.forEach((optKey) => {
+        const opt = group.options.find((o) => o._key === optKey);
+        if (opt) {
+          cartModifiers.push({
+            name: group.name,
+            option: opt.name,
+            priceDelta: typeof opt.price === 'number' ? opt.price : 0,
+          });
+        }
       });
     });
     return cartModifiers;
@@ -122,7 +132,7 @@ export function useModifierSelection({ menuItem, isOpen }: UseModifierSelectionO
     specialInstructions,
     setSpecialInstructions,
     quantity,
-    setQuantity,
+    setQuantity: setQuantityClamped,
     modifierGroups,
     hasModifiers,
     handleOptionSelect,

@@ -19,8 +19,8 @@ function Switch({
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2B7A9B] focus-visible:ring-offset-2',
         // Disabled
         'disabled:cursor-not-allowed disabled:opacity-50',
-        // Unchecked state - warm neutral
-        'data-[state=unchecked]:bg-[#d4c4b0]',
+        // Unchecked state - warm brown (WCAG AA compliant)
+        'data-[state=unchecked]:bg-[#8B7355]',
         // Checked state - teal accent
         'data-[state=checked]:bg-[#2B7A9B]',
         className

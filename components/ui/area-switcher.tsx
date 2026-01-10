@@ -97,6 +97,7 @@ export function AreaSwitcher({ className }: AreaSwitcherProps) {
     <DropdownMenu.Root open={open} onOpenChange={setOpen}>
       <DropdownMenu.Trigger asChild>
         <button
+          type="button"
           className={cn(
             'group relative flex items-center gap-3 rounded-lg px-3 py-2',
             'bg-gradient-to-r from-[#322723]/5 to-transparent',

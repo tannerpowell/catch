@@ -103,6 +103,9 @@ const getLocationsCached = unstable_cache(
 async function fetchItemsRaw(): Promise<MenuItem[]> {
   if (!client) throw new Error('Sanity client not configured');
   const raw = await withTimeout(client.fetch(qItems));
+  if (!Array.isArray(raw)) {
+    throw new Error('Expected Sanity items query to return an array');
+  }
   const mapped = raw.map((i: Record<string, unknown>) => ({
     id: i._id,
     name: i.name,
@@ -122,7 +125,7 @@ async function fetchItemsRaw(): Promise<MenuItem[]> {
     modifierGroups: normalizeModifierGroups(i.modifierGroups),
     itemModifierOverrides: normalizeItemModifierOverrides(i.itemModifierOverrides),
   }));
-  return z.array(ItemSchema).parse(mapped) as MenuItem[];
+  return z.array(ItemSchema).parse(mapped);
 }
 
 const fetchItemsProtected = withCircuitBreaker(
@@ -196,7 +199,7 @@ export const adapter: BrandAdapter = {
   },
 
   async getItemsByCategory(slug: string) {
-    const all = await this.getItems();
+    const all = await getItemsCached();
     return all.filter(i => i.categorySlug === slug);
   }
 };

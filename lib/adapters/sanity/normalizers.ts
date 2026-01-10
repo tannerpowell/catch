@@ -28,8 +28,9 @@ export function normalizeModifierGroups(groups: unknown): ModifierGroup[] | unde
       displayOrder: typeof g.displayOrder === 'number' ? g.displayOrder : undefined,
       options: Array.isArray(g.options)
         ? g.options
-            .filter((opt: Record<string, unknown>) => opt._key && opt.name)
-            .map((opt: Record<string, unknown>) => ({
+            .filter((opt): opt is Record<string, unknown> =>
+              opt !== null && typeof opt === 'object' && opt._key && opt.name)
+            .map((opt) => ({
               _key: String(opt._key),
               name: String(opt.name),
               price: typeof opt.price === 'number' ? opt.price : undefined,
