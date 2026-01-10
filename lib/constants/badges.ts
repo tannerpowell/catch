@@ -1,4 +1,22 @@
-import type { Badge } from '../types';
+/**
+ * All valid badge values. This is the single source of truth.
+ * TypeScript type and Zod schema both derive from this array.
+ */
+export const BADGE_OPTIONS = [
+  "Family Favorite",
+  "Salvadoran",
+  "Tex-Mex",
+  "Spicy",
+  "Vegetarian",
+  "Gluten-Free",
+  "Cajun",
+  "Fried",
+  "Grilled",
+  "Boiled",
+  "Market Price"
+] as const;
+
+export type Badge = (typeof BADGE_OPTIONS)[number];
 
 /**
  * Badge display information for menu items.

@@ -1,0 +1,217 @@
+'use client';
+
+import * as React from 'react';
+import Link from 'next/link';
+import type { Route } from 'next';
+import { usePathname } from 'next/navigation';
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import {
+  ChevronDown,
+  LayoutDashboard,
+  Tv,
+  Printer,
+  ChefHat,
+  Store,
+  ExternalLink,
+  Check,
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
+
+interface AreaConfig {
+  id: string;
+  label: string;
+  description: string;
+  href: Route;
+  icon: React.ElementType;
+  external?: boolean;
+}
+
+const AREAS: AreaConfig[] = [
+  {
+    id: 'studio',
+    label: 'Sanity Studio',
+    description: 'Content management',
+    href: '/studio' as Route,
+    icon: LayoutDashboard,
+  },
+  {
+    id: 'kitchen',
+    label: 'Kitchen Display',
+    description: 'Order management',
+    href: '/kitchen' as Route,
+    icon: ChefHat,
+  },
+  {
+    id: 'tv-menu',
+    label: 'TV Menu Display',
+    description: 'In-store displays',
+    href: '/tv-menu-display' as Route,
+    icon: Tv,
+  },
+  {
+    id: 'print-menu',
+    label: 'Print Menus',
+    description: 'PDF generation',
+    href: '/print-menu' as Route,
+    icon: Printer,
+  },
+  {
+    id: 'site',
+    label: 'Customer Site',
+    description: 'Public website',
+    href: '/' as Route,
+    icon: Store,
+  },
+];
+
+const AREA_BY_ID = new Map(AREAS.map((area) => [area.id, area]));
+
+/** Path prefixes ordered from most specific to least specific */
+const PATH_TO_AREA: [string, string][] = [
+  ['/tv-menu-display', 'tv-menu'],
+  ['/print-menu', 'print-menu'],
+  ['/studio', 'studio'],
+  ['/kitchen', 'kitchen'],
+];
+
+function getCurrentArea(pathname: string): AreaConfig {
+  for (const [prefix, areaId] of PATH_TO_AREA) {
+    if (pathname.startsWith(prefix)) {
+      return AREA_BY_ID.get(areaId)!;
+    }
+  }
+  return AREA_BY_ID.get('site')!;
+}
+
+interface AreaSwitcherProps {
+  className?: string;
+}
+
+export function AreaSwitcher({ className }: AreaSwitcherProps) {
+  const pathname = usePathname();
+  const [open, setOpen] = React.useState(false);
+  const currentArea = getCurrentArea(pathname);
+  const CurrentIcon = currentArea.icon;
+
+  return (
+    <DropdownMenu.Root open={open} onOpenChange={setOpen}>
+      <DropdownMenu.Trigger asChild>
+        <button
+          className={cn(
+            'group relative flex items-center gap-3 rounded-lg px-3 py-2',
+            'bg-gradient-to-r from-[#322723]/5 to-transparent',
+            'hover:from-[#322723]/10 hover:to-[#322723]/5',
+            'border border-[#322723]/10 hover:border-[#322723]/20',
+            'transition-all duration-200',
+            'focus:outline-none focus:ring-2 focus:ring-[#2B7A9B]/50',
+            className
+          )}
+        >
+          {/* Icon circle */}
+          <div className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#2B7A9B] to-[#2B7A9B]/80 text-white shadow-sm">
+            <CurrentIcon className="h-4 w-4" />
+          </div>
+
+          {/* Area info */}
+          <div className="hidden flex-col items-start sm:flex">
+            <span className="text-sm font-medium text-[#322723]">
+              {currentArea.label}
+            </span>
+            <span className="text-[10px] text-[#7c6a63]">
+              {currentArea.description}
+            </span>
+          </div>
+
+          {/* Chevron */}
+          <ChevronDown
+            className={cn(
+              'h-4 w-4 text-[#7c6a63] transition-transform duration-200',
+              open && 'rotate-180'
+            )}
+          />
+        </button>
+      </DropdownMenu.Trigger>
+
+      <DropdownMenu.Portal>
+        <DropdownMenu.Content
+          align="end"
+          sideOffset={8}
+          className={cn(
+            'z-50 min-w-[240px] overflow-hidden rounded-xl',
+            'bg-white/95 backdrop-blur-xl',
+            'border border-[#322723]/10 shadow-xl shadow-[#322723]/10',
+            // Animation
+            'data-[state=open]:animate-in data-[state=closed]:animate-out',
+            'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+            'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
+            'data-[side=bottom]:slide-in-from-top-2',
+            'data-[side=top]:slide-in-from-bottom-2'
+          )}
+        >
+          {/* Header */}
+          <div className="border-b border-[#322723]/10 px-3 py-2">
+            <p className="text-xs font-medium uppercase tracking-wider text-[#7c6a63]">
+              Switch Area
+            </p>
+          </div>
+
+          {/* Area options */}
+          <div className="p-1">
+            {AREAS.map((area) => {
+              const Icon = area.icon;
+              const isActive = area.id === currentArea.id;
+
+              return (
+                <DropdownMenu.Item key={area.id} asChild>
+                  <Link
+                    href={area.href}
+                    className={cn(
+                      'flex items-center gap-3 rounded-lg px-3 py-2.5',
+                      'outline-none transition-colors',
+                      isActive
+                        ? 'bg-[#2B7A9B]/10 text-[#2B7A9B]'
+                        : 'text-[#322723] hover:bg-[#322723]/5'
+                    )}
+                    onClick={() => setOpen(false)}
+                  >
+                    <div
+                      className={cn(
+                        'flex h-8 w-8 items-center justify-center rounded-lg',
+                        isActive
+                          ? 'bg-[#2B7A9B] text-white'
+                          : 'bg-[#322723]/5 text-[#5b4a42]'
+                      )}
+                    >
+                      <Icon className="h-4 w-4" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium">{area.label}</span>
+                        {area.external && (
+                          <ExternalLink className="h-3 w-3 text-[#7c6a63]" />
+                        )}
+                      </div>
+                      <span className="text-xs text-[#7c6a63]">
+                        {area.description}
+                      </span>
+                    </div>
+                    {isActive && (
+                      <Check className="h-4 w-4 text-[#2B7A9B]" />
+                    )}
+                  </Link>
+                </DropdownMenu.Item>
+              );
+            })}
+          </div>
+
+          {/* Footer */}
+          <div className="border-t border-[#322723]/10 px-3 py-2">
+            <p className="text-[10px] text-[#7c6a63]">
+              The Catch Staff Tools
+            </p>
+          </div>
+        </DropdownMenu.Content>
+      </DropdownMenu.Portal>
+    </DropdownMenu.Root>
+  );
+}
