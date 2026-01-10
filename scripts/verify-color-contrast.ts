@@ -55,60 +55,52 @@ function getContrastGrade(ratio: number, isLargeText = false): string {
   return '❌ Fail';
 }
 
+/** Verify brand colors against a background and count issues */
+function verifyBrandColors(
+  mode: 'light' | 'dark',
+  background: string
+): number {
+  let issues = 0;
+
+  Object.entries(colorData.brand).forEach(([name, data]) => {
+    if (name === 'cremaFresca') {
+      console.log(`⏭️  ${name.padEnd(20)} (background color, not tested as text)\n`);
+      return;
+    }
+
+    const color = mode === 'light' ? data.light : data.dark;
+    const ratio = contrastRatio(color, background);
+    const grade = getContrastGrade(ratio);
+
+    if (grade.includes('❌') || grade.includes('⚠️')) {
+      issues++;
+    }
+
+    console.log(`${grade} ${name.padEnd(20)} ${ratio.toFixed(2)}:1`);
+    console.log(`   ${color.padEnd(10)} "${data.description}"\n`);
+  });
+
+  return issues;
+}
+
 console.log('🎨 WCAG AA Contrast Verification\n');
 console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 
-// Brand colors on light and dark backgrounds
 const lightBg = colorData.brand.cremaFresca.light;
 const darkBg = colorData.brand.cremaFresca.dark;
-const white = '#ffffff';
 const cardBg = '#ffffff';
 
 console.log('📊 Brand Colors on Page Background\n');
 console.log('Light Mode (on Crema Fresca #FDF8ED):');
 console.log('────────────────────────────────────────────────────\n');
 
-let lightModeIssues = 0;
-let darkModeIssues = 0;
-
-Object.entries(colorData.brand).forEach(([name, data]) => {
-  // Skip background colors from being tested as foreground
-  if (name === 'cremaFresca') {
-    console.log(`⏭️  ${name.padEnd(20)} (background color, not tested as text)\n`);
-    return;
-  }
-
-  const lightRatio = contrastRatio(data.light, lightBg);
-  const lightGrade = getContrastGrade(lightRatio);
-
-  if (lightGrade.includes('❌') || lightGrade.includes('⚠️')) {
-    lightModeIssues++;
-  }
-
-  console.log(`${lightGrade} ${name.padEnd(20)} ${lightRatio.toFixed(2)}:1`);
-  console.log(`   ${data.light.padEnd(10)} "${data.description}"\n`);
-});
+const lightModeIssues = verifyBrandColors('light', lightBg);
 
 console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 console.log('Dark Mode (on Dark Crema #0f172a):');
 console.log('────────────────────────────────────────────────────\n');
 
-Object.entries(colorData.brand).forEach(([name, data]) => {
-  if (name === 'cremaFresca') {
-    console.log(`⏭️  ${name.padEnd(20)} (background color, not tested as text)\n`);
-    return;
-  }
-
-  const darkRatio = contrastRatio(data.dark, darkBg);
-  const darkGrade = getContrastGrade(darkRatio);
-
-  if (darkGrade.includes('❌') || darkGrade.includes('⚠️')) {
-    darkModeIssues++;
-  }
-
-  console.log(`${darkGrade} ${name.padEnd(20)} ${darkRatio.toFixed(2)}:1`);
-  console.log(`   ${data.dark.padEnd(10)} "${data.description}"\n`);
-});
+const darkModeIssues = verifyBrandColors('dark', darkBg);
 
 console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 console.log('🏷️  Badge Colors (Large Text - 3:1 minimum)\n');

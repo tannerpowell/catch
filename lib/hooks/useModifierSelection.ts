@@ -85,29 +85,23 @@ export function useModifierSelection({ menuItem, isOpen }: UseModifierSelectionO
     return base * quantity;
   }, [menuItem.price, modifierGroups, selectedModifiers, quantity]);
 
-  const isValid = useMemo(() => {
-    return modifierGroups.every((group) => {
-      if (!group.required) return true;
-      const selected = selectedModifiers[group._id] || [];
-      if (group.multiSelect && group.minSelections) {
-        return selected.length >= group.minSelections;
-      }
-      return selected.length > 0;
-    });
-  }, [modifierGroups, selectedModifiers]);
+  /** Check if a required group has met its selection requirements */
+  const isGroupComplete = useCallback((group: ModifierGroup): boolean => {
+    if (!group.required) return true;
+    const selected = selectedModifiers[group._id] || [];
+    if (group.multiSelect && group.minSelections) {
+      return selected.length >= group.minSelections;
+    }
+    return selected.length > 0;
+  }, [selectedModifiers]);
 
   const incompleteGroups = useMemo(() => {
     return modifierGroups
-      .filter((group) => {
-        if (!group.required) return false;
-        const selected = selectedModifiers[group._id] || [];
-        if (group.multiSelect && group.minSelections) {
-          return selected.length < group.minSelections;
-        }
-        return selected.length === 0;
-      })
+      .filter((group) => !isGroupComplete(group))
       .map((g) => g.name);
-  }, [modifierGroups, selectedModifiers]);
+  }, [modifierGroups, isGroupComplete]);
+
+  const isValid = incompleteGroups.length === 0;
 
   const buildCartModifiers = useCallback((): CartModifier[] => {
     const cartModifiers: CartModifier[] = [];

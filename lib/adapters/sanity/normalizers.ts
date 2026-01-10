@@ -4,13 +4,15 @@ export function normalizeOverrides(
   arr: { loc: string; price?: number | null; available?: boolean }[] | undefined
 ): Record<string, LocationOverride> {
   if (!arr) return {};
-  return arr.reduce<Record<string, LocationOverride>>((acc, o) => {
-    acc[o.loc] = {
-      price: typeof o.price === 'number' ? o.price : undefined,
-      available: o.available,
-    };
-    return acc;
-  }, {});
+  return Object.fromEntries(
+    arr.map((o) => [
+      o.loc,
+      {
+        price: typeof o.price === 'number' ? o.price : undefined,
+        available: o.available,
+      },
+    ])
+  );
 }
 
 export function normalizeModifierGroups(groups: unknown): ModifierGroup[] | undefined {
@@ -23,7 +25,7 @@ export function normalizeModifierGroups(groups: unknown): ModifierGroup[] | unde
       _id: String(g._id),
       name: String(g.name),
       slug: String(g.slug),
-      description: g.description && typeof g.description === 'string' ? g.description : undefined,
+      description: typeof g.description === 'string' ? g.description : undefined,
       required: Boolean(g.required),
       multiSelect: Boolean(g.multiSelect),
       minSelections: typeof g.minSelections === 'number' ? g.minSelections : undefined,

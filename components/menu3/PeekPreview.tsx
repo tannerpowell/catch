@@ -107,7 +107,7 @@ export function PeekPreview({
     return { top, left };
   })() : undefined;
 
-  const content = (
+  return (
     <div
       className={`menu3-peek ${mode === 'float' ? 'menu3-peek--float' : 'menu3-peek--dock'}`}
       style={floatStyles}
@@ -347,6 +347,4 @@ export function PeekPreview({
       `}</style>
     </div>
   );
-
-  return content;
 }

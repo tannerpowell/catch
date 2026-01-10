@@ -94,20 +94,12 @@ if (process.env.NODE_ENV === 'development') {
 function getCurrentArea(pathname: string): AreaConfig {
   for (const [prefix, areaId] of PATH_TO_AREA) {
     if (pathname.startsWith(prefix)) {
-      const area = AREA_BY_ID.get(areaId);
-      if (!area) {
-        console.error(`[AreaSwitcher] Area not found for ID: ${areaId}`);
-        return AREA_BY_ID.get('site') ?? AREAS[0];
-      }
-      return area;
+      // AREA_BY_ID is built from AREAS, so this lookup always succeeds
+      return AREA_BY_ID.get(areaId)!;
     }
   }
-  const siteArea = AREA_BY_ID.get('site');
-  if (!siteArea) {
-    console.error('[AreaSwitcher] Site area not found in AREAS array');
-    return AREAS[0];
-  }
-  return siteArea;
+  // Default to site area for unmatched paths
+  return AREA_BY_ID.get('site')!;
 }
 
 interface AreaSwitcherProps {
