@@ -10,21 +10,21 @@
   --color-crema-fresca: #FDF8ED;
   --color-tierra-secondary: #5b4a42;
   --color-tierra-muted: #7c6a63;
-  --color-warm-brown: #8B7355;
-  --color-agua-clara: #76bda6;
+  --color-warm-brown: #7A6547;
+  --color-agua-clara: #2F7A65;
 
   /* === Badge Colors === */
   --color-badge-spicy: #e74c3c;
-  --color-badge-vegetarian: #27ae60;
+  --color-badge-vegetarian: #1e8449;
   --color-badge-gluten-free: #8e44ad;
-  --color-badge-favorite: #f39c12;
+  --color-badge-favorite: #C07810;
   --color-badge-cajun: #d35400;
-  --color-badge-fried: #c9a96a;
+  --color-badge-fried: #a67c52;
   --color-badge-grilled: #6d4c41;
   --color-badge-boiled: #3498db;
   --color-badge-market-price: #7f8c8d;
   --color-badge-salvadoran: #2980b9;
-  --color-badge-tex-mex: #e67e22;
+  --color-badge-tex-mex: #c0611f;
 
   /* === Semantic Mappings === */
   --color-brand-primary: var(--color-ocean-blue);

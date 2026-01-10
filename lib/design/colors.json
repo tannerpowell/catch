@@ -31,13 +31,13 @@
       "description": "Light brown - muted text and borders"
     },
     "warmBrown": {
-      "light": "#8B7355",
+      "light": "#7A6547",
       "dark": "#d4b896",
       "name": "Warm Brown",
       "description": "Accent brown - switch unchecked state"
     },
     "aguaClara": {
-      "light": "#76bda6",
+      "light": "#2F7A65",
       "dark": "#5eead4",
       "name": "Agua Clara",
       "description": "Teal accent - supporting color"
@@ -45,16 +45,16 @@
   },
   "badges": {
     "spicy": { "value": "#e74c3c", "label": "Spicy" },
-    "vegetarian": { "value": "#27ae60", "label": "Vegetarian" },
+    "vegetarian": { "value": "#1e8449", "label": "Vegetarian" },
     "glutenFree": { "value": "#8e44ad", "label": "GF" },
-    "favorite": { "value": "#f39c12", "label": "Favorite" },
+    "favorite": { "value": "#C07810", "label": "Favorite" },
     "cajun": { "value": "#d35400", "label": "Cajun" },
-    "fried": { "value": "#c9a96a", "label": "Fried" },
+    "fried": { "value": "#a67c52", "label": "Fried" },
     "grilled": { "value": "#6d4c41", "label": "Grilled" },
     "boiled": { "value": "#3498db", "label": "Boiled" },
     "marketPrice": { "value": "#7f8c8d", "label": "Market Price" },
     "salvadoran": { "value": "#2980b9", "label": "Salvadoran" },
-    "texMex": { "value": "#e67e22", "label": "Tex-Mex" }
+    "texMex": { "value": "#c0611f", "label": "Tex-Mex" }
   },
   "semantic": {
     "brandPrimary": "brand.oceanBlue",

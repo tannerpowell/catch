@@ -127,25 +127,25 @@ export function AreaSwitcher({ className }: AreaSwitcherProps) {
           type="button"
           className={cn(
             'group relative flex items-center gap-3 rounded-lg px-3 py-2',
-            'bg-gradient-to-r from-[#322723]/5 to-transparent',
-            'hover:from-[#322723]/10 hover:to-[#322723]/5',
-            'border border-[#322723]/10 hover:border-[#322723]/20',
+            'bg-gradient-to-r from-tierra-reca/5 to-transparent',
+            'hover:from-tierra-reca/10 hover:to-tierra-reca/5',
+            'border border-tierra-reca/10 hover:border-tierra-reca/20',
             'transition-all duration-200',
-            'focus:outline-none focus:ring-2 focus:ring-[#2B7A9B]/50',
+            'focus:outline-none focus:ring-2 focus:ring-ocean-blue/50',
             className
           )}
         >
           {/* Icon circle */}
-          <div className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#2B7A9B] to-[#2B7A9B]/80 text-white shadow-sm">
+          <div className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-ocean-blue to-ocean-blue/80 text-white shadow-sm">
             <CurrentIcon className="h-4 w-4" />
           </div>
 
           {/* Area info */}
           <div className="hidden flex-col items-start sm:flex">
-            <span className="text-sm font-medium text-[#322723]">
+            <span className="text-sm font-medium text-tierra-reca">
               {currentArea.label}
             </span>
-            <span className="text-[10px] text-[#7c6a63]">
+            <span className="text-[10px] text-tierra-muted">
               {currentArea.description}
             </span>
           </div>
@@ -153,7 +153,7 @@ export function AreaSwitcher({ className }: AreaSwitcherProps) {
           {/* Chevron */}
           <ChevronDown
             className={cn(
-              'h-4 w-4 text-[#7c6a63] transition-transform duration-200',
+              'h-4 w-4 text-tierra-muted transition-transform duration-200',
               open && 'rotate-180'
             )}
           />
@@ -167,7 +167,7 @@ export function AreaSwitcher({ className }: AreaSwitcherProps) {
           className={cn(
             'z-50 min-w-[240px] overflow-hidden rounded-xl',
             'bg-white/95 backdrop-blur-xl',
-            'border border-[#322723]/10 shadow-xl shadow-[#322723]/10',
+            'border border-tierra-reca/10 shadow-xl shadow-tierra-reca/10',
             // Animation
             'data-[state=open]:animate-in data-[state=closed]:animate-out',
             'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
@@ -177,8 +177,8 @@ export function AreaSwitcher({ className }: AreaSwitcherProps) {
           )}
         >
           {/* Header */}
-          <div className="border-b border-[#322723]/10 px-3 py-2">
-            <p className="text-xs font-medium uppercase tracking-wider text-[#7c6a63]">
+          <div className="border-b border-tierra-reca/10 px-3 py-2">
+            <p className="text-xs font-medium uppercase tracking-wider text-tierra-muted">
               Switch Area
             </p>
           </div>
@@ -197,8 +197,8 @@ export function AreaSwitcher({ className }: AreaSwitcherProps) {
                       'flex items-center gap-3 rounded-lg px-3 py-2.5',
                       'outline-none transition-colors',
                       isActive
-                        ? 'bg-[#2B7A9B]/10 text-[#2B7A9B]'
-                        : 'text-[#322723] hover:bg-[#322723]/5'
+                        ? 'bg-ocean-blue/10 text-ocean-blue'
+                        : 'text-tierra-reca hover:bg-tierra-reca/5'
                     )}
                     onClick={() => setOpen(false)}
                   >
@@ -206,8 +206,8 @@ export function AreaSwitcher({ className }: AreaSwitcherProps) {
                       className={cn(
                         'flex h-8 w-8 items-center justify-center rounded-lg',
                         isActive
-                          ? 'bg-[#2B7A9B] text-white'
-                          : 'bg-[#322723]/5 text-[#5b4a42]'
+                          ? 'bg-ocean-blue text-white'
+                          : 'bg-tierra-reca/5 text-tierra-secondary'
                       )}
                     >
                       <Icon className="h-4 w-4" />
@@ -216,15 +216,15 @@ export function AreaSwitcher({ className }: AreaSwitcherProps) {
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-medium">{area.label}</span>
                         {area.external && (
-                          <ExternalLink className="h-3 w-3 text-[#7c6a63]" />
+                          <ExternalLink className="h-3 w-3 text-tierra-muted" />
                         )}
                       </div>
-                      <span className="text-xs text-[#7c6a63]">
+                      <span className="text-xs text-tierra-muted">
                         {area.description}
                       </span>
                     </div>
                     {isActive && (
-                      <Check className="h-4 w-4 text-[#2B7A9B]" />
+                      <Check className="h-4 w-4 text-ocean-blue" />
                     )}
                   </Link>
                 </DropdownMenu.Item>
@@ -233,8 +233,8 @@ export function AreaSwitcher({ className }: AreaSwitcherProps) {
           </div>
 
           {/* Footer */}
-          <div className="border-t border-[#322723]/10 px-3 py-2">
-            <p className="text-[10px] text-[#7c6a63]">
+          <div className="border-t border-tierra-reca/10 px-3 py-2">
+            <p className="text-[10px] text-tierra-muted">
               The Catch Staff Tools
             </p>
           </div>

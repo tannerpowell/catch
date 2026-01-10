@@ -26,7 +26,9 @@
     "vercel:check": "tsx scripts/check-vercel-config.ts",
     "stripe:setup": "tsx scripts/ecommerce/setup-stripe-locations.ts",
     "stripe:check": "tsx scripts/ecommerce/check-stripe-status.ts",
-    "locations:migrate": "tsx scripts/ecommerce/migrate-locations.ts"
+    "locations:migrate": "tsx scripts/ecommerce/migrate-locations.ts",
+    "verify:contrast": "tsx scripts/verify-color-contrast.ts",
+    "find:colors": "tsx scripts/find-hardcoded-colors.ts"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.36.5",
