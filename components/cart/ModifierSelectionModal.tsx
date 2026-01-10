@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef, type RefObject } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import Image from 'next/image';
 // NOTE: @silk-hq/components requires a commercial license for commercial use.
 // Current license="non-commercial" is for development/evaluation only.
@@ -9,17 +9,7 @@ import { Sheet } from '@silk-hq/components';
 import styles from './ModifierSelectionModal.module.css';
 import type { MenuItem, CartModifier } from '@/lib/types';
 import { useModifierSelection } from '@/lib/hooks/useModifierSelection';
-
-/** Track if component is mounted to prevent state updates after unmount */
-function useMountedRef(): RefObject<boolean> {
-  const mounted = useRef(true);
-  useEffect(() => {
-    return () => {
-      mounted.current = false;
-    };
-  }, []);
-  return mounted;
-}
+import { useMountedRef } from '@/lib/hooks/useMountedRef';
 
 interface ModifierSelectionModalProps {
   isOpen: boolean;

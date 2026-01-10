@@ -66,7 +66,13 @@ const AREAS: AreaConfig[] = [
 
 const AREA_BY_ID = new Map(AREAS.map((area) => [area.id, area]));
 
-/** Path prefixes ordered from most specific to least specific */
+/**
+ * Path prefixes ordered from most specific to least specific.
+ *
+ * ORDER MATTERS: More specific paths must come before less specific ones.
+ * For example, '/tv-menu-display' must come before '/tv' to avoid
+ * incorrect matches. Uses first-match semantics via startsWith().
+ */
 const PATH_TO_AREA: [string, string][] = [
   ['/tv-menu-display', 'tv-menu'],
   ['/print-menu', 'print-menu'],
@@ -74,13 +80,34 @@ const PATH_TO_AREA: [string, string][] = [
   ['/kitchen', 'kitchen'],
 ];
 
+// Validate ordering at module load time (dev only)
+if (process.env.NODE_ENV === 'development') {
+  for (let i = 1; i < PATH_TO_AREA.length; i++) {
+    if (PATH_TO_AREA[i - 1][0].startsWith(PATH_TO_AREA[i][0])) {
+      console.warn(
+        `[AreaSwitcher] PATH_TO_AREA ordering issue: "${PATH_TO_AREA[i - 1][0]}" starts with "${PATH_TO_AREA[i][0]}" - more specific path should come first`
+      );
+    }
+  }
+}
+
 function getCurrentArea(pathname: string): AreaConfig {
   for (const [prefix, areaId] of PATH_TO_AREA) {
     if (pathname.startsWith(prefix)) {
-      return AREA_BY_ID.get(areaId)!;
+      const area = AREA_BY_ID.get(areaId);
+      if (!area) {
+        console.error(`[AreaSwitcher] Area not found for ID: ${areaId}`);
+        return AREA_BY_ID.get('site') ?? AREAS[0];
+      }
+      return area;
     }
   }
-  return AREA_BY_ID.get('site')!;
+  const siteArea = AREA_BY_ID.get('site');
+  if (!siteArea) {
+    console.error('[AreaSwitcher] Site area not found in AREAS array');
+    return AREAS[0];
+  }
+  return siteArea;
 }
 
 interface AreaSwitcherProps {
@@ -90,7 +117,7 @@ interface AreaSwitcherProps {
 export function AreaSwitcher({ className }: AreaSwitcherProps) {
   const pathname = usePathname();
   const [open, setOpen] = React.useState(false);
-  const currentArea = getCurrentArea(pathname);
+  const currentArea = React.useMemo(() => getCurrentArea(pathname), [pathname]);
   const CurrentIcon = currentArea.icon;
 
   return (

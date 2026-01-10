@@ -12,7 +12,7 @@ export const qItems = groq`*[_type=="menuItem"]{
   "categorySlug": category->slug.current,
   "image": image.asset->url,
   badges,
-  "basePrice": coalesce(basePrice, null),
+  "basePrice": basePrice,
   availableEverywhere,
   allowSpecialInstructions,
   "overrides": coalesce(locationOverrides, [])[]{ "loc": location->slug.current, price, available },
