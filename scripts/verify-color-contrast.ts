@@ -18,14 +18,22 @@ interface RGB {
 }
 
 function hexToRgb(hex: string): RGB {
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  // Match both 3-char (#FFF) and 6-char (#FFFFFF) hex formats
+  const result = /^#?([a-f\d]{3}){1,2}$/i.exec(hex);
   if (!result) {
     throw new Error(`Invalid hex color: ${hex}`);
   }
+
+  let h = hex.replace('#', '');
+  // Expand 3-char shorthand to 6-char (e.g., "FFF" -> "FFFFFF")
+  if (h.length === 3) {
+    h = h.split('').map(c => c + c).join('');
+  }
+
   return {
-    r: parseInt(result[1], 16),
-    g: parseInt(result[2], 16),
-    b: parseInt(result[3], 16),
+    r: parseInt(h.slice(0, 2), 16),
+    g: parseInt(h.slice(2, 4), 16),
+    b: parseInt(h.slice(4, 6), 16),
   };
 }
 
@@ -51,7 +59,8 @@ function getContrastGrade(ratio: number, isLargeText = false): string {
   const threshold = isLargeText ? 3.0 : 4.5;
   if (ratio >= 7.0) return '✅ AAA';
   if (ratio >= threshold) return '✅ AA';
-  if (ratio >= 3.0 && isLargeText) return '⚠️  AA Large';
+  // AA Large is a valid WCAG compliance level for large text (18pt+/14pt bold+)
+  if (ratio >= 3.0 && isLargeText) return '✅ AA Large';
   return '❌ Fail';
 }
 
@@ -72,7 +81,7 @@ function verifyBrandColors(
     const ratio = contrastRatio(color, background);
     const grade = getContrastGrade(ratio);
 
-    if (grade.includes('❌') || grade.includes('⚠️')) {
+    if (grade.includes('❌')) {
       issues++;
     }
 

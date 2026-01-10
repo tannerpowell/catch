@@ -12,6 +12,7 @@ export const BRAND_COLORS = {
   tierraMuted: colorData.brand.tierraMuted.light,
   warmBrown: colorData.brand.warmBrown.light,
   aguaClara: colorData.brand.aguaClara.light,
+  pureWhite: colorData.brand.pureWhite.light,
 } as const;
 
 export const DARK_COLORS = {
@@ -22,6 +23,7 @@ export const DARK_COLORS = {
   tierraMuted: colorData.brand.tierraMuted.dark,
   warmBrown: colorData.brand.warmBrown.dark,
   aguaClara: colorData.brand.aguaClara.dark,
+  pureWhite: colorData.brand.pureWhite.dark,
 } as const;
 
 export const BADGE_COLORS = Object.fromEntries(
@@ -32,12 +34,22 @@ export type BrandColor = keyof typeof BRAND_COLORS;
 export type BadgeColor = keyof typeof BADGE_COLORS;
 
 /**
+ * Convert camelCase to kebab-case, handling uppercase-starting inputs
+ */
+function toKebab(str: string): string {
+  // Lowercase first char to avoid leading dash, then convert remaining uppercase
+  return str
+    .replace(/^[A-Z]/, (m) => m.toLowerCase())
+    .replace(/([A-Z])/g, '-$1')
+    .toLowerCase();
+}
+
+/**
  * Get CSS custom property name for a color
  * Usage: var(${getCSSVar('oceanBlue')})
  */
 export function getCSSVar(color: BrandColor): string {
-  const kebab = color.replace(/([A-Z])/g, '-$1').toLowerCase();
-  return `--color-${kebab}`;
+  return `--color-${toKebab(color)}`;
 }
 
 /**
@@ -48,6 +60,5 @@ export function getColorClass(
   color: BrandColor,
   prefix: 'bg' | 'text' | 'border' | 'ring'
 ): string {
-  const kebab = color.replace(/([A-Z])/g, '-$1').toLowerCase();
-  return `${prefix}-${kebab}`;
+  return `${prefix}-${toKebab(color)}`;
 }

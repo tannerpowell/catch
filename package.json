@@ -9,6 +9,7 @@
     "generate:theme": "tsx scripts/generate-theme-css.ts",
     "predev": "pnpm run generate:theme",
     "dev": "next dev --turbopack",
+    "predev:warm": "pnpm run generate:theme",
     "dev:warm": "next dev --turbopack & sleep 4 && pnpm warmup && wait",
     "warmup": "tsx scripts/warmup-routes.ts",
     "prebuild": "pnpm run generate:theme",

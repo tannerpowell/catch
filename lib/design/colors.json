@@ -41,6 +41,12 @@
       "dark": "#5eead4",
       "name": "Agua Clara",
       "description": "Teal accent - supporting color"
+    },
+    "pureWhite": {
+      "light": "#ffffff",
+      "dark": "#ffffff",
+      "name": "Pure White",
+      "description": "Maximum contrast white - cards and text on primary"
     }
   },
   "badges": {
@@ -62,8 +68,8 @@
     "textSecondary": "brand.tierraSecondary",
     "textMuted": "brand.tierraMuted",
     "surfacePage": "brand.cremaFresca",
-    "surfaceCard": "#ffffff",
+    "surfaceCard": "brand.pureWhite",
     "borderDefault": "brand.tierraReca",
-    "textOnPrimary": "#ffffff"
+    "textOnPrimary": "brand.pureWhite"
   }
 }

@@ -9,7 +9,7 @@ export function normalizeOverrides(
       o.loc,
       {
         price: typeof o.price === 'number' ? o.price : undefined,
-        available: o.available,
+        available: o.available !== false, // Default to true unless explicitly false
       },
     ])
   );

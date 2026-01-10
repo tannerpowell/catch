@@ -18,10 +18,12 @@ export function useModifierSelection({ menuItem, isOpen }: UseModifierSelectionO
   const modifierGroups = useMemo(() => menuItem.modifierGroups || [], [menuItem.modifierGroups]);
   const hasModifiers = modifierGroups.length > 0;
 
-  // Clamp quantity setter
+  // Clamp quantity setter with NaN/Infinity guard
   const setQuantityClamped = useCallback((q: number | ((prev: number) => number)) => {
     setQuantity((prev) => {
       const next = typeof q === 'function' ? q(prev) : q;
+      // Guard against NaN/Infinity - keep previous value if invalid
+      if (!Number.isFinite(next)) return prev;
       return Math.max(1, Math.trunc(next));
     });
   }, []);
@@ -31,13 +33,33 @@ export function useModifierSelection({ menuItem, isOpen }: UseModifierSelectionO
     if (isOpen) {
       const defaults: SelectedModifiers = {};
       modifierGroups.forEach((group) => {
-        const defaultOption = group.options.find((opt) => opt.isDefault);
-        if (defaultOption) {
-          defaults[group._id] = [defaultOption._key];
-        } else if (group.required && !group.multiSelect && group.options.length > 0) {
-          defaults[group._id] = [group.options[0]._key];
+        if (group.multiSelect) {
+          // Multi-select: collect ALL isDefault options
+          const defaultKeys = group.options
+            .filter((opt) => opt.isDefault)
+            .map((opt) => opt._key);
+
+          // If required and minSelections not met, add more options
+          if (group.required && group.minSelections && defaultKeys.length < group.minSelections) {
+            const needed = group.minSelections - defaultKeys.length;
+            const additional = group.options
+              .filter((opt) => !opt.isDefault)
+              .slice(0, needed)
+              .map((opt) => opt._key);
+            defaults[group._id] = [...defaultKeys, ...additional];
+          } else {
+            defaults[group._id] = defaultKeys;
+          }
         } else {
-          defaults[group._id] = [];
+          // Single-select: pick first default or first option if required
+          const defaultOption = group.options.find((opt) => opt.isDefault);
+          if (defaultOption) {
+            defaults[group._id] = [defaultOption._key];
+          } else if (group.required && group.options.length > 0) {
+            defaults[group._id] = [group.options[0]._key];
+          } else {
+            defaults[group._id] = [];
+          }
         }
       });
       setSelectedModifiers(defaults);
@@ -52,6 +74,11 @@ export function useModifierSelection({ menuItem, isOpen }: UseModifierSelectionO
 
       if (group.multiSelect) {
         if (current.includes(option._key)) {
+          // Block removal if it would drop below minSelections for required groups
+          const minRequired = group.required ? (group.minSelections ?? 1) : 0;
+          if (current.length - 1 < minRequired) {
+            return prev; // Can't deselect below minimum
+          }
           return { ...prev, [group._id]: current.filter((k) => k !== option._key) };
         } else {
           if (group.maxSelections && current.length >= group.maxSelections) {

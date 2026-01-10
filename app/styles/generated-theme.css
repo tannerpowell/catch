@@ -12,6 +12,7 @@
   --color-tierra-muted: #7c6a63;
   --color-warm-brown: #7A6547;
   --color-agua-clara: #2F7A65;
+  --color-pure-white: #ffffff;
 
   /* === Badge Colors === */
   --color-badge-spicy: #e74c3c;
@@ -32,7 +33,7 @@
   --color-text-secondary: var(--color-tierra-secondary);
   --color-text-muted: var(--color-tierra-muted);
   --color-surface-page: var(--color-crema-fresca);
-  --color-surface-card: #ffffff;
+  --color-surface-card: var(--color-pure-white);
   --color-border-default: var(--color-tierra-reca);
-  --color-text-on-primary: #ffffff;
+  --color-text-on-primary: var(--color-pure-white);
 }

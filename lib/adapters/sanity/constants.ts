@@ -50,6 +50,7 @@ export const fallbackGeoCoordinates: Record<string, { lat: number; lng: number }
   // Texas locations
   "arlington": { lat: 32.675407, lng: -97.196220 },
   "atascocita": { lat: 29.993227, lng: -95.177946 },
+  "humble": { lat: 29.9988, lng: -95.2622 },
   "burleson": { lat: 32.519184, lng: -97.348927 },
   "coit-campbell": { lat: 32.977688, lng: -96.770851 },
   "conroe": { lat: 30.317270, lng: -95.478130 },
