@@ -1,4 +1,4 @@
-@import './styles/generated-theme.css';
+@import './styles/generated-theme.css' layer(theme);
 @import './styles/components.css' layer(base);
 @import './styles/catch-base.css' layer(base);
 @import './styles/catch-track.css' layer(base);

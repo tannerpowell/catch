@@ -80,6 +80,7 @@ const PATH_TO_AREA: [string, string][] = [
 
 // Validate ordering at module load time (dev only)
 if (process.env.NODE_ENV === 'development') {
+  // Check ordering
   for (let i = 1; i < PATH_TO_AREA.length; i++) {
     if (PATH_TO_AREA[i][0].startsWith(PATH_TO_AREA[i - 1][0])) {
       console.warn(
@@ -87,11 +88,21 @@ if (process.env.NODE_ENV === 'development') {
       );
     }
   }
+
+  // Check that all PATH_TO_AREA IDs exist in AREAS
+  for (const [prefix, areaId] of PATH_TO_AREA) {
+    if (!AREA_BY_ID.has(areaId)) {
+      console.error(
+        `[AreaSwitcher] PATH_TO_AREA references non-existent area ID: "${areaId}" (prefix: "${prefix}")`
+      );
+    }
+  }
 }
 
 function getCurrentArea(pathname: string): AreaConfig {
   for (const [prefix, areaId] of PATH_TO_AREA) {
-    if (pathname.startsWith(prefix)) {
+    // Match exact path or path with trailing slash/segment
+    if (pathname === prefix || pathname.startsWith(prefix + '/')) {
       // AREA_BY_ID is built from AREAS, so this lookup always succeeds
       return AREA_BY_ID.get(areaId)!;
     }
@@ -115,6 +126,7 @@ export function AreaSwitcher({ className }: AreaSwitcherProps) {
       <DropdownMenu.Trigger asChild>
         <button
           type="button"
+          aria-label={`Switch area: currently ${currentArea.label}`}
           className={cn(
             'group relative flex items-center gap-3 rounded-lg px-3 py-2',
             'bg-gradient-to-r from-tierra-reca/5 to-transparent',
@@ -180,7 +192,11 @@ export function AreaSwitcher({ className }: AreaSwitcherProps) {
               const isActive = area.id === currentArea.id;
 
               return (
-                <DropdownMenu.Item key={area.id} asChild>
+                <DropdownMenu.Item
+                  key={area.id}
+                  asChild
+                  onSelect={() => setOpen(false)}
+                >
                   <Link
                     href={area.href}
                     className={cn(
@@ -190,7 +206,6 @@ export function AreaSwitcher({ className }: AreaSwitcherProps) {
                         ? 'bg-ocean-blue/10 text-ocean-blue'
                         : 'text-tierra-reca hover:bg-tierra-reca/5'
                     )}
-                    onClick={() => setOpen(false)}
                   >
                     <div
                       className={cn(
