@@ -1,4 +1,5 @@
 import type { CircuitState } from "@/lib/utils/circuit-breaker";
+import { logger } from "@/lib/utils/logger";
 
 export const CACHE_REVALIDATE_SECONDS = 60;
 
@@ -15,9 +16,19 @@ export const SANITY_CIRCUIT_OPTIONS = {
   successThreshold: 2,
   onStateChange: (from: CircuitState, to: CircuitState, serviceName: string) => {
     if (to === 'OPEN') {
-      console.error(`[Sanity] Circuit breaker OPEN for ${serviceName} - falling back to demo data`);
+      logger.error('Circuit breaker opened - falling back to demo data', {
+        serviceName,
+        from,
+        to,
+        timestamp: new Date().toISOString(),
+      });
     } else if (to === 'CLOSED') {
-      console.log(`[Sanity] Circuit breaker CLOSED for ${serviceName} - back to normal operation`);
+      logger.info('Circuit breaker closed - back to normal operation', {
+        serviceName,
+        from,
+        to,
+        timestamp: new Date().toISOString(),
+      });
     }
   },
 };

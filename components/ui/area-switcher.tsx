@@ -12,7 +12,6 @@ import {
   Printer,
   ChefHat,
   Store,
-  ExternalLink,
   Check,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -23,7 +22,6 @@ interface AreaConfig {
   description: string;
   href: Route;
   icon: React.ElementType;
-  external?: boolean;
 }
 
 const AREAS: AreaConfig[] = [
@@ -83,9 +81,9 @@ const PATH_TO_AREA: [string, string][] = [
 // Validate ordering at module load time (dev only)
 if (process.env.NODE_ENV === 'development') {
   for (let i = 1; i < PATH_TO_AREA.length; i++) {
-    if (PATH_TO_AREA[i - 1][0].startsWith(PATH_TO_AREA[i][0])) {
+    if (PATH_TO_AREA[i][0].startsWith(PATH_TO_AREA[i - 1][0])) {
       console.warn(
-        `[AreaSwitcher] PATH_TO_AREA ordering issue: "${PATH_TO_AREA[i - 1][0]}" starts with "${PATH_TO_AREA[i][0]}" - more specific path should come first`
+        `[AreaSwitcher] PATH_TO_AREA ordering issue: "${PATH_TO_AREA[i][0]}" starts with "${PATH_TO_AREA[i - 1][0]}" - more specific path should come first`
       );
     }
   }
@@ -207,9 +205,6 @@ export function AreaSwitcher({ className }: AreaSwitcherProps) {
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-medium">{area.label}</span>
-                        {area.external && (
-                          <ExternalLink className="h-3 w-3 text-tierra-muted" />
-                        )}
                       </div>
                       <span className="text-xs text-tierra-muted">
                         {area.description}

@@ -181,7 +181,7 @@ export default function ModifierSelectionModal({
                           {group.options
                             .filter((opt) => opt.available !== false)
                             .map((option) => {
-                              const isSelected = selected.includes(option.name);
+                              const isSelected = selected.includes(option._key);
 
                               if (useCompact) {
                                 return (
