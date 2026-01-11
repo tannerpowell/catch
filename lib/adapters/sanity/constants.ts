@@ -10,6 +10,13 @@ export const CACHE_TAGS = {
   all: 'sanity-content',
 } as const;
 
+/**
+ * Circuit breaker configuration for Sanity client
+ * Automatically falls back to demo data when Sanity API fails
+ * - failureThreshold: Number of failures before opening circuit
+ * - resetTimeout: Time in ms before attempting to close circuit
+ * - successThreshold: Consecutive successes needed to fully close circuit
+ */
 export const SANITY_CIRCUIT_OPTIONS = {
   failureThreshold: 5,
   resetTimeout: 30000,
@@ -64,6 +71,14 @@ export const fallbackGeoCoordinates: Record<string, { lat: number; lng: number }
   "willowbrook": { lat: 29.963846, lng: -95.543372 },
 };
 
+/**
+ * Get hero image for location, falling back to default if slug is invalid or not found
+ * @param slug - Location slug to look up hero image for
+ * @returns Location hero image URL or default fallback if slug doesn't exist
+ */
 export function fallbackHero(slug: string): string {
-  return fallbackLocationPhotography[slug] ?? defaultFallbackHero;
+  if (!slug || typeof slug !== 'string' || !slug.trim()) {
+    return defaultFallbackHero;
+  }
+  return fallbackLocationPhotography[slug.trim()] ?? defaultFallbackHero;
 }

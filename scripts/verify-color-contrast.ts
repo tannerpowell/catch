@@ -72,8 +72,8 @@ function verifyBrandColors(
   let issues = 0;
 
   Object.entries(colorData.brand).forEach(([name, data]) => {
-    if (name === 'cremaFresca') {
-      console.log(`⏭️  ${name.padEnd(20)} (background color, not tested as text)\n`);
+    if (name === 'cremaFresca' || name === 'pureWhite') {
+      console.log(`⏭️  ${name.padEnd(20)} (surface color, not tested as text)\n`);
       return;
     }
 

@@ -34,14 +34,14 @@ html[data-route^="/studio"].dark body {
   --slate-100: #f1f5f9;
   --slate-50: #f8fafc;
 
-  /* Override semantic color variables for dark mode */
-  --color-text-primary: var(--slate-50);
-  --color-text-secondary: var(--slate-300);
-  --color-text-muted: var(--slate-400);
-  --color-surface-page: var(--slate-900);
-  --color-surface-card: var(--slate-800);
-  --color-border-subtle: var(--slate-700);
-  --color-brand-primary: var(--color-warm-brown); /* Warm gold - NO BLUE TEXT */
+  /* Brand colors - dark mode variants from colors.json */
+  --color-ocean-blue: #38bdf8;
+  --color-tierra-reca: #f8fafc;
+  --color-crema-fresca: #0f172a;
+  --color-tierra-secondary: #cbd5e1;
+  --color-tierra-muted: #94a3b8;
+  --color-warm-brown: #d4b896;
+  --color-agua-clara: #5eead4;
 
   /* Ocean Blue palette - primary accent for dark mode */
   --ocean-50: #f0f9ff;
@@ -54,6 +54,15 @@ html[data-route^="/studio"].dark body {
   --ocean-700: #0369a1;
   --ocean-800: #075985;
   --ocean-900: #0c4a6e;
+
+  /* Override semantic color variables for dark mode */
+  --color-text-primary: var(--slate-50);
+  --color-text-secondary: var(--slate-300);
+  --color-text-muted: var(--slate-400);
+  --color-surface-page: var(--slate-900);
+  --color-surface-card: var(--slate-800);
+  --color-border-subtle: var(--slate-700);
+  --color-brand-primary: var(--color-warm-brown); /* Warm gold - NO BLUE TEXT */
 
   /* Primary backgrounds using Slate */
   --color--dark-slate-deepest: var(--slate-950);
@@ -77,15 +86,6 @@ html[data-route^="/studio"].dark body {
   --text-primary: var(--slate-50);
   --text-secondary: var(--slate-300);
   --text-tertiary: var(--slate-400);
-
-  /* Brand colors - dark mode variants from colors.json */
-  --color-ocean-blue: #38bdf8;
-  --color-tierra-reca: #f8fafc;
-  --color-crema-fresca: #0f172a;
-  --color-tierra-secondary: #cbd5e1;
-  --color-tierra-muted: #94a3b8;
-  --color-warm-brown: #d4b896;
-  --color-agua-clara: #5eead4;
 
   /* Overrides */
   color-scheme: dark;
