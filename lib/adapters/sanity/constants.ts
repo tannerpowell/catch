@@ -40,16 +40,16 @@ export const SANITY_CIRCUIT_OPTIONS = {
   },
 };
 
-export const fallbackLocationPhotography: Record<string, string> = {
+export const fallbackLocationPhotography = {
   conroe: "/images/Location-Conroe.jpg",
   humble: "/images/Location-Humble.jpg",
   "s-post-oak": "/images/Location-Post-Oak.jpg",
-  willowbrook: "/images/Location-Willowbrook.jpg"
-};
+  willowbrook: "/images/Location-Willowbrook.jpg",
+} as const;
 
 export const defaultFallbackHero = fallbackLocationPhotography.humble;
 
-export const fallbackGeoCoordinates: Record<string, { lat: number; lng: number }> = {
+export const fallbackGeoCoordinates = {
   // Oklahoma locations
   "okc-memorial": { lat: 35.610210, lng: -97.550766 },
   "midwest-city": { lat: 35.440914, lng: -97.405760 },
@@ -69,12 +69,21 @@ export const fallbackGeoCoordinates: Record<string, { lat: number; lng: number }
   "tyler": { lat: 32.331307, lng: -95.289808 },
   "wichita-falls": { lat: 33.880000, lng: -98.520000 },
   "willowbrook": { lat: 29.963846, lng: -95.543372 },
-};
+} as const;
+
+export type FallbackLocationSlug = keyof typeof fallbackGeoCoordinates;
+
+/**
+ * Get geo coordinates for a location slug
+ */
+export function getGeoCoordinates(slug: string): { lat: number; lng: number } | undefined {
+  return (fallbackGeoCoordinates as Record<string, { lat: number; lng: number }>)[slug];
+}
 
 /**
  * Get hero image for location, falling back to default if slug is invalid or not found
  */
 export function fallbackHero(slug: string): string {
-  const normalized = typeof slug === 'string' ? slug.trim() : '';
-  return fallbackLocationPhotography[normalized] ?? defaultFallbackHero;
+  const key = slug.trim().toLowerCase();
+  return (fallbackLocationPhotography as Record<string, string>)[key] ?? defaultFallbackHero;
 }

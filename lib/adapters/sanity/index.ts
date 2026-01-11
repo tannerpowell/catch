@@ -14,11 +14,14 @@ import {
   CACHE_TAGS,
   SANITY_CIRCUIT_OPTIONS,
   fallbackHero,
-  fallbackGeoCoordinates
+  getGeoCoordinates
 } from "./constants";
 
 // Re-export for backwards compatibility
-export { CACHE_TAGS, fallbackGeoCoordinates };
+export { CACHE_TAGS, getGeoCoordinates };
+
+// Re-export fallbackGeoCoordinates for iteration use cases
+export { fallbackGeoCoordinates } from "./constants";
 
 // --- Categories ---
 
@@ -76,7 +79,7 @@ async function fetchLocationsRaw(): Promise<Location[]> {
     directionsUrl: l.directionsUrl ?? undefined,
     heroImage: l.heroImage ?? fallbackHero(l.slug),
     openToday: !!l.hours,
-    geo: l.geo ?? fallbackGeoCoordinates[l.slug] ?? undefined,
+    geo: l.geo ?? getGeoCoordinates(l.slug),
   }));
 }
 
@@ -190,7 +193,7 @@ export const adapter: BrandAdapter = {
         heroImage: parsed.heroImage ?? fallbackHero(parsed.slug),
         openToday: !!parsed.hours,
         hours: parsed.hours,
-        geo: parsed.geo ?? fallbackGeoCoordinates[parsed.slug] ?? undefined
+        geo: parsed.geo ?? getGeoCoordinates(parsed.slug)
       };
     } catch (error) {
       console.warn("Falling back to demo location", slug, error instanceof Error ? error.message : error);
