@@ -40,9 +40,11 @@ export function useModifierSelection({ menuItem, isOpen }: UseModifierSelectionO
             .map((opt) => opt._key);
 
           // Use same minRequired logic as handleOptionSelect for consistency
+          // Clamp to available options to handle edge case where minSelections > options.length
           const minRequired = group.required ? (group.minSelections ?? 1) : 0;
-          if (defaultKeys.length < minRequired) {
-            const needed = minRequired - defaultKeys.length;
+          const actualMin = Math.min(minRequired, group.options.length);
+          if (defaultKeys.length < actualMin) {
+            const needed = actualMin - defaultKeys.length;
             const additional = group.options
               .filter((opt) => !opt.isDefault)
               .slice(0, needed)

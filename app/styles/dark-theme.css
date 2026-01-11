@@ -62,6 +62,8 @@ html[data-route^="/studio"].dark body {
   --color-surface-page: var(--slate-900);
   --color-surface-card: var(--slate-800);
   --color-border-subtle: var(--slate-700);
+  --color-border-default: var(--slate-700); /* Match generated-theme.css token */
+  --color-text-on-primary: #ffffff; /* Override for dark mode */
   --color-brand-primary: var(--color-warm-brown); /* Warm gold - NO BLUE TEXT */
 
   /* Primary backgrounds using Slate */

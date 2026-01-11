@@ -56,10 +56,17 @@ function contrastRatio(hex1: string, hex2: string): number {
 }
 
 function getContrastGrade(ratio: number, isLargeText = false): string {
-  if (ratio >= 7.0) return '✅ AAA';
-  if (ratio >= 4.5) return '✅ AA';
-  if (ratio >= 3.0 && isLargeText) return '✅ AA Large';
-  return '❌ Fail';
+  if (isLargeText) {
+    // Large text (18pt+ / 14pt bold+): AAA = 4.5:1, AA = 3:1
+    if (ratio >= 4.5) return '✅ AAA';
+    if (ratio >= 3.0) return '✅ AA Large';
+    return '❌ Fail';
+  } else {
+    // Normal text: AAA = 7:1, AA = 4.5:1
+    if (ratio >= 7.0) return '✅ AAA';
+    if (ratio >= 4.5) return '✅ AA';
+    return '❌ Fail';
+  }
 }
 
 /** Verify brand colors against a background and count issues */

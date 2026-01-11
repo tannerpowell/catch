@@ -36,31 +36,33 @@ export function normalizeModifierGroups(groups: unknown): ModifierGroup[] | unde
       isNonEmptyString(g.name)
     )
     .map((g) => {
-      const minSelections = isPositiveInt(g.minSelections) ? g.minSelections : undefined;
-      const maxSelections = isPositiveInt(g.maxSelections) ? g.maxSelections : undefined;
+      const required = g.required === true;
+      const multiSelect = g.multiSelect === true;
+      const minSelections = multiSelect && isPositiveInt(g.minSelections) ? g.minSelections : undefined;
+      const maxSelections = multiSelect && isPositiveInt(g.maxSelections) ? g.maxSelections : undefined;
 
       return {
-        _id: String(g._id),
-        name: String(g.name),
-        slug: String(g.slug),
+        _id: (g._id as string).trim(),
+        name: (g.name as string).trim(),
+        slug: (g.slug as string).trim(),
         description: typeof g.description === 'string' ? g.description : undefined,
-        required: Boolean(g.required),
-        multiSelect: Boolean(g.multiSelect),
+        required,
+        multiSelect,
         minSelections,
         maxSelections,
-        displayOrder: typeof g.displayOrder === 'number' ? g.displayOrder : undefined,
+        displayOrder: typeof g.displayOrder === 'number' && Number.isFinite(g.displayOrder) ? g.displayOrder : undefined,
         options: (Array.isArray(g.options) ? g.options : [])
           .filter((opt): opt is Record<string, unknown> =>
             opt !== null && typeof opt === 'object' &&
             isNonEmptyString(opt._key) &&
             isNonEmptyString(opt.name))
           .map((opt) => ({
-            _key: String(opt._key),
-            name: String(opt.name),
-            price: typeof opt.price === 'number' ? opt.price : undefined,
-            isDefault: Boolean(opt.isDefault),
+            _key: (opt._key as string).trim(),
+            name: (opt.name as string).trim(),
+            price: typeof opt.price === 'number' && Number.isFinite(opt.price) ? opt.price : undefined,
+            isDefault: opt.isDefault === true,
             available: opt.available !== false,
-            calories: typeof opt.calories === 'number' ? opt.calories : undefined,
+            calories: typeof opt.calories === 'number' && Number.isFinite(opt.calories) ? opt.calories : undefined,
           })),
       };
     })
@@ -81,12 +83,16 @@ export function normalizeItemModifierOverrides(overrides: unknown): ItemModifier
 
   const normalized = overrides
     .filter((o): o is Record<string, unknown> => o !== null && typeof o === 'object')
-    .filter((o) => o._key && o.modifierGroupId && o.optionName)
+    .filter((o) =>
+      isNonEmptyString(o._key) &&
+      isNonEmptyString(o.modifierGroupId) &&
+      isNonEmptyString(o.optionName)
+    )
     .map((o) => ({
-      _key: String(o._key),
-      modifierGroupId: String(o.modifierGroupId),
-      optionName: String(o.optionName),
-      price: typeof o.price === 'number' ? o.price : undefined,
+      _key: (o._key as string).trim(),
+      modifierGroupId: (o.modifierGroupId as string).trim(),
+      optionName: (o.optionName as string).trim(),
+      price: typeof o.price === 'number' && Number.isFinite(o.price) ? o.price : undefined,
       available: o.available !== false,
     }));
 
