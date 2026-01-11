@@ -3,14 +3,15 @@
  * Development route warmup script.
  *
  * Turbopack compiles routes on-demand, which can cause slow first-visits.
- * Run this after `pnpm dev` starts to pre-compile all routes.
+ * Run this after `bun run dev` starts to pre-compile all routes.
  *
  * Usage:
- *   pnpm warmup          # After dev server is running
- *   pnpm dev:warm        # Starts dev + auto-warms after 4s
+ *   bun run warmup       # After dev server is running
+ *   bun run dev:warm     # Starts dev + auto-warms after 4s
  */
 
 const BASE_URL = process.env.BASE_URL || "http://localhost:3000";
+const TIMEOUT_MS = 10000;
 
 // All public routes to warm up
 // NOTE: Update this list when adding or removing routes
@@ -42,6 +43,22 @@ const routes = [
 
 async function warmup() {
   console.log(`\n🔥 Warming up ${routes.length} routes on ${BASE_URL}...\n`);
+
+  // Verify server is reachable
+  try {
+    const healthCheck = await fetch(BASE_URL, {
+      method: 'HEAD',
+      signal: AbortSignal.timeout(TIMEOUT_MS)
+    });
+    if (!healthCheck.ok) {
+      throw new Error(`Server returned ${healthCheck.status}`);
+    }
+  } catch (error) {
+    console.error(`\n❌ Dev server at ${BASE_URL} is not reachable.`);
+    console.error(`   Make sure the dev server is running before warming routes.\n`);
+    process.exit(1);
+  }
+
   const start = Date.now();
 
   const results = await Promise.allSettled(
@@ -50,18 +67,16 @@ async function warmup() {
       const routeStart = Date.now();
 
       try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000);
-
         const res = await fetch(url, {
           headers: { "X-Warmup": "true" },
           redirect: "follow",
-          signal: controller.signal,
+          signal: AbortSignal.timeout(TIMEOUT_MS),
         });
-        clearTimeout(timeoutId);
         const elapsed = Date.now() - routeStart;
 
-        // Accept 200, 307 (redirect), 401 (auth required) as "warmed"
+        // Accept 200, 307 (redirect), 401 (auth required), 302 (redirect) as "warmed".
+        // For cache warming, we only care that the route handler executed and
+        // warmed the Next.js cache, not whether the user is authenticated.
         const ok = [200, 307, 401, 302].includes(res.status);
         const icon = ok ? "✓" : "✗";
         const status = ok ? "" : ` [${res.status}]`;

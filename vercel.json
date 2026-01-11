@@ -1,7 +1,6 @@
 {
   "framework": "nextjs",
-  "buildCommand": "npm run build",
-  "installCommand": "npm install --legacy-peer-deps",
+  "buildCommand": "bun run build",
   "env": {
     "DISABLE_AUTH_CHECK": "",
     "ALLOW_AUTH_BYPASS_IN_DEV": ""
