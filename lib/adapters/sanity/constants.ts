@@ -22,20 +22,13 @@ export const SANITY_CIRCUIT_OPTIONS = {
   resetTimeout: 30000,
   successThreshold: 2,
   onStateChange: (from: CircuitState, to: CircuitState, serviceName: string) => {
+    const metadata = { serviceName, from, to, timestamp: new Date().toISOString() };
     if (to === 'OPEN') {
-      logger.error('Circuit breaker opened - falling back to demo data', {
-        serviceName,
-        from,
-        to,
-        timestamp: new Date().toISOString(),
-      });
+      logger.error('Circuit breaker opened - falling back to demo data', metadata);
+    } else if (to === 'HALF_OPEN') {
+      logger.warn('Circuit breaker half-open - attempting recovery', metadata);
     } else if (to === 'CLOSED') {
-      logger.info('Circuit breaker closed - back to normal operation', {
-        serviceName,
-        from,
-        to,
-        timestamp: new Date().toISOString(),
-      });
+      logger.info('Circuit breaker closed - back to normal operation', metadata);
     }
   },
 };
@@ -74,10 +67,11 @@ export const fallbackGeoCoordinates = {
 export type FallbackLocationSlug = keyof typeof fallbackGeoCoordinates;
 
 /**
- * Get geo coordinates for a location slug
+ * Get geo coordinates for a location slug (normalizes slug to match fallbackHero behavior)
  */
 export function getGeoCoordinates(slug: string): { lat: number; lng: number } | undefined {
-  return (fallbackGeoCoordinates as Record<string, { lat: number; lng: number }>)[slug];
+  const key = slug.trim().toLowerCase();
+  return (fallbackGeoCoordinates as Record<string, { lat: number; lng: number }>)[key];
 }
 
 /**

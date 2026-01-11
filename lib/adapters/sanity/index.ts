@@ -9,6 +9,7 @@ import { client } from "./client";
 import { qCategories, qLocations, qItems, qLocationBySlug } from "./queries";
 import { LocationSchema, CategorySchema, ItemSchema, isBadge } from "./schemas";
 import { normalizeOverrides, normalizeModifierGroups, normalizeItemModifierOverrides } from "./normalizers";
+import { logger } from "@/lib/utils/logger";
 import {
   CACHE_REVALIDATE_SECONDS,
   CACHE_TAGS,
@@ -43,6 +44,7 @@ const fetchCategoriesProtected = withCircuitBreaker(
   SANITY_CIRCUIT_OPTIONS
 );
 
+// Pre-check avoids circuit breaker overhead when client is not configured
 async function fetchCategories(): Promise<MenuCategory[]> {
   if (!client) return demoCategories;
   return fetchCategoriesProtected();
@@ -90,6 +92,7 @@ const fetchLocationsProtected = withCircuitBreaker(
   SANITY_CIRCUIT_OPTIONS
 );
 
+// Pre-check avoids circuit breaker overhead when client is not configured
 async function fetchLocations(): Promise<Location[]> {
   if (!client) return demoLocations;
   return fetchLocationsProtected();
@@ -138,6 +141,7 @@ const fetchItemsProtected = withCircuitBreaker(
   SANITY_CIRCUIT_OPTIONS
 );
 
+// Pre-check avoids circuit breaker overhead when client is not configured
 async function fetchItems(): Promise<MenuItem[]> {
   if (!client) return demoItems;
   return fetchItemsProtected();
@@ -196,7 +200,7 @@ export const adapter: BrandAdapter = {
         geo: parsed.geo ?? getGeoCoordinates(parsed.slug)
       };
     } catch (error) {
-      console.warn("Falling back to demo location", slug, error instanceof Error ? error.message : error);
+      logger.warn("Falling back to demo location", { slug, error: error instanceof Error ? error.message : error });
       return demoLocations.find(loc => loc.slug === slug);
     }
   },
