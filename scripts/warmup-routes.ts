@@ -50,7 +50,7 @@ async function warmup() {
       method: 'HEAD',
       signal: AbortSignal.timeout(TIMEOUT_MS)
     });
-    if (!healthCheck.ok && healthCheck.status !== 404) {
+    if (!healthCheck.ok) {
       throw new Error(`Server returned ${healthCheck.status}`);
     }
   } catch (error) {

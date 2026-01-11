@@ -16,7 +16,13 @@ import tsconfigPaths from "vite-tsconfig-paths";
  * - npm run test            → All tests
  */
 export default defineConfig({
-  plugins: [tsconfigPaths(), react()],
+  plugins: [
+    tsconfigPaths({
+      // Enable logging for path resolution debugging (v6 feature)
+      projects: ['../../../tsconfig.json'],
+    }),
+    react()
+  ],
   test: {
     environment: "jsdom",
     setupFiles: ["./vitest.setup.ts"],
