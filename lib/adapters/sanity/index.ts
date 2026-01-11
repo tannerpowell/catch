@@ -58,11 +58,8 @@ const getCategoriesCached = unstable_cache(
 
 // --- Locations ---
 
-async function fetchLocationsRaw(): Promise<Location[]> {
-  if (!client) throw new Error('Sanity client not configured');
-  const raw = await withTimeout(client.fetch(qLocations));
-  const parsed = z.array(LocationSchema).parse(raw);
-  return parsed.map((l) => ({
+function mapLocationData(l: z.infer<typeof LocationSchema>): Location {
+  return {
     _id: l._id,
     name: l.name,
     slug: l.slug,
@@ -74,7 +71,7 @@ async function fetchLocationsRaw(): Promise<Location[]> {
     postalCode: l.postalCode ?? "",
     phone: l.phone ?? undefined,
     hours: l.hours ?? undefined,
-    revelUrl: l.revelUrl ?? l.menuUrl ?? undefined,
+    revelUrl: l.revelUrl ?? undefined,
     doordashUrl: l.doordashUrl ?? undefined,
     uberEatsUrl: l.uberEatsUrl ?? undefined,
     menuUrl: l.menuUrl ?? undefined,
@@ -82,7 +79,14 @@ async function fetchLocationsRaw(): Promise<Location[]> {
     heroImage: l.heroImage ?? fallbackHero(l.slug),
     openToday: !!l.hours,
     geo: l.geo ?? getGeoCoordinates(l.slug),
-  }));
+  };
+}
+
+async function fetchLocationsRaw(): Promise<Location[]> {
+  if (!client) throw new Error('Sanity client not configured');
+  const raw = await withTimeout(client.fetch(qLocations));
+  const parsed = z.array(LocationSchema).parse(raw);
+  return parsed.map(mapLocationData);
 }
 
 const fetchLocationsProtected = withCircuitBreaker(
@@ -178,27 +182,7 @@ export const adapter: BrandAdapter = {
       const one = await withTimeout(client.fetch(qLocationBySlug, { s: slug }));
       if (!one) return undefined;
       const parsed = LocationSchema.parse(one);
-      return {
-        _id: parsed._id,
-        name: parsed.name,
-        slug: parsed.slug,
-        region: parsed.region ?? undefined,
-        addressLine1: parsed.addressLine1 ?? '',
-        city: parsed.city ?? '',
-        state: parsed.state ?? '',
-        postalCode: parsed.postalCode ?? '',
-        addressLine2: parsed.addressLine2 ?? undefined,
-        phone: parsed.phone ?? undefined,
-        revelUrl: parsed.revelUrl ?? parsed.menuUrl ?? undefined,
-        doordashUrl: parsed.doordashUrl ?? undefined,
-        uberEatsUrl: parsed.uberEatsUrl ?? undefined,
-        menuUrl: parsed.menuUrl ?? undefined,
-        directionsUrl: parsed.directionsUrl ?? undefined,
-        heroImage: parsed.heroImage ?? fallbackHero(parsed.slug),
-        openToday: !!parsed.hours,
-        hours: parsed.hours,
-        geo: parsed.geo ?? getGeoCoordinates(parsed.slug)
-      };
+      return mapLocationData(parsed);
     } catch (error) {
       logger.warn("Falling back to demo location", { slug, error: error instanceof Error ? error.message : error });
       return demoLocations.find(loc => loc.slug === slug);
