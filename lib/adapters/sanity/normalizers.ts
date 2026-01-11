@@ -5,14 +5,26 @@ export function normalizeOverrides(
 ): Record<string, LocationOverride> {
   if (!arr) return {};
   return Object.fromEntries(
-    arr.map((o) => [
-      o.loc,
-      {
-        price: typeof o.price === 'number' ? o.price : undefined,
-        available: o.available !== false, // Default to true unless explicitly false
-      },
-    ])
+    arr
+      .filter((o) => typeof o.loc === 'string' && o.loc.trim().length > 0)
+      .map((o) => [
+        o.loc,
+        {
+          price: typeof o.price === 'number' ? o.price : undefined,
+          available: o.available !== false, // Default to true unless explicitly false
+        },
+      ])
   );
+}
+
+/** Validate positive integer */
+function isPositiveInt(val: unknown): val is number {
+  return typeof val === 'number' && Number.isInteger(val) && val > 0;
+}
+
+/** Validate non-empty string */
+function isNonEmptyString(val: unknown): val is string {
+  return typeof val === 'string' && val.trim().length > 0;
 }
 
 export function normalizeModifierGroups(groups: unknown): ModifierGroup[] | undefined {
@@ -20,29 +32,48 @@ export function normalizeModifierGroups(groups: unknown): ModifierGroup[] | unde
 
   const normalized = groups
     .filter((g): g is Record<string, unknown> => g !== null && typeof g === 'object')
-    .filter((g) => g._id && g.slug && g.name)
-    .map((g) => ({
-      _id: String(g._id),
-      name: String(g.name),
-      slug: String(g.slug),
-      description: typeof g.description === 'string' ? g.description : undefined,
-      required: Boolean(g.required),
-      multiSelect: Boolean(g.multiSelect),
-      minSelections: typeof g.minSelections === 'number' ? g.minSelections : undefined,
-      maxSelections: typeof g.maxSelections === 'number' ? g.maxSelections : undefined,
-      displayOrder: typeof g.displayOrder === 'number' ? g.displayOrder : undefined,
-      options: (Array.isArray(g.options) ? g.options : [])
-        .filter((opt): opt is Record<string, unknown> =>
-          opt !== null && typeof opt === 'object' && opt._key && opt.name)
-        .map((opt) => ({
-          _key: String(opt._key),
-          name: String(opt.name),
-          price: typeof opt.price === 'number' ? opt.price : undefined,
-          isDefault: Boolean(opt.isDefault),
-          available: opt.available !== false,
-          calories: typeof opt.calories === 'number' ? opt.calories : undefined,
-        })),
-    }));
+    .filter((g) =>
+      isNonEmptyString(g._id) &&
+      isNonEmptyString(g.slug) &&
+      isNonEmptyString(g.name)
+    )
+    .map((g) => {
+      const minSelections = isPositiveInt(g.minSelections) ? g.minSelections : undefined;
+      const maxSelections = isPositiveInt(g.maxSelections) ? g.maxSelections : undefined;
+
+      return {
+        _id: String(g._id),
+        name: String(g.name),
+        slug: String(g.slug),
+        description: typeof g.description === 'string' ? g.description : undefined,
+        required: Boolean(g.required),
+        multiSelect: Boolean(g.multiSelect),
+        minSelections,
+        maxSelections,
+        displayOrder: typeof g.displayOrder === 'number' ? g.displayOrder : undefined,
+        options: (Array.isArray(g.options) ? g.options : [])
+          .filter((opt): opt is Record<string, unknown> =>
+            opt !== null && typeof opt === 'object' &&
+            isNonEmptyString(opt._key) &&
+            isNonEmptyString(opt.name))
+          .map((opt) => ({
+            _key: String(opt._key),
+            name: String(opt.name),
+            price: typeof opt.price === 'number' ? opt.price : undefined,
+            isDefault: Boolean(opt.isDefault),
+            available: opt.available !== false,
+            calories: typeof opt.calories === 'number' ? opt.calories : undefined,
+          })),
+      };
+    })
+    // Validate min/max relationship and required groups have options
+    .filter((g) => {
+      if (g.minSelections !== undefined && g.maxSelections !== undefined) {
+        if (g.minSelections > g.maxSelections) return false;
+      }
+      if (g.required && g.options.length === 0) return false;
+      return true;
+    });
 
   return normalized.length > 0 ? normalized : undefined;
 }

@@ -39,9 +39,10 @@ export function useModifierSelection({ menuItem, isOpen }: UseModifierSelectionO
             .filter((opt) => opt.isDefault)
             .map((opt) => opt._key);
 
-          // If required and minSelections not met, add more options
-          if (group.required && group.minSelections && defaultKeys.length < group.minSelections) {
-            const needed = group.minSelections - defaultKeys.length;
+          // Use same minRequired logic as handleOptionSelect for consistency
+          const minRequired = group.required ? (group.minSelections ?? 1) : 0;
+          if (defaultKeys.length < minRequired) {
+            const needed = minRequired - defaultKeys.length;
             const additional = group.options
               .filter((opt) => !opt.isDefault)
               .slice(0, needed)
@@ -116,10 +117,9 @@ export function useModifierSelection({ menuItem, isOpen }: UseModifierSelectionO
   const isGroupComplete = useCallback((group: ModifierGroup): boolean => {
     if (!group.required) return true;
     const selected = selectedModifiers[group._id] || [];
-    if (group.multiSelect && group.minSelections) {
-      return selected.length >= group.minSelections;
-    }
-    return selected.length > 0;
+    // Use consistent minRequired logic (defaults to 1 for required groups)
+    const minRequired = group.minSelections ?? 1;
+    return selected.length >= minRequired;
   }, [selectedModifiers]);
 
   const incompleteGroups = useMemo(() => {
