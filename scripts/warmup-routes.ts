@@ -67,15 +67,11 @@ async function warmup() {
       const routeStart = Date.now();
 
       try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
-
         const res = await fetch(url, {
           headers: { "X-Warmup": "true" },
           redirect: "follow",
-          signal: controller.signal,
+          signal: AbortSignal.timeout(TIMEOUT_MS),
         });
-        clearTimeout(timeoutId);
         const elapsed = Date.now() - routeStart;
 
         // Accept 200, 307 (redirect), 401 (auth required), 302 (redirect) as "warmed".
