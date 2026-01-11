@@ -100,15 +100,10 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 function getCurrentArea(pathname: string): AreaConfig {
-  for (const [prefix, areaId] of PATH_TO_AREA) {
-    // Match exact path or path with trailing slash/segment
-    if (pathname === prefix || pathname.startsWith(prefix + '/')) {
-      // AREA_BY_ID is built from AREAS, so this lookup always succeeds
-      return AREA_BY_ID.get(areaId)!;
-    }
-  }
-  // Default to site area for unmatched paths
-  return AREA_BY_ID.get('site')!;
+  const match = PATH_TO_AREA.find(([prefix]) =>
+    pathname === prefix || pathname.startsWith(prefix + '/')
+  );
+  return AREA_BY_ID.get(match?.[1] ?? 'site')!;
 }
 
 interface AreaSwitcherProps {

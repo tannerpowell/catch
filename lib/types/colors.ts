@@ -33,15 +33,8 @@ export const BADGE_COLORS = Object.fromEntries(
 export type BrandColor = keyof typeof BRAND_COLORS;
 export type BadgeColor = keyof typeof BADGE_COLORS;
 
-/**
- * Convert camelCase to kebab-case, handling uppercase-starting inputs
- */
 function toKebab(str: string): string {
-  // Lowercase first char to avoid leading dash, then convert remaining uppercase
-  return str
-    .replace(/^[A-Z]/, (m) => m.toLowerCase())
-    .replace(/([A-Z])/g, '-$1')
-    .toLowerCase();
+  return str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
 }
 
 /**

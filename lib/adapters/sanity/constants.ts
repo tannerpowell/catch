@@ -73,12 +73,8 @@ export const fallbackGeoCoordinates: Record<string, { lat: number; lng: number }
 
 /**
  * Get hero image for location, falling back to default if slug is invalid or not found
- * @param slug - Location slug to look up hero image for
- * @returns Location hero image URL or default fallback if slug doesn't exist
  */
 export function fallbackHero(slug: string): string {
-  if (!slug || typeof slug !== 'string' || !slug.trim()) {
-    return defaultFallbackHero;
-  }
-  return fallbackLocationPhotography[slug.trim()] ?? defaultFallbackHero;
+  const normalized = typeof slug === 'string' ? slug.trim() : '';
+  return fallbackLocationPhotography[normalized] ?? defaultFallbackHero;
 }

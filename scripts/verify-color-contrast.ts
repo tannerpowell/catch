@@ -56,10 +56,8 @@ function contrastRatio(hex1: string, hex2: string): number {
 }
 
 function getContrastGrade(ratio: number, isLargeText = false): string {
-  const threshold = isLargeText ? 3.0 : 4.5;
   if (ratio >= 7.0) return '✅ AAA';
-  if (ratio >= threshold) return '✅ AA';
-  // AA Large is a valid WCAG compliance level for large text (18pt+/14pt bold+)
+  if (ratio >= 4.5) return '✅ AA';
   if (ratio >= 3.0 && isLargeText) return '✅ AA Large';
   return '❌ Fail';
 }

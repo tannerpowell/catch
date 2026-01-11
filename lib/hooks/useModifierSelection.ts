@@ -98,19 +98,15 @@ export function useModifierSelection({ menuItem, isOpen }: UseModifierSelectionO
   }, []);
 
   const totalPrice = useMemo(() => {
-    let base = menuItem.price || 0;
-
-    modifierGroups.forEach((group) => {
+    const modifierTotal = modifierGroups.reduce((acc, group) => {
       const selected = selectedModifiers[group._id] || [];
-      selected.forEach((optKey) => {
+      return acc + selected.reduce((sum, optKey) => {
         const opt = group.options.find((o) => o._key === optKey);
-        if (typeof opt?.price === 'number') {
-          base += opt.price;
-        }
-      });
-    });
+        return sum + (typeof opt?.price === 'number' ? opt.price : 0);
+      }, 0);
+    }, 0);
 
-    return base * quantity;
+    return ((menuItem.price || 0) + modifierTotal) * quantity;
   }, [menuItem.price, modifierGroups, selectedModifiers, quantity]);
 
   /** Check if a required group has met its selection requirements */
