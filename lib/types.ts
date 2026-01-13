@@ -1,3 +1,7 @@
+// Re-export Badge from the single source of truth
+export type { Badge } from "./constants/badges";
+import type { Badge } from "./constants/badges";
+
 export interface GeoPoint { lat: number; lng: number }
 export interface Hours {
   sunday?: string; monday?: string; tuesday?: string; wednesday?: string;
@@ -47,10 +51,6 @@ export interface Location {
   deliveryFee?: number;
   taxRate?: number;
 }
-
-export type Badge =
-  | "Family Favorite" | "Salvadoran" | "Tex-Mex" | "Spicy" | "Vegetarian" | "Gluten-Free"
-  | "Cajun" | "Fried" | "Grilled" | "Boiled" | "Market Price";
 
 export interface LocationOverride { price?: number; available?: boolean }
 

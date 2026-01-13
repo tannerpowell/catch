@@ -62,3 +62,5 @@ declare global {
 }
 
 global.ResizeObserver = ResizeObserver;
+
+// Note: localStorage is provided by jsdom environment - no need to mock

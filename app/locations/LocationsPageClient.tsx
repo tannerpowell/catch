@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useCallback } from 'react';
 import dynamic from 'next/dynamic';
-import { fallbackGeoCoordinates } from '@/lib/adapters/sanity-catch';
+import { getGeoCoordinates } from '@/lib/adapters/sanity-catch';
 import { formatPhone } from '@/lib/utils/formatPhone';
 import { getDistance } from '@/lib/utils/distance';
 import styles from './LocationsPageClient.module.css';
@@ -164,7 +164,7 @@ export default function LocationsPageClient({ locations }: LocationsPageClientPr
         let minDistance = Infinity;
 
         locations.forEach(location => {
-          const coords = fallbackGeoCoordinates[location.slug];
+          const coords = getGeoCoordinates(location.slug);
           if (!coords) return;
           // Use shared getDistance utility from lib/utils/distance.ts
           const distance = getDistance(latitude, longitude, coords.lat, coords.lng);
@@ -207,7 +207,7 @@ export default function LocationsPageClient({ locations }: LocationsPageClientPr
   // Get nearest location coordinates for map
   const nearestCoords = useMemo((): [number, number] | null => {
     if (!nearestSlug) return null;
-    const coords = fallbackGeoCoordinates[nearestSlug];
+    const coords = getGeoCoordinates(nearestSlug);
     if (!coords) return null;
     return [coords.lng, coords.lat];
   }, [nearestSlug]);

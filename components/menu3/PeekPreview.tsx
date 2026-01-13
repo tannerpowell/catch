@@ -107,7 +107,7 @@ export function PeekPreview({
     return { top, left };
   })() : undefined;
 
-  const content = (
+  return (
     <div
       className={`menu3-peek ${mode === 'float' ? 'menu3-peek--float' : 'menu3-peek--dock'}`}
       style={floatStyles}
@@ -153,7 +153,7 @@ export function PeekPreview({
                 <span
                   key={badge}
                   className="menu3-peek-badge menu3-type-badge"
-                  style={{ '--badge-color': info?.color || '#888' } as React.CSSProperties}
+                  style={{ '--badge-color': `var(${info?.cssVar || '--color-tierra-muted'})` } as React.CSSProperties}
                 >
                   {info?.label || badge}
                 </span>
@@ -347,6 +347,4 @@ export function PeekPreview({
       `}</style>
     </div>
   );
-
-  return content;
 }

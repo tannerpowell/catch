@@ -11,12 +11,8 @@
 
 import { describe, test, expect, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
-import { createMockLocalStorage, resetLocalStorage, tryImport } from "./_helpers";
+import { tryImport } from "./_helpers";
 import { ReactNode } from "react";
-
-// Mock localStorage
-const mockStorage = createMockLocalStorage();
-Object.defineProperty(window, "localStorage", { value: mockStorage });
 
 // Cart type definitions
 interface CartModifier {
@@ -100,8 +96,10 @@ describe("CartContext", () => {
   };
 
   beforeEach(async () => {
-    // Reset localStorage between tests
-    resetLocalStorage(mockStorage);
+    // Reset localStorage between tests if available
+    if (typeof localStorage !== 'undefined' && typeof localStorage.clear === 'function') {
+      localStorage.clear();
+    }
 
     // Try to import the cart context
     const cartModule = await tryImport(() => import("@/lib/contexts/CartContext"));
@@ -160,7 +158,7 @@ describe("CartContext", () => {
       result.current.addToCart(mockItem, mockLocation);
     });
 
-    const stored = mockStorage.getItem("catch-cart");
+    const stored = localStorage.getItem("catch-cart");
     expect(stored).toBeTruthy();
     expect(stored).toContain("Fried Catfish");
   });

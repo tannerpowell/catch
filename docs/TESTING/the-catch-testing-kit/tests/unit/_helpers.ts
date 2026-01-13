@@ -61,3 +61,6 @@ export function createMockLocalStorage(): Storage {
 export function resetLocalStorage(storage: Storage): void {
   storage.clear();
 }
+
+// Alias for backwards compatibility with tests expecting tryImport
+export { importOrSkip as tryImport };
