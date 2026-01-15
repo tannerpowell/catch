@@ -368,6 +368,13 @@
               },
               "optional": true
             },
+            "smsOptIn": {
+              "type": "objectAttribute",
+              "value": {
+                "type": "boolean"
+              },
+              "optional": true
+            },
             "marketingOptIn": {
               "type": "objectAttribute",
               "value": {
