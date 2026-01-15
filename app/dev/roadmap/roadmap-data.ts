@@ -456,12 +456,12 @@ export const ROADMAP_EPICS: RoadmapEpic[] = [
         title: "SMS Notifications",
         description: "Text message updates via Twilio",
         priority: "p1",
-        status: "in_progress",
+        status: "done",
         tasks: [
           { id: "CATCH-051a", title: "Twilio SDK setup", status: "done", effort: "s" },
           { id: "CATCH-051b", title: "Order confirmed SMS", status: "done", effort: "s" },
           { id: "CATCH-051c", title: "Order ready for pickup SMS", status: "done", effort: "s" },
-          { id: "CATCH-051d", title: "Customer opt-in/opt-out handling", status: "todo", effort: "m" },
+          { id: "CATCH-051d", title: "Customer opt-in/opt-out handling", status: "done", effort: "m" },
         ],
       },
       {

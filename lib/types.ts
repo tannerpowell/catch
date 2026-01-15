@@ -208,6 +208,7 @@ export interface Order {
     name: string;
     email: string;
     phone: string;
+    smsOptIn?: boolean;
     marketingOptIn: boolean;
   };
   orderType: OrderType;

@@ -21,6 +21,7 @@ export default function CheckoutPage() {
   });
 
   const [orderType, setOrderType] = useState<'pickup' | 'delivery'>('pickup');
+  const [smsOptIn, setSmsOptIn] = useState(true);
   const [specialInstructions, setSpecialInstructions] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -94,6 +95,7 @@ export default function CheckoutPage() {
             name: customerInfo.name,
             email: customerInfo.email,
             phone: customerInfo.phone,
+            smsOptIn,
             marketingOptIn: false,
           },
           orderType,
@@ -219,6 +221,15 @@ export default function CheckoutPage() {
                       className="checkout-input"
                     />
                   </div>
+                  <label className="checkout-checkbox-label">
+                    <input
+                      type="checkbox"
+                      checked={smsOptIn}
+                      onChange={(e) => setSmsOptIn(e.target.checked)}
+                      className="checkout-checkbox"
+                    />
+                    <span>Text me order updates (recommended)</span>
+                  </label>
                 </div>
               </div>
 
@@ -449,6 +460,23 @@ const styles = `
   .checkout-textarea {
     resize: vertical;
     min-height: 80px;
+  }
+
+  /* Checkbox */
+  .checkout-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--color--tierra-reca, #322723);
+  }
+
+  .checkout-checkbox {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--color--ocean-blue, #2B7A9B);
+    cursor: pointer;
   }
 
   /* Order Type - Track Pattern */
@@ -688,5 +716,9 @@ const styles = `
     background: rgba(180, 60, 60, 0.15);
     border-color: rgba(180, 60, 60, 0.3);
     color: #f0a0a0;
+  }
+
+  :global(.dark) .checkout-checkbox-label {
+    color: #f0f0f0;
   }
 `;
