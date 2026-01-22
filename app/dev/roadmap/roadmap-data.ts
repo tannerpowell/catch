@@ -91,7 +91,7 @@ export const EFFORT_META: Record<Effort, { label: string; hint: string }> = {
 // Roadmap Metadata
 // =============================================================================
 
-export const ROADMAP_LAST_UPDATED = "January 3, 2026";
+export const ROADMAP_LAST_UPDATED = "January 15, 2026";
 
 // =============================================================================
 // Roadmap Data
@@ -443,12 +443,12 @@ export const ROADMAP_EPICS: RoadmapEpic[] = [
         title: "Email Notifications",
         description: "Transactional emails via Resend",
         priority: "p1",
-        status: "todo",
+        status: "done",
         tasks: [
-          { id: "CATCH-050a", title: "Resend SDK setup", status: "todo", effort: "s", notes: "Resend already installed" },
-          { id: "CATCH-050b", title: "Order confirmation email template", status: "todo", effort: "m" },
-          { id: "CATCH-050c", title: "Order ready notification", status: "todo", effort: "s" },
-          { id: "CATCH-050d", title: "Receipt email with order details", status: "todo", effort: "m" },
+          { id: "CATCH-050a", title: "Resend SDK setup", status: "done", effort: "s" },
+          { id: "CATCH-050b", title: "Order confirmation email template", status: "done", effort: "m" },
+          { id: "CATCH-050c", title: "Order ready notification", status: "done", effort: "s" },
+          { id: "CATCH-050d", title: "Receipt email with order details", status: "done", effort: "m", notes: "Included in order confirmation" },
         ],
       },
       {
@@ -456,12 +456,12 @@ export const ROADMAP_EPICS: RoadmapEpic[] = [
         title: "SMS Notifications",
         description: "Text message updates via Twilio",
         priority: "p1",
-        status: "todo",
+        status: "done",
         tasks: [
-          { id: "CATCH-051a", title: "Twilio SDK setup", status: "todo", effort: "s", notes: "Twilio already installed" },
-          { id: "CATCH-051b", title: "Order confirmed SMS", status: "todo", effort: "s" },
-          { id: "CATCH-051c", title: "Order ready for pickup SMS", status: "todo", effort: "s" },
-          { id: "CATCH-051d", title: "Customer opt-in/opt-out handling", status: "todo", effort: "m" },
+          { id: "CATCH-051a", title: "Twilio SDK setup", status: "done", effort: "s" },
+          { id: "CATCH-051b", title: "Order confirmed SMS", status: "done", effort: "s" },
+          { id: "CATCH-051c", title: "Order ready for pickup SMS", status: "done", effort: "s" },
+          { id: "CATCH-051d", title: "Customer opt-in/opt-out handling", status: "done", effort: "m" },
         ],
       },
       {

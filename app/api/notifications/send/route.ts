@@ -61,7 +61,8 @@ async function fetchOrderData(orderId: string) {
       customer {
         name,
         email,
-        phone
+        phone,
+        smsOptIn
       },
       "location": locationSnapshot {
         name,
@@ -139,7 +140,10 @@ export async function POST(request: NextRequest) {
     const prefs = await fetchNotificationPreferences(order.customer.email);
 
     // Determine which channels to use
-    const sendSms = channels?.sms ?? true;
+    // For SMS, respect the order-level smsOptIn preference (guest checkout)
+    // If smsOptIn is explicitly false, don't send SMS regardless of other settings
+    const customerSmsOptIn = order.customer.smsOptIn !== false; // Default true if undefined
+    const sendSms = (channels?.sms ?? true) && customerSmsOptIn;
     const sendEmailFlag = channels?.email ?? true;
 
     const results = {

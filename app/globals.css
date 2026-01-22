@@ -1,3 +1,4 @@
+@import './styles/generated-theme.css' layer(theme);
 @import './styles/components.css' layer(base);
 @import './styles/catch-base.css' layer(base);
 @import './styles/catch-track.css' layer(base);
@@ -144,21 +145,17 @@
     --slate-900: #0f172a;
     --slate-950: #020617;
 
-    /* Color - Ocean Blue primary (matches design demo) */
-    --color-brand-primary: #2b7a9b;
+    /* Color accents (not in generated theme) */
     --color-brand-primary-soft: #38bdf8;
     --color-brand-accent-warm: #0284c7; /* bold accent */
     --color-brand-accent-soft: #bae6fd;
 
-    --color-text-primary: #241814;
-    --color-text-secondary: #5b4a42;
-    --color-text-muted: #7c6a63;
-    --color-text-on-primary: #ffffff;
-
-    --color-surface-page: #faf7f3;
-    --color-surface-card: #ffffff;
+    /* Surfaces not in generated theme */
     --color-surface-overlay: rgba(0, 0, 0, 0.55);
     --color-border-subtle: #e4cfc1;
+
+    /* Note: --color-brand-primary, --color-text-*, --color-surface-page,
+       --color-surface-card are defined in generated-theme.css (layer theme) */
 
     /* Typography */
     --font-display:

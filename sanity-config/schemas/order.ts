@@ -124,6 +124,12 @@ export default defineType({
           })
         }),
         defineField({
+          name: "smsOptIn",
+          type: "boolean",
+          title: "SMS Notifications Opt-In",
+          description: "Customer opted in to receive order status SMS"
+        }),
+        defineField({
           name: "marketingOptIn",
           type: "boolean",
           title: "Marketing Opt-In"

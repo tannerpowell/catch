@@ -1,22 +1,15 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import Image from 'next/image';
 // NOTE: @silk-hq/components requires a commercial license for commercial use.
 // Current license="non-commercial" is for development/evaluation only.
 // See: https://silk-hq.com/pricing for commercial licensing options.
 import { Sheet } from '@silk-hq/components';
 import styles from './ModifierSelectionModal.module.css';
-import type { MenuItem, ModifierGroup, ModifierOption, CartModifier } from '@/lib/types';
-
-// Track if component is mounted to prevent state updates after unmount
-function useMountedRef() {
-  const mounted = useRef(true);
-  useEffect(() => {
-    return () => { mounted.current = false; };
-  }, []);
-  return mounted;
-}
+import type { MenuItem, CartModifier } from '@/lib/types';
+import { useModifierSelection } from '@/lib/hooks/useModifierSelection';
+import { useMountedRef } from '@/lib/hooks/useMountedRef';
 
 interface ModifierSelectionModalProps {
   isOpen: boolean;
@@ -25,47 +18,38 @@ interface ModifierSelectionModalProps {
   menuItem: MenuItem;
 }
 
-interface SelectedModifiers {
-  [groupId: string]: string[];
-}
-
 export default function ModifierSelectionModal({
   isOpen,
   onClose,
   onAddToCart,
   menuItem,
 }: ModifierSelectionModalProps) {
-  const [selectedModifiers, setSelectedModifiers] = useState<SelectedModifiers>({});
-  const [specialInstructions, setSpecialInstructions] = useState('');
-  const [quantity, setQuantity] = useState(1);
+  const {
+    selectedModifiers,
+    specialInstructions,
+    setSpecialInstructions,
+    quantity,
+    setQuantity,
+    modifierGroups,
+    hasModifiers,
+    handleOptionSelect,
+    totalPrice,
+    isValid,
+    incompleteGroups,
+    buildCartModifiers,
+  } = useModifierSelection({ menuItem, isOpen });
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showScrollFade, setShowScrollFade] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
   const mountedRef = useMountedRef();
 
-  const modifierGroups = useMemo(() => menuItem.modifierGroups || [], [menuItem.modifierGroups]);
-  const hasModifiers = modifierGroups.length > 0;
-
-  // Initialize default selections
+  // Reset scroll fade when modal opens
   useEffect(() => {
     if (isOpen) {
-      const defaults: SelectedModifiers = {};
-      modifierGroups.forEach((group) => {
-        const defaultOption = group.options.find((opt) => opt.isDefault);
-        if (defaultOption) {
-          defaults[group._id] = [defaultOption.name];
-        } else if (group.required && !group.multiSelect && group.options.length > 0) {
-          defaults[group._id] = [group.options[0].name];
-        } else {
-          defaults[group._id] = [];
-        }
-      });
-      setSelectedModifiers(defaults);
-      setSpecialInstructions('');
-      setQuantity(1);
       setShowScrollFade(true);
     }
-  }, [isOpen, modifierGroups]);
+  }, [isOpen]);
 
   // Check if scrolled to bottom
   const handleScroll = useCallback(() => {
@@ -78,105 +62,24 @@ export default function ModifierSelectionModal({
   // Check scroll on mount and when content changes
   useEffect(() => {
     if (isOpen) {
-      // Small delay to let content render
       const timer = setTimeout(handleScroll, 100);
       return () => clearTimeout(timer);
     }
   }, [isOpen, handleScroll]);
-
-  const handleOptionSelect = useCallback((group: ModifierGroup, option: ModifierOption) => {
-    setSelectedModifiers((prev) => {
-      const current = prev[group._id] || [];
-
-      if (group.multiSelect) {
-        if (current.includes(option.name)) {
-          return { ...prev, [group._id]: current.filter((n) => n !== option.name) };
-        } else {
-          if (group.maxSelections && current.length >= group.maxSelections) {
-            return prev;
-          }
-          return { ...prev, [group._id]: [...current, option.name] };
-        }
-      } else {
-        // For single-select: toggle off if already selected (only for non-required groups)
-        if (current.includes(option.name) && !group.required) {
-          return { ...prev, [group._id]: [] };
-        }
-        return { ...prev, [group._id]: [option.name] };
-      }
-    });
-  }, []);
-
-  // Calculate total price (include 0 and negative price deltas)
-  const totalPrice = useMemo(() => {
-    let base = menuItem.price || 0;
-
-    modifierGroups.forEach((group) => {
-      const selected = selectedModifiers[group._id] || [];
-      selected.forEach((optName) => {
-        const opt = group.options.find((o) => o.name === optName);
-        if (typeof opt?.price === 'number') {
-          base += opt.price;
-        }
-      });
-    });
-
-    return base * quantity;
-  }, [menuItem.price, modifierGroups, selectedModifiers, quantity]);
-
-  // Check if all required groups have selections
-  const isValid = useMemo(() => {
-    return modifierGroups.every((group) => {
-      if (!group.required) return true;
-      const selected = selectedModifiers[group._id] || [];
-      if (group.multiSelect && group.minSelections) {
-        return selected.length >= group.minSelections;
-      }
-      return selected.length > 0;
-    });
-  }, [modifierGroups, selectedModifiers]);
-
-  // Get validation message for incomplete required groups
-  const incompleteGroups = useMemo(() => {
-    return modifierGroups
-      .filter((group) => {
-        if (!group.required) return false;
-        const selected = selectedModifiers[group._id] || [];
-        if (group.multiSelect && group.minSelections) {
-          return selected.length < group.minSelections;
-        }
-        return selected.length === 0;
-      })
-      .map((g) => g.name);
-  }, [modifierGroups, selectedModifiers]);
 
   const handleAddToCart = useCallback(async () => {
     if (!isValid || isSubmitting) return;
 
     setIsSubmitting(true);
 
-    const cartModifiers: CartModifier[] = [];
-    modifierGroups.forEach((group) => {
-      const selected = selectedModifiers[group._id] || [];
-      selected.forEach((optName) => {
-        const opt = group.options.find((o) => o.name === optName);
-        cartModifiers.push({
-          name: group.name,
-          option: optName,
-          priceDelta: typeof opt?.price === 'number' ? opt.price : 0,
-        });
-      });
-    });
-
     try {
-      await onAddToCart(cartModifiers, specialInstructions.trim(), quantity);
+      await onAddToCart(buildCartModifiers(), specialInstructions.trim(), quantity);
     } finally {
-      // Only update state if still mounted
       if (mountedRef.current) {
         setIsSubmitting(false);
       }
     }
-  }, [isValid, isSubmitting, modifierGroups, selectedModifiers, specialInstructions, quantity, onAddToCart, mountedRef]);
+  }, [isValid, isSubmitting, buildCartModifiers, specialInstructions, quantity, onAddToCart, mountedRef]);
 
   return (
     <Sheet.Root
@@ -278,7 +181,7 @@ export default function ModifierSelectionModal({
                           {group.options
                             .filter((opt) => opt.available !== false)
                             .map((option) => {
-                              const isSelected = selected.includes(option.name);
+                              const isSelected = selected.includes(option._key);
 
                               if (useCompact) {
                                 return (

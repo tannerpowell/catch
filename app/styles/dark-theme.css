@@ -34,14 +34,14 @@ html[data-route^="/studio"].dark body {
   --slate-100: #f1f5f9;
   --slate-50: #f8fafc;
 
-  /* Override semantic color variables for dark mode */
-  --color-text-primary: var(--slate-50);
-  --color-text-secondary: var(--slate-300);
-  --color-text-muted: var(--slate-400);
-  --color-surface-page: var(--slate-900);
-  --color-surface-card: var(--slate-800);
-  --color-border-subtle: var(--slate-700);
-  --color-brand-primary: #D4B896; /* Warm gold - NO BLUE TEXT */
+  /* Brand colors - dark mode variants from colors.json */
+  --color-ocean-blue: #38bdf8;
+  --color-tierra-reca: #f8fafc;
+  --color-crema-fresca: #0f172a;
+  --color-tierra-secondary: #cbd5e1;
+  --color-tierra-muted: #94a3b8;
+  --color-warm-brown: #d4b896;
+  --color-agua-clara: #5eead4;
 
   /* Ocean Blue palette - primary accent for dark mode */
   --ocean-50: #f0f9ff;
@@ -54,6 +54,17 @@ html[data-route^="/studio"].dark body {
   --ocean-700: #0369a1;
   --ocean-800: #075985;
   --ocean-900: #0c4a6e;
+
+  /* Override semantic color variables for dark mode */
+  --color-text-primary: var(--slate-50);
+  --color-text-secondary: var(--slate-300);
+  --color-text-muted: var(--slate-400);
+  --color-surface-page: var(--slate-900);
+  --color-surface-card: var(--slate-800);
+  --color-border-subtle: var(--slate-700);
+  --color-border-default: var(--slate-700); /* Match generated-theme.css token */
+  --color-text-on-primary: #ffffff; /* Override for dark mode */
+  --color-brand-primary: var(--color-warm-brown); /* Warm gold - NO BLUE TEXT */
 
   /* Primary backgrounds using Slate */
   --color--dark-slate-deepest: var(--slate-950);
@@ -69,7 +80,7 @@ html[data-route^="/studio"].dark body {
   --color--tierra-reca-dark: var(--slate-300);
 
   /* Semantic accent colors - warm gold, NOT blue */
-  --color-accent-primary: #D4B896;
+  --color-accent-primary: var(--color-warm-brown);
   --color-accent-primary-soft: #E8D4B8;
   --color-accent-hover: #F0E0C8;
 
@@ -99,7 +110,7 @@ html[data-route^="/studio"].dark body {
 }
 
 .dark .catch-eyebrow {
-  color: #D4B896; /* Warm gold, not blue */
+  color: var(--color-warm-brown); /* Warm gold, not blue */
 }
 
 .dark .catch-heading-1,
@@ -185,7 +196,7 @@ html[data-route^="/studio"].dark body {
 
 .dark .catch-nav-link:hover,
 .dark .nav-link:hover {
-  color: #D4B896; /* Warm gold on hover */
+  color: var(--color-warm-brown); /* Warm gold on hover */
 }
 
 /* Menu icon */
@@ -838,7 +849,7 @@ html[data-route^="/studio"].dark body {
   --menu3-border: rgba(255, 255, 255, 0.08);
   --menu3-search-bg: rgba(255, 255, 255, 0.05);
   --menu3-hover-bg: rgba(255, 255, 255, 0.06);
-  --menu3-accent: #D4B896; /* Warm gold accent */
+  --menu3-accent: var(--color-warm-brown); /* Warm gold accent */
 
   /* Active category - slate instead of white for better dark mode contrast */
   --menu3-active-bg: var(--slate-700);
