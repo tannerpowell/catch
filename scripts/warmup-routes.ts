@@ -50,6 +50,8 @@ async function warmup() {
       method: 'HEAD',
       signal: AbortSignal.timeout(TIMEOUT_MS)
     });
+    // Health check requires 2xx response to ensure server is properly configured and running.
+    // This is stricter than route warming (which accepts 401/302/307) since it validates server availability.
     if (!healthCheck.ok) {
       throw new Error(`Server returned ${healthCheck.status}`);
     }

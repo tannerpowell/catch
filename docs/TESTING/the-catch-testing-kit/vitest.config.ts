@@ -20,6 +20,9 @@ export default defineConfig({
     tsconfigPaths({
       // Enable logging for path resolution debugging (v6 feature)
       projects: ['../../../tsconfig.json'],
+      // Enable logging for debugging path resolution issues
+      // Creates vite-tsconfig-paths.log in the project root
+      logFile: true,
     }),
     react()
   ],
