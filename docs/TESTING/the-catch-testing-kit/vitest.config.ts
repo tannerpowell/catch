@@ -18,11 +18,10 @@ import tsconfigPaths from "vite-tsconfig-paths";
 export default defineConfig({
   plugins: [
     tsconfigPaths({
-      // Enable logging for path resolution debugging (v6 feature)
       projects: ['../../../tsconfig.json'],
-      // Enable logging for debugging path resolution issues
+      // Enable logging for debugging path resolution issues (set DEBUG_PATHS=true)
       // Creates vite-tsconfig-paths.log in the project root
-      logFile: true,
+      logFile: process.env.DEBUG_PATHS === 'true',
     }),
     react()
   ],
