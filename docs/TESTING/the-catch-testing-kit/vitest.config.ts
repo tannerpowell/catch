@@ -11,9 +11,9 @@ import tsconfigPaths from "vite-tsconfig-paths";
  * - Source-level tests: src slash star star slash star.test.ts and tsx
  *
  * Run specific layers:
- * - npm run test:unit       → Unit tests only
- * - npm run test:integration → Integration tests only
- * - npm run test            → All tests
+ * - bun run test:unit       → Unit tests only
+ * - bun run test:integration → Integration tests only
+ * - bun run test            → All tests
  */
 export default defineConfig({
   plugins: [
