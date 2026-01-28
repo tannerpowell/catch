@@ -60,7 +60,7 @@ jobs:
           echo "===================="
 
           # Thresholds in KB
-          TOTAL_THRESHOLD=16000      # 15MB total (includes Sanity Studio ~4MB)
+          TOTAL_THRESHOLD=16000      # 16MB total (includes Sanity Studio ~4MB)
           PAGE_THRESHOLD=300         # 300KB per-page JS limit
 
           FAILED=0
